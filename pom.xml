@@ -61,6 +61,11 @@
             <version>${oidc-support.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>no.nav</groupId>
+            <artifactId>nare</artifactId>
+            <version>dfe6569</version>
+        </dependency>
     </dependencies>
 
     <build>
