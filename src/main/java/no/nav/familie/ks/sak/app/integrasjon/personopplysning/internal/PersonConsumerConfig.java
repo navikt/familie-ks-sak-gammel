@@ -23,6 +23,10 @@ public class PersonConsumerConfig implements EnvironmentAware {
     private static final QName PERSON_V3_SERVICE = new QName(PERSON_V3_NAMESPACE, "Person_v3");
     private static final QName PERSON_V3_PORT = new QName(PERSON_V3_NAMESPACE, "Person_v3Port");
 
+    static {
+        System.setProperty("javax.xml.soap.SAAJMetaFactory", "com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl");
+    }
+
     private Environment environment;
 
     @Bean
