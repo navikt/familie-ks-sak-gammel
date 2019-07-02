@@ -16,9 +16,9 @@ import org.springframework.web.context.annotation.ApplicationScope;
 
 import no.nav.familie.ks.sak.app.integrasjon.felles.ws.DateUtil;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Periode;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personhistorikkinfo;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status.PersonstatusType;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.TpsUtil;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status.PersonstatusType;
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Bruker;
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Gateadresse;
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Kodeverdi;
@@ -82,7 +82,7 @@ public class TpsAdresseOversetter {
         return adresseInfoList;
     }
 
-    public void konverterBostedadressePerioder(HentPersonhistorikkResponse response, Personhistorikkinfo.Builder builder) {
+    public void konverterBostedadressePerioder(HentPersonhistorikkResponse response, PersonhistorikkInfo.Builder builder) {
         if (Optional.ofNullable(response.getBostedsadressePeriodeListe()).isPresent()) {
             response.getBostedsadressePeriodeListe().forEach(e -> {
                 StrukturertAdresse strukturertAdresse = e.getBostedsadresse().getStrukturertAdresse();
@@ -96,7 +96,7 @@ public class TpsAdresseOversetter {
         }
     }
 
-    public void konverterPostadressePerioder(HentPersonhistorikkResponse response, Personhistorikkinfo.Builder builder) {
+    public void konverterPostadressePerioder(HentPersonhistorikkResponse response, PersonhistorikkInfo.Builder builder) {
         if (Optional.ofNullable(response.getPostadressePeriodeListe()).isPresent()) {
             response.getPostadressePeriodeListe().forEach(e -> {
                 Periode periode =
@@ -116,7 +116,7 @@ public class TpsAdresseOversetter {
         }
     }
 
-    public void konverterMidlertidigAdressePerioder(HentPersonhistorikkResponse response, Personhistorikkinfo.Builder builder) {
+    public void konverterMidlertidigAdressePerioder(HentPersonhistorikkResponse response, PersonhistorikkInfo.Builder builder) {
         if (Optional.ofNullable(response.getMidlertidigAdressePeriodeListe()).isPresent()) {
             response.getMidlertidigAdressePeriodeListe().forEach(e -> {
                 Periode periode =

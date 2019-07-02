@@ -91,9 +91,9 @@ public class TpsOversetter {
                 .build();
     }
 
-    public Personhistorikkinfo tilPersonhistorikkInfo(String aktørId, HentPersonhistorikkResponse response) {
+    public PersonhistorikkInfo tilPersonhistorikkInfo(String aktørId, HentPersonhistorikkResponse response) {
 
-        Personhistorikkinfo.Builder builder = Personhistorikkinfo
+        PersonhistorikkInfo.Builder builder = PersonhistorikkInfo
                 .builder()
                 .medAktørId(aktørId);
 
@@ -108,7 +108,7 @@ public class TpsOversetter {
         return builder.build();
     }
 
-    private void konverterPersonstatusPerioder(HentPersonhistorikkResponse response, Personhistorikkinfo.Builder builder) {
+    private void konverterPersonstatusPerioder(HentPersonhistorikkResponse response, PersonhistorikkInfo.Builder builder) {
         Optional.ofNullable(response.getPersonstatusListe()).ifPresent(list -> {
             list.forEach(e -> {
                 Personstatus personstatus = new Personstatus();
@@ -125,7 +125,7 @@ public class TpsOversetter {
         });
     }
 
-    private void konverterStatsborgerskapPerioder(HentPersonhistorikkResponse response, Personhistorikkinfo.Builder builder) {
+    private void konverterStatsborgerskapPerioder(HentPersonhistorikkResponse response, PersonhistorikkInfo.Builder builder) {
         Optional.ofNullable(response.getStatsborgerskapListe()).ifPresent(list -> {
             list.forEach(e -> {
                 Periode periode = Periode.innenfor(

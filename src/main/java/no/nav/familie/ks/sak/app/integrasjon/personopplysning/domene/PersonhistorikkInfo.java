@@ -10,14 +10,14 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.Adr
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status.PersonstatusPeriode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.StatsborgerskapPeriode;
 
-public class Personhistorikkinfo {
+public class PersonhistorikkInfo {
 
     private String aktørId;
     private List<PersonstatusPeriode> personstatushistorikk = new ArrayList<>();
     private List<StatsborgerskapPeriode> statsborgerskaphistorikk = new ArrayList<>();
     private List<AdressePeriode> adressehistorikk = new ArrayList<>();
 
-    private Personhistorikkinfo() {
+    private PersonhistorikkInfo() {
     }
 
     public String getAktørId() {
@@ -38,7 +38,7 @@ public class Personhistorikkinfo {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Personhistorikkinfo{");
+        final StringBuilder sb = new StringBuilder("PersonhistorikkInfo{");
         sb.append("personstatushistorikk=").append(personstatushistorikk);
         sb.append(", statsborgerskaphistorikk=").append(statsborgerskaphistorikk);
         sb.append(", adressehistorikk=").append(adressehistorikk);
@@ -50,7 +50,7 @@ public class Personhistorikkinfo {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Personhistorikkinfo that = (Personhistorikkinfo) o;
+        PersonhistorikkInfo that = (PersonhistorikkInfo) o;
         return Objects.equals(aktørId, that.aktørId) &&
             Objects.equals(personstatushistorikk, that.personstatushistorikk) &&
             Objects.equals(statsborgerskaphistorikk, that.statsborgerskaphistorikk) &&
@@ -67,10 +67,10 @@ public class Personhistorikkinfo {
     }
 
     public static final class Builder {
-        private Personhistorikkinfo kladd;
+        private PersonhistorikkInfo kladd;
 
         private Builder() {
-            this.kladd = new Personhistorikkinfo();
+            this.kladd = new PersonhistorikkInfo();
         }
 
         public Builder medAktørId(String aktørId) {
@@ -93,8 +93,8 @@ public class Personhistorikkinfo {
             return this;
         }
 
-        public Personhistorikkinfo build() {
-            requireNonNull(kladd.aktørId, "Personhistorikkinfo må ha aktørId"); //$NON-NLS-1$
+        public PersonhistorikkInfo build() {
+            requireNonNull(kladd.aktørId, "PersonhistorikkInfo må ha aktørId"); //$NON-NLS-1$
             // TODO PK-49366 andre non-null?
             return kladd;
         }
