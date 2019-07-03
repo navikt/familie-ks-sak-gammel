@@ -9,16 +9,10 @@ import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3;
 
 @Configuration
 public class PersonConsumerProducer {
-    private PersonConsumerConfig consumerConfig;
-
-
-    public PersonConsumerProducer(PersonConsumerConfig consumerConfig) {
-        this.consumerConfig = consumerConfig;
-    }
 
     @Bean
-    public PersonConsumer personConsumer() {
-        PersonV3 port = wrapWithSts(consumerConfig.getPort(), NAVSTSClient.StsClientType.SYSTEM_SAML);
+    public PersonConsumer personConsumer(PersonV3 consumerPort) {
+        PersonV3 port = wrapWithSts(consumerPort, NAVSTSClient.StsClientType.SYSTEM_SAML);
         return new PersonConsumer(port);
     }
 

@@ -3,7 +3,6 @@ package no.nav.familie.ks.sak;
 import java.io.File;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -24,7 +23,6 @@ public class DevLauncher {
         initCryptoStoreConfig("truststore", TRUSTSTORE_PATH_PROP, TRUSTSTORE_PASSW_PROP, "changeit");
 
         SpringApplication app = new SpringApplicationBuilder(ApplicationConfig.class)
-                .web(WebApplicationType.SERVLET)
                 .build();
         app.run(args);
     }
