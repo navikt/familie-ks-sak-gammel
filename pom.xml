@@ -19,6 +19,7 @@
         <revision>1</revision>
         <java.version>11</java.version>
         <oidc-support.version>0.2.18</oidc-support.version>
+        <fpsak.nare.version>2.0_20181105115918_47dcace</fpsak.nare.version>
     </properties>
 
     <dependencies>
@@ -62,9 +63,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>no.nav</groupId>
-            <artifactId>nare</artifactId>
-            <version>dfe6569</version>
+            <groupId>no.nav.fpsak.nare</groupId>
+            <artifactId>fpsak-nare-core</artifactId>
+            <version>${fpsak.nare.version}</version>
         </dependency>
     </dependencies>
 
