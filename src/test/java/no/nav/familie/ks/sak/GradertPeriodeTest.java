@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak;
 
-import no.nav.familie.ks.sak.felles.GradertPeriode;
+import no.nav.familie.ks.sak.app.behandling.GradertPeriode;
 import org.junit.Test;
 
 import java.time.LocalDate;

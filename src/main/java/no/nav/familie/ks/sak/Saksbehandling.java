@@ -1,18 +1,18 @@
 package no.nav.familie.ks.sak;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import no.nav.familie.ks.sak.behandling.VilkårRegel;
-import no.nav.familie.ks.sak.behandling.Regelresultat;
-import no.nav.familie.ks.sak.behandling.grunnlag.Vilkårvurdering;
-import no.nav.familie.ks.sak.behandling.grunnlag.Faktagrunnlag;
-import no.nav.familie.ks.sak.felles.GradertPeriode;
-import no.nav.familie.ks.sak.resultat.UtfallType;
-import no.nav.familie.ks.sak.resultat.Vedtak;
-import no.nav.familie.ks.sak.grunnlag.TpsFakta;
-import no.nav.familie.ks.sak.grunnlag.Søknad;
-import no.nav.familie.ks.sak.behandling.Oppslag;
-import no.nav.familie.ks.sak.behandling.PeriodeOppretter;
-import no.nav.familie.ks.sak.behandling.VilkårRegelFeil;
+import no.nav.familie.ks.sak.app.behandling.VilkårRegel;
+import no.nav.familie.ks.sak.app.behandling.Regelresultat;
+import no.nav.familie.ks.sak.app.behandling.fastsetting.Vilkårvurdering;
+import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
+import no.nav.familie.ks.sak.app.behandling.GradertPeriode;
+import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
+import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
+import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.grunnlag.Søknad;
+import no.nav.familie.ks.sak.app.grunnlag.Oppslag;
+import no.nav.familie.ks.sak.app.behandling.PeriodeOppretter;
+import no.nav.familie.ks.sak.app.behandling.VilkårRegelFeil;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSerializer;
 

@@ -1,13 +1,13 @@
 package no.nav.familie.ks.sak;
 
 
-import no.nav.familie.ks.sak.behandling.Regelresultat;
-import no.nav.familie.ks.sak.behandling.VilkårRegel;
-import no.nav.familie.ks.sak.behandling.grunnlag.Faktagrunnlag;
-import no.nav.familie.ks.sak.behandling.regler.*;
-import no.nav.familie.ks.sak.resultat.UtfallType;
-import no.nav.familie.ks.sak.grunnlag.Søknad;
-import no.nav.familie.ks.sak.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.behandling.Regelresultat;
+import no.nav.familie.ks.sak.app.behandling.VilkårRegel;
+import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
+import no.nav.familie.ks.sak.app.behandling.regler.*;
+import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
+import no.nav.familie.ks.sak.app.grunnlag.Søknad;
+import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.evaluation.Resultat;
 import org.junit.Test;

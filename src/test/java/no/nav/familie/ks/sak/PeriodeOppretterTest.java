@@ -1,13 +1,13 @@
 package no.nav.familie.ks.sak;
 
-import no.nav.familie.ks.sak.behandling.grunnlag.Faktagrunnlag;
-import no.nav.familie.ks.sak.felles.GradertPeriode;
-import no.nav.familie.ks.sak.grunnlag.Søknad;
-import no.nav.familie.ks.sak.grunnlag.TpsFakta;
-import no.nav.familie.ks.sak.resultat.UtfallType;
-import no.nav.familie.ks.sak.resultat.Vedtak;
-import no.nav.familie.ks.sak.behandling.Oppslag;
-import no.nav.familie.ks.sak.behandling.PeriodeOppretter;
+import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
+import no.nav.familie.ks.sak.app.behandling.GradertPeriode;
+import no.nav.familie.ks.sak.app.grunnlag.Søknad;
+import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
+import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
+import no.nav.familie.ks.sak.app.grunnlag.Oppslag;
+import no.nav.familie.ks.sak.app.behandling.PeriodeOppretter;
 import org.junit.Before;
 import org.junit.Test;
 
