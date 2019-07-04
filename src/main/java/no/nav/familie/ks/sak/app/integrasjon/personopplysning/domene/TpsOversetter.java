@@ -3,16 +3,16 @@ package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene;
 import static java.util.stream.Collectors.toSet;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import no.nav.tjeneste.virksomhet.person.v3.informasjon.*;
+import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import no.nav.familie.ks.sak.app.integrasjon.felles.ws.DateUtil;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.Adresseinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.TpsAdresseOversetter;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
@@ -20,13 +20,6 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status.Pers
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status.PersonstatusType;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.StatsborgerskapPeriode;
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Aktoer;
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Bruker;
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Doedsdato;
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Foedselsdato;
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent;
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Personstatus;
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Statsborgerskap;
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonhistorikkResponse;
 
 @Component
@@ -48,32 +41,30 @@ public class TpsOversetter {
         return landkode;
     }
 
-    public Personinfo tilBrukerInfo(AktørId aktørId, Bruker bruker) { // NOSONAR - ingen forbedring å forkorte metoden her
-        String navn = bruker.getPersonnavn().getSammensattNavn();
-        String adresse = tpsAdresseOversetter.finnAdresseFor(bruker);
-        String adresseLandkode = tpsAdresseOversetter.finnAdresseLandkodeFor(bruker);
-        String utlandsadresse = tpsAdresseOversetter.finnUtlandsadresseFor(bruker);
+    public Personinfo tilPersonInfo(String aktørId, Person person) { // NOSONAR - ingen forbedring å forkorte metoden her
+        String navn = person.getPersonnavn().getSammensattNavn();
+        String adresse = tpsAdresseOversetter.finnAdresseFor(person);
+        String adresseLandkode = tpsAdresseOversetter.finnAdresseLandkodeFor(person);
 
-        LocalDate fødselsdato = finnFødselsdato(bruker);
-        LocalDate dødsdato = finnDødsdato(bruker);
+        LocalDate fødselsdato = finnFødselsdato(person);
+        LocalDate dødsdato = finnDødsdato(person);
 
-        Aktoer aktoer = bruker.getAktoer();
+        Aktoer aktoer = person.getAktoer();
         PersonIdent pi = (PersonIdent) aktoer;
         String ident = pi.getIdent().getIdent();
-        PersonstatusType personstatus = tilPersonstatusType(bruker.getPersonstatus());
-        Set<Familierelasjon> familierelasjoner = bruker.getHarFraRolleI().stream()
+        PersonstatusType personstatus = tilPersonstatusType(person.getPersonstatus());
+        Set<Familierelasjon> familierelasjoner = person.getHarFraRolleI().stream()
                 .map(this::tilRelasjon)
                 .collect(toSet());
 
-        Landkode landkode = utledLandkode(bruker.getStatsborgerskap());
+        Landkode landkode = utledLandkode(person.getStatsborgerskap());
 
-        String diskresjonskode = bruker.getDiskresjonskode() == null ? null : bruker.getDiskresjonskode().getValue();
-        String geografiskTilknytning = bruker.getGeografiskTilknytning() != null ? bruker.getGeografiskTilknytning().getGeografiskTilknytning() : null;
+        String diskresjonskode = person.getDiskresjonskode() == null ? null : person.getDiskresjonskode().getValue();
 
-        List<Adresseinfo> adresseinfoList = tpsAdresseOversetter.lagListeMedAdresseInfo(bruker);
+        AktørId id = new AktørId(aktørId);
 
         return new Personinfo.Builder()
-                .medAktørId(aktørId)
+                .medAktørId(id)
                 .medPersonIdent(no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent.fra(ident))
                 .medNavn(navn)
                 .medAdresse(adresse)
@@ -83,10 +74,7 @@ public class TpsOversetter {
                 .medPersonstatusType(personstatus)
                 .medStatsborgerskap(landkode)
                 .medFamilierelasjon(familierelasjoner)
-                .medUtlandsadresse(utlandsadresse)
-                .medGegrafiskTilknytning(geografiskTilknytning)
                 .medDiskresjonsKode(diskresjonskode)
-                .medAdresseInfoList(adresseinfoList)
                 .medLandkode(landkode)
                 .build();
     }
@@ -102,7 +90,6 @@ public class TpsOversetter {
         konverterStatsborgerskapPerioder(response, builder);
 
         tpsAdresseOversetter.konverterBostedadressePerioder(response, builder);
-        tpsAdresseOversetter.konverterPostadressePerioder(response, builder);
         tpsAdresseOversetter.konverterMidlertidigAdressePerioder(response, builder);
 
         return builder.build();
@@ -143,7 +130,7 @@ public class TpsOversetter {
         return PersonstatusType.valueOf(personstatus.getPersonstatus().getValue());
     }
 
-    private LocalDate finnDødsdato(Bruker person) {
+    private LocalDate finnDødsdato(Person person) {
         LocalDate dødsdato = null;
         Doedsdato dødsdatoJaxb = person.getDoedsdato();
         if (dødsdatoJaxb != null) {
@@ -152,7 +139,7 @@ public class TpsOversetter {
         return dødsdato;
     }
 
-    private LocalDate finnFødselsdato(Bruker person) {
+    private LocalDate finnFødselsdato(Person person) {
         LocalDate fødselsdato = null;
         Foedselsdato fødselsdatoJaxb = person.getFoedselsdato();
         if (fødselsdatoJaxb != null) {

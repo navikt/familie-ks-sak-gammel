@@ -1,7 +1,6 @@
 package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene;
 
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Aktoer;
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Bruker;
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent;
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person;
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent;
@@ -49,8 +48,8 @@ public final class TpsUtil {
         return førsteTegn >= '4' && førsteTegn <= '7';
     }
 
-    public static no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent getPersonIdent(Bruker bruker) {
-        return getPersonIdent(bruker.getAktoer());
+    public static no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent getPersonIdent(Person person) {
+        return getPersonIdent(person.getAktoer());
     }
 
     static no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent getPersonIdent(Aktoer aktor) {
