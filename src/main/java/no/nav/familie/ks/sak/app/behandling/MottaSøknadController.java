@@ -1,9 +1,8 @@
 package no.nav.familie.ks.sak.app.behandling;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
-import javax.ws.rs.core.Response;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,9 +18,9 @@ public class MottaSøknadController {
     public MottaSøknadController() {
     }
 
-    @PostMapping(consumes = APPLICATION_JSON, path = "dokument")
-    public Response mottaDokument(@RequestBody String soeknad) {
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
+    public ResponseEntity mottaDokument(@RequestBody String soeknad) {
 
-        return Response.ok().build();
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

@@ -1,11 +1,10 @@
 package no.nav.familie.ks.sak.app.integrasjon.personopplysning;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
 import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,7 +27,7 @@ public class PersonopplysningerController {
         this.personopplysningerTjeneste = personopplysningerTjeneste;
     }
 
-    @GetMapping(produces = APPLICATION_JSON, path = "historikk")
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, path = "historikk")
     @Unprotected
     public PersonhistorikkInfo historikk(@NotNull @RequestParam(name = "id") String aktørId) {
         MDCOperations.putCallId(); // FIXME: Midlertidig, bør settes generelt i et filter elns
