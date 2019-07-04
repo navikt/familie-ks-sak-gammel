@@ -17,6 +17,8 @@
 
     <properties>
         <revision>1</revision>
+        <sha1></sha1>
+        <changelist>-SNAPSHOT</changelist>
         <java.version>11</java.version>
         <oidc-support.version>0.2.18</oidc-support.version>
         <cxf.version>3.3.1</cxf.version>
