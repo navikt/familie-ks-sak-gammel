@@ -16,7 +16,7 @@ public class SjekkTreÅrUtland extends LeafSpecification<Faktagrunnlag> {
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        if (! grunnlag.getSøknad().getIkkeUtlandTreMåneder()) {
+        if (! grunnlag.getSøknad().kravTilSoker.skalBoMedBarnetINorgeNesteTolvMaaneder.equals("JA")) {
             return ja();
         }
         return nei();

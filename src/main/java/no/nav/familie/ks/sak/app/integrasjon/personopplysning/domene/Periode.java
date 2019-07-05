@@ -10,7 +10,7 @@ public class Periode {
     private LocalDate fom;
     private LocalDate tom;
 
-    private Periode(LocalDate fom, LocalDate tom) {
+    public Periode(LocalDate fom, LocalDate tom) {
         // Fom er null om perioden for en opplysning gjelder fra personen ble født
         // Setter da fom til tidenes begynnelse for å slippe et ekstra kall for å hente fødselsdato
         if (fom == null) {

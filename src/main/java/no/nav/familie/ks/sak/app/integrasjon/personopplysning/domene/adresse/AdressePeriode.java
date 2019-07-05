@@ -131,7 +131,7 @@ public class AdressePeriode {
         private Periode periodeKladd;
         private Adresse adresseKladd;
 
-        private Builder() {
+        public Builder() {
             this.adresseKladd = new Adresse();
         }
 

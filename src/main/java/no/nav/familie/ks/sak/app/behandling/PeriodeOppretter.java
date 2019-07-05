@@ -11,9 +11,10 @@ public class PeriodeOppretter {
 
     public GradertPeriode opprettStønadPeriode(Faktagrunnlag grunnlag) {
         LocalDate søknadsDato = LocalDate.now(); //TODO: Hent fra fastsetting
-        LocalDate gyldigAlderFom = grunnlag.getTpsFakta().getBarnetsFødselsdato().plusMonths(13);
-        LocalDate gyldigAlderTom = grunnlag.getTpsFakta().getBarnetsFødselsdato().plusMonths(23);
+        LocalDate gyldigAlderFom = grunnlag.getTpsFakta().getBarn().getFødselsdato().plusMonths(13);
+        LocalDate gyldigAlderTom = grunnlag.getTpsFakta().getBarn().getFødselsdato().plusMonths(23);
         LocalDate startDato = søknadsDato.isBefore(gyldigAlderFom) ? gyldigAlderFom : søknadsDato; //Tillater ikke tilbakevirkende
+        /*
         LocalDate opphørDato;
         try {
             GradertPeriode barnehagePeriode = opprettBarnehagePeriode(grunnlag);
@@ -24,13 +25,17 @@ public class PeriodeOppretter {
         catch (NullPointerException ingenBarnehagePlass) {
             return new GradertPeriode(startDato, gyldigAlderTom, FULL_UTBETALINGSGRAD);
         }
+        */
+        return new GradertPeriode(startDato, gyldigAlderTom, 100);
     }
 
     private GradertPeriode opprettBarnehagePeriode(Faktagrunnlag faktagrunnlag) {
+        //TODO: Hent fra søknad
         return new GradertPeriode(
-                faktagrunnlag.getSøknad().getBarnehageplassFom(),
-                faktagrunnlag.getSøknad().getBarnehageplassTom(),
-                faktagrunnlag.getSøknad().getBarnehageplassProsent());
+                LocalDate.now(),
+                LocalDate.now(),
+                100
+        );
     }
 
     private int finnUtbetalingsgrad(int barnehageProsent) {

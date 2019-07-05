@@ -16,10 +16,15 @@ public class SjekkBarnSammeAdresse extends LeafSpecification<Faktagrunnlag> {
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        //TODO: Flagg hentes fra TPS?
-        if (! grunnlag.getTpsFakta().getStatsborgerskap().equals("NOR")) {
-            return ja();
+        var adresseBarn = grunnlag.getTpsFakta().getBarn().getAdresse();
+        var adresseSøker = grunnlag.getTpsFakta().getForelder().getPersoninfo().getAdresse();
+        var adresseAnnenForelder = adresseSøker;
+        if (grunnlag.getTpsFakta().getAnnenForelder() != null) {
+            adresseAnnenForelder = grunnlag.getTpsFakta().getForelder().getPersoninfo().getAdresse();
         }
-        return nei();
+        if (adresseBarn.equals(adresseSøker) && adresseBarn.equals(adresseAnnenForelder)) {
+            return nei();
+        }
+        return ja();
     }
 }

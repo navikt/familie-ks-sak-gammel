@@ -16,8 +16,7 @@ public class SjekkDeltBosted extends LeafSpecification<Faktagrunnlag> {
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        //TODO: Flagg hentes fra TPS?
-        if (! grunnlag.getTpsFakta().getStatsborgerskap().equals("NOR")) {
+        if (! grunnlag.getSøknad().kravTilSoker.ikkeAvtaltDeltBosted.equals("JA")) {
             return ja();
         }
         return nei();

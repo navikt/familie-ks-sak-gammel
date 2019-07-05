@@ -32,6 +32,7 @@ public class VilkårRegel implements RuleService<Faktagrunnlag> {
     @Override
     public Specification<Faktagrunnlag> getSpecification() {
 
+        /*
         var sjekkMedlemsskap = rs.hvisRegel(SjekkMedlemsskap.ID, "Har forelder/foreldre vært medlem av den norske forlketrygden minimum fem år?")
                 .hvis(new SjekkMedlemsskap(), Sluttpunkt.ikkeOppfylt("UT8010", VilkårIkkeOppfyltÅrsak.IKKE_FEM_ÅR_MEDLEMSKAP))
                 .ellers(Sluttpunkt.oppfylt("UT8011", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT));
@@ -51,6 +52,12 @@ public class VilkårRegel implements RuleService<Faktagrunnlag> {
         return rs.hvisRegel(SjekkBarnetsAlder.ID, "Er barnet i kontantstøtte-alder?")
                 .hvis(new SjekkBarnetsAlder(), Sluttpunkt.ikkeOppfylt("UT8004", VilkårIkkeOppfyltÅrsak.IKKE_GYLDIG_ALDER))
                 .ellers(sjekkBarnSammeAdresse);
+
+         */
+        return rs.hvisRegel(SjekkMedlemsskap.ID, "Har forelder/foreldre vært medlem av den norske forlketrygden minimum fem år?")
+                .hvis(new SjekkMedlemsskap(), Sluttpunkt.ikkeOppfylt("UT8004", VilkårIkkeOppfyltÅrsak.IKKE_FEM_ÅR_MEDLEMSKAP))
+                .ellers(Sluttpunkt.oppfylt("UT8011", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT));
+
     }
 
 }

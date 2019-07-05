@@ -22,7 +22,7 @@ public class SjekkBarnetsAlder extends LeafSpecification<Faktagrunnlag> {
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        LocalDate barnetsFødselsdato = grunnlag.getTpsFakta().getBarnetsFødselsdato();
+        LocalDate barnetsFødselsdato = grunnlag.getTpsFakta().getBarn().getFødselsdato();
         Period diff = Period.between(barnetsFødselsdato, LocalDate.now());
         Integer alderIManeder = diff.getYears() * 12 + diff.getMonths();
         if ((alderIManeder >= MIN_ALDER_I_MANEDER) &&
