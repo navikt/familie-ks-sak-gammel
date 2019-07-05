@@ -1,23 +1,21 @@
 package no.nav.familie.ks.sak.app.grunnlag;
 
-import java.time.LocalDate;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 
 public class TpsFakta {
 
-    private LocalDate barnetsFødselsdato;
-    private String statsborgerskap;
+    private Forelder forelder;
+    private Personinfo barn;
+    private Forelder annenForelder;
 
     private TpsFakta() {
     }
 
-    public LocalDate getBarnetsFødselsdato() {
-        return barnetsFødselsdato;
-    }
+    public Forelder getForelder() { return forelder; }
 
+    public Personinfo getBarn() { return barn; }
 
-    public String getStatsborgerskap() {
-        return statsborgerskap;
-    }
+    public Forelder getAnnenForelder() { return  annenForelder; }
 
     public static final class Builder {
         private TpsFakta kladd;
@@ -26,14 +24,18 @@ public class TpsFakta {
             kladd = new TpsFakta();
         }
 
-
-        public Builder medBarnetsFødselsdato(LocalDate barnetsFødselsdato) {
-            kladd.barnetsFødselsdato = barnetsFødselsdato;
+        public Builder medForelder(Forelder forelder) {
+            kladd.forelder = forelder;
             return this;
         }
 
-        public Builder medStatsborgerskap(String statsborgerskap) {
-            kladd.statsborgerskap = statsborgerskap;
+        public Builder medBarn(Personinfo barn) {
+            kladd.barn = barn;
+            return this;
+        }
+
+        public Builder medAnnenForelder(Forelder annenForelder) {
+            kladd.annenForelder = annenForelder;
             return this;
         }
 
