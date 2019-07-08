@@ -8,7 +8,7 @@ metadata:
 
 spec:
   image: repo.adeo.no:5443/familie-ks-sak:RELEASE_VERSION
-  port: 8080
+  port: 8083
   liveness:
     path: /internal/status/isAlive
     initialDelay: 30
@@ -31,5 +31,7 @@ spec:
     requests:
       memory: 256Mi
       cpu: 200m
+  secureLogs:
+    enabled: true
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
     - https://familie-ks-sak.nais.preprod.local
