@@ -1,5 +1,7 @@
 package no.nav.familie.ks.sak.app.behandling;
 
+import org.camunda.bpm.engine.RuntimeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +15,18 @@ import no.nav.security.oidc.api.ProtectedWithClaims;
 @RestController
 @RequestMapping("/api/mottak")
 @ProtectedWithClaims(issuer = "intern")
-public class MottaSøknadController {
+public class MottaSoknadController {
 
-    public MottaSøknadController() {
+    @Autowired
+    private RuntimeService runtimeService;
+
+    public MottaSoknadController() {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
     public ResponseEntity mottaDokument(@RequestBody String soeknad) {
 
+        runtimeService.startProcessInstanceByKey("kontantstotte","soknad", soeknad);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

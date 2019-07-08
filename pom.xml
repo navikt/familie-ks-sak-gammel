@@ -4,11 +4,6 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.5.RELEASE</version>
-    </parent>
 
     <groupId>no.nav.familie.ks.sak</groupId>
     <artifactId>familie-ks-sak</artifactId>
@@ -20,6 +15,10 @@
         <sha1></sha1>
         <changelist>-SNAPSHOT</changelist>
         <java.version>11</java.version>
+        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <camunda.spring-boot.version>3.3.2</camunda.spring-boot.version>
         <oidc-support.version>0.2.18</oidc-support.version>
         <cxf.version>3.3.1</cxf.version>
         <tjenestespesifikasjoner.version>1.2019.06.11-13.36-786a4cec3151</tjenestespesifikasjoner.version>
@@ -27,6 +26,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-core</artifactId>
@@ -64,6 +70,11 @@
                 <type>pom</type>
             </dependency>
             <dependency>
+                <groupId>org.camunda.bpm.springboot</groupId>
+                <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+                <version>${camunda.spring-boot.version}</version>
+            </dependency>
+            <dependency>
                 <!-- trenger denne . inneholder gamle com.sun.activation.registries klasser som er nødvendig -->
                 <groupId>javax.activation</groupId>
                 <artifactId>activation</artifactId>
@@ -74,20 +85,24 @@
 
     <dependencies>
 
-        <!-- Spring Boot avhengigheter -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jetty</artifactId>
+            <groupId>org.camunda.bpm.springboot</groupId>
+            <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.2.3</version>
+        </dependency>
+    
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -164,6 +179,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
             </plugin>
         </plugins>
     </build>
