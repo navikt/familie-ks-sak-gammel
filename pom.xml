@@ -169,12 +169,6 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>commonj.sdo</groupId>-->
-<!--                    <artifactId>commonj.sdo</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
