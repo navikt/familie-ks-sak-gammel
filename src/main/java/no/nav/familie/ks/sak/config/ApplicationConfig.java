@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootConfiguration
+@EnableJpaAuditing
 @ComponentScan({ "no.nav.familie.ks.sak" })
 public class ApplicationConfig {
 

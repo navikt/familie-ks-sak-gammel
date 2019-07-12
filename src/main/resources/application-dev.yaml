@@ -8,3 +8,14 @@ no.nav.security.oidc:
 credential:
   username: "srv-ks-sak"
   password: "not-a-real-password"
+
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql=false
+    hibernate:
+      ddl-auto: create
+  flyway:
+    enabled: false

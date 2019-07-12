@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.context.annotation.Import;
 
 import no.nav.familie.ks.sak.config.ApplicationConfig;
@@ -13,6 +14,8 @@ import no.nav.security.oidc.test.support.spring.TokenGeneratorConfiguration;
 
 
 @SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
+@EnableTransactionManagement
+@AutoConfigureDataJpa
 @Import({ApplicationConfig.class, TokenGeneratorConfiguration.class})
 public class DevLauncher {
 
@@ -22,8 +25,8 @@ public class DevLauncher {
     public static void main(String... args) {
         initCryptoStoreConfig("truststore", TRUSTSTORE_PATH_PROP, TRUSTSTORE_PASSW_PROP, "changeit");
 
-        SpringApplication app = new SpringApplicationBuilder(ApplicationConfig.class)
-                .build();
+        SpringApplicationBuilder app = new SpringApplicationBuilder(ApplicationConfig.class)
+                .profiles("dev");
         app.run(args);
     }
 
