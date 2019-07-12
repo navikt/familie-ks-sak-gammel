@@ -1,17 +1,15 @@
 package no.nav.familie.ks.sak;
 
-import java.io.File;
-
-import org.springframework.boot.SpringApplication;
+import no.nav.familie.ks.sak.config.ApplicationConfig;
+import no.nav.security.oidc.test.support.spring.TokenGeneratorConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.context.annotation.Import;
-
-import no.nav.familie.ks.sak.config.ApplicationConfig;
-import no.nav.security.oidc.test.support.spring.TokenGeneratorConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.io.File;
 
 
 @SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
