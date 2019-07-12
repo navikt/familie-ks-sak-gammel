@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Import;
 
 import no.nav.familie.ks.sak.config.ApplicationConfig;
 import no.nav.security.oidc.test.support.spring.TokenGeneratorConfiguration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 @SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
