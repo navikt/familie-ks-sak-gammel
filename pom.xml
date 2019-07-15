@@ -213,6 +213,11 @@
             <version>4.3.7.RELEASE</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>5.1.8.RELEASE</version>
+        </dependency>
 
         <!-- NAV-interne avhengigheter -->
         <dependency>
