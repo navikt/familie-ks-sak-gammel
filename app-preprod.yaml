@@ -8,13 +8,15 @@ metadata:
 
 spec:
   image: repo.adeo.no:5443/familie-ks-sak:RELEASE_VERSION
-  port: 8083
+  port: 8080
   liveness:
     path: /internal/status/isAlive
     initialDelay: 30
+    failureThreshold: 10
   readiness:
     path: /internal/status/isAlive
     initialDelay: 30
+    failureThreshold: 10
   prometheus:
     enabled: true
     path: /internal/prometheus
@@ -26,12 +28,15 @@ spec:
     cpuThresholdPercentage: 50
   resources:
     limits:
+      memory: 1024Mi
+      cpu: 1
+    requests:
       memory: 512Mi
       cpu: 500m
-    requests:
-      memory: 256Mi
-      cpu: 200m
   secureLogs:
     enabled: true
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
     - https://familie-ks-sak.nais.preprod.local
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: preprod

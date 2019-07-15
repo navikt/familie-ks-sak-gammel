@@ -5,6 +5,10 @@ no.nav.security.oidc:
     acceptedaudience: ${ACCEPTEDAUDIENCE} #Ligger i vault
     cookie_name: selvbetjening_idtoken
 
+spring:
+  datasource:
+    url: jdbc:postgresql://a01dbfl039.adeo.no:5432/familie-ks-sak
+
 # Appdynamics
 APPDYNAMICS_CONTROLLER_HOST_NAME: appdynamics.adeo.no
 APPDYNAMICS_CONTROLLER_PORT: 443

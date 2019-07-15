@@ -9,8 +9,10 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootConfiguration
+@EnableJpaAuditing
 @ComponentScan({ "no.nav.familie.ks.sak" })
 public class ApplicationConfig {
 
@@ -21,7 +23,7 @@ public class ApplicationConfig {
 
         JettyServletWebServerFactory serverFactory = new JettyServletWebServerFactory();
 
-        serverFactory.setPort(8083);
+        serverFactory.setPort(8080);
 
         return serverFactory;
     }
