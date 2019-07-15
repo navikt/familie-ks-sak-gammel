@@ -31,6 +31,8 @@ spec:
     requests:
       memory: 256Mi
       cpu: 200m
+  secureLogs:
+    enabled: true
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
     - https://familie-ks-sak.nais.preprod.local
   env:
