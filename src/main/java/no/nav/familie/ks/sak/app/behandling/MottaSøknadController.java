@@ -21,8 +21,6 @@ import no.nav.security.oidc.api.ProtectedWithClaims;
 @ProtectedWithClaims(issuer = "intern")
 public class MottaSøknadController {
 
-    private static final Logger log = LoggerFactory.getLogger(MottaSøknadController.class);
-
     private final Counter sokerKanBehandlesAutomatisk = Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", "JA");
     private final Counter sokerKanIkkeBehandlesAutomatisk = Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", "NEI");
 
@@ -30,10 +28,7 @@ public class MottaSøknadController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
-    @Unprotected
     public ResponseEntity mottaDokument(@RequestBody String soknad) {
-        log.info(soknad);
-
         sokerKanBehandlesAutomatisk.increment();
 
         return new ResponseEntity(HttpStatus.OK);
