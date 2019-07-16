@@ -2,6 +2,7 @@ package no.nav.familie.ks.sak.app.behandling;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
+import no.nav.familie.ks.sak.app.behandling.soknad.KontantstotteSoknad;
 import no.nav.familie.ks.sak.config.ApplicationConfig;
 import no.nav.security.oidc.api.Unprotected;
 import org.slf4j.Logger;
@@ -28,8 +29,13 @@ public class MottaSøknadController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
-    public ResponseEntity mottaDokument(@RequestBody String soknad) {
-        sokerKanBehandlesAutomatisk.increment();
+    @Unprotected
+    public ResponseEntity mottaDokument(@RequestBody KontantstotteSoknad soknad) {
+        if (soknad.oppsummering.erGyldig()) {
+            sokerKanBehandlesAutomatisk.increment();
+        } else {
+            sokerKanIkkeBehandlesAutomatisk.increment();
+        }
 
         return new ResponseEntity(HttpStatus.OK);
     }
