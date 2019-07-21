@@ -200,12 +200,12 @@ public class PeriodeOppretterTest {
             .build();
 
     private PersonhistorikkInfo femÅrPersonInfoHistorikk = new PersonhistorikkInfo.Builder()
-            .medAktørId("12345678910")
+            .medPersonIdent("12345678910")
             .leggTil(norskAdresseEtÅr)
             .build();
 
     private PersonhistorikkInfo mindreEnnFemÅrPersonInfoHistorikk = new PersonhistorikkInfo.Builder()
-            .medAktørId("12345678910")
+            .medPersonIdent("12345678910")
             .leggTil(norskAdresseEtÅr)
             .build();
 

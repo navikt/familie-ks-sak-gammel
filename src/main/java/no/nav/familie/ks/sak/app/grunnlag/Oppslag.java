@@ -1,6 +1,5 @@
 package no.nav.familie.ks.sak.app.grunnlag;
 
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.PersonopplysningerTjeneste;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
@@ -15,10 +14,10 @@ public class Oppslag {
     private PersonopplysningerTjeneste personopplysningerTjeneste;
 
     public TpsFakta hentTpsFakta(Søknad søknad) {
-        AktørId aktørIdSøker = hentAktørId(søknad.person.fnr);
-        Personinfo personInfoSøker = personopplysningerTjeneste.hentPersoninfoFor(aktørIdSøker);
+        String personidentForSøker = søknad.person.fnr;
+        Personinfo personInfoSøker = personopplysningerTjeneste.hentPersoninfoFor(personidentForSøker);
         LocalDate fødselsdatoSøker = personInfoSøker.getFødselsdato();
-        PersonhistorikkInfo personhistorikkInfoSøker = personopplysningerTjeneste.hentHistorikkFor(aktørIdSøker, fødselsdatoSøker, LocalDate.now());
+        PersonhistorikkInfo personhistorikkInfoSøker = personopplysningerTjeneste.hentHistorikkFor(personidentForSøker, fødselsdatoSøker, LocalDate.now());
 
         Forelder forelder = new Forelder.Builder()
                 .medPersonhistorikkInfo(personhistorikkInfoSøker)
@@ -37,22 +36,15 @@ public class Oppslag {
     private Forelder finnAnnenForelderFraSøknad(Søknad søknad) {
         String annenForelderFnr = søknad.familieforhold.annenForelderFodselsnummer;
         if (! annenForelderFnr.isEmpty()) {
-            var aktørId = hentAktørId(annenForelderFnr);
-            Personinfo personinfo = personopplysningerTjeneste.hentPersoninfoFor(aktørId);
+            Personinfo personinfo = personopplysningerTjeneste.hentPersoninfoFor(annenForelderFnr);
             var fødselsdato = personinfo.getFødselsdato();
-            PersonhistorikkInfo personhistorikkInfo = personopplysningerTjeneste.hentHistorikkFor(aktørId, fødselsdato, LocalDate.now());
+            PersonhistorikkInfo personhistorikkInfo = personopplysningerTjeneste.hentHistorikkFor(annenForelderFnr, fødselsdato, LocalDate.now());
             return new Forelder.Builder()
                     .medPersonhistorikkInfo(personhistorikkInfo)
                     .medPersoninfo(personinfo)
                     .build();
         }
         return null;
-    }
-
-    private AktørId hentAktørId(String personIdent) {
-        // TODO: Hent aktørid
-        String aktørId = personIdent;
-        return new AktørId(aktørId);
     }
 
     private Personinfo finnBarnSøktFor(Søknad søknad, Personinfo personinfo) {
@@ -68,6 +60,6 @@ public class Oppslag {
                 .orElseThrow(
                 () -> new IllegalArgumentException("Finner ikke relasjon til barn søkt for: " + personIdentBarn));
 
-        return personopplysningerTjeneste.hentPersoninfoFor(hentAktørId(personIdentBarn));
+        return personopplysningerTjeneste.hentPersoninfoFor(personIdentBarn);
     }
 }

@@ -41,7 +41,7 @@ public class TpsOversetter {
         return landkode;
     }
 
-    public Personinfo tilPersonInfo(String aktørId, Person person) { // NOSONAR - ingen forbedring å forkorte metoden her
+    public Personinfo tilPersonInfo(String personident, Person person) { // NOSONAR - ingen forbedring å forkorte metoden her
         String navn = person.getPersonnavn().getSammensattNavn();
         String adresse = tpsAdresseOversetter.finnAdresseFor(person);
         String adresseLandkode = tpsAdresseOversetter.finnAdresseLandkodeFor(person);
@@ -61,7 +61,7 @@ public class TpsOversetter {
 
         String diskresjonskode = person.getDiskresjonskode() == null ? null : person.getDiskresjonskode().getValue();
 
-        AktørId id = new AktørId(aktørId);
+        AktørId id = new AktørId(personident);
 
         return new Personinfo.Builder()
                 .medAktørId(id)
@@ -79,11 +79,11 @@ public class TpsOversetter {
                 .build();
     }
 
-    public PersonhistorikkInfo tilPersonhistorikkInfo(String aktørId, HentPersonhistorikkResponse response) {
+    public PersonhistorikkInfo tilPersonhistorikkInfo(String personident, HentPersonhistorikkResponse response) {
 
         PersonhistorikkInfo.Builder builder = PersonhistorikkInfo
                 .builder()
-                .medAktørId(aktørId);
+                .medPersonIdent(personident);
 
         konverterPersonstatusPerioder(response, builder);
 

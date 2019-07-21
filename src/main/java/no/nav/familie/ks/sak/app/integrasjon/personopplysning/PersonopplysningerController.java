@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.util.MDCOperations;
 import no.nav.security.oidc.api.ProtectedWithClaims;
@@ -29,9 +28,9 @@ public class PersonopplysningerController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, path = "historikk")
     @Unprotected
-    public PersonhistorikkInfo historikk(@NotNull @RequestParam(name = "id") String aktørId) {
+    public PersonhistorikkInfo historikk(@NotNull @RequestParam(name = "id") String personident) {
         MDCOperations.putCallId(); // FIXME: Midlertidig, bør settes generelt i et filter elns
         LocalDate idag = LocalDate.now();
-        return personopplysningerTjeneste.hentHistorikkFor(new AktørId(aktørId), idag.minusYears(5), idag);
+        return personopplysningerTjeneste.hentHistorikkFor(personident, idag.minusYears(5), idag);
     }
 }
