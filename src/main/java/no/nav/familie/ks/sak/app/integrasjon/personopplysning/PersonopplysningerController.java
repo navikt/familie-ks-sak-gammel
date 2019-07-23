@@ -14,7 +14,6 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.util.MDCOperations;
 import no.nav.security.oidc.api.ProtectedWithClaims;
-import no.nav.security.oidc.api.Unprotected;
 
 @RestController
 @RequestMapping("/api/personopplysning")
@@ -28,7 +27,6 @@ public class PersonopplysningerController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, path = "historikk")
-    @Unprotected
     public PersonhistorikkInfo historikk(@NotNull @RequestParam(name = "id") String aktørId) {
         MDCOperations.putCallId(); // FIXME: Midlertidig, bør settes generelt i et filter elns
         LocalDate idag = LocalDate.now();
