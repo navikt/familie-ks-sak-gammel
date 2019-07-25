@@ -50,7 +50,7 @@ public class TpsAdresseOversetter {
                         Periode
                                 .innenfor(DateUtil.convertToLocalDate(e.getPeriode().getFom()), DateUtil.convertToLocalDate(e.getPeriode().getTom()));
 
-                AdressePeriode adressePeriode = konverterStrukturertAdresse(strukturertAdresse, periode);
+                AdressePeriode adressePeriode = konverterStrukturertAdresse(strukturertAdresse, AdresseType.BOSTEDSADRESSE, periode);
                 builder.leggTil(adressePeriode);
             });
         }
@@ -64,11 +64,11 @@ public class TpsAdresseOversetter {
                                 .innenfor(DateUtil.convertToLocalDate(e.getPostleveringsPeriode().getFom()), DateUtil.convertToLocalDate(e.getPostleveringsPeriode().getTom()));
                 if (e instanceof MidlertidigPostadresseNorge) {
                     StrukturertAdresse strukturertAdresse = ((MidlertidigPostadresseNorge) e).getStrukturertAdresse();
-                    AdressePeriode adressePeriode = konverterStrukturertAdresse(strukturertAdresse, periode);
+                    AdressePeriode adressePeriode = konverterStrukturertAdresse(strukturertAdresse, AdresseType.MIDLERTIDIG_POSTADRESSE_NORGE, periode);
                     builder.leggTil(adressePeriode);
                 } else if (e instanceof MidlertidigPostadresseUtland) {
                     UstrukturertAdresse ustrukturertAdresse = ((MidlertidigPostadresseUtland) e).getUstrukturertAdresse();
-                    AdressePeriode adressePeriode = konverterUstrukturertAdresse(ustrukturertAdresse, periode);
+                    AdressePeriode adressePeriode = konverterUstrukturertAdresse(ustrukturertAdresse, AdresseType.MIDLERTIDIG_POSTADRESSE_UTLAND, periode);
                     builder.leggTil(adressePeriode);
                 }
             });
@@ -91,8 +91,9 @@ public class TpsAdresseOversetter {
         }
     }
 
-    private AdressePeriode konverterStrukturertAdresse(StrukturertAdresse adresse, Periode periode) {
+    private AdressePeriode konverterStrukturertAdresse(StrukturertAdresse adresse, AdresseType adresseType, Periode periode) {
         requireNonNull(adresse);
+        requireNonNull(adresseType);
         requireNonNull(periode);
 
         Adresse strukturertAdresse;
@@ -108,22 +109,23 @@ public class TpsAdresseOversetter {
             throw new IllegalArgumentException("Ikke-støttet klasse for strukturert adresse: " + adresse.getClass());
         }
 
-        return byggAdressePeriode(strukturertAdresse, periode);
+        return byggAdressePeriode(adresseType, strukturertAdresse, periode);
     }
 
-    private AdressePeriode konverterUstrukturertAdresse(UstrukturertAdresse ustrukturertAdresse, Periode periode) {
+    private AdressePeriode konverterUstrukturertAdresse(UstrukturertAdresse ustrukturertAdresse, AdresseType adresseType, Periode periode) {
 
         Adresse adresse = konverterUstrukturertAdresse(ustrukturertAdresse);
 
-        return byggAdressePeriode(adresse, periode);
+        return byggAdressePeriode(adresseType, adresse, periode);
     }
 
     private Adresseinfo konverterStrukturertAdresse(Person person,
+                                                    AdresseType gjeldende,
                                                     Matrikkeladresse matrikkeladresse) {
 
         Adresse adresse = konverterStrukturertAdresse(matrikkeladresse);
 
-        return byggAddresseinfo(person, adresse);
+        return byggAddresseinfo(person, gjeldende, adresse);
     }
 
     private String adresseFraBolignummerOgEiendomsnavn(Matrikkeladresse matrikkeladresse) {
@@ -135,10 +137,11 @@ public class TpsAdresseOversetter {
     }
 
     private Adresseinfo konverterStrukturertAdresse(Person person,
+                                                    AdresseType gjeldende,
                                                     Gateadresse gateadresse) {
 
         Adresse adresse = konverterStrukturertAdresse(gateadresse);
-        return byggAddresseinfo(person, adresse);
+        return byggAddresseinfo(person, gjeldende, adresse);
     }
 
     private String adresseFraGateadresse(Gateadresse gateadresse) {
@@ -148,21 +151,24 @@ public class TpsAdresseOversetter {
     }
 
     private Adresseinfo konverterStrukturertAdresse(Person person,
+                                                    AdresseType gjeldende,
                                                     StedsadresseNorge stedsadresseNorge) {
 
         Adresse adresse = konverterStrukturertAdresse(stedsadresseNorge);
-        return byggAddresseinfo(person, adresse);
+        return byggAddresseinfo(person, gjeldende, adresse);
     }
 
     private Adresseinfo konverterStrukturertAdresse(Person person,
+                                                    AdresseType gjeldende,
                                                     PostboksadresseNorsk postboksadresseNorsk) {
         Adresse adresse = konverterStrukturertAdresse(postboksadresseNorsk);
-        return byggAddresseinfo(person, adresse);
+        return byggAddresseinfo(person, gjeldende, adresse);
     }
 
-    private Adresseinfo.Builder adresseBuilderForPerson(Person person) {
+    private Adresseinfo.Builder adresseBuilderForPerson(Person person,
+                                                        AdresseType gjeldende) {
         Personstatus personstatus = person.getPersonstatus();
-        return new Adresseinfo.Builder(
+        return new Adresseinfo.Builder(gjeldende,
                 TpsUtil.getPersonIdent(person),
                 TpsUtil.getPersonnavn(person),
                 personstatus == null ? null : tilPersonstatusType(personstatus));
@@ -173,8 +179,8 @@ public class TpsAdresseOversetter {
                 hvisfinnes(postboksadresseNorsk.getPostboksanlegg());
     }
 
-    private Adresseinfo byggAddresseinfo(Person person, Adresse adresse) {
-        return adresseBuilderForPerson(person)
+    private Adresseinfo byggAddresseinfo(Person person, AdresseType gjeldende, Adresse adresse) {
+        return adresseBuilderForPerson(person, gjeldende)
                 .medPostNr(adresse.postnummer)
                 .medPoststed(adresse.poststed)
                 .medLand(adresse.land)
@@ -185,13 +191,14 @@ public class TpsAdresseOversetter {
                 .build();
     }
 
-    private AdressePeriode byggAdressePeriode(Adresse adresse, Periode periode) {
+    private AdressePeriode byggAdressePeriode(AdresseType adresseType, Adresse adresse, Periode periode) {
         return AdressePeriode.builder()
                 .medGyldighetsperiode(periode)
                 .medAdresselinje1(adresse.adresselinje1)
                 .medAdresselinje2(adresse.adresselinje2)
                 .medAdresselinje3(adresse.adresselinje3)
                 .medAdresselinje4(adresse.adresselinje4)
+                .medAdresseType(adresseType)
                 .medLand(adresse.land)
                 .medPostnummer(adresse.postnummer)
                 .medPoststed(adresse.poststed)

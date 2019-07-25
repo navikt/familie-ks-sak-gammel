@@ -3,6 +3,8 @@ package no.nav.familie.ks.sak.app.behandling.regler;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdressePeriode;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdresseType;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
@@ -34,7 +36,7 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
     private boolean norskMedlemsskap(Personinfo personinfo, PersonhistorikkInfo personhistorikkInfo) {
         var statsborgerskap = personinfo.getStatsborgerskap();
         var antallMånederINorge = personhistorikkInfo.getAdressehistorikk().stream()
-                .filter( adressePeriode ->  adressePeriode.getAdresse().getLand().equals(GYLDIG_STATSBORGERSKAP))
+                .filter( adressePeriode ->  erNorskBostedsadresse(adressePeriode))
                 .map( adressePeriode -> adressePeriode.getPeriode() )
                 .map ( periode -> Period.between(periode.getFom(), periode.getTom()))
                 .map ( periode -> periode.getYears() * ANTALL_MÅNEDER_I_ÅRET + periode.getMonths())
@@ -43,5 +45,9 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
 
         var boddINorgeFemÅr = antallMånederINorge >= MIN_ANTALL_ÅR * ANTALL_MÅNEDER_I_ÅRET + 2;
         return statsborgerskap.erNorge() && boddINorgeFemÅr;
+    }
+
+    private boolean erNorskBostedsadresse(AdressePeriode adressePeriode) {
+        return adressePeriode.getAdresse().getLand().equals(GYLDIG_STATSBORGERSKAP) && adressePeriode.getAdresse().getAdresseType().equals(AdresseType.BOSTEDSADRESSE);
     }
 }

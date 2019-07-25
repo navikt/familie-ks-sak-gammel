@@ -9,6 +9,7 @@ import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.*;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdressePeriode;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdresseType;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
 
 import java.io.File;
@@ -93,6 +94,7 @@ class FaktagrunnlagBuilder {
 
     private AdressePeriode norskAdresseSeksÅr = new AdressePeriode.Builder()
             .medLand(STATSBORGERSKAP_GYLDIG)
+            .medAdresseType(AdresseType.BOSTEDSADRESSE)
             .medGyldighetsperiode(
                     new Periode(LocalDate.now().minusYears(6), LocalDate.now())
             )
@@ -100,6 +102,7 @@ class FaktagrunnlagBuilder {
 
     private AdressePeriode norskAdresseEtÅr = new AdressePeriode.Builder()
             .medLand(STATSBORGERSKAP_GYLDIG)
+            .medAdresseType(AdresseType.BOSTEDSADRESSE)
             .medGyldighetsperiode(
                     new Periode(LocalDate.now().minusYears(1), LocalDate.now())
             )

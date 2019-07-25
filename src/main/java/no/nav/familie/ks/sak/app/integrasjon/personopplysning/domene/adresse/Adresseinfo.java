@@ -71,6 +71,7 @@ public class Adresseinfo {
     }
 
     public static class Builder {
+        private final AdresseType gjeldendePostadresseType;
         private final String mottakerNavn;
         private final PersonIdent fnr;
         private String adresselinje1;
@@ -82,7 +83,8 @@ public class Adresseinfo {
         private String land;
         private PersonstatusType personstatus;
 
-        public Builder(PersonIdent fnr, String mottakerNavn, PersonstatusType personstatus) {
+        public Builder(AdresseType gjeldende, PersonIdent fnr, String mottakerNavn, PersonstatusType personstatus) {
+            this.gjeldendePostadresseType = gjeldende;
             this.fnr = fnr;
             this.mottakerNavn = mottakerNavn;
             this.personstatus = personstatus;
@@ -126,6 +128,7 @@ public class Adresseinfo {
         public Adresseinfo build() {
             verifyStateForBuild();
             Adresseinfo adresseinfo = new Adresseinfo();
+            adresseinfo.gjeldendePostadresseType = this.gjeldendePostadresseType;
             adresseinfo.mottakerNavn = this.mottakerNavn;
             adresseinfo.personIdent = this.fnr;
             adresseinfo.adresselinje1 = this.adresselinje1;
@@ -142,6 +145,7 @@ public class Adresseinfo {
         private void verifyStateForBuild() {
             Objects.requireNonNull(mottakerNavn, "mottakerNavn");
             Objects.requireNonNull(fnr, "fnr");
+            Objects.requireNonNull(gjeldendePostadresseType, "gjeldendePostadresseType");
         }
     }
 }
