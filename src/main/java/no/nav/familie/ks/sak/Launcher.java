@@ -15,8 +15,7 @@ import no.nav.security.spring.oidc.api.EnableOIDCTokenValidation;
 public class Launcher {
 
     public static void main(String... args) {
-        SpringApplication app = new SpringApplicationBuilder(ApplicationConfig.class)
-                .build();
+        SpringApplication app = new SpringApplication(ApplicationConfig.class);
         app.setRegisterShutdownHook(false);
         ConfigurableApplicationContext applicationContext = app.run(args);
         Runtime.getRuntime().addShutdownHook(new DelayedShutdownHook(applicationContext));

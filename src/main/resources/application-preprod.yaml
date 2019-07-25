@@ -5,3 +5,6 @@ no.nav.security.oidc:
     acceptedaudience: ${ACCEPTEDAUDIENCE} #Ligger i vault
     cookie_name: selvbetjening-idtoken
 
+spring:
+  datasource:
+    url: jdbc:postgresql://b27dbvl008.preprod.local:5432/familie-ks-sak
