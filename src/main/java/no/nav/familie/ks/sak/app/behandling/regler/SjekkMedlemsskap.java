@@ -11,9 +11,9 @@ import java.time.Period;
 @RuleDocumentation(SjekkMedlemsskap.ID)
 public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
 
-    public static final String ID = "SVP_VK 14.4.6";
-    private static final String GYLDIG_STATSBORGERSKAPKODE = "NOR";
-    private static int ANTALL_DAGER_I_ÅRET = 365;
+    public static final String ID = "PARAGRAF 123";
+    private static final String GYLDIG_STATSBORGERSKAP = "NOR";
+    private static int MIN_ANTALL_ÅR = 5;
     private static int ANTALL_MÅNEDER_I_ÅRET = 12;
 
     public SjekkMedlemsskap() {
@@ -22,9 +22,10 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        var statsborgerskap = grunnlag.getTpsFakta().getForelder().getPersoninfo().getStatsborgerskap();
-        //TODO: Sjekk medlemsskap for begge foreldre
-        if (! statsborgerskap.erNorge()) {
+        var forelder = grunnlag.getTpsFakta().getForelder();
+        var annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
+        if (! norskMedlemsskap(forelder.getPersoninfo(), forelder.getPersonhistorikkInfo())
+                || (annenForelder != null && ! norskMedlemsskap(annenForelder.getPersoninfo(), annenForelder.getPersonhistorikkInfo()))) {
             return ja();
         }
         return nei();
@@ -32,15 +33,15 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
 
     private boolean norskMedlemsskap(Personinfo personinfo, PersonhistorikkInfo personhistorikkInfo) {
         var statsborgerskap = personinfo.getStatsborgerskap();
-        var antallDagerINorge = personhistorikkInfo.getAdressehistorikk().stream()
-                .filter( adressePeriode ->  adressePeriode.getAdresse().getLand().equals("NOR"))
+        var antallMånederINorge = personhistorikkInfo.getAdressehistorikk().stream()
+                .filter( adressePeriode ->  adressePeriode.getAdresse().getLand().equals(GYLDIG_STATSBORGERSKAP))
                 .map( adressePeriode -> adressePeriode.getPeriode() )
                 .map ( periode -> Period.between(periode.getFom(), periode.getTom()))
-                .map ( periode -> periode.getDays() + periode.getMonths() * ANTALL_MÅNEDER_I_ÅRET + periode.getYears() * ANTALL_DAGER_I_ÅRET)
+                .map ( periode -> periode.getYears() * ANTALL_MÅNEDER_I_ÅRET + periode.getMonths())
                 .mapToInt(Integer::intValue)
                 .sum();
 
-        var boddINorgeFemÅr = antallDagerINorge / ANTALL_MÅNEDER_I_ÅRET >= 5;
+        var boddINorgeFemÅr = antallMånederINorge >= MIN_ANTALL_ÅR * ANTALL_MÅNEDER_I_ÅRET + 2;
         return statsborgerskap.erNorge() && boddINorgeFemÅr;
     }
 }

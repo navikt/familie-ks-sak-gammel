@@ -21,7 +21,7 @@
   "familieforhold": {
     "annenForelderFodselsnummer": "",
     "annenForelderNavn": "",
-    "borForeldreneSammenMedBarnet": "NEI"
+    "borForeldreneSammenMedBarnet": "JA"
   },
   "kravTilSoker": {
     "barnIkkeHjemme": "JA",

@@ -11,7 +11,7 @@ import java.time.Period;
 @RuleDocumentation(SjekkBarnetsAlder.ID)
 public class SjekkBarnetsAlder extends LeafSpecification<Faktagrunnlag> {
 
-    public static final String ID = "SVP_VK 14.4.2";
+    public static final String ID = "PARAGRAF 123";
 
     private static final int MIN_ALDER_I_MANEDER = 10;
     private static final int MAKS_ALDER_I_MANEDER = 28;

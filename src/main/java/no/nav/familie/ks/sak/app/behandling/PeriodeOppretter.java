@@ -14,42 +14,7 @@ public class PeriodeOppretter {
         LocalDate gyldigAlderFom = grunnlag.getTpsFakta().getBarn().getFødselsdato().plusMonths(13);
         LocalDate gyldigAlderTom = grunnlag.getTpsFakta().getBarn().getFødselsdato().plusMonths(23);
         LocalDate startDato = søknadsDato.isBefore(gyldigAlderFom) ? gyldigAlderFom : søknadsDato; //Tillater ikke tilbakevirkende
-        /*
-        LocalDate opphørDato;
-        try {
-            GradertPeriode barnehagePeriode = opprettBarnehagePeriode(grunnlag);
-            opphørDato = gyldigAlderTom.isAfter(barnehagePeriode.getTom()) ? gyldigAlderTom : barnehagePeriode.getFom();
-            int utbetalingsgrad = finnUtbetalingsgrad(barnehagePeriode.getProsent());
-            return new GradertPeriode(startDato, opphørDato, utbetalingsgrad);
-        }
-        catch (NullPointerException ingenBarnehagePlass) {
-            return new GradertPeriode(startDato, gyldigAlderTom, FULL_UTBETALINGSGRAD);
-        }
-        */
-        return new GradertPeriode(startDato, gyldigAlderTom, 100);
+        return new GradertPeriode(startDato, gyldigAlderTom, FULL_UTBETALINGSGRAD);
+        //TODO: Lag GradertPeriode fra barnehageinformasjon og regn ut prosent og periode for stønad ved barnehage
     }
-
-    private GradertPeriode opprettBarnehagePeriode(Faktagrunnlag faktagrunnlag) {
-        //TODO: Hent fra søknad
-        return new GradertPeriode(
-                LocalDate.now(),
-                LocalDate.now(),
-                100
-        );
-    }
-
-    private int finnUtbetalingsgrad(int barnehageProsent) {
-        if (barnehageProsent > 80) {
-            return 0;
-        } else if (barnehageProsent > 60) {
-            return 20;
-        } else if (barnehageProsent > 40) {
-            return 40;
-        } else if (barnehageProsent > 20) {
-            return 60;
-        } else {
-            return 80;
-        }
-    }
-
 }

@@ -8,7 +8,7 @@ import no.nav.fpsak.nare.specification.LeafSpecification;
 @RuleDocumentation(SjekkDeltBosted.ID)
 public class SjekkDeltBosted extends LeafSpecification<Faktagrunnlag> {
 
-    public static final String ID = "SVP_VK 14.4.7";
+    public static final String ID = "PARAGRAF 123";
 
     public SjekkDeltBosted() {
         super(ID);

@@ -8,7 +8,7 @@ import no.nav.fpsak.nare.specification.LeafSpecification;
 @RuleDocumentation(SjekkBarnSammeAdresse.ID)
 public class SjekkBarnSammeAdresse extends LeafSpecification<Faktagrunnlag> {
 
-    public static final String ID = "SVP_VK 14.4.7";
+    public static final String ID = "PARAGRAF 123";
 
     public SjekkBarnSammeAdresse() {
         super(ID);

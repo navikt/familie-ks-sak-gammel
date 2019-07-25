@@ -14,17 +14,18 @@ public class Oppslag {
     private PersonopplysningerTjeneste personopplysningerTjeneste;
 
     public TpsFakta hentTpsFakta(Søknad søknad) {
-        String personidentForSøker = søknad.person.fnr;
-        Personinfo personInfoSøker = personopplysningerTjeneste.hentPersoninfoFor(personidentForSøker);
-        LocalDate fødselsdatoSøker = personInfoSøker.getFødselsdato();
-        PersonhistorikkInfo personhistorikkInfoSøker = personopplysningerTjeneste.hentHistorikkFor(personidentForSøker, fødselsdatoSøker, LocalDate.now());
 
-        Forelder forelder = new Forelder.Builder()
-                .medPersonhistorikkInfo(personhistorikkInfoSøker)
-                .medPersoninfo(personInfoSøker)
-                .build();
+        var personInfoSøker = personopplysningerTjeneste.hentPersoninfoFor(søknad.person.fnr);
+        Forelder forelder = genererForelder(personInfoSøker);
+
+        var personidentForAnnenForelder = søknad.familieforhold.annenForelderFodselsnummer;
+        Forelder annenForelder = null;
+        if (! personidentForAnnenForelder.isEmpty()) {
+            var personinfo = personopplysningerTjeneste.hentPersoninfoFor(personidentForAnnenForelder);
+            annenForelder = genererForelder(personinfo);
+        }
+
         Personinfo barn = finnBarnSøktFor(søknad, personInfoSøker);
-        Forelder annenForelder = finnAnnenForelderFraSøknad(søknad);
 
         return new TpsFakta.Builder()
                 .medForelder(forelder)
@@ -33,18 +34,17 @@ public class Oppslag {
                 .build();
     }
 
-    private Forelder finnAnnenForelderFraSøknad(Søknad søknad) {
-        String annenForelderFnr = søknad.familieforhold.annenForelderFodselsnummer;
-        if (! annenForelderFnr.isEmpty()) {
-            Personinfo personinfo = personopplysningerTjeneste.hentPersoninfoFor(annenForelderFnr);
-            var fødselsdato = personinfo.getFødselsdato();
-            PersonhistorikkInfo personhistorikkInfo = personopplysningerTjeneste.hentHistorikkFor(annenForelderFnr, fødselsdato, LocalDate.now());
-            return new Forelder.Builder()
-                    .medPersonhistorikkInfo(personhistorikkInfo)
-                    .medPersoninfo(personinfo)
-                    .build();
-        }
-        return null;
+    private Forelder genererForelder(Personinfo personinfo) {
+        var fødselsdato = personinfo.getFødselsdato();
+        PersonhistorikkInfo personhistorikkInfo = personopplysningerTjeneste.hentHistorikkFor(
+                personinfo.getPersonIdent().getIdent(),
+                fødselsdato.minusYears(5).minusMonths(2),
+                LocalDate.now()
+        );
+        return new Forelder.Builder()
+                .medPersonhistorikkInfo(personhistorikkInfo)
+                .medPersoninfo(personinfo)
+                .build();
     }
 
     private Personinfo finnBarnSøktFor(Søknad søknad, Personinfo personinfo) {

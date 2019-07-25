@@ -19,8 +19,8 @@
     "skalSlutteIBarnehageKommune": "Trondheim"
   },
   "familieforhold": {
-    "annenForelderFodselsnummer": "ZZZZZZZZZZ",
-    "annenForelderNavn": "Annen forelder navn",
+    "annenForelderFodselsnummer": "",
+    "annenForelderNavn": "",
     "borForeldreneSammenMedBarnet": "JA"
   },
   "kravTilSoker": {
@@ -38,26 +38,26 @@
     "bekreftelse": "JA"
   },
   "tilknytningTilUtland": {
-    "annenForelderBoddEllerJobbetINorgeMinstFemAar": "nei",
-    "annenForelderBoddEllerJobbetINorgeMinstFemAarForklaring": "Annen forelder oppgir her land, utenlandsk ID-nummer, adresse i landene og perioder",
-    "boddEllerJobbetINorgeMinstFemAar": "jaIEOS",
-    "boddEllerJobbetINorgeMinstFemAarForklaring": "Søker oppgir land, utenlandsk ID-nummer, adresse i landene og perioder hvor man mottok eller fortsatt mottar ytelser fra utlandet"
+    "annenForelderBoddEllerJobbetINorgeMinstFemAar": "Ubesvart",
+    "annenForelderBoddEllerJobbetINorgeMinstFemAarForklaring": "",
+    "boddEllerJobbetINorgeMinstFemAar": "jaINorge",
+    "boddEllerJobbetINorgeMinstFemAarForklaring": ""
   },
   "arbeidIUtlandet": {
     "arbeiderIUtlandetEllerKontinentalsokkel": "NEI",
-    "arbeiderIUtlandetEllerKontinentalsokkelForklaring":"Søker oppgir land, utenlandsk ID-nummer, adresse i landene og perioder",
-    "arbeiderAnnenForelderIUtlandet": "JA",
-    "arbeiderAnnenForelderIUtlandetForklaring": "Annen forelder oppgir her land, utenlandsk ID-nummer, adresse i landene og perioder"
+    "arbeiderIUtlandetEllerKontinentalsokkelForklaring":"",
+    "arbeiderAnnenForelderIUtlandet": "UBESVART",
+    "arbeiderAnnenForelderIUtlandetForklaring": ""
   },
   "utenlandskKontantstotte": {
     "mottarKontantstotteFraUtlandet": "NEI",
-    "mottarKontantstotteFraUtlandetTilleggsinfo": "Barnet får kontantstøtte fra land X"
+    "mottarKontantstotteFraUtlandetTilleggsinfo": ""
   },
   "utenlandskeYtelser": {
-    "mottarAnnenForelderYtelserFraUtland": "NEI",
-    "mottarAnnenForelderYtelserFraUtlandForklaring": "Søker fyller ut info om land osv",
-    "mottarYtelserFraUtland": "JA",
-    "mottarYtelserFraUtlandForklaring": "Søker oppgir land, utenlandsk id-nummer, adresse i landene og perioder hvor man mottok eller fortsatt mottar ytelser fra utlandet\n"
+    "mottarAnnenForelderYtelserFraUtland": "UBESVART",
+    "mottarAnnenForelderYtelserFraUtlandForklaring": "",
+    "mottarYtelserFraUtland": "NEI",
+    "mottarYtelserFraUtlandForklaring": ""
   },
   "sprak": "nb",
   "innsendingsTidspunkt": "2018-10-10T11:23:03.181Z"

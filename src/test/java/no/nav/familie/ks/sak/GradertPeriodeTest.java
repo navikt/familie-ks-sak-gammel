@@ -19,7 +19,7 @@ public class GradertPeriodeTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void fom_etter_tom_skal_kaste_exceptions() {
+    public void fom_etter_tom_skal_kaste_exception() {
         new GradertPeriode(LocalDate.of(2019, Month.FEBRUARY, 1), LocalDate.of(2019, Month.JANUARY, 1),50) {};
     }
 }

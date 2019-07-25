@@ -18,11 +18,9 @@ import no.nav.familie.ks.sak.app.behandling.PeriodeOppretter;
 import no.nav.familie.ks.sak.app.behandling.VilkårRegelFeil;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSerializer;
-
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
-
 
 public class Saksbehandling {
 
