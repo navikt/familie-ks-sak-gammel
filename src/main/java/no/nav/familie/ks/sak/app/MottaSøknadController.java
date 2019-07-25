@@ -6,6 +6,7 @@ import no.nav.familie.ks.sak.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.PersonopplysningerTjeneste;
 import no.nav.security.oidc.api.Unprotected;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,9 +34,10 @@ public class MottaSøknadController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
     @Unprotected
-    public ResponseEntity mottaDokument(@RequestBody Søknad søknad) {
-        Vedtak vedtak = saksbehandling.behandle(søknad);
-        if (vedtak.getVilkårvurdering().getUtfallType().equals(UtfallType.OPPFYLT)) {
+    public ResponseEntity mottaDokument(@RequestBody Søknad søknad, @Autowired PersonopplysningerTjeneste personopplysningerTjeneste) {
+        //Vedtak vedtak = saksbehandling.behandle(søknad);
+        //if (vedtak.getVilkårvurdering().getUtfallType().equals(UtfallType.OPPFYLT)) {
+        if (personopplysningerTjeneste.hentPersoninfoFor(søknad.person.fnr).getStatsborgerskap().erNorge()) {
             sokerKanBehandlesAutomatisk.increment();
         } else {
             sokerKanIkkeBehandlesAutomatisk.increment();
