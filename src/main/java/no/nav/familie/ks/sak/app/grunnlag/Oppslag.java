@@ -4,15 +4,19 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.Personopplysninger
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 
+@Component
 public class Oppslag {
 
-    @Inject
     private PersonopplysningerTjeneste personopplysningerTjeneste;
 
+    public Oppslag(@Autowired PersonopplysningerTjeneste personopplysningerTjeneste) {
+        this.personopplysningerTjeneste = personopplysningerTjeneste;
+    }
     public TpsFakta hentTpsFakta(Søknad søknad) {
 
         var personInfoSøker = personopplysningerTjeneste.hentPersoninfoFor(søknad.person.fnr);

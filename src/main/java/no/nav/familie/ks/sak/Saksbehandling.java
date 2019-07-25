@@ -18,19 +18,24 @@ import no.nav.familie.ks.sak.app.behandling.PeriodeOppretter;
 import no.nav.familie.ks.sak.app.behandling.VilkårRegelFeil;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
 
+@Component
 public class Saksbehandling {
 
     private final JacksonJsonConfig jacksonJsonConfig = new JacksonJsonConfig();
     private PeriodeOppretter periodeOppretter = new PeriodeOppretter();
-    private Oppslag oppslag = new Oppslag();
     private VilkårRegel vilkår = new VilkårRegel();
     private ObjectMapper mapper = new ObjectMapper();
+    private Oppslag oppslag;
 
-    public Saksbehandling() {
+    public Saksbehandling(@Autowired Oppslag oppslag) {
+        this.oppslag = oppslag;
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
@@ -105,9 +110,5 @@ public class Saksbehandling {
         } catch (IOException e) {
             throw new IOError(e);
         }
-    }
-
-    public void setOppslag(Oppslag oppslag) {
-        this.oppslag = oppslag;
     }
 }

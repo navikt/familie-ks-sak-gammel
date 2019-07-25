@@ -6,7 +6,6 @@ import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Oppslag;
 import no.nav.familie.ks.sak.app.behandling.PeriodeOppretter;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -23,13 +22,8 @@ public class PeriodeOppretterTest {
     private static final int MAKS_UTBETALINGSGRAD = 100;
 
     private final Oppslag oppslagMock = mock(Oppslag.class);
-    private final Saksbehandling saksbehandling = new Saksbehandling();
+    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock);
     private final FaktagrunnlagBuilder faktagrunnlagBuilder = new FaktagrunnlagBuilder();
-
-    @Before
-    public void setUp() {
-        saksbehandling.setOppslag(oppslagMock);
-    }
 
     @Test
     public void at_søknad_med_barnehage_gir_feil() {
