@@ -43,6 +43,13 @@ public class Saksbehandling {
         return vedtak;
     }
 
+    public Vedtak behandle(Søknad søknad) {
+        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
+        Vilkårvurdering vilkårvurdering = vurderVilkår(vilkår, faktagrunnlag);
+        Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
+        return vedtak;
+    }
+
     private Faktagrunnlag fastsettFakta(Søknad søknad) {
         // søknadsdata, TPS-data og evt. barnehagelister
         TpsFakta tpsFakta = oppslag.hentTpsFakta(søknad);
