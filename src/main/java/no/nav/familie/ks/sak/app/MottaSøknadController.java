@@ -7,7 +7,9 @@ import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.PersonopplysningerTjeneste;
+import no.nav.security.oidc.OIDCConstants;
 import no.nav.security.oidc.api.Unprotected;
+import no.nav.security.oidc.context.OIDCValidationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import no.nav.security.oidc.api.ProtectedWithClaims;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 @RestController
 @RequestMapping("/api/mottak")
@@ -26,6 +31,7 @@ public class MottaSøknadController {
 
     private final Counter sokerKanBehandlesAutomatisk = Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", "JA");
     private final Counter sokerKanIkkeBehandlesAutomatisk = Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", "NEI");
+    private static final String SELVBETJENING = "selvbetjening";
     private final Saksbehandling saksbehandling;
 
     public MottaSøknadController(@Autowired Saksbehandling saksbehandling) {
@@ -37,12 +43,19 @@ public class MottaSøknadController {
     public ResponseEntity mottaDokument(@RequestBody Søknad søknad, @Autowired PersonopplysningerTjeneste personopplysningerTjeneste) {
         //Vedtak vedtak = saksbehandling.behandle(søknad);
         //if (vedtak.getVilkårvurdering().getUtfallType().equals(UtfallType.OPPFYLT)) {
-        if (personopplysningerTjeneste.hentPersoninfoFor(søknad.person.fnr).getStatsborgerskap().erNorge()) {
+        //if (personopplysningerTjeneste.hentPersoninfoFor(hentFnrFraToken()).getStatsborgerskap().erNorge()) {
+        if (hentFnrFraToken() != null) {
             sokerKanBehandlesAutomatisk.increment();
         } else {
             sokerKanIkkeBehandlesAutomatisk.increment();
         }
 
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    private static String hentFnrFraToken() {
+        OIDCValidationContext context = (OIDCValidationContext) RequestContextHolder.currentRequestAttributes().getAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT, RequestAttributes.SCOPE_REQUEST);
+        context = context != null ? context : new OIDCValidationContext();
+        return context.getClaims(SELVBETJENING).getClaimSet().getSubject();
     }
 }
