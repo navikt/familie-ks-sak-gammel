@@ -44,7 +44,8 @@ public class MottaSøknadController {
         //Vedtak vedtak = saksbehandling.behandle(søknad);
         //if (vedtak.getVilkårvurdering().getUtfallType().equals(UtfallType.OPPFYLT)) {
         //if (personopplysningerTjeneste.hentPersoninfoFor(hentFnrFraToken()).getStatsborgerskap().erNorge()) {
-        if (hentFnrFraToken() != null) {
+        if (personopplysningerTjeneste.hentPersoninfoFor(søknad.familieforhold.annenForelderFodselsnummer).getStatsborgerskap().erNorge()) {
+        //if (hentFnrFraToken() != null) {
             sokerKanBehandlesAutomatisk.increment();
         } else {
             sokerKanIkkeBehandlesAutomatisk.increment();
