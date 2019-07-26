@@ -44,19 +44,17 @@ public class MottaSøknadController {
         //Vedtak vedtak = saksbehandling.behandle(søknad);
         //if (vedtak.getVilkårvurdering().getUtfallType().equals(UtfallType.OPPFYLT)) {
         //if (personopplysningerTjeneste.hentPersoninfoFor(hentFnrFraToken()).getStatsborgerskap().erNorge()) {
-        if (personopplysningerTjeneste.hentPersoninfoFor(søknad.familieforhold.annenForelderFodselsnummer).getStatsborgerskap().erNorge()) {
-        //if (hentFnrFraToken() != null) {
+        //if (personopplysningerTjeneste.hentPersoninfoFor(søknad.familieforhold.annenForelderFodselsnummer).getStatsborgerskap().erNorge()) {
+        if (hentFnrFraToken() != null) {
             sokerKanBehandlesAutomatisk.increment();
         } else {
             sokerKanIkkeBehandlesAutomatisk.increment();
         }
-
         return new ResponseEntity(HttpStatus.OK);
     }
 
     private static String hentFnrFraToken() {
-        OIDCValidationContext context = (OIDCValidationContext) RequestContextHolder.currentRequestAttributes().getAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT, RequestAttributes.SCOPE_REQUEST);
-        context = context != null ? context : new OIDCValidationContext();
+        OIDCValidationContext context = new OIDCValidationContext();
         return context.getClaims(SELVBETJENING).getClaimSet().getSubject();
     }
 }
