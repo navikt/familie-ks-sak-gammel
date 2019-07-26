@@ -47,7 +47,4 @@
         <appender-ref ref="stdout_json_with_filter"/>
         <appender-ref ref="metrics"/>
     </logger>
-
-    <logger name="no.nav.security" level="DEBUG" />
-
 </configuration>
