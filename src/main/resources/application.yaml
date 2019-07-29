@@ -27,13 +27,8 @@ management:
       info: "status/isAlive"
   metrics.export.prometheus.enabled: true
 
-http.proxy: http://webproxy-nais.nav.no:8088
-
 integrasjon:
   securityTokenService.url:
     "https://localhost:8063/soap/SecurityTokenServiceProvider/"
   person.url:
     "https://localhost:8063/soap/tpsws/ws/Person/v3"
-credential:
-  username: "srv-ks-sak"
-  password: "not-a-real-password"
