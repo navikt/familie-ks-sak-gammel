@@ -20,6 +20,7 @@ public class PeriodeOppretterTest {
     private static final int MIN_ALDER_I_MÅNEDER = 13;
     private static final int MAKS_ALDER_I_MÅNEDER = 23;
     private static final int MAKS_UTBETALINGSGRAD = 100;
+    private static final String PERSONIDENT = "123";
 
     private final Oppslag oppslagMock = mock(Oppslag.class);
     private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock);
@@ -27,15 +28,15 @@ public class PeriodeOppretterTest {
 
     @Test
     public void at_søknad_med_barnehage_gir_feil() {
-        when(oppslagMock.hentTpsFakta(any())).thenReturn(faktagrunnlagBuilder.tpsFaktaGyldig);
-        var vedtak = saksbehandling.behandle(getFile("soknadMedBarnehageplass.json"));
+        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.tpsFaktaGyldig);
+        var vedtak = saksbehandling.behandle(getFile("soknadMedBarnehageplass.json"), PERSONIDENT);
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
     }
 
     @Test
     public void at_søknad_uten_barnehage_gir_stønadperiode() {
-        when(oppslagMock.hentTpsFakta(any())).thenReturn(faktagrunnlagBuilder.tpsFaktaGyldig);
-        Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"));
+        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.tpsFaktaGyldig);
+        Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"), PERSONIDENT);
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
         assertThat(vedtak.getStønadperiode().getFom()).isEqualTo(faktagrunnlagBuilder.tpsFaktaGyldig.getBarn().getFødselsdato().plusMonths(MIN_ALDER_I_MÅNEDER));
         assertThat(vedtak.getStønadperiode().getTom()).isEqualTo(faktagrunnlagBuilder.tpsFaktaGyldig.getBarn().getFødselsdato().plusMonths(MAKS_ALDER_I_MÅNEDER));

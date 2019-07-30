@@ -40,24 +40,24 @@ public class Saksbehandling {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    public Vedtak behandle(String søknadJson) {
+    public Vedtak behandle(String søknadJson, String personident) {
         Søknad søknad = tilSøknad(søknadJson);
-        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
+        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad, personident);
         Vilkårvurdering vilkårvurdering = vurderVilkår(vilkår, faktagrunnlag);
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
         return vedtak;
     }
 
-    public Vedtak behandle(Søknad søknad) {
-        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
+    public Vedtak behandle(Søknad søknad, String personident) {
+        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad, personident);
         Vilkårvurdering vilkårvurdering = vurderVilkår(vilkår, faktagrunnlag);
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
         return vedtak;
     }
 
-    private Faktagrunnlag fastsettFakta(Søknad søknad) {
+    private Faktagrunnlag fastsettFakta(Søknad søknad, String personident) {
         // søknadsdata, TPS-data og evt. barnehagelister
-        TpsFakta tpsFakta = oppslag.hentTpsFakta(søknad);
+        TpsFakta tpsFakta = oppslag.hentTpsFakta(søknad, personident);
         return new Faktagrunnlag.Builder()
                 .medTpsFakta(tpsFakta)
                 .medSøknad(søknad)

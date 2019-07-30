@@ -1,35 +1,64 @@
 package no.nav.familie.ks.sak.app.grunnlag;
 
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.PersonopplysningerTjeneste;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.familie.ks.sak.app.MottaSøknadController;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
-import org.springframework.beans.factory.annotation.Autowired;
+import no.nav.log.MDCConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+
+import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 
 @Component
 public class Oppslag {
 
-    private PersonopplysningerTjeneste personopplysningerTjeneste;
+    private URI oppslagServiceUri;
+    private ObjectMapper mapper;
+    private HttpClient client;
+    private static final Logger logger = LoggerFactory.getLogger(MottaSøknadController.class);
 
-    public Oppslag(@Autowired PersonopplysningerTjeneste personopplysningerTjeneste) {
-        this.personopplysningerTjeneste = personopplysningerTjeneste;
+    public Oppslag(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri) {
+        this.oppslagServiceUri = oppslagServiceUri;
+        this.mapper = new ObjectMapper();
+        this.client = create();
     }
-    public TpsFakta hentTpsFakta(Søknad søknad) {
 
-        var personInfoSøker = personopplysningerTjeneste.hentPersoninfoFor(søknad.person.fnr);
-        Forelder forelder = genererForelder(personInfoSøker);
+    public static HttpClient create() {
+        return HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
+    }
+
+    public TpsFakta hentTpsFakta(Søknad søknad, String personident) {
+
+        String aktørId = hentAktørId(personident);
+
+        Forelder forelder = genererForelder(aktørId);
 
         var personidentForAnnenForelder = søknad.familieforhold.annenForelderFodselsnummer;
         Forelder annenForelder = null;
         if (! personidentForAnnenForelder.isEmpty()) {
-            var personinfo = personopplysningerTjeneste.hentPersoninfoFor(personidentForAnnenForelder);
-            annenForelder = genererForelder(personinfo);
+            var aktørIdAnnenForelder = hentAktørId(personidentForAnnenForelder);
+            annenForelder = genererForelder(aktørIdAnnenForelder);
         }
 
-        Personinfo barn = finnBarnSøktFor(søknad, personInfoSøker);
+        Personinfo barn = finnBarnSøktFor(søknad, forelder.getPersoninfo());
 
         return new TpsFakta.Builder()
                 .medForelder(forelder)
@@ -38,16 +67,10 @@ public class Oppslag {
                 .build();
     }
 
-    private Forelder genererForelder(Personinfo personinfo) {
-        var fødselsdato = personinfo.getFødselsdato();
-        PersonhistorikkInfo personhistorikkInfo = personopplysningerTjeneste.hentHistorikkFor(
-                personinfo.getPersonIdent().getIdent(),
-                fødselsdato.minusYears(5).minusMonths(2),
-                LocalDate.now()
-        );
+    private Forelder genererForelder(String aktørId) {
         return new Forelder.Builder()
-                .medPersonhistorikkInfo(personhistorikkInfo)
-                .medPersoninfo(personinfo)
+                .medPersonhistorikkInfo(hentHistorikkFor(aktørId))
+                .medPersoninfo(hentPersonFor(aktørId))
                 .build();
     }
 
@@ -64,6 +87,56 @@ public class Oppslag {
                 .orElseThrow(
                 () -> new IllegalArgumentException("Finner ikke relasjon til barn søkt for: " + personIdentBarn));
 
-        return personopplysningerTjeneste.hentPersoninfoFor(personIdentBarn);
+        var aktørId = hentAktørId(personIdentBarn);
+        return hentPersonFor(aktørId);
+    }
+
+    private String hentAktørId(String personident){
+        URI uri = UriBuilder.fromUri(oppslagServiceUri).path("aktoer").build();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .header("Nav-Call-Id", MDC.get(MDCConstants.MDC_CORRELATION_ID))
+                .header("Nav-Personident", personident)
+                .GET()
+                .build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (!SUCCESSFUL.equals(Response.Status.Family.familyOf(response.statusCode()))) {
+                logger.info("Kall mot oppslag feilet: " + response.body());
+                throw new OppslagException(response.body());
+            } else {
+                return mapper.readValue(response.body(), String.class);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.info("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+        }
+    }
+
+    private PersonhistorikkInfo hentHistorikkFor(String aktørId) {
+        URI uri = UriBuilder.fromUri(oppslagServiceUri).queryParam("id",aktørId).path("personoppslysning/historikk").build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .header("Nav-Call-Id", MDC.get(MDCConstants.MDC_CORRELATION_ID))
+                .GET()
+                .build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (!SUCCESSFUL.equals(Response.Status.Family.familyOf(response.statusCode()))) {
+                logger.info("Kall mot oppslag feilet: " + response.body());
+                throw new OppslagException(response.body());
+            } else {
+                return mapper.readValue(response.body(), PersonhistorikkInfo.class);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.info("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+        }
+    }
+
+    private Personinfo hentPersonFor(String aktørId) {
+        //TODO: Hent når implementert i oppslag
+        return Personinfo.builder().build();
     }
 }
