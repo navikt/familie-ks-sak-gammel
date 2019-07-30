@@ -1,13 +1,16 @@
 package no.nav.familie.ks.sak.app.behandling.regler;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
+import no.nav.familie.ks.sak.app.integrasjon.felles.ws.Tid;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Periode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdressePeriode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdresseType;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
+
+import java.time.LocalDate;
 import java.time.Period;
 
 @RuleDocumentation(SjekkMedlemsskap.ID)
@@ -26,24 +29,30 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
         var forelder = grunnlag.getTpsFakta().getForelder();
         var annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
-        if (! norskMedlemsskap(forelder.getPersoninfo(), forelder.getPersonhistorikkInfo())
-                || (annenForelder != null && ! norskMedlemsskap(annenForelder.getPersoninfo(), annenForelder.getPersonhistorikkInfo()))) {
+        if (! norskMedlemsskap(forelder.getPersonhistorikkInfo())
+                || (annenForelder != null && ! norskMedlemsskap(annenForelder.getPersonhistorikkInfo()))) {
             return ja();
         }
         return nei();
     }
 
-    private boolean norskMedlemsskap(Personinfo personinfo, PersonhistorikkInfo personhistorikkInfo) {
-        var statsborgerskap = personinfo.getStatsborgerskap();
+    private boolean norskMedlemsskap(PersonhistorikkInfo personhistorikkInfo) {
+        var statsborgerskap = personhistorikkInfo.getStatsborgerskaphistorikk().stream()
+                .filter( periode -> periode.getPeriode().getTom().equals(Tid.TIDENES_ENDE))
+                .findFirst()
+                .get()
+                .getTilhørendeLand();
         var antallMånederINorge = personhistorikkInfo.getAdressehistorikk().stream()
-                .filter( adressePeriode ->  erNorskBostedsadresse(adressePeriode))
-                .map( adressePeriode -> adressePeriode.getPeriode() )
-                .map ( periode -> Period.between(periode.getFom(), periode.getTom()))
-                .map ( periode -> periode.getYears() * ANTALL_MÅNEDER_I_ÅRET + periode.getMonths())
+                .filter(this::erNorskBostedsadresse)
+                .map(AdressePeriode::getPeriode)
+                .map( periode -> periode.getTom().equals(Tid.TIDENES_ENDE)
+                        ? Period.between(periode.getFom(), LocalDate.now())
+                        : Period.between(periode.getFom(), periode.getTom()))
+                .map( periode -> periode.getYears() * ANTALL_MÅNEDER_I_ÅRET + periode.getMonths())
                 .mapToInt(Integer::intValue)
                 .sum();
 
-        var boddINorgeFemÅr = antallMånederINorge >= MIN_ANTALL_ÅR * ANTALL_MÅNEDER_I_ÅRET + 2;
+        var boddINorgeFemÅr = antallMånederINorge >= MIN_ANTALL_ÅR * ANTALL_MÅNEDER_I_ÅRET;
         return statsborgerskap.erNorge() && boddINorgeFemÅr;
     }
 

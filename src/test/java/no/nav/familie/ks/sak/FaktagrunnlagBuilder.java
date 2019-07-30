@@ -7,10 +7,13 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.Forelder;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.felles.ws.Tid;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.*;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdressePeriode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdresseType;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.StatsborgerskapPeriode;
+import no.nav.tjeneste.virksomhet.person.v3.informasjon.Landkoder;
 
 import java.io.File;
 import java.io.IOError;
@@ -96,7 +99,7 @@ class FaktagrunnlagBuilder {
             .medLand(STATSBORGERSKAP_GYLDIG)
             .medAdresseType(AdresseType.BOSTEDSADRESSE)
             .medGyldighetsperiode(
-                    new Periode(LocalDate.now().minusYears(6), LocalDate.now())
+                    new Periode(LocalDate.now().minusYears(6), Tid.TIDENES_ENDE)
             )
             .build();
 
@@ -104,28 +107,38 @@ class FaktagrunnlagBuilder {
             .medLand(STATSBORGERSKAP_GYLDIG)
             .medAdresseType(AdresseType.BOSTEDSADRESSE)
             .medGyldighetsperiode(
-                    new Periode(LocalDate.now().minusYears(1), LocalDate.now())
+                    new Periode(LocalDate.now().minusYears(1), Tid.TIDENES_ENDE)
             )
             .build();
 
-    private PersonhistorikkInfo boddINorgeSeksÅr = new PersonhistorikkInfo.Builder()
+    private StatsborgerskapPeriode norskStatsborgerskapSeksÅr = new StatsborgerskapPeriode(
+            new Periode(LocalDate.now().minusYears(6), Tid.TIDENES_ENDE),
+            Landkode.NORGE);
+
+    private StatsborgerskapPeriode norskStatsborgerskapEtÅr = new StatsborgerskapPeriode(
+            new Periode(LocalDate.now().minusYears(1), Tid.TIDENES_ENDE),
+            Landkode.NORGE);
+
+    private PersonhistorikkInfo norgeSeksÅr = new PersonhistorikkInfo.Builder()
             .medPersonIdent("12345678910")
             .leggTil(norskAdresseSeksÅr)
+            .leggTil(norskStatsborgerskapSeksÅr)
             .build();
 
-    private PersonhistorikkInfo boddINorgeEtÅr = new PersonhistorikkInfo.Builder()
+    private PersonhistorikkInfo norgeEtÅr = new PersonhistorikkInfo.Builder()
             .medPersonIdent("12345678910")
             .leggTil(norskAdresseEtÅr)
+            .leggTil(norskStatsborgerskapEtÅr)
             .build();
 
     private Forelder forelderNorsk = new Forelder.Builder()
             .medPersoninfo(personinfoNorsk)
-            .medPersonhistorikkInfo(boddINorgeSeksÅr)
+            .medPersonhistorikkInfo(norgeSeksÅr)
             .build();
 
     private Forelder forelderUtland = new Forelder.Builder()
             .medPersoninfo(personinfoUtland)
-            .medPersonhistorikkInfo(boddINorgeEtÅr)
+            .medPersonhistorikkInfo(norgeEtÅr)
             .build();
 
     TpsFakta tpsFaktaGyldig = new TpsFakta.Builder()
