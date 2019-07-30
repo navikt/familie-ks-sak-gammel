@@ -36,17 +36,9 @@ public class VilkårRegel implements RuleService<Faktagrunnlag> {
                 .hvis(new SjekkMedlemsskap(), Sluttpunkt.ikkeOppfylt("ID1", VilkårIkkeOppfyltÅrsak.IKKE_FEM_ÅR_MEDLEMSKAP))
                 .ellers(Sluttpunkt.oppfylt("UT8011", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT));
 
-        var sjekkBarnSammeAdresse = rs.hvisRegel(SjekkBarnSammeAdresse.ID, "Bor forelder sammen med barnet?")
-                .hvis(new SjekkBarnSammeAdresse(), Sluttpunkt.ikkeOppfylt("ID2", VilkårIkkeOppfyltÅrsak.FORELDER_BOR_IKKE_MED_BARN))
-                .ellers(sjekkMedlemsskap);
-
-        var sjekkBarnehage = rs.hvisRegel(SjekkBarnehage.ID, "Har barnet/har barnet hatt barnehageplass?")
+        return rs.hvisRegel(SjekkBarnehage.ID, "Har barnet/har barnet hatt barnehageplass?")
                 .hvis(new SjekkBarnehage(), Sluttpunkt.ikkeOppfylt("ID3", VilkårIkkeOppfyltÅrsak.BARNEHAGEPLASS))
-                .ellers(sjekkBarnSammeAdresse);
-
-        return rs.hvisRegel(SjekkBarnetsAlder.ID, "Er barnet i kontantstøtte-alder?")
-                .hvis(new SjekkBarnetsAlder(), Sluttpunkt.ikkeOppfylt("ID4", VilkårIkkeOppfyltÅrsak.IKKE_GYLDIG_ALDER))
-                .ellers(sjekkBarnehage);
+                .ellers(sjekkMedlemsskap);
     }
 
 }
