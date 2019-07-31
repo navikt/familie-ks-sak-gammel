@@ -97,7 +97,7 @@ public class Oppslag {
                 .build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
+            if (response.statusCode() != 200) {
                 logger.info("Kall mot oppslag feilet: " + response.body());
                 throw new OppslagException(response.body());
             } else {
@@ -118,7 +118,7 @@ public class Oppslag {
                 .build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
+            if (response.statusCode() != 200) {
                 logger.info("Kall mot oppslag feilet: " + response.body());
                 throw new OppslagException(response.body());
             } else {
