@@ -110,7 +110,7 @@ public class Oppslag {
     }
 
     private PersonhistorikkInfo hentHistorikkFor(String aktørId) {
-        URI uri = URI.create(oppslagServiceUri + "/personoppslysning/historikk?id=" + aktørId);
+        URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?id=" + aktørId);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .header("Nav-Call-Id", MDC.get(MDCConstants.MDC_CORRELATION_ID))
