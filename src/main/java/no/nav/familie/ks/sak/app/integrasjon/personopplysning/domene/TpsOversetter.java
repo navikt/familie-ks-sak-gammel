@@ -79,11 +79,11 @@ public class TpsOversetter {
                 .build();
     }
 
-    public PersonhistorikkInfo tilPersonhistorikkInfo(String personident, HentPersonhistorikkResponse response) {
+    public PersonhistorikkInfo tilPersonhistorikkInfo(String aktørId, HentPersonhistorikkResponse response) {
 
         PersonhistorikkInfo.Builder builder = PersonhistorikkInfo
                 .builder()
-                .medPersonIdent(personident);
+                .medAktørId(aktørId);
 
         konverterPersonstatusPerioder(response, builder);
 

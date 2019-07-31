@@ -120,13 +120,13 @@ class FaktagrunnlagBuilder {
             Landkode.NORGE);
 
     private PersonhistorikkInfo norgeSeksÅr = new PersonhistorikkInfo.Builder()
-            .medPersonIdent("12345678910")
+            .medAktørId("12345678910")
             .leggTil(norskAdresseSeksÅr)
             .leggTil(norskStatsborgerskapSeksÅr)
             .build();
 
     private PersonhistorikkInfo norgeEtÅr = new PersonhistorikkInfo.Builder()
-            .medPersonIdent("12345678910")
+            .medAktørId("12345678910")
             .leggTil(norskAdresseEtÅr)
             .leggTil(norskStatsborgerskapEtÅr)
             .build();

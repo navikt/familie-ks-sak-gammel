@@ -12,7 +12,7 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighe
 
 public class PersonhistorikkInfo {
 
-    private String personident;
+    private String aktørId;
     private List<PersonstatusPeriode> personstatushistorikk = new ArrayList<>();
     private List<StatsborgerskapPeriode> statsborgerskaphistorikk = new ArrayList<>();
     private List<AdressePeriode> adressehistorikk = new ArrayList<>();
@@ -20,8 +20,8 @@ public class PersonhistorikkInfo {
     private PersonhistorikkInfo() {
     }
 
-    public String getPersonident() {
-        return this.personident;
+    public String getAktørId() {
+        return this.aktørId;
     }
 
     public List<PersonstatusPeriode> getPersonstatushistorikk() {
@@ -51,7 +51,7 @@ public class PersonhistorikkInfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PersonhistorikkInfo that = (PersonhistorikkInfo) o;
-        return Objects.equals(personident, that.personident) &&
+        return Objects.equals(aktørId, that.aktørId) &&
             Objects.equals(personstatushistorikk, that.personstatushistorikk) &&
             Objects.equals(statsborgerskaphistorikk, that.statsborgerskaphistorikk) &&
             Objects.equals(adressehistorikk, that.adressehistorikk);
@@ -59,7 +59,7 @@ public class PersonhistorikkInfo {
 
     @Override
     public int hashCode() {
-        return Objects.hash(personident, personstatushistorikk, statsborgerskaphistorikk, adressehistorikk);
+        return Objects.hash(aktørId, personstatushistorikk, statsborgerskaphistorikk, adressehistorikk);
     }
 
     public static Builder builder() {
@@ -73,8 +73,8 @@ public class PersonhistorikkInfo {
             this.kladd = new PersonhistorikkInfo();
         }
 
-        public Builder medPersonIdent(String personIdent) {
-            this.kladd.personident = personIdent;
+        public Builder medAktørId(String aktørId) {
+            this.kladd.aktørId = aktørId;
             return this;
         }
 
@@ -94,7 +94,7 @@ public class PersonhistorikkInfo {
         }
 
         public PersonhistorikkInfo build() {
-            requireNonNull(kladd.personident, "PersonhistorikkInfo må ha personident"); //$NON-NLS-1$
+            requireNonNull(kladd.aktørId, "PersonhistorikkInfo må ha aktørId"); //$NON-NLS-1$
             // TODO PK-49366 andre non-null?
             return kladd;
         }
