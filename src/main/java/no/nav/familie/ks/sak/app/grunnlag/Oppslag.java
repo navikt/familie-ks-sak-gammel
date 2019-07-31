@@ -13,16 +13,12 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-
-import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 
 @Component
 public class Oppslag {
@@ -92,17 +88,16 @@ public class Oppslag {
     }
 
     private String hentAktørId(String personident){
-        URI uri = UriBuilder.fromUri(oppslagServiceUri).path("aktoer").build();
+        URI uri = URI.create(oppslagServiceUri + "/aktoer?ident=" + personident);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .header("Nav-Call-Id", MDC.get(MDCConstants.MDC_CORRELATION_ID))
-                .header("Nav-Personident", personident)
                 .GET()
                 .build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (!SUCCESSFUL.equals(Response.Status.Family.familyOf(response.statusCode()))) {
+            if (response.statusCode() == 200) {
                 logger.info("Kall mot oppslag feilet: " + response.body());
                 throw new OppslagException(response.body());
             } else {
@@ -115,7 +110,7 @@ public class Oppslag {
     }
 
     private PersonhistorikkInfo hentHistorikkFor(String aktørId) {
-        URI uri = UriBuilder.fromUri(oppslagServiceUri).queryParam("id",aktørId).path("personoppslysning/historikk").build();
+        URI uri = URI.create(oppslagServiceUri + "/personoppslysning/historikk?id=" + aktørId);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .header("Nav-Call-Id", MDC.get(MDCConstants.MDC_CORRELATION_ID))
@@ -123,7 +118,7 @@ public class Oppslag {
                 .build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (!SUCCESSFUL.equals(Response.Status.Family.familyOf(response.statusCode()))) {
+            if (response.statusCode() == 200) {
                 logger.info("Kall mot oppslag feilet: " + response.body());
                 throw new OppslagException(response.body());
             } else {
