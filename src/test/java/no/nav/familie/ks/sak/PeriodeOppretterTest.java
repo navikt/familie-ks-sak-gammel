@@ -38,8 +38,8 @@ public class PeriodeOppretterTest {
         when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.tpsFaktaGyldig);
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"), PERSONIDENT);
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
-        assertThat(vedtak.getStønadperiode().getFom()).isEqualTo(faktagrunnlagBuilder.tpsFaktaGyldig.getBarn().getFødselsdato().plusMonths(MIN_ALDER_I_MÅNEDER));
-        assertThat(vedtak.getStønadperiode().getTom()).isEqualTo(faktagrunnlagBuilder.tpsFaktaGyldig.getBarn().getFødselsdato().plusMonths(MAKS_ALDER_I_MÅNEDER));
+        assertThat(vedtak.getStønadperiode().getFom()).isEqualTo(faktagrunnlagBuilder.tpsFaktaGyldig.getBarn().getFødselsdato().plusMonths(MIN_ALDER_I_MÅNEDER).withDayOfMonth(1));
+        assertThat(vedtak.getStønadperiode().getTom()).isEqualTo(faktagrunnlagBuilder.tpsFaktaGyldig.getBarn().getFødselsdato().plusMonths(MAKS_ALDER_I_MÅNEDER).withDayOfMonth(1));
         assertThat(vedtak.getStønadperiode().getProsent()).isEqualTo(100);
     }
 
@@ -49,9 +49,8 @@ public class PeriodeOppretterTest {
         Faktagrunnlag faktagrunnlag = faktagrunnlagBuilder.gyldig();
         LocalDate fødselsdatoBarn = faktagrunnlag.getTpsFakta().getBarn().getFødselsdato();
         GradertPeriode stønadPeriode = periodeOppretter.opprettStønadPeriode(faktagrunnlag);
-
-        assertThat(stønadPeriode.getFom()).isEqualTo(LocalDate.now());
-        assertThat(stønadPeriode.getTom()).isEqualTo(fødselsdatoBarn.plusMonths(MAKS_ALDER_I_MÅNEDER));
+        assertThat(stønadPeriode.getFom()).isEqualTo(LocalDate.now().withDayOfMonth(1));
+        assertThat(stønadPeriode.getTom()).isEqualTo(fødselsdatoBarn.plusMonths(MAKS_ALDER_I_MÅNEDER).withDayOfMonth(1));
         assertThat(stønadPeriode.getProsent()).isEqualTo(MAKS_UTBETALINGSGRAD);
     }
 
@@ -62,8 +61,8 @@ public class PeriodeOppretterTest {
         LocalDate fødselsdatoBarn = faktagrunnlag.getTpsFakta().getBarn().getFødselsdato();
         GradertPeriode stønadPeriode = periodeOppretter.opprettStønadPeriode(faktagrunnlag);
 
-        assertThat(stønadPeriode.getFom()).isEqualTo(fødselsdatoBarn.plusMonths(MIN_ALDER_I_MÅNEDER));
-        assertThat(stønadPeriode.getTom()).isEqualTo(fødselsdatoBarn.plusMonths(MAKS_ALDER_I_MÅNEDER));
+        assertThat(stønadPeriode.getFom()).isEqualTo(fødselsdatoBarn.plusMonths(MIN_ALDER_I_MÅNEDER).withDayOfMonth(1));
+        assertThat(stønadPeriode.getTom()).isEqualTo(fødselsdatoBarn.plusMonths(MAKS_ALDER_I_MÅNEDER).withDayOfMonth(1));
         assertThat(stønadPeriode.getProsent()).isEqualTo(MAKS_UTBETALINGSGRAD);
     }
 
