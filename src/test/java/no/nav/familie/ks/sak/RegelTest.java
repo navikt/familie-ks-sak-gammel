@@ -16,33 +16,6 @@ public class RegelTest {
     private final VilkårRegel vilkårRegel = new VilkårRegel();
     private final FaktagrunnlagBuilder faktagrunnlagBuilder = new FaktagrunnlagBuilder();
 
-
-    @Test
-    public void at_sjekkBarnetsAlder_returnerer_korrekt() {
-        SjekkBarnetsAlder sjekkBarnetsAlder = new SjekkBarnetsAlder();
-
-        Faktagrunnlag faktagrunnlag = faktagrunnlagBuilder.gyldig();
-        Evaluation evaluation = sjekkBarnetsAlder.evaluate(faktagrunnlag);
-        assertThat(evaluation.result()).isEqualByComparingTo(Resultat.NEI);
-
-        faktagrunnlag = faktagrunnlagBuilder.ugyldig();
-        evaluation = sjekkBarnetsAlder.evaluate(faktagrunnlag);
-        assertThat(evaluation.result()).isEqualByComparingTo(Resultat.JA);
-    }
-
-    @Test
-    public void at_sjekkBarnSammeAdresse_returnerer_korrekt() {
-        SjekkBarnSammeAdresse sjekkBarnSammeAdresse = new SjekkBarnSammeAdresse();
-
-        Faktagrunnlag faktagrunnlag = faktagrunnlagBuilder.gyldig();
-        Evaluation evaluation = sjekkBarnSammeAdresse.evaluate(faktagrunnlag);
-        assertThat(evaluation.result()).isEqualByComparingTo(Resultat.NEI);
-
-        faktagrunnlag = faktagrunnlagBuilder.ugyldig();
-        evaluation = sjekkBarnSammeAdresse.evaluate(faktagrunnlag);
-        assertThat(evaluation.result()).isEqualByComparingTo(Resultat.JA);
-    }
-
     @Test
     public void at_sjekkMedlemsskap_returnerer_korrekt() {
         SjekkMedlemsskap sjekkMedlemsskap = new SjekkMedlemsskap();

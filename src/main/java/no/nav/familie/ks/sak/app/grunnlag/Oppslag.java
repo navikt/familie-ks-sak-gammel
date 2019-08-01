@@ -8,7 +8,6 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
 import no.nav.log.MDCConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,7 +130,7 @@ public class Oppslag {
     }
 
     private Personinfo hentPersonFor(String aktørId) {
-        //TODO: Hent når implementert i oppslag
+        //TODO: Hent når implementert i oppslag. Personinfo brukes foreløpig ikke i noen regler.
         return Personinfo.builder()
                 .medAktørId(new AktørId("1111111111111"))
                 .medPersonIdent(new PersonIdent("11111111111"))

@@ -14,7 +14,7 @@ public class GradertPeriodeTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void mnaglende_tom_skal_kaste_exception() {
+    public void maglende_tom_skal_kaste_exception() {
         new GradertPeriode(LocalDate.of(2019, Month.JANUARY, 1), null,50) {};
     }
 
