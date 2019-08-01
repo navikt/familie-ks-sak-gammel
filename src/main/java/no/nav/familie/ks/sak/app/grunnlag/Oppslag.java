@@ -12,6 +12,7 @@ import no.nav.log.MDCConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,29 +24,35 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
 
+import no.nav.familie.ks.sak.app.integrasjon.sts.*;
+
 @Component
 public class Oppslag {
 
     private URI oppslagServiceUri;
     private HttpClient client;
+    private StsRestClient stsRestClient;
     private static final Logger logger = LoggerFactory.getLogger(MottaSøknadController.class);
     public static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
-    public Oppslag(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri) {
+    public Oppslag(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
+                   @Autowired StsRestClient stsRestClient) {
         this.oppslagServiceUri = oppslagServiceUri;
+        this.stsRestClient = stsRestClient;
         this.client = create();
     }
 
-    private static HttpClient create() {
+    private HttpClient create() {
         return HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .version(HttpClient.Version.HTTP_1_1)
                 .build();
     }
 
-    private static HttpRequest request(URI uri) {
+    private HttpRequest request(URI uri) {
         return HttpRequest.newBuilder()
                 .uri(uri)
+                .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
                 .header("Nav-Call-Id", MDC.get(MDCConstants.MDC_CORRELATION_ID))
                 .GET()
                 .build();
