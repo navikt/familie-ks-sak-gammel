@@ -7,6 +7,8 @@ import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.security.oidc.api.Unprotected;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +24,7 @@ public class MottaSøknadController {
     private final Counter sokerKanBehandlesAutomatisk = Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", "JA");
     private final Counter sokerKanIkkeBehandlesAutomatisk = Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", "NEI");
     private final Saksbehandling saksbehandling;
+    private static final Logger log = LoggerFactory.getLogger(MottaSøknadController.class);
 
     public MottaSøknadController(@Autowired Saksbehandling saksbehandling) {
         this.saksbehandling = saksbehandling;
@@ -34,8 +37,14 @@ public class MottaSøknadController {
 
         Vedtak vedtak = saksbehandling.behandle(søknad, personident);
         if (vedtak.getVilkårvurdering().getUtfallType().equals(UtfallType.OPPFYLT)) {
+            log.info("Søknad kan behandles automatisk. Årsak " +
+                    vedtak.getVilkårvurdering().getVilkårÅrsak().getId() + ": " +
+                    vedtak.getVilkårvurdering().getVilkårÅrsak().getBeskrivelse());
             sokerKanBehandlesAutomatisk.increment();
         } else {
+            log.info("Søknad kan ikke behandles automatisk. Årsak " +
+                    vedtak.getVilkårvurdering().getVilkårÅrsak().getId() + ": " +
+                    vedtak.getVilkårvurdering().getVilkårÅrsak().getBeskrivelse());
             sokerKanIkkeBehandlesAutomatisk.increment();
         }
 
