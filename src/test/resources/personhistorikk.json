@@ -1,0 +1,41 @@
+{
+  "aktørId": "1111111111111",
+  "personstatushistorikk": [
+    {
+      "periode": {
+        "fom": "1987-01-01",
+        "tom": "9999-12-31"
+      },
+      "personstatus": "BOSA"
+    }
+  ],
+  "statsborgerskaphistorikk": [
+    {
+      "periode": {
+        "fom": "1987-01-01",
+        "tom": "9999-12-31"
+      },
+      "tilhørendeLand": {
+        "kode": "NOR"
+      }
+    }
+  ],
+  "adressehistorikk": [
+    {
+      "periode": {
+        "fom": "1987-01-01",
+        "tom": "9999-12-31"
+      },
+      "adresse": {
+        "adresseType": "BOSTEDSADRESSE",
+        "adresselinje1": "SANNERGATA 2",
+        "adresselinje2": null,
+        "adresselinje3": null,
+        "adresselinje4": null,
+        "postnummer": "0557",
+        "poststed": "UDEFINERT",
+        "land": "NOR"
+      }
+    }
+  ]
+}
