@@ -87,21 +87,8 @@ public class Oppslag {
 
     private Personinfo finnBarnSøktFor(Søknad søknad, Personinfo personinfo) {
         return hentPersonFor("123");
-        /*
-        // TODO: Returner fnr for valgt barn i tillegg til fødselsdato
-        String personIdentBarn = søknad.mineBarn.fodselsdato;
-        personinfo
-                .getFamilierelasjoner()
-                .stream()
-                .filter( relasjon -> relasjon.getRelasjonsrolle().equals(RelasjonsRolleType.BARN))
-                .filter( barn -> barn.getPersonIdent().equals(personIdentBarn))
-                .findFirst()
-                .orElseThrow(
-                () -> new IllegalArgumentException("Finner ikke relasjon til barn søkt for: " + personIdentBarn));
-
-        var aktørId = hentAktørId(personIdentBarn);
-        return hentPersonFor(aktørId);
-        */
+        // TODO: Fnr for valgt barn bør sendes med søknad.
+        // TODO: Sjekk om barn er i familierelasjon og returner personinfo for barn
     }
 
     private String hentAktørId(String personident){
