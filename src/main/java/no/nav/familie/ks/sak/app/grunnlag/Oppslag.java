@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.familie.ks.sak.app.MottaSøknadController;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
@@ -20,6 +22,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.time.LocalDate;
 
 @Component
 public class Oppslag {
@@ -77,6 +80,8 @@ public class Oppslag {
     }
 
     private Personinfo finnBarnSøktFor(Søknad søknad, Personinfo personinfo) {
+        return hentPersonFor("123");
+        /*
         // TODO: Returner fnr for valgt barn i tillegg til fødselsdato
         String personIdentBarn = søknad.mineBarn.fodselsdato;
         personinfo
@@ -90,6 +95,7 @@ public class Oppslag {
 
         var aktørId = hentAktørId(personIdentBarn);
         return hentPersonFor(aktørId);
+        */
     }
 
     private String hentAktørId(String personident){
@@ -126,6 +132,11 @@ public class Oppslag {
 
     private Personinfo hentPersonFor(String aktørId) {
         //TODO: Hent når implementert i oppslag
-        return Personinfo.builder().build();
+        return Personinfo.builder()
+                .medAktørId(new AktørId("1111111111111"))
+                .medPersonIdent(new PersonIdent("11111111111"))
+                .medNavn("Navn Navnesen")
+                .medFødselsdato(LocalDate.now())
+                .build();
     }
 }
