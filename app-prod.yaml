@@ -8,7 +8,7 @@ metadata:
 
 spec:
   image: repo.adeo.no:5443/familie-ks-sak:RELEASE_VERSION
-  port: 8080
+  port: 8083
   liveness:
     path: /internal/status/isAlive
     initialDelay: 30

@@ -23,7 +23,7 @@ public class ApplicationConfig {
 
         JettyServletWebServerFactory serverFactory = new JettyServletWebServerFactory();
 
-        serverFactory.setPort(8080);
+        serverFactory.setPort(8083);
 
         return serverFactory;
     }
