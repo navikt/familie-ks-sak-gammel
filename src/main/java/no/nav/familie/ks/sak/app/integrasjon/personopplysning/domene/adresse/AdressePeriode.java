@@ -2,6 +2,8 @@ package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Periode;
 
 public class AdressePeriode {
@@ -9,7 +11,8 @@ public class AdressePeriode {
     private Periode periode;
     private Adresse adresse;
 
-    private AdressePeriode(Periode periode, Adresse adresse) {
+    @JsonCreator
+    private AdressePeriode(@JsonProperty("periode") Periode periode, @JsonProperty("adresse") Adresse adresse) {
         this.periode = periode;
         this.adresse = adresse;
     }

@@ -17,6 +17,9 @@ public class PersonhistorikkInfo {
     private List<StatsborgerskapPeriode> statsborgerskaphistorikk = new ArrayList<>();
     private List<AdressePeriode> adressehistorikk = new ArrayList<>();
 
+    private PersonhistorikkInfo() {
+    }
+
     public String getAktørId() {
         return this.aktørId;
     }

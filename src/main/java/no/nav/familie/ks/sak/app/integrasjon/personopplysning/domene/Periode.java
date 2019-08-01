@@ -3,6 +3,8 @@ package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import no.nav.familie.ks.sak.app.integrasjon.felles.ws.Tid;
 
 public class Periode {
@@ -10,7 +12,8 @@ public class Periode {
     private LocalDate fom;
     private LocalDate tom;
 
-    public Periode(LocalDate fom, LocalDate tom) {
+    @JsonCreator
+    public Periode(@JsonProperty("fom") LocalDate fom, @JsonProperty("tom") LocalDate tom) {
         // Fom er null om perioden for en opplysning gjelder fra personen ble født
         // Setter da fom til tidenes begynnelse for å slippe et ekstra kall for å hente fødselsdato
         if (fom == null) {
