@@ -1,9 +1,9 @@
 no.nav.security.oidc:
-  issuers: selvbetjening
-  issuer.selvbetjening:
-    discoveryurl: https://login.microsoftonline.com/navnob2c.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten
-    acceptedaudience: ${ACCEPTEDAUDIENCE} #Ligger i vault
-    cookie_name: selvbetjening_idtoken
+  issuers: intern
+  issuer.intern:
+    discoveryurl: https://security-token-service.nais.adeo.no/rest/v1/sts/.well-known/openid-configuration
+    accepted_audience: ${GYLDIGE_SRVBRUKERE}
+    cookie_name: ID_token
 
 spring:
   datasource:

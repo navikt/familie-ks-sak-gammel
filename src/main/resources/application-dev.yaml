@@ -1,6 +1,6 @@
 no.nav.security.oidc:
-  issuers: selvbetjening
-  issuer.selvbetjening:
+  issuers: intern
+  issuer.intern:
     discoveryurl: http://metadata
     accepted_audience: aud-localhost
     cookie_name: localhost-idtoken
