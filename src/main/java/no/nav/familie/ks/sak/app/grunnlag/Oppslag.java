@@ -2,7 +2,7 @@ package no.nav.familie.ks.sak.app.grunnlag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import no.nav.familie.ks.sak.app.MottaSøknadController;
+import no.nav.familie.ks.sak.app.behandling.MottaSøknadController;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
