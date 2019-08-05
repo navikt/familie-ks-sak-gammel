@@ -40,7 +40,7 @@ class VilkårUtfall extends LeafSpecification<Faktagrunnlag> {
             throw new IllegalArgumentException("Årsak kan ikke være null.");
         }
         this.vurderingÅrsak = vurderingÅrsak;
-        this.ruleReasonRef = new RuleReasonRefImpl(String.valueOf(vurderingÅrsak.getId()), vurderingÅrsak.getBeskrivelse());
+        this.ruleReasonRef = new RuleReasonRefImpl(String.valueOf(vurderingÅrsak.getÅrsakKode()), vurderingÅrsak.getBeskrivelse());
 
         this.utfallSpesifiserere.add((singleEvaluation, grunnlag) -> {
             singleEvaluation.getEvaluationProperties().put(UTFALL, utfallType);

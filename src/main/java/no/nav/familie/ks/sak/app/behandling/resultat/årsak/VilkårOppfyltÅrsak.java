@@ -4,17 +4,17 @@ public enum VilkårOppfyltÅrsak implements VilkårÅrsak {
 
     VILKÅR_OPPFYLT(8601, "Vilkår for å søke kontantstøtte er godkjent");
 
-    private final int id;
+    private final int årsakKode;
     private final String beskrivelse;
 
-    VilkårOppfyltÅrsak(int id, String beskrivelse) {
-        this.id = id;
+    VilkårOppfyltÅrsak(int årsakKode, String beskrivelse) {
+        this.årsakKode = årsakKode;
         this.beskrivelse = beskrivelse;
     }
 
     @Override
-    public int getId() {
-        return id;
+    public int getÅrsakKode() {
+        return årsakKode;
     }
 
     @Override

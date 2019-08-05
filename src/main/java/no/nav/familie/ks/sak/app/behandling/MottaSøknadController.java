@@ -38,12 +38,12 @@ public class MottaSøknadController {
         Vedtak vedtak = saksbehandling.behandle(søknad, personident);
         if (vedtak.getVilkårvurdering().getUtfallType().equals(UtfallType.OPPFYLT)) {
             log.info("Søknad kan behandles automatisk. Årsak " +
-                    vedtak.getVilkårvurdering().getVilkårÅrsak().getId() + ": " +
+                    vedtak.getVilkårvurdering().getVilkårÅrsak().getÅrsakKode() + ": " +
                     vedtak.getVilkårvurdering().getVilkårÅrsak().getBeskrivelse());
             sokerKanBehandlesAutomatisk.increment();
         } else {
             log.info("Søknad kan ikke behandles automatisk. Årsak " +
-                    vedtak.getVilkårvurdering().getVilkårÅrsak().getId() + ": " +
+                    vedtak.getVilkårvurdering().getVilkårÅrsak().getÅrsakKode() + ": " +
                     vedtak.getVilkårvurdering().getVilkårÅrsak().getBeskrivelse());
             sokerKanIkkeBehandlesAutomatisk.increment();
         }

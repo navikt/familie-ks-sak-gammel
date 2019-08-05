@@ -33,11 +33,11 @@ public class VilkårRegel implements RuleService<Faktagrunnlag> {
     public Specification<Faktagrunnlag> getSpecification() {
 
         var sjekkMedlemsskap = rs.hvisRegel(SjekkMedlemsskap.ID, "Har forelder/foreldre vært medlem av den norske forlketrygden minimum fem år?")
-                .hvis(new SjekkMedlemsskap(), Sluttpunkt.ikkeOppfylt("ID1", VilkårIkkeOppfyltÅrsak.IKKE_FEM_ÅR_MEDLEMSKAP))
-                .ellers(Sluttpunkt.oppfylt("UT8011", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT));
+                .hvis(new SjekkMedlemsskap(), Sluttpunkt.ikkeOppfylt("UTFALLKODE1", VilkårIkkeOppfyltÅrsak.IKKE_FEM_ÅR_MEDLEMSKAP))
+                .ellers(Sluttpunkt.oppfylt("UTFALLKODE2", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT));
 
         return rs.hvisRegel(SjekkBarnehage.ID, "Har barnet/har barnet hatt barnehageplass?")
-                .hvis(new SjekkBarnehage(), Sluttpunkt.ikkeOppfylt("ID3", VilkårIkkeOppfyltÅrsak.BARNEHAGEPLASS))
+                .hvis(new SjekkBarnehage(), Sluttpunkt.ikkeOppfylt("UTFALLKODE3", VilkårIkkeOppfyltÅrsak.BARNEHAGEPLASS))
                 .ellers(sjekkMedlemsskap);
     }
 
