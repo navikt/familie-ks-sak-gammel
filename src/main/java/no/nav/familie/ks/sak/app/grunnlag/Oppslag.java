@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -95,14 +96,14 @@ public class Oppslag {
         URI uri = URI.create(oppslagServiceUri + "/aktoer?ident=" + personident);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) {
-                logger.info("Kall mot oppslag feilet: " + response.body());
+            if (response.statusCode() != HttpStatus.ACCEPTED.value()) {
+                logger.warn("Kall mot oppslag feilet: " + response.body());
                 throw new OppslagException(response.body());
             } else {
                 return mapper.readValue(response.body(), String.class);
             }
         } catch (IOException | InterruptedException e) {
-            logger.info("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
         }
     }
@@ -111,14 +112,14 @@ public class Oppslag {
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?id=" + aktørId);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) {
-                logger.info("Kall mot oppslag feilet: " + response.body());
+            if (response.statusCode() != HttpStatus.ACCEPTED.value()) {
+                logger.warn("Kall mot oppslag feilet: " + response.body());
                 throw new OppslagException(response.body());
             } else {
                 return mapper.readValue(response.body(), PersonhistorikkInfo.class);
             }
         } catch (IOException | InterruptedException e) {
-            logger.info("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
         }
     }
