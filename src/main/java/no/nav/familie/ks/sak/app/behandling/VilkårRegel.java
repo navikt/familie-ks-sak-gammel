@@ -11,7 +11,7 @@ import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.Specification;
 
 /**
- * Regeltjeneste som fastsetter uttaksperioder som er søkt om for svangerskapspenger.
+ * Regeltjeneste som fastsetter kontantstøttevedtak og om  krav til automatisk behandling er oppfylt
  */
 @RuleDocumentation(value = VilkårRegel.ID, specificationReference = "TODO")
 public class VilkårRegel implements RuleService<Faktagrunnlag> {
