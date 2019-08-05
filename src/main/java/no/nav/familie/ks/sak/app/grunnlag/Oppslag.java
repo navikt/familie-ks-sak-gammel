@@ -96,7 +96,7 @@ public class Oppslag {
         URI uri = URI.create(oppslagServiceUri + "/aktoer?ident=" + personident);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != HttpStatus.ACCEPTED.value()) {
+            if (response.statusCode() != HttpStatus.OK.value()) {
                 logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + response.body());
                 throw new OppslagException(response.body());
             } else {
@@ -112,7 +112,7 @@ public class Oppslag {
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?id=" + aktørId);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != HttpStatus.ACCEPTED.value()) {
+            if (response.statusCode() != HttpStatus.OK.value()) {
                 logger.warn("Kall mot oppslag feilet ved uthenting av historikk: " + response.body());
                 throw new OppslagException(response.body());
             } else {
