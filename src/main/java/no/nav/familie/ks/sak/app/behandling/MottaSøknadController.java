@@ -31,7 +31,7 @@ public class MottaSøknadController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
-    @Unprotected
+    @ProtectedWithClaims(issuer = "intern")
     public ResponseEntity mottaDokument(@RequestHeader(value="Nav-Personident") String personident,
                                         @RequestBody Søknad søknad) {
 
