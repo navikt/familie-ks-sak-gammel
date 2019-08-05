@@ -97,7 +97,7 @@ public class Oppslag {
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != HttpStatus.ACCEPTED.value()) {
-                logger.warn("Kall mot oppslag feilet: " + response.body());
+                logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + response.body());
                 throw new OppslagException(response.body());
             } else {
                 return mapper.readValue(response.body(), String.class);
@@ -113,7 +113,7 @@ public class Oppslag {
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != HttpStatus.ACCEPTED.value()) {
-                logger.warn("Kall mot oppslag feilet: " + response.body());
+                logger.warn("Kall mot oppslag feilet ved uthenting av historikk: " + response.body());
                 throw new OppslagException(response.body());
             } else {
                 return mapper.readValue(response.body(), PersonhistorikkInfo.class);
