@@ -2,6 +2,8 @@ package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Periode;
 
 public class PersonstatusPeriode {
@@ -9,7 +11,8 @@ public class PersonstatusPeriode {
     private Periode periode;
     private PersonstatusType personstatus;
 
-    public PersonstatusPeriode(Periode periode, PersonstatusType personstatus) {
+    @JsonCreator
+    public PersonstatusPeriode(@JsonProperty("periode") Periode periode, @JsonProperty("personstatus") PersonstatusType personstatus) {
         this.periode = periode;
         this.personstatus = personstatus;
     }

@@ -1,5 +1,8 @@
 package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class Landkode {
@@ -9,7 +12,8 @@ public class Landkode {
 
     private final String kode;
 
-    public Landkode(String kode) {
+    @JsonCreator
+    public Landkode(@JsonProperty("kode") String kode) {
         this.kode = kode;
     }
 

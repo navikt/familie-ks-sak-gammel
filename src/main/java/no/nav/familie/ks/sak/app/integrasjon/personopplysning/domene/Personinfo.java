@@ -36,6 +36,10 @@ public class Personinfo {
     private Personinfo() {
     }
 
+    public static Personinfo.Builder builder() {
+        return new Personinfo.Builder();
+    }
+
     public AktørId getAktørId() {
         return aktørId;
     }

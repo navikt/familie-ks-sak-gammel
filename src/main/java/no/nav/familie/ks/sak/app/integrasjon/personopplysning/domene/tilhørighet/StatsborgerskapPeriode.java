@@ -3,6 +3,8 @@ package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørigh
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Periode;
 
 public class StatsborgerskapPeriode {
@@ -10,7 +12,8 @@ public class StatsborgerskapPeriode {
     private Periode periode;
     private Landkode tilhørendeLand;
 
-    public StatsborgerskapPeriode(Periode periode, Landkode statsborgerskap) {
+    @JsonCreator
+    public StatsborgerskapPeriode(@JsonProperty("periode") Periode periode, @JsonProperty("statsborgerskap") Landkode statsborgerskap) {
         this.periode = periode;
         this.tilhørendeLand = statsborgerskap;
     }

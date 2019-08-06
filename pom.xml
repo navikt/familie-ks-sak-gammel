@@ -21,6 +21,7 @@
         <changelist>-SNAPSHOT</changelist>
         <java.version>11</java.version>
         <oidc-support.version>0.2.18</oidc-support.version>
+        <fpsak.nare.version>2.0_20181105115918_47dcace</fpsak.nare.version>
         <cxf.version>3.3.1</cxf.version>
         <tjenestespesifikasjoner.version>1.2019.06.11-13.36-786a4cec3151</tjenestespesifikasjoner.version>
         <common-java-modules.version>2018.10.02.19.54</common-java-modules.version>
@@ -164,9 +165,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>no.nav</groupId>
-            <artifactId>nare</artifactId>
-            <version>dfe6569</version>
+            <groupId>no.nav.fpsak.nare</groupId>
+            <artifactId>fpsak-nare-core</artifactId>
+            <version>${fpsak.nare.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Logging -->

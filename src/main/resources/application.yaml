@@ -32,3 +32,11 @@ integrasjon:
     "https://localhost:8063/soap/SecurityTokenServiceProvider/"
   person.url:
     "https://localhost:8063/soap/tpsws/ws/Person/v3"
+credential:
+  username: "srv-ks-sak"
+  password: "not-a-real-password"
+
+STS_URL: http://security-token-service.default.svc.nais.local
+
+CREDENTIAL_USERNAME: INVALID_USERNAME
+CREDENTIAL_PASSWORD: INVALID_PASSWORD
