@@ -33,7 +33,7 @@ public class Oppslag {
     private URI oppslagServiceUri;
     private HttpClient client;
     private StsRestClient stsRestClient;
-    private static final Logger logger = LoggerFactory.getLogger(MottaSøknadController.class);
+    private static final Logger logger = LoggerFactory.getLogger(Oppslag.class);
     public static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     public Oppslag(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
@@ -94,6 +94,7 @@ public class Oppslag {
 
     private String hentAktørId(String personident){
         URI uri = URI.create(oppslagServiceUri + "/aktoer?ident=" + personident);
+        logger.info("Henter aktørId fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != HttpStatus.OK.value()) {
@@ -110,6 +111,7 @@ public class Oppslag {
 
     private PersonhistorikkInfo hentHistorikkFor(String aktørId) {
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?id=" + aktørId);
+        logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != HttpStatus.OK.value()) {
