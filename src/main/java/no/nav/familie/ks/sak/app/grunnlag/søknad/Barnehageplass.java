@@ -29,7 +29,7 @@ public class Barnehageplass {
 
     public enum BarnehageplassVerdier {
         garIkkeIBarnehage,
-        garIBarnehage,
+        harBarnehageplass,
         harSluttetIBarnehage,
         skalBegynneIBarnehage,
         skalSlutteIBarnehage
