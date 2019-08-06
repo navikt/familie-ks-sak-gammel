@@ -78,9 +78,9 @@ public class Oppslag {
     }
 
     private Forelder finnAnnenForelder(Søknad søknad) {
-        var personident = søknad.familieforhold.annenForelderFodselsnummer;
+        String personident = søknad.familieforhold.annenForelderFodselsnummer;
         if (! personident.isEmpty()) {
-            var aktørId = hentAktørId(personident);
+            String aktørId = hentAktørId(personident);
             return genererForelder(aktørId);
         }
         else return null;

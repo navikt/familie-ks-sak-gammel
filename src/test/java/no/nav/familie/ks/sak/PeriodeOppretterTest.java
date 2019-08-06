@@ -29,7 +29,7 @@ public class PeriodeOppretterTest {
     @Test
     public void at_søknad_med_barnehage_gir_feil() {
         when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.tpsFaktaGyldig);
-        var vedtak = saksbehandling.behandle(getFile("soknadMedBarnehageplass.json"), PERSONIDENT);
+        Vedtak vedtak = saksbehandling.behandle(getFile("soknadMedBarnehageplass.json"), PERSONIDENT);
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
     }
 

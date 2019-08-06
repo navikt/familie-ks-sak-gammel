@@ -32,7 +32,7 @@ public class VilkårRegel implements RuleService<Faktagrunnlag> {
     @Override
     public Specification<Faktagrunnlag> getSpecification() {
 
-        var sjekkMedlemsskap = rs.hvisRegel(SjekkMedlemsskap.ID, "Har forelder/foreldre vært medlem av den norske forlketrygden minimum fem år?")
+        Specification<Faktagrunnlag> sjekkMedlemsskap = rs.hvisRegel(SjekkMedlemsskap.ID, "Har forelder/foreldre vært medlem av den norske forlketrygden minimum fem år?")
                 .hvis(new SjekkMedlemsskap(), Sluttpunkt.ikkeOppfylt("UTFALLKODE1", VilkårIkkeOppfyltÅrsak.IKKE_FEM_ÅR_MEDLEMSKAP))
                 .ellers(Sluttpunkt.oppfylt("UTFALLKODE2", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT));
 

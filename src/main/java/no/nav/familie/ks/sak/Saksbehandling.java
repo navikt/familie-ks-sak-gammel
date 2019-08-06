@@ -11,12 +11,14 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.GradertPeriode;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
+import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårÅrsak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.grunnlag.Oppslag;
 import no.nav.familie.ks.sak.app.behandling.PeriodeOppretter;
 import no.nav.familie.ks.sak.app.behandling.VilkårRegelFeil;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
+import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -65,12 +67,12 @@ public class Saksbehandling {
     }
 
     private Vilkårvurdering vurderVilkår(VilkårRegel vilkår, Faktagrunnlag grunnlag) {
-        var evaluering = vilkår.evaluer(grunnlag);
-        var inputJson = toJson(grunnlag);
-        var regelJson = EvaluationSerializer.asJson(evaluering);
-        var regelresultat = new Regelresultat(evaluering);
-        var utfallType = regelresultat.getUtfallType();
-        var årsak = regelresultat.getUtfallÅrsak();
+        Evaluation evaluering = vilkår.evaluer(grunnlag);
+        String inputJson = toJson(grunnlag);
+        String regelJson = EvaluationSerializer.asJson(evaluering);
+        Regelresultat regelresultat = new Regelresultat(evaluering);
+        UtfallType utfallType = regelresultat.getUtfallType();
+        VilkårÅrsak årsak = regelresultat.getUtfallÅrsak();
         return new Vilkårvurdering.Builder()
                 .medInputJson(inputJson)
                 .medRegelJson(regelJson)

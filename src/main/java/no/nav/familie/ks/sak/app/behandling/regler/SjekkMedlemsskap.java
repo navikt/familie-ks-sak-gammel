@@ -1,10 +1,12 @@
 package no.nav.familie.ks.sak.app.behandling.regler;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
+import no.nav.familie.ks.sak.app.grunnlag.Forelder;
 import no.nav.familie.ks.sak.app.integrasjon.felles.ws.Tid;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdressePeriode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdresseType;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
@@ -26,8 +28,8 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        var forelder = grunnlag.getTpsFakta().getForelder();
-        var annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
+        Forelder forelder = grunnlag.getTpsFakta().getForelder();
+        Forelder annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
         if (! norskMedlemsskap(forelder.getPersonhistorikkInfo())
                 || (annenForelder != null && ! norskMedlemsskap(annenForelder.getPersonhistorikkInfo()))) {
             return ja();
@@ -36,12 +38,12 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
     }
 
     private boolean norskMedlemsskap(PersonhistorikkInfo personhistorikkInfo) {
-        var statsborgerskap = personhistorikkInfo.getStatsborgerskaphistorikk().stream()
+        Landkode statsborgerskap = personhistorikkInfo.getStatsborgerskaphistorikk().stream()
                 .filter( periode -> periode.getPeriode().getTom().equals(Tid.TIDENES_ENDE))
                 .findFirst()
                 .get()
                 .getTilhørendeLand();
-        var antallMånederINorge = personhistorikkInfo.getAdressehistorikk().stream()
+        int antallMånederINorge = personhistorikkInfo.getAdressehistorikk().stream()
                 .filter(this::erNorskBostedsadresse)
                 .map(AdressePeriode::getPeriode)
                 .map( periode -> periode.getTom().equals(Tid.TIDENES_ENDE)
@@ -51,7 +53,7 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
                 .mapToInt(Integer::intValue)
                 .sum();
 
-        var boddINorgeFemÅr = antallMånederINorge >= MIN_ANTALL_ÅR * ANTALL_MÅNEDER_I_ÅRET;
+        boolean boddINorgeFemÅr = antallMånederINorge >= MIN_ANTALL_ÅR * ANTALL_MÅNEDER_I_ÅRET;
         return statsborgerskap.erNorge() && boddINorgeFemÅr;
     }
 
