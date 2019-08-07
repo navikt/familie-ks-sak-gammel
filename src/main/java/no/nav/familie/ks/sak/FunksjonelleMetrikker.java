@@ -16,7 +16,7 @@ public class FunksjonelleMetrikker {
     private final HashMap<String, Counter> barnehageCounters = Maps.newHashMap();
     private final Counter mottarKontantstotteFraUtlandet = Metrics.counter("soknad.kontantstotte.funksjonell.mottarKontantstotteFraUtlandet", "status", "JA");
     private final Counter boddEllerJobbetINorgeMinstFemAar = Metrics.counter("soknad.kontantstotte.funksjonell.boddEllerJobbetINorgeMinstFemAar", "status", "JA");
-    private final Counter ikkeBoddEllerJobbetINorgeMinstFemAar = Metrics.counter("soknad.kontantstotte.funksjonell.ikkeBoddEllerJobbetINorgeMinstFemAar", "status", "JA");
+    private final Counter ikkeBoddEllerJobbetINorgeMinstFemAar = Metrics.counter("soknad.kontantstotte.funksjonell.boddEllerJobbetINorgeMinstFemAar", "status", "NEI");
 
 
     public FunksjonelleMetrikker() {
