@@ -6,6 +6,7 @@ import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
 
+
 @RuleDocumentation(SjekkBarnehage.ID)
 public class SjekkBarnehage extends LeafSpecification<Faktagrunnlag> {
 
@@ -17,9 +18,25 @@ public class SjekkBarnehage extends LeafSpecification<Faktagrunnlag> {
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        if (! grunnlag.getSøknad().barnehageplass.barnBarnehageplassStatus.equals(Barnehageplass.BarnehageplassVerdier.garIkkeIBarnehage)) {
-            return ja();
+        Barnehageplass barnehageplass = grunnlag.getSøknad().barnehageplass;
+
+        switch (barnehageplass.barnBarnehageplassStatus) {
+            case garIkkeIBarnehage:
+                return nei();
+            case harBarnehageplass:
+                return gradertBarnehageplass(barnehageplass.harBarnehageplassAntallTimer);
+            case harSluttetIBarnehage:
+                return gradertBarnehageplass(barnehageplass.harSluttetIBarnehageAntallTimer);
+            case skalBegynneIBarnehage:
+                return gradertBarnehageplass(barnehageplass.skalBegynneIBarnehageAntallTimer);
+            case skalSlutteIBarnehage:
+                return gradertBarnehageplass(barnehageplass.skalSlutteIBarnehageAntallTimer);
+            default:
+                return ja();
         }
-        return nei();
+    }
+
+    private Evaluation gradertBarnehageplass(String antallTimer) {
+        return Float.parseFloat(antallTimer) >= 33 ? nei() : ja();
     }
 }
