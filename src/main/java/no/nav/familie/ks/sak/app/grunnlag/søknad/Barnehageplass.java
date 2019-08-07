@@ -28,10 +28,20 @@ public class Barnehageplass {
     }
 
     public enum BarnehageplassVerdier {
-        garIkkeIBarnehage,
-        harBarnehageplass,
-        harSluttetIBarnehage,
-        skalBegynneIBarnehage,
-        skalSlutteIBarnehage
+        garIkkeIBarnehage("Går ikke i barnehage"),
+        harBarnehageplass("Har barnehageplass"),
+        harSluttetIBarnehage("Har sluttet i barnehage"),
+        skalBegynneIBarnehage("Skal begynne i barnehage"),
+        skalSlutteIBarnehage("Skal slutte i barnehage");
+
+        private String beskrivelse;
+
+        BarnehageplassVerdier(String beskrivelse) {
+            this.beskrivelse = beskrivelse;
+        }
+
+        public String getBeskrivelse() {
+            return beskrivelse;
+        }
     }
 }

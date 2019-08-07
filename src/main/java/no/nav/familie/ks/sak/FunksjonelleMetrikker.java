@@ -22,7 +22,7 @@ public class FunksjonelleMetrikker {
     public FunksjonelleMetrikker() {
         Lists.newArrayList(Barnehageplass.BarnehageplassVerdier.values()).forEach(barnehageplassVerdi -> barnehageCounters.put(
                 barnehageplassVerdi.name(),
-                Metrics.counter("soknad.kontantstotte.funksjonell.barnehage", "status", barnehageplassVerdi.name())
+                Metrics.counter("soknad.kontantstotte.funksjonell.barnehage", "status", barnehageplassVerdi.name(), "beskrivelse", barnehageplassVerdi.getBeskrivelse())
         ));
     }
 

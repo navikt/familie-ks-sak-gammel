@@ -43,7 +43,7 @@ public class MottaSøknadController {
 
         Lists.newArrayList(VilkårIkkeOppfyltÅrsak.values()).forEach(vilkårIkkeOppfyltÅrsak -> vilkårIkkeOppfyltCounters.put(
                 Integer.toString(vilkårIkkeOppfyltÅrsak.getÅrsakKode()),
-                Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", Integer.toString(vilkårIkkeOppfyltÅrsak.getÅrsakKode()))
+                Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", Integer.toString(vilkårIkkeOppfyltÅrsak.getÅrsakKode()), "beskrivelse", vilkårIkkeOppfyltÅrsak.getBeskrivelse())
         ));
     }
 
