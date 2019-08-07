@@ -29,8 +29,8 @@ import java.util.HashMap;
 public class MottaSøknadController {
 
     private static final Logger log = LoggerFactory.getLogger(MottaSøknadController.class);
-    private final Counter sokerKanBehandlesAutomatisk = Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", "JA");
-    private final Counter sokerKanIkkeBehandlesAutomatisk = Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", "NEI");
+    private final Counter sokerKanBehandlesAutomatisk = Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", "JA", "beskrivelse", "Søknaden kan automatisk godkjennes");
+    private final Counter sokerKanIkkeBehandlesAutomatisk = Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", "NEI", "beskrivelse", "Søknanden kan ikke automatisk godkjennes");
     private final HashMap<String, Counter> vilkårIkkeOppfyltCounters = Maps.newHashMap();
 
     private final FunksjonelleMetrikker funksjonelleMetrikker;
@@ -48,7 +48,6 @@ public class MottaSøknadController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
-    @Unprotected
     public ResponseEntity mottaDokument(@RequestHeader(value="Nav-Personident") String personident,
                                         @RequestBody Søknad søknad) {
         Vedtak vedtak = saksbehandling.behandle(søknad, personident);
