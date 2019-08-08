@@ -6,7 +6,6 @@ import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.security.oidc.api.ProtectedWithClaims;
-import no.nav.security.oidc.api.Unprotected;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +27,9 @@ public class MottaSøknadController {
     public MottaSøknadController(@Autowired Saksbehandling saksbehandling, @Autowired FunksjonelleMetrikker funksjonelleMetrikker) {
         this.funksjonelleMetrikker = funksjonelleMetrikker;
         this.saksbehandling = saksbehandling;
-
-
-
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
-    @Unprotected
     public ResponseEntity mottaDokument(@RequestHeader(value="Nav-Personident") String personident,
                                         @RequestBody Søknad søknad) {
         Vedtak vedtak = saksbehandling.behandle(søknad, personident);
