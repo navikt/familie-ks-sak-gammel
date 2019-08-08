@@ -29,9 +29,7 @@ import java.util.HashMap;
 public class MottaSøknadController {
 
     private static final Logger log = LoggerFactory.getLogger(MottaSøknadController.class);
-    private final Counter sokerKanBehandlesAutomatisk = Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", "JA", "beskrivelse", "Søknaden kan automatisk godkjennes");
-    private final Counter sokerKanIkkeBehandlesAutomatisk = Metrics.counter("soknad.kontantstotte.behandling.automatisk", "status", "NEI", "beskrivelse", "Søknanden kan ikke automatisk godkjennes");
-    private final HashMap<String, Counter> vilkårIkkeOppfyltCounters = Maps.newHashMap();
+
 
     private final FunksjonelleMetrikker funksjonelleMetrikker;
     private final Saksbehandling saksbehandling;
@@ -41,10 +39,7 @@ public class MottaSøknadController {
         this.saksbehandling = saksbehandling;
 
 
-        Lists.newArrayList(VilkårIkkeOppfyltÅrsak.values()).forEach(vilkårIkkeOppfyltÅrsak -> vilkårIkkeOppfyltCounters.put(
-                Integer.toString(vilkårIkkeOppfyltÅrsak.getÅrsakKode()),
-                Metrics.counter("soknad.kontantstotte.behandling.automatisk.avslag", "status", Integer.toString(vilkårIkkeOppfyltÅrsak.getÅrsakKode()), "beskrivelse", vilkårIkkeOppfyltÅrsak.getBeskrivelse())
-        ));
+
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
@@ -55,16 +50,13 @@ public class MottaSøknadController {
             log.info("Søknad kan behandles automatisk. Årsak " +
                     vedtak.getVilkårvurdering().getVilkårÅrsak().getÅrsakKode() + ": " +
                     vedtak.getVilkårvurdering().getVilkårÅrsak().getBeskrivelse());
-            sokerKanBehandlesAutomatisk.increment();
         } else {
             log.info("Søknad kan ikke behandles automatisk. Årsak " +
                     vedtak.getVilkårvurdering().getVilkårÅrsak().getÅrsakKode() + ": " +
                     vedtak.getVilkårvurdering().getVilkårÅrsak().getBeskrivelse());
-            vilkårIkkeOppfyltCounters.get(Integer.toString(vedtak.getVilkårvurdering().getVilkårÅrsak().getÅrsakKode())).increment();
-            sokerKanIkkeBehandlesAutomatisk.increment();
         }
 
-        funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad);
+        funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
 
         return new ResponseEntity(HttpStatus.OK);
     }
