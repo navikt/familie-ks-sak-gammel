@@ -27,12 +27,12 @@ public class FunksjonelleMetrikker {
     public FunksjonelleMetrikker() {
         Lists.newArrayList(UtfallType.values()).forEach(utfallType -> søkerUtfall.put(
                 utfallType.name(),
-                Metrics.counter("soknad.kontantstotte.behandling.automatisk.avslag", "status", utfallType.name(), "beskrivelse", utfallType.getBeskrivelse())
+                Metrics.counter("soknad.kontantstotte.behandling.funksjonell.utfall", "status", utfallType.name(), "beskrivelse", utfallType.getBeskrivelse())
         ));
 
         Lists.newArrayList(VilkårIkkeOppfyltÅrsak.values()).forEach(vilkårIkkeOppfyltÅrsak -> vilkårIkkeOppfyltCounters.put(
                 Integer.toString(vilkårIkkeOppfyltÅrsak.getÅrsakKode()),
-                Metrics.counter("soknad.kontantstotte.behandling.automatisk.avslag", "status", Integer.toString(vilkårIkkeOppfyltÅrsak.getÅrsakKode()), "beskrivelse", vilkårIkkeOppfyltÅrsak.getBeskrivelse())
+                Metrics.counter("soknad.kontantstotte.behandling.funksjonell.avslag", "status", Integer.toString(vilkårIkkeOppfyltÅrsak.getÅrsakKode()), "beskrivelse", vilkårIkkeOppfyltÅrsak.getBeskrivelse())
         ));
 
         Lists.newArrayList(Barnehageplass.BarnehageplassVerdier.values()).forEach(barnehageplassVerdi -> barnehageCounters.put(
