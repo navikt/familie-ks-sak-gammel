@@ -1,17 +1,11 @@
 package no.nav.familie.ks.sak.app.behandling;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.ks.sak.FunksjonelleMetrikker;
 import no.nav.familie.ks.sak.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.security.oidc.api.ProtectedWithClaims;
-import no.nav.security.oidc.api.Unprotected;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 @RestController
 @RequestMapping("/api/mottak")
 @ProtectedWithClaims(issuer = "intern")
 public class MottaSøknadController {
 
     private static final Logger log = LoggerFactory.getLogger(MottaSøknadController.class);
-
 
     private final FunksjonelleMetrikker funksjonelleMetrikker;
     private final Saksbehandling saksbehandling;

@@ -17,9 +17,9 @@ import java.util.HashMap;
 @Component
 public class FunksjonelleMetrikker {
     private final HashMap<String, Counter> søkerUtfall = Maps.newHashMap();
-    private final HashMap<String, Counter> vilkårIkkeOppfyltCounters = Maps.newHashMap();
+    private final HashMap<String, Counter> vilkårIkkeOppfylt = Maps.newHashMap();
 
-    private final HashMap<String, Counter> barnehageCounters = Maps.newHashMap();
+    private final HashMap<String, Counter> barnehagestatus = Maps.newHashMap();
     private final HashMap<String, Counter> boddEllerJobbetINorgeEllerEøsIFemÅr = Maps.newHashMap();
     private final Counter mottarKontantstotteFraUtlandet = Metrics.counter("soknad.kontantstotte.funksjonell.mottarKontantstotteFraUtlandet", "status", "JA");
 
@@ -30,12 +30,12 @@ public class FunksjonelleMetrikker {
                 Metrics.counter("soknad.kontantstotte.behandling.funksjonell.utfall", "status", utfallType.name(), "beskrivelse", utfallType.getBeskrivelse())
         ));
 
-        Lists.newArrayList(VilkårIkkeOppfyltÅrsak.values()).forEach(vilkårIkkeOppfyltÅrsak -> vilkårIkkeOppfyltCounters.put(
+        Lists.newArrayList(VilkårIkkeOppfyltÅrsak.values()).forEach(vilkårIkkeOppfyltÅrsak -> vilkårIkkeOppfylt.put(
                 Integer.toString(vilkårIkkeOppfyltÅrsak.getÅrsakKode()),
                 Metrics.counter("soknad.kontantstotte.behandling.funksjonell.avslag", "status", Integer.toString(vilkårIkkeOppfyltÅrsak.getÅrsakKode()), "beskrivelse", vilkårIkkeOppfyltÅrsak.getBeskrivelse())
         ));
 
-        Lists.newArrayList(Barnehageplass.BarnehageplassVerdier.values()).forEach(barnehageplassVerdi -> barnehageCounters.put(
+        Lists.newArrayList(Barnehageplass.BarnehageplassVerdier.values()).forEach(barnehageplassVerdi -> barnehagestatus.put(
                 barnehageplassVerdi.name(),
                 Metrics.counter("soknad.kontantstotte.funksjonell.barnehage", "status", barnehageplassVerdi.name(), "beskrivelse", barnehageplassVerdi.getBeskrivelse())
         ));
@@ -48,9 +48,11 @@ public class FunksjonelleMetrikker {
 
     public void tellFunksjonelleMetrikker(Søknad søknad, Vedtak vedtak) {
         søkerUtfall.get(vedtak.getVilkårvurdering().getUtfallType().name()).increment();
-        vilkårIkkeOppfyltCounters.get(Integer.toString(vedtak.getVilkårvurdering().getVilkårÅrsak().getÅrsakKode())).increment();
+        if (vedtak.getVilkårvurdering().getUtfallType().equals(UtfallType.IKKE_OPPFYLT)) {
+            vilkårIkkeOppfylt.get(Integer.toString(vedtak.getVilkårvurdering().getVilkårÅrsak().getÅrsakKode())).increment();
+        }
 
-        barnehageCounters.get(søknad.barnehageplass.barnBarnehageplassStatus.name()).increment();
+        barnehagestatus.get(søknad.barnehageplass.barnBarnehageplassStatus.name()).increment();
         boddEllerJobbetINorgeEllerEøsIFemÅr.get(søknad.tilknytningTilUtland.boddEllerJobbetINorgeMinstFemAar.name()).increment();
 
         if (søknad.utenlandskKontantstotte.mottarKontantstotteFraUtlandet.equals("JA")) {
