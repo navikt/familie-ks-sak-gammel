@@ -11,10 +11,14 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighe
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
+import no.nav.fpsak.tidsserie.LocalDateInterval;
+import no.nav.fpsak.tidsserie.LocalDateSegment;
+import no.nav.fpsak.tidsserie.LocalDateTimeline;
+import no.nav.fpsak.tidsserie.StandardCombinators;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RuleDocumentation(SjekkMedlemsskap.ID)
 public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
@@ -22,7 +26,7 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
     public static final String ID = "PARAGRAF 123";
     private static final String GYLDIG_STATSBORGERSKAP = "NOR";
     private static int MIN_ANTALL_ÅR = 5;
-    private static int ANTALL_MÅNEDER_I_ÅRET = 12;
+    private static int ANTALL_DAGER_I_ÅRET = 365;
 
     public SjekkMedlemsskap() {
         super(ID);
@@ -45,17 +49,16 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
                 .filter(periode -> periode.getTilhørendeLand().erNorge())
                 .map(StatsborgerskapPeriode::getTilhørendeLand)
                 .findFirst();
-        int antallMånederINorge = personhistorikkInfo.getAdressehistorikk().stream()
+        final var segmenter = personhistorikkInfo.getAdressehistorikk().stream()
                 .filter(this::erNorskBostedsadresse)
                 .map(AdressePeriode::getPeriode)
-                .map(periode -> periode.getTom().equals(Tid.TIDENES_ENDE)
-                        ? Period.between(periode.getFom(), LocalDate.now())
-                        : Period.between(periode.getFom(), periode.getTom()))
-                .map(periode -> periode.getYears() * ANTALL_MÅNEDER_I_ÅRET + periode.getMonths())
-                .mapToInt(Integer::intValue)
-                .sum();
+                .map(periode -> new LocalDateSegment<>(periode.getFom(), periode.getTom() != Tid.TIDENES_ENDE ? periode.getTom() : LocalDate.now(), true))
+                .collect(Collectors.toList());
 
-        boolean boddINorgeFemÅr = antallMånederINorge >= MIN_ANTALL_ÅR * ANTALL_MÅNEDER_I_ÅRET;
+        final var bostedstidslinje = new LocalDateTimeline<>(segmenter, StandardCombinators::alwaysTrueForMatch).compress();
+        final var antallDagerINorge = bostedstidslinje.getDatoIntervaller().stream().map(LocalDateInterval::totalDays).reduce(0L, Long::sum);
+
+        boolean boddINorgeFemÅr = antallDagerINorge >= MIN_ANTALL_ÅR * ANTALL_DAGER_I_ÅRET;
         return statsborgerskap.isPresent() && boddINorgeFemÅr;
     }
 
