@@ -1,7 +1,8 @@
 package no.nav.familie.ks.sak.app.behandling.regler;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.grunnlag.Forelder;
+import no.nav.familie.ks.sak.app.behandling.regler.medlemskap.HarVærtBosattFemÅrINorge;
+import no.nav.familie.ks.sak.app.behandling.regler.medlemskap.MinstEnErNorskStatsborger;
 import no.nav.familie.ks.sak.app.integrasjon.felles.ws.Tid;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdressePeriode;
@@ -10,19 +11,21 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighe
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.StatsborgerskapPeriode;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
+import no.nav.fpsak.nare.specification.AndSpecification;
 import no.nav.fpsak.nare.specification.LeafSpecification;
+import no.nav.fpsak.tidsserie.LocalDateInterval;
+import no.nav.fpsak.tidsserie.LocalDateSegment;
+import no.nav.fpsak.tidsserie.LocalDateTimeline;
+import no.nav.fpsak.tidsserie.StandardCombinators;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RuleDocumentation(SjekkMedlemsskap.ID)
 public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
 
-    public static final String ID = "PARAGRAF 123";
-    private static final String GYLDIG_STATSBORGERSKAP = "NOR";
-    private static int MIN_ANTALL_ÅR = 5;
-    private static int ANTALL_MÅNEDER_I_ÅRET = 12;
+    public static final String ID = "MEDL-root";
 
     public SjekkMedlemsskap() {
         super(ID);
@@ -30,36 +33,9 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        Forelder forelder = grunnlag.getTpsFakta().getForelder();
-        Forelder annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
-        if (!norskMedlemsskap(forelder.getPersonhistorikkInfo())
-                || (annenForelder != null && !norskMedlemsskap(annenForelder.getPersonhistorikkInfo()))) {
-            return ja();
-        }
-        return nei();
+        return new AndSpecification<>(new MinstEnErNorskStatsborger(),
+                new HarVærtBosattFemÅrINorge())
+                .evaluate(grunnlag);
     }
 
-    private boolean norskMedlemsskap(PersonhistorikkInfo personhistorikkInfo) {
-        Optional<Landkode> statsborgerskap = personhistorikkInfo.getStatsborgerskaphistorikk().stream()
-                .filter(periode -> periode.getPeriode().getTom().equals(Tid.TIDENES_ENDE))
-                .filter(periode -> periode.getTilhørendeLand().erNorge())
-                .map(StatsborgerskapPeriode::getTilhørendeLand)
-                .findFirst();
-        int antallMånederINorge = personhistorikkInfo.getAdressehistorikk().stream()
-                .filter(this::erNorskBostedsadresse)
-                .map(AdressePeriode::getPeriode)
-                .map(periode -> periode.getTom().equals(Tid.TIDENES_ENDE)
-                        ? Period.between(periode.getFom(), LocalDate.now())
-                        : Period.between(periode.getFom(), periode.getTom()))
-                .map(periode -> periode.getYears() * ANTALL_MÅNEDER_I_ÅRET + periode.getMonths())
-                .mapToInt(Integer::intValue)
-                .sum();
-
-        boolean boddINorgeFemÅr = antallMånederINorge >= MIN_ANTALL_ÅR * ANTALL_MÅNEDER_I_ÅRET;
-        return statsborgerskap.isPresent() && boddINorgeFemÅr;
-    }
-
-    private boolean erNorskBostedsadresse(AdressePeriode adressePeriode) {
-        return adressePeriode.getAdresse().getLand().equals(GYLDIG_STATSBORGERSKAP) && adressePeriode.getAdresse().getAdresseType().equals(AdresseType.BOSTEDSADRESSE);
-    }
 }

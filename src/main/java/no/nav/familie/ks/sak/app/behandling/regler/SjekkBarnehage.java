@@ -17,7 +17,7 @@ public class SjekkBarnehage extends LeafSpecification<Faktagrunnlag> {
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        if (! grunnlag.getSøknad().barnehageplass.barnBarnehageplassStatus.equals(Barnehageplass.BarnehageplassVerdier.garIkkeIBarnehage)) {
+        if (grunnlag.getSøknad().barnehageplass.barnBarnehageplassStatus.equals(Barnehageplass.BarnehageplassVerdier.garIkkeIBarnehage)) {
             return ja();
         }
         return nei();
