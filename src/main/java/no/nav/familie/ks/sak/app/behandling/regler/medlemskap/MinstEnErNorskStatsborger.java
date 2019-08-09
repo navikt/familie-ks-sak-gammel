@@ -39,6 +39,9 @@ public class MinstEnErNorskStatsborger extends LeafSpecification<Faktagrunnlag> 
     }
 
     private boolean norskStatsborger(Forelder forelder) {
+        if (forelder == null) {
+            return false;
+        }
         var segmenter = forelder.getPersonhistorikkInfo().getAdressehistorikk().stream()
                 .filter(this::erNorskBostedsadresse)
                 .map(AdressePeriode::getPeriode)
