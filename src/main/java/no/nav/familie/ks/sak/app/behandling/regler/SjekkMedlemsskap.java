@@ -36,8 +36,8 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
         Forelder forelder = grunnlag.getTpsFakta().getForelder();
         Forelder annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
-        if (!norskMedlemsskap(forelder.getPersonhistorikkInfo())
-                || (annenForelder != null && !norskMedlemsskap(annenForelder.getPersonhistorikkInfo()))) {
+        if (norskMedlemsskap(forelder.getPersonhistorikkInfo())
+                || (annenForelder != null && norskMedlemsskap(annenForelder.getPersonhistorikkInfo()))) {
             return ja();
         }
         return nei();
