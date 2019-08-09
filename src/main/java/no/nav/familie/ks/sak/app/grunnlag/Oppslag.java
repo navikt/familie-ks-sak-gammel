@@ -29,11 +29,11 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class Oppslag {
 
+    public static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private static final Logger logger = LoggerFactory.getLogger(Oppslag.class);
     private URI oppslagServiceUri;
     private HttpClient client;
     private StsRestClient stsRestClient;
-    private static final Logger logger = LoggerFactory.getLogger(Oppslag.class);
-    public static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     public Oppslag(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
                    @Autowired StsRestClient stsRestClient) {
@@ -81,7 +81,8 @@ public class Oppslag {
         if (!personident.isEmpty()) {
             String aktørId = hentAktørId(personident);
             return genererForelder(aktørId);
-        } else return null;
+        }
+        return null;
     }
 
     private Personinfo finnBarnSøktFor(Søknad søknad, Personinfo personinfo) {
@@ -126,7 +127,7 @@ public class Oppslag {
     }
 
     private String formaterDato(LocalDate date) {
-        return date.format(DateTimeFormatter.BASIC_ISO_DATE);
+        return date.format(DateTimeFormatter.ISO_DATE);
     }
 
     private Personinfo hentPersonFor(String aktørId) {
