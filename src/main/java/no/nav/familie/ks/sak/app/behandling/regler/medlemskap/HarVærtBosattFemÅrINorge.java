@@ -31,6 +31,9 @@ public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag>
     }
 
     private boolean bosatt(Forelder forelder) {
+        if (forelder == null) {
+            return false;
+        }
         Optional<Landkode> statsborgerskap = forelder.getPersonhistorikkInfo().getStatsborgerskaphistorikk().stream()
                 .filter(periode -> periode.getPeriode().getTom().equals(Tid.TIDENES_ENDE))
                 .filter(periode -> periode.getTilhørendeLand().erNorge())
