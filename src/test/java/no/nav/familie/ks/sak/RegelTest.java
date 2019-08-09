@@ -19,11 +19,11 @@ public class RegelTest {
     public void at_sjekkMedlemsskap_returnerer_korrekt() {
         SjekkMedlemsskap sjekkMedlemsskap = new SjekkMedlemsskap();
 
-        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.gyldig();
+        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder();
         Evaluation evaluation = sjekkMedlemsskap.evaluate(faktagrunnlag);
         assertThat(evaluation.result()).isEqualByComparingTo(Resultat.JA);
 
-        faktagrunnlag = FaktagrunnlagBuilder.ugyldig();
+        faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreUtenlandskeStatsborgereOgBarnForGammel();
         evaluation = sjekkMedlemsskap.evaluate(faktagrunnlag);
         assertThat(evaluation.result()).isEqualByComparingTo(Resultat.NEI);
     }
@@ -32,18 +32,18 @@ public class RegelTest {
     public void at_sjekkBarnehage_returnerer_korrekt() {
         SjekkBarnehage sjekkBarnehage = new SjekkBarnehage();
 
-        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.gyldig();
+        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder();
         Evaluation evaluation = sjekkBarnehage.evaluate(faktagrunnlag);
         assertThat(evaluation.result()).isEqualByComparingTo(Resultat.JA);
 
-        faktagrunnlag = FaktagrunnlagBuilder.ugyldig();
+        faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreUtenlandskeStatsborgereOgBarnForGammel();
         evaluation = sjekkBarnehage.evaluate(faktagrunnlag);
         assertThat(evaluation.result()).isEqualByComparingTo(Resultat.NEI);
     }
 
     @Test
     public void at_vilkår_regel_blir_oppfylt() {
-        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.gyldig();
+        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder();
         Evaluation evaluation = vilkårRegel.evaluer(faktagrunnlag);
         Regelresultat regelresultat = new Regelresultat(evaluation);
         assertThat(regelresultat.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);

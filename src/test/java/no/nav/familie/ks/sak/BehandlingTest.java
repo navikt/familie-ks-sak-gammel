@@ -19,7 +19,7 @@ public class BehandlingTest {
 
     @Test
     public void positivt_vedtak_ved_oppfylte_vilkår() {
-        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.tpsFaktaGyldig);
+        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder);
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"), PERSONIDENT);
 
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
@@ -27,7 +27,7 @@ public class BehandlingTest {
 
     @Test
     public void negativt_vedtak_ved_ikke_oppfylte_vilkår() {
-        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.tpsFaktaUgyldig);
+        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.beggeForeldreUtenlandskeStatsborgereOgBarnForGammel);
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadMedBarnehageplass.json"), PERSONIDENT);
 
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);

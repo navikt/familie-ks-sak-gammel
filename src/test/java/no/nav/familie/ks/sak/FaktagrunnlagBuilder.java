@@ -13,7 +13,6 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.Adr
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdresseType;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.StatsborgerskapPeriode;
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Landkoder;
 
 import java.io.File;
 import java.io.IOError;
@@ -31,16 +30,16 @@ final class FaktagrunnlagBuilder {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    static Faktagrunnlag ugyldig() {
+    static Faktagrunnlag beggeForeldreUtenlandskeStatsborgereOgBarnForGammel() {
         return new Faktagrunnlag.Builder()
-                .medTpsFakta(tpsFaktaUgyldig)
+                .medTpsFakta(beggeForeldreUtenlandskeStatsborgereOgBarnForGammel)
                 .medSøknad(medBarnehageplass())
                 .build();
     }
 
-    static Faktagrunnlag gyldig() {
+    static Faktagrunnlag beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder() {
         return new Faktagrunnlag.Builder()
-                .medTpsFakta(tpsFaktaGyldig)
+                .medTpsFakta(beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder)
                 .medSøknad(utenBarnehageplass())
                 .build();
     }
@@ -141,13 +140,13 @@ final class FaktagrunnlagBuilder {
             .medPersonhistorikkInfo(norgeEtÅr)
             .build();
 
-    static TpsFakta tpsFaktaGyldig = new TpsFakta.Builder()
+    static TpsFakta beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder = new TpsFakta.Builder()
             .medForelder(forelderNorsk)
             .medAnnenForelder(forelderNorsk)
             .medBarn(barnGyldigAlder)
             .build();
 
-    static TpsFakta tpsFaktaUgyldig = new TpsFakta.Builder()
+    static TpsFakta beggeForeldreUtenlandskeStatsborgereOgBarnForGammel = new TpsFakta.Builder()
             .medForelder(forelderUtland)
             .medAnnenForelder(forelderUtland)
             .medBarn(barnUgyldigAlder)
