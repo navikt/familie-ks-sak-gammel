@@ -28,7 +28,7 @@ public class BehandlingTest {
     @Test
     public void negativt_vedtak_ved_ikke_oppfylte_vilkår() {
         when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.beggeForeldreUtenlandskeStatsborgereOgBarnForGammel);
-        Vedtak vedtak = saksbehandling.behandle(getFile("soknadMedBarnehageplass.json"), PERSONIDENT);
+        Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"), PERSONIDENT);
 
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
     }

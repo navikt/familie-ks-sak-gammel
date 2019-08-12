@@ -33,7 +33,7 @@ final class FaktagrunnlagBuilder {
     static Faktagrunnlag beggeForeldreUtenlandskeStatsborgereOgBarnForGammel() {
         return new Faktagrunnlag.Builder()
                 .medTpsFakta(beggeForeldreUtenlandskeStatsborgereOgBarnForGammel)
-                .medSøknad(medBarnehageplass())
+                .medSøknad(gradertBarnehageplass())
                 .build();
     }
 
@@ -52,9 +52,9 @@ final class FaktagrunnlagBuilder {
         }
     }
 
-    private static Søknad medBarnehageplass() {
+    private static Søknad gradertBarnehageplass() {
         try {
-            return mapper.readValue(new File(getFile("soknadMedBarnehageplass.json")), Søknad.class);
+            return mapper.readValue(new File(getFile("soknadGradertBarnehageplass.json")), Søknad.class);
         } catch (IOException e) {
             throw new IOError(e);
         }
