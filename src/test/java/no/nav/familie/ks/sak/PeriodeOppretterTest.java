@@ -28,25 +28,25 @@ public class PeriodeOppretterTest {
 
     @Test
     public void at_søknad_med_barnehage_gir_feil() {
-        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.tpsFaktaGyldig);
+        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder);
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadMedBarnehageplass.json"), PERSONIDENT);
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
     }
 
     @Test
     public void at_søknad_uten_barnehage_gir_stønadperiode() {
-        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.tpsFaktaGyldig);
+        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(faktagrunnlagBuilder.beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder);
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"), PERSONIDENT);
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
-        assertThat(vedtak.getStønadperiode().getFom()).isEqualTo(faktagrunnlagBuilder.tpsFaktaGyldig.getBarn().getFødselsdato().plusMonths(MIN_ALDER_I_MÅNEDER).withDayOfMonth(1));
-        assertThat(vedtak.getStønadperiode().getTom()).isEqualTo(faktagrunnlagBuilder.tpsFaktaGyldig.getBarn().getFødselsdato().plusMonths(MAKS_ALDER_I_MÅNEDER).withDayOfMonth(1));
+        assertThat(vedtak.getStønadperiode().getFom()).isEqualTo(faktagrunnlagBuilder.beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder.getBarn().getFødselsdato().plusMonths(MIN_ALDER_I_MÅNEDER).withDayOfMonth(1));
+        assertThat(vedtak.getStønadperiode().getTom()).isEqualTo(faktagrunnlagBuilder.beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder.getBarn().getFødselsdato().plusMonths(MAKS_ALDER_I_MÅNEDER).withDayOfMonth(1));
         assertThat(vedtak.getStønadperiode().getProsent()).isEqualTo(100);
     }
 
     @Test
     public void at_periode_opprettes_korrekt_nå() {
         PeriodeOppretter periodeOppretter = new PeriodeOppretter();
-        Faktagrunnlag faktagrunnlag = faktagrunnlagBuilder.gyldig();
+        Faktagrunnlag faktagrunnlag = faktagrunnlagBuilder.beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder();
         LocalDate fødselsdatoBarn = faktagrunnlag.getTpsFakta().getBarn().getFødselsdato();
         GradertPeriode stønadPeriode = periodeOppretter.opprettStønadPeriode(faktagrunnlag);
         assertThat(stønadPeriode.getFom()).isEqualTo(LocalDate.now().withDayOfMonth(1));
@@ -57,7 +57,7 @@ public class PeriodeOppretterTest {
     @Test
     public void at_periode_opprettes_korrekt_fremtidig() {
         PeriodeOppretter periodeOppretter = new PeriodeOppretter();
-        Faktagrunnlag faktagrunnlag = faktagrunnlagBuilder.ugyldig();
+        Faktagrunnlag faktagrunnlag = faktagrunnlagBuilder.beggeForeldreUtenlandskeStatsborgereOgBarnForGammel();
         LocalDate fødselsdatoBarn = faktagrunnlag.getTpsFakta().getBarn().getFødselsdato();
         GradertPeriode stønadPeriode = periodeOppretter.opprettStønadPeriode(faktagrunnlag);
 

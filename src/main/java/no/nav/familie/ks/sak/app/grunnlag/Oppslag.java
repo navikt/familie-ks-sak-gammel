@@ -2,12 +2,12 @@ package no.nav.familie.ks.sak.app.grunnlag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import no.nav.familie.ks.sak.app.behandling.MottaSøknadController;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
+import no.nav.familie.ks.sak.app.integrasjon.sts.StsRestClient;
 import no.nav.log.MDCConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,17 +24,16 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
-
-import no.nav.familie.ks.sak.app.integrasjon.sts.*;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class Oppslag {
 
+    public static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private static final Logger logger = LoggerFactory.getLogger(Oppslag.class);
     private URI oppslagServiceUri;
     private HttpClient client;
     private StsRestClient stsRestClient;
-    private static final Logger logger = LoggerFactory.getLogger(Oppslag.class);
-    public static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     public Oppslag(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
                    @Autowired StsRestClient stsRestClient) {
@@ -79,11 +78,11 @@ public class Oppslag {
 
     private Forelder finnAnnenForelder(Søknad søknad) {
         String personident = søknad.familieforhold.annenForelderFodselsnummer;
-        if (! personident.isEmpty()) {
+        if (!personident.isEmpty()) {
             String aktørId = hentAktørId(personident);
             return genererForelder(aktørId);
         }
-        else return null;
+        return null;
     }
 
     private Personinfo finnBarnSøktFor(Søknad søknad, Personinfo personinfo) {
@@ -92,7 +91,7 @@ public class Oppslag {
         // TODO: Sjekk om barn er i familierelasjon og returner personinfo for barn
     }
 
-    private String hentAktørId(String personident){
+    private String hentAktørId(String personident) {
         URI uri = URI.create(oppslagServiceUri + "/aktoer?ident=" + personident);
         logger.info("Henter aktørId fra " + oppslagServiceUri);
         try {
@@ -110,7 +109,8 @@ public class Oppslag {
     }
 
     private PersonhistorikkInfo hentHistorikkFor(String aktørId) {
-        URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?id=" + aktørId);
+        final var iDag = LocalDate.now();
+        URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?id=" + aktørId + "&fomDato=" + formaterDato(iDag.minusYears(6)) + "&tomDato=" + formaterDato(iDag));
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
@@ -124,6 +124,10 @@ public class Oppslag {
             logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
         }
+    }
+
+    private String formaterDato(LocalDate date) {
+        return date.format(DateTimeFormatter.ISO_DATE);
     }
 
     private Personinfo hentPersonFor(String aktørId) {

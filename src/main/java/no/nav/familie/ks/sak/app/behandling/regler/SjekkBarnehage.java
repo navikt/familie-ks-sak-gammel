@@ -22,7 +22,7 @@ public class SjekkBarnehage extends LeafSpecification<Faktagrunnlag> {
 
         switch (barnehageplass.barnBarnehageplassStatus) {
             case garIkkeIBarnehage:
-                return nei();
+                return ja();
             case harBarnehageplass:
                 return gradertBarnehageplass(barnehageplass.harBarnehageplassAntallTimer);
             case harSluttetIBarnehage:
@@ -32,11 +32,11 @@ public class SjekkBarnehage extends LeafSpecification<Faktagrunnlag> {
             case skalSlutteIBarnehage:
                 return gradertBarnehageplass(barnehageplass.skalSlutteIBarnehageAntallTimer);
             default:
-                return ja();
+                return nei();
         }
     }
 
     private Evaluation gradertBarnehageplass(String antallTimer) {
-        return Float.parseFloat(antallTimer) >= 33 ? nei() : ja();
+        return Float.parseFloat(antallTimer) >= 33 ? ja() : nei();
     }
 }
