@@ -24,19 +24,19 @@ public class SjekkBarnehage extends LeafSpecification<Faktagrunnlag> {
             case garIkkeIBarnehage:
                 return ja();
             case harBarnehageplass:
-                return gradertBarnehageplass(barnehageplass.harBarnehageplassAntallTimer);
+                return fullBarnehageplass(barnehageplass.harBarnehageplassAntallTimer);
             case harSluttetIBarnehage:
-                return gradertBarnehageplass(barnehageplass.harSluttetIBarnehageAntallTimer);
+                return fullBarnehageplass(barnehageplass.harSluttetIBarnehageAntallTimer);
             case skalBegynneIBarnehage:
-                return gradertBarnehageplass(barnehageplass.skalBegynneIBarnehageAntallTimer);
+                return fullBarnehageplass(barnehageplass.skalBegynneIBarnehageAntallTimer);
             case skalSlutteIBarnehage:
-                return gradertBarnehageplass(barnehageplass.skalSlutteIBarnehageAntallTimer);
+                return fullBarnehageplass(barnehageplass.skalSlutteIBarnehageAntallTimer);
             default:
                 return nei();
         }
     }
 
-    private Evaluation gradertBarnehageplass(String antallTimer) {
+    private Evaluation fullBarnehageplass(String antallTimer) {
         return Float.parseFloat(antallTimer) >= 33 ? ja() : nei();
     }
 }
