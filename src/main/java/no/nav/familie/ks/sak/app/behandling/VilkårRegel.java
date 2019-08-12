@@ -36,9 +36,9 @@ public class VilkårRegel implements RuleService<Faktagrunnlag> {
                 .hvis(new SjekkMedlemsskap(), Sluttpunkt.oppfylt("UTFALLKODE2", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT))
                 .ellers(Sluttpunkt.ikkeOppfylt("UTFALLKODE1", VilkårIkkeOppfyltÅrsak.IKKE_FEM_ÅR_MEDLEMSKAP));
 
-        return rs.hvisRegel(SjekkBarnehage.ID, "Har barnet/har barnet hatt barnehageplass?")
+        return rs.hvisRegel(SjekkBarnehage.ID, "Inneholder søknaden gradert barnehageplass?")
                 .hvis(new SjekkBarnehage(), sjekkMedlemsskap)
-                .ellers(Sluttpunkt.ikkeOppfylt("UTFALLKODE3", VilkårIkkeOppfyltÅrsak.BARNEHAGEPLASS));
+                .ellers(Sluttpunkt.ikkeOppfylt("UTFALLKODE3", VilkårIkkeOppfyltÅrsak.GRADERT_BARNEHAGEPLASS));
     }
 
 }
