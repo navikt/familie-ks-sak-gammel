@@ -6,6 +6,7 @@ import java.time.Instant;
 
 import static java.time.Instant.now;
 
+// FIXME: fields bør være immutable..
 public class Søknad {
 
     public Veiledning veiledning;

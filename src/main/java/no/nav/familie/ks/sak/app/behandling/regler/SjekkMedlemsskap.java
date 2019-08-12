@@ -5,7 +5,6 @@ import no.nav.familie.ks.sak.app.behandling.regler.medlemskap.HarVærtBosattFem�
 import no.nav.familie.ks.sak.app.behandling.regler.medlemskap.MinstEnErNorskStatsborger;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
-import no.nav.fpsak.nare.specification.AndSpecification;
 import no.nav.fpsak.nare.specification.LeafSpecification;
 
 @RuleDocumentation(SjekkMedlemsskap.ID)
@@ -19,9 +18,7 @@ public class SjekkMedlemsskap extends LeafSpecification<Faktagrunnlag> {
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        return new AndSpecification<>(new MinstEnErNorskStatsborger(),
-                new HarVærtBosattFemÅrINorge())
-                .evaluate(grunnlag);
+        return new HarVærtBosattFemÅrINorge().og(new MinstEnErNorskStatsborger()).evaluate(grunnlag);
     }
 
 }

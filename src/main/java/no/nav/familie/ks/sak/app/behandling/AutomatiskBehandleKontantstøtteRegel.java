@@ -13,14 +13,14 @@ import no.nav.fpsak.nare.specification.Specification;
 /**
  * Regeltjeneste som fastsetter kontantstøttevedtak og om  krav til automatisk behandling er oppfylt
  */
-@RuleDocumentation(value = VilkårRegel.ID, specificationReference = "TODO")
-public class VilkårRegel implements RuleService<Faktagrunnlag> {
+@RuleDocumentation(value = AutomatiskBehandleKontantstøtteRegel.ID, specificationReference = "TODO")
+public class AutomatiskBehandleKontantstøtteRegel implements RuleService<Faktagrunnlag> {
 
     public static final String ID = "PARAGRAF 123";
 
     private final Ruleset<Faktagrunnlag> rs = new Ruleset<>();
 
-    public VilkårRegel() {
+    public AutomatiskBehandleKontantstøtteRegel() {
         // For dokumentasjonsgenerering
     }
 

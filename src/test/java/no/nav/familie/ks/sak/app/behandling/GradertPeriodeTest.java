@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak;
+package no.nav.familie.ks.sak.app.behandling;
 
 import no.nav.familie.ks.sak.app.behandling.GradertPeriode;
 import org.junit.Test;

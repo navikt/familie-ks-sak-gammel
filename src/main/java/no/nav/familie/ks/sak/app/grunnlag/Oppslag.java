@@ -1,7 +1,6 @@
 package no.nav.familie.ks.sak.app.grunnlag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
@@ -29,16 +28,19 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class Oppslag {
 
-    public static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private static final Logger logger = LoggerFactory.getLogger(Oppslag.class);
     private URI oppslagServiceUri;
     private HttpClient client;
     private StsRestClient stsRestClient;
+    private ObjectMapper mapper;
 
+    @Autowired
     public Oppslag(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
-                   @Autowired StsRestClient stsRestClient) {
+                   StsRestClient stsRestClient,
+                   ObjectMapper objectMapper) {
         this.oppslagServiceUri = oppslagServiceUri;
         this.stsRestClient = stsRestClient;
+        this.mapper = objectMapper;
         this.client = create();
     }
 

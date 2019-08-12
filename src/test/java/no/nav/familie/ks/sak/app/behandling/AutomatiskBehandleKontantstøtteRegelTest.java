@@ -1,7 +1,8 @@
-package no.nav.familie.ks.sak;
+package no.nav.familie.ks.sak.app.behandling;
 
+import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.app.behandling.Regelresultat;
-import no.nav.familie.ks.sak.app.behandling.VilkårRegel;
+import no.nav.familie.ks.sak.app.behandling.AutomatiskBehandleKontantstøtteRegel;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.regler.*;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
@@ -11,9 +12,9 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RegelTest {
+public class AutomatiskBehandleKontantstøtteRegelTest {
 
-    private final VilkårRegel vilkårRegel = new VilkårRegel();
+    private final no.nav.familie.ks.sak.app.behandling.AutomatiskBehandleKontantstøtteRegel vilkårRegel = new no.nav.familie.ks.sak.app.behandling.AutomatiskBehandleKontantstøtteRegel();
 
     @Test
     public void at_sjekkMedlemsskap_returnerer_korrekt() {

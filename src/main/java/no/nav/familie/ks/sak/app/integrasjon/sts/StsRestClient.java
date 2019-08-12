@@ -3,6 +3,7 @@ package no.nav.familie.ks.sak.app.integrasjon.sts;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ import static java.time.LocalTime.now;
 public class StsRestClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(StsRestClient.class);
-    private ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper;
 
     private HttpClient client;
     private URI stsUrl;
@@ -33,11 +34,18 @@ public class StsRestClient {
 
     private AccessTokenResponse cachedToken;
 
-    public StsRestClient(@Value("${STS_URL}") URI stsUrl, @Value("${CREDENTIAL_USERNAME}") String stsUsername, @Value("${CREDENTIAL_PASSWORD}") String stsPassword) {
+    @Autowired
+    public StsRestClient(@Value("${STS_URL}") URI stsUrl, @Value("${CREDENTIAL_USERNAME}") String stsUsername, @Value("${CREDENTIAL_PASSWORD}") String stsPassword,
+                         ObjectMapper objectMapper) {
+        this.mapper = objectMapper;
         this.client = HttpClient.newHttpClient();
         this.stsUrl = URI.create(stsUrl + "/rest/v1/sts/token?grant_type=client_credentials&scope=openid");
         this.stsUsername = stsUsername;
         this.stsPassword = stsPassword;
+    }
+
+    private static String basicAuth(String username, String password) {
+        return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
     }
 
     private boolean isTokenValid() {
@@ -45,10 +53,10 @@ public class StsRestClient {
 
         LOG.info("Tokenet løper ut: {}. Tiden nå er: {}", Instant.ofEpochMilli(cachedToken.getExpires_in()).atZone(ZoneId.systemDefault()).toLocalTime(), now(ZoneId.systemDefault()));
         return Instant.ofEpochMilli(cachedToken.getExpires_in())
-            .atZone(ZoneId.systemDefault())
-            .toLocalTime()
-            .minusMinutes(15)
-            .isAfter(now(ZoneId.systemDefault()));
+                .atZone(ZoneId.systemDefault())
+                .toLocalTime()
+                .minusMinutes(15)
+                .isAfter(now(ZoneId.systemDefault()));
     }
 
     public String getSystemOIDCToken() {
@@ -58,26 +66,26 @@ public class StsRestClient {
         }
         LOG.info("Henter token fra STS");
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(stsUrl)
-            .header("Authorization", basicAuth(stsUsername, stsPassword))
-            .header("Content-Type", "application/json")
-            .timeout(Duration.ofSeconds(30))
-            .build();
+                .uri(stsUrl)
+                .header("Authorization", basicAuth(stsUsername, stsPassword))
+                .header("Content-Type", "application/json")
+                .timeout(Duration.ofSeconds(30))
+                .build();
 
         AccessTokenResponse accessTokenResponse;
         try {
             accessTokenResponse = client
-                .sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenApply(it -> {
-                    try {
-                        return mapper.readValue(it, AccessTokenResponse.class);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    .sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(HttpResponse::body)
+                    .thenApply(it -> {
+                        try {
+                            return mapper.readValue(it, AccessTokenResponse.class);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
-                    return null;
-                }).get();
+                        return null;
+                    }).get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return "";
@@ -89,9 +97,5 @@ public class StsRestClient {
         } else {
             return "";
         }
-    }
-
-    private static String basicAuth(String username, String password) {
-        return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
     }
 }

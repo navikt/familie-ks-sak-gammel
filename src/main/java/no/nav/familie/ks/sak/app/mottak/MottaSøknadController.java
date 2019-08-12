@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling;
+package no.nav.familie.ks.sak.app.mottak;
 
 import no.nav.familie.ks.sak.FunksjonelleMetrikker;
 import no.nav.familie.ks.sak.Saksbehandling;
