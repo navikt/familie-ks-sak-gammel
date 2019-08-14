@@ -49,7 +49,7 @@ public class FunksjonelleMetrikker {
     public void tellFunksjonelleMetrikker(Søknad søknad, Vedtak vedtak) {
         søkerUtfall.get(vedtak.getVilkårvurdering().getUtfallType().name()).increment();
         if (vedtak.getVilkårvurdering().getUtfallType().equals(UtfallType.IKKE_OPPFYLT)) {
-            vilkårIkkeOppfylt.get(Integer.toString(vedtak.getVilkårvurdering().getVilkårÅrsak().getÅrsakKode())).increment();
+            vilkårIkkeOppfylt.get(Integer.toString(vedtak.getVilkårvurdering().getÅrsakType().iterator().next().getÅrsakKode())).increment();
         }
 
         barnehagestatus.get(søknad.barnehageplass.barnBarnehageplassStatus.name()).increment();

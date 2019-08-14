@@ -1,19 +1,19 @@
 package no.nav.familie.ks.sak.app.behandling.resultat;
 
-import no.nav.familie.ks.sak.app.behandling.fastsetting.Vilkårvurdering;
 import no.nav.familie.ks.sak.app.behandling.GradertPeriode;
+import no.nav.familie.ks.sak.app.behandling.SamletVilkårsVurdering;
 
 public class Vedtak {
 
     private GradertPeriode stønadperiode;
-    private Vilkårvurdering vilkårvurdering;
+    private SamletVilkårsVurdering vilkårvurdering;
 
-    public Vedtak(Vilkårvurdering vilkårvurdering, GradertPeriode stønadperiode) {
+    public Vedtak(SamletVilkårsVurdering vilkårvurdering, GradertPeriode stønadperiode) {
         this.vilkårvurdering = vilkårvurdering;
         this.stønadperiode = stønadperiode;
     }
 
-    public Vedtak(Vilkårvurdering vilkårvurdering) {
+    public Vedtak(SamletVilkårsVurdering vilkårvurdering) {
         this.vilkårvurdering = vilkårvurdering;
     }
 
@@ -21,5 +21,5 @@ public class Vedtak {
         return stønadperiode;
     }
 
-    public Vilkårvurdering getVilkårvurdering() { return vilkårvurdering; }
+    public SamletVilkårsVurdering getVilkårvurdering() { return vilkårvurdering; }
 }

@@ -1,6 +1,7 @@
-package no.nav.familie.ks.sak.app.behandling.regler.medlemskap;
+package no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.regel;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
+import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.grunnlag.Forelder;
 import no.nav.familie.ks.sak.app.integrasjon.felles.ws.Tid;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
@@ -11,12 +12,12 @@ import no.nav.fpsak.nare.specification.LeafSpecification;
 
 import java.util.Optional;
 
-@RuleDocumentation(HarVærtBosattFemÅrINorge.ID)
-public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag> {
+@RuleDocumentation(MinstEnErNorskStatsborger.ID)
+public class MinstEnErNorskStatsborger extends LeafSpecification<Faktagrunnlag> {
 
     public static final String ID = "MEDL-2";
 
-    public HarVærtBosattFemÅrINorge() {
+    public MinstEnErNorskStatsborger() {
         super(ID);
     }
 
@@ -24,13 +25,13 @@ public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag>
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
         Forelder forelder = grunnlag.getTpsFakta().getForelder();
         Forelder annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
-        if (bosatt(forelder) || bosatt(annenForelder)) {
+        if (norskStatsborger(forelder) || norskStatsborger(annenForelder)) {
             return ja();
         }
-        return nei();
+        return nei(VilkårIkkeOppfyltÅrsak.IKKE_NORSK_STATSBORGER);
     }
 
-    private boolean bosatt(Forelder forelder) {
+    private boolean norskStatsborger(Forelder forelder) {
         if (forelder == null) {
             return false;
         }

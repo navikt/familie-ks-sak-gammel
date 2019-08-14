@@ -1,6 +1,7 @@
-package no.nav.familie.ks.sak.app.behandling.regler.medlemskap;
+package no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.regel;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
+import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.grunnlag.Forelder;
 import no.nav.familie.ks.sak.app.integrasjon.felles.ws.Tid;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdressePeriode;
@@ -17,14 +18,14 @@ import no.nav.fpsak.tidsserie.StandardCombinators;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
-@RuleDocumentation(MinstEnErNorskStatsborger.ID)
-public class MinstEnErNorskStatsborger extends LeafSpecification<Faktagrunnlag> {
+@RuleDocumentation(HarVærtBosattFemÅrINorge.ID)
+public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag> {
 
-    public static final String ID = "MEDL-1";
+    public static final String ID = "KS-MEDL-1";
     private static int MIN_ANTALL_ÅR = 5;
     private static int ANTALL_DAGER_I_ÅRET = 365;
 
-    public MinstEnErNorskStatsborger() {
+    public HarVærtBosattFemÅrINorge() {
         super(ID);
     }
 
@@ -32,13 +33,13 @@ public class MinstEnErNorskStatsborger extends LeafSpecification<Faktagrunnlag> 
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
         Forelder forelder = grunnlag.getTpsFakta().getForelder();
         Forelder annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
-        if (norskStatsborger(forelder) || norskStatsborger(annenForelder)) {
+        if (bosattFemÅrINorge(forelder) || bosattFemÅrINorge(annenForelder)) {
             return ja();
         }
-        return nei();
+        return nei(VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_I_NORGE_FEM_ÅR);
     }
 
-    private boolean norskStatsborger(Forelder forelder) {
+    private boolean bosattFemÅrINorge(Forelder forelder) {
         if (forelder == null) {
             return false;
         }

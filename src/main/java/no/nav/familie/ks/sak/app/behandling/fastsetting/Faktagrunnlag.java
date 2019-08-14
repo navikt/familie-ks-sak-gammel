@@ -3,14 +3,21 @@ package no.nav.familie.ks.sak.app.behandling.fastsetting;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class Faktagrunnlag {
 
+    private final LocalDate behandlingstidspunkt;
     private TpsFakta tpsFakta;
     private Søknad søknad;
 
     public Faktagrunnlag() {
+        behandlingstidspunkt = LocalDate.now();
+    }
+
+    public LocalDate getBehandlingstidspunkt() {
+        return behandlingstidspunkt;
     }
 
     public TpsFakta getTpsFakta() {

@@ -9,6 +9,7 @@ public class Landkode {
 
     public static final Landkode UDEFINERT = new Landkode("UDEFINERT");
     public static final Landkode NORGE = new Landkode("NOR");
+    public static final Landkode SVERIGE = new Landkode("SWE");
 
     private final String kode;
 

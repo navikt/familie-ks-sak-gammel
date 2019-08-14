@@ -6,10 +6,10 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import java.util.Objects;
 
 public class Forelder {
-    Personinfo personinfo;
-    PersonhistorikkInfo personhistorikkInfo;
+    private Personinfo personinfo;
+    private PersonhistorikkInfo personhistorikkInfo;
 
-    public Forelder() {
+    private Forelder() {
     }
 
     public PersonhistorikkInfo getPersonhistorikkInfo() {
@@ -19,7 +19,6 @@ public class Forelder {
     public Personinfo getPersoninfo() {
         return personinfo;
     }
-
 
     public static final class Builder {
         private Forelder kladd;

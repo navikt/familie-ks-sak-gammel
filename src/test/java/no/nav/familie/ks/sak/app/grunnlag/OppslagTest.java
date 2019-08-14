@@ -1,9 +1,10 @@
-package no.nav.familie.ks.sak;
+package no.nav.familie.ks.sak.app.grunnlag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.grunnlag.Oppslag;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status.PersonstatusType;
+import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import org.junit.Test;
 
 import java.io.File;
@@ -11,7 +12,7 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 public class OppslagTest {
 
-    private static final ObjectMapper oppslagMapper = Oppslag.mapper;
+    private static final ObjectMapper oppslagMapper = new JacksonJsonConfig().objectMapper();
     private static final String NORGE = "NOR";
 
     @Test

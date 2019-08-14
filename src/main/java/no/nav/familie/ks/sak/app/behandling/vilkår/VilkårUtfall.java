@@ -1,7 +1,7 @@
-package no.nav.familie.ks.sak.app.behandling;
+package no.nav.familie.ks.sak.app.behandling.vilkår;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.behandling.resultat.*;
+import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårÅrsak;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-class VilkårUtfall extends LeafSpecification<Faktagrunnlag> {
+public class VilkårUtfall extends LeafSpecification<Faktagrunnlag> {
 
     public static final String UTFALL = "UTFALL";
     public static final String ÅRSAK = "ÅRSAK";
