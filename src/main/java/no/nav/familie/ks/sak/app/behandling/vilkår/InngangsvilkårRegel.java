@@ -7,8 +7,6 @@ public interface InngangsvilkårRegel<T> extends RuleService<T> {
 
     VilkårType getVilkårType();
 
-    default T konverterInput(Faktagrunnlag faktagrunnlag) {
-        return (T) faktagrunnlag;
-    }
+    T konverterInput(Faktagrunnlag faktagrunnlag);
 
 }

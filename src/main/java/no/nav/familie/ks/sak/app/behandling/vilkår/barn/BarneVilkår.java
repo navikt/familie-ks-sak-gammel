@@ -23,6 +23,11 @@ public class BarneVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
     }
 
     @Override
+    public Faktagrunnlag konverterInput(Faktagrunnlag faktagrunnlag) {
+        return faktagrunnlag;
+    }
+
+    @Override
     public Evaluation evaluer(Faktagrunnlag input) {
         return getSpecification().evaluate(input);
     }
