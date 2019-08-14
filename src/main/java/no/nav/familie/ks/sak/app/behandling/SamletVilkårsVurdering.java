@@ -41,6 +41,7 @@ public class SamletVilkårsVurdering {
     public Set<VilkårÅrsak> getÅrsakType() {
         return vurderinger.stream()
                 .map(evaluation -> new Regelresultat(faktagrunnlag, evaluation))
+                .filter(it -> it.getUtfallType().equals(getUtfallType()))
                 .map(Regelresultat::getUtfallÅrsak)
                 .collect(Collectors.toSet());
     }
