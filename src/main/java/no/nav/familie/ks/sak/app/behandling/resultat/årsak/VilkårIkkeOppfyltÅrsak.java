@@ -5,7 +5,7 @@ public enum VilkårIkkeOppfyltÅrsak implements VilkårÅrsak {
     IKKE_FEM_ÅR_MEDLEMSKAP(8301, "Må ha vært medlem av den norske folketrygden i minst fem år"),
     GRADERT_BARNEHAGEPLASS(8302, "Søknaden inneholder gradert barnehageplass"),
     IKKE_BOSATT_I_NORGE_FEM_ÅR(8303, "Ikke bosatt vært bosatt fem år i norge"),
-    BARN_UTENFOR_KONTANTSTØTTE_ALDER(8305, "Ikke bosatt vært bosatt fem år i norge"),
+    BARN_UTENFOR_KONTANTSTØTTE_ALDER(8305, "Barn utenfor kontantstøtte alder"),
     IKKE_NORSK_STATSBORGER(8304, "Ikke norsk statsborger");
 
     private final int årsakKode;
