@@ -6,16 +6,16 @@
     "barnBarnehageplassStatus": "skalBegynneIBarnehage",
     "harBarnehageplass": "JA",
     "harBarnehageplassAntallTimer": "2",
-    "harBarnehageplassDato": "02.01.2020",
+    "harBarnehageplassDato": "2020-01-02",
     "harBarnehageplassKommune": "Bergen",
     "harSluttetIBarnehageAntallTimer": "",
-    "harSluttetIBarnehageDato": "04.01.2019",
+    "harSluttetIBarnehageDato": "2019-01-04",
     "harSluttetIBarnehageKommune": "Asker",
     "skalBegynneIBarnehageAntallTimer": "10",
-    "skalBegynneIBarnehageDato": "01.01.2019",
+    "skalBegynneIBarnehageDato": "2019-01-01",
     "skalBegynneIBarnehageKommune": "Oslo",
     "skalSlutteIBarnehageAntallTimer": "",
-    "skalSlutteIBarnehageDato": "03.01.2019",
+    "skalSlutteIBarnehageDato": "2019-01-03",
     "skalSlutteIBarnehageKommune": "Trondheim"
   },
   "familieforhold": {
@@ -30,7 +30,7 @@
     "skalBoMedBarnetINorgeNesteTolvMaaneder": "JA"
   },
   "mineBarn": {
-    "fodselsdato": "12.12.2018",
+    "fodselsdato": "2018-12-12",
     "navn": "Jakob",
     "erFlerling": "NEI"
   },

@@ -12,7 +12,7 @@
     "harSluttetIBarnehageDato": "",
     "harSluttetIBarnehageKommune": "",
     "skalBegynneIBarnehageAntallTimer": "37",
-    "skalBegynneIBarnehageDato": "01.01.2019",
+    "skalBegynneIBarnehageDato": "2019-01-01",
     "skalBegynneIBarnehageKommune": "Oslo",
     "skalSlutteIBarnehageAntallTimer": "",
     "skalSlutteIBarnehageDato": "",
@@ -30,7 +30,7 @@
     "skalBoMedBarnetINorgeNesteTolvMaaneder": "JA"
   },
   "mineBarn": {
-    "fodselsdato": "12.12.2018",
+    "fodselsdato": "2018-12-12",
     "navn": "Jakob",
     "erFlerling": "NEI"
   },

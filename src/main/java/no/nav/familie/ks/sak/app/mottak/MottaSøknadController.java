@@ -33,14 +33,16 @@ public class MottaSøknadController {
     public ResponseEntity mottaDokument(@RequestHeader(value="Nav-Personident") String personident,
                                         @RequestBody Søknad søknad) {
         Vedtak vedtak = saksbehandling.behandle(søknad, personident);
-        if (vedtak.getVilkårvurdering().getUtfallType().equals(UtfallType.OPPFYLT)) {
+        final var vilkårvurdering = vedtak.getVilkårvurdering();
+        final var årsakType = vilkårvurdering.getÅrsakType().iterator().next();
+        if (vilkårvurdering.getUtfallType().equals(UtfallType.OPPFYLT)) {
             log.info("Søknad kan behandles automatisk. Årsak " +
-                    vedtak.getVilkårvurdering().getVilkårÅrsak().getÅrsakKode() + ": " +
-                    vedtak.getVilkårvurdering().getVilkårÅrsak().getBeskrivelse());
+                    årsakType.getÅrsakKode() + ": " +
+                    årsakType.getBeskrivelse());
         } else {
             log.info("Søknad kan ikke behandles automatisk. Årsak " +
-                    vedtak.getVilkårvurdering().getVilkårÅrsak().getÅrsakKode() + ": " +
-                    vedtak.getVilkårvurdering().getVilkårÅrsak().getBeskrivelse());
+                    årsakType.getÅrsakKode() + ": " +
+                    årsakType.getBeskrivelse());
         }
 
         funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);

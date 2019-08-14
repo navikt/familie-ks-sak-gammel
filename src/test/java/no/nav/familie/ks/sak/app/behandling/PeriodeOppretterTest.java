@@ -5,11 +5,14 @@ import no.nav.familie.ks.sak.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
+import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;
+import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.grunnlag.Oppslag;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import org.junit.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,7 +27,8 @@ public class PeriodeOppretterTest {
     private static final String PERSONIDENT = "123";
 
     private final Oppslag oppslagMock = mock(Oppslag.class);
-    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, new JacksonJsonConfig().objectMapper());
+    private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår()));
+    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, new JacksonJsonConfig().objectMapper());
 
     @Test
     public void at_søknad_med_gradert_barnehage_gir_feil() {

@@ -1,6 +1,8 @@
 package no.nav.familie.ks.sak.app.behandling.resultat.årsak;
 
-public interface VilkårÅrsak {
+import no.nav.fpsak.nare.evaluation.RuleReasonRef;
+
+public interface VilkårÅrsak extends RuleReasonRef {
 
     default String getKode() {
         return "" + getÅrsakKode();

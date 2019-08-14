@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.regler.medlemskap;
+package no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.regel;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
@@ -8,7 +8,6 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighe
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.StatsborgerskapPeriode;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
-import no.nav.fpsak.nare.evaluation.RuleReasonRefImpl;
 import no.nav.fpsak.nare.specification.LeafSpecification;
 
 import java.util.Optional;
@@ -29,7 +28,7 @@ public class MinstEnErNorskStatsborger extends LeafSpecification<Faktagrunnlag> 
         if (norskStatsborger(forelder) || norskStatsborger(annenForelder)) {
             return ja();
         }
-        return nei(new RuleReasonRefImpl(VilkårIkkeOppfyltÅrsak.IKKE_NORSK_STATSBORGER.getKode(), VilkårIkkeOppfyltÅrsak.IKKE_NORSK_STATSBORGER.getBeskrivelse()));
+        return nei(VilkårIkkeOppfyltÅrsak.IKKE_NORSK_STATSBORGER);
     }
 
     private boolean norskStatsborger(Forelder forelder) {

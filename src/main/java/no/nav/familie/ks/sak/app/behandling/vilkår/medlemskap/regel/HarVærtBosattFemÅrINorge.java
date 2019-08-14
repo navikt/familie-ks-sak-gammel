@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.regler.medlemskap;
+package no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.regel;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
@@ -9,7 +9,6 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.Adr
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
-import no.nav.fpsak.nare.evaluation.RuleReasonRefImpl;
 import no.nav.fpsak.nare.specification.LeafSpecification;
 import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.fpsak.tidsserie.LocalDateSegment;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 @RuleDocumentation(HarVærtBosattFemÅrINorge.ID)
 public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag> {
 
-    public static final String ID = "MEDL-1";
+    public static final String ID = "KS-MEDL-1";
     private static int MIN_ANTALL_ÅR = 5;
     private static int ANTALL_DAGER_I_ÅRET = 365;
 
@@ -37,7 +36,7 @@ public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag>
         if (bosattFemÅrINorge(forelder) || bosattFemÅrINorge(annenForelder)) {
             return ja();
         }
-        return nei(new RuleReasonRefImpl(VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_I_NORGE_FEM_ÅR.getKode(), VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_I_NORGE_FEM_ÅR.getBeskrivelse()));
+        return nei(VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_I_NORGE_FEM_ÅR);
     }
 
     private boolean bosattFemÅrINorge(Forelder forelder) {

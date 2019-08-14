@@ -21,4 +21,14 @@ public enum VilkårOppfyltÅrsak implements VilkårÅrsak {
     public String getBeskrivelse() {
         return beskrivelse;
     }
+
+    @Override
+    public String getReasonTextTemplate() {
+        return beskrivelse;
+    }
+
+    @Override
+    public String getReasonCode() {
+        return "" + årsakKode;
+    }
 }

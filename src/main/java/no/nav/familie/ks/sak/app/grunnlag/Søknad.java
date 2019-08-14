@@ -17,11 +17,11 @@ public class Søknad {
     public Barnehageplass barnehageplass;
     public ArbeidIUtlandet arbeidIUtlandet;
     public UtenlandskKontantstotte utenlandskKontantstotte;
-    public Barn mineBarn;
     public TilknytningTilUtland tilknytningTilUtland;
     public UtenlandskeYtelser utenlandskeYtelser;
     public Oppsummering oppsummering;
     public String sprak;
+    private Barn mineBarn;
 
     public Søknad() {
         this.veiledning = new Veiledning();
@@ -43,5 +43,9 @@ public class Søknad {
 
     public void markerInnsendingsTidspunkt() {
         innsendingsTidspunkt = now();
+    }
+
+    public Barn getMineBarn() {
+        return mineBarn;
     }
 }

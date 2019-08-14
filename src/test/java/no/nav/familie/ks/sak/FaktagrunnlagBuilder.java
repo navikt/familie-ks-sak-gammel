@@ -30,6 +30,14 @@ public final class FaktagrunnlagBuilder {
             .medAdresse("testadresse")
             .medNavn("test testesen")
             .build();
+    private static Personinfo personinfoSvensk = new Personinfo.Builder()
+            .medStatsborgerskap(Landkode.SVERIGE)
+            .medFødselsdato(LocalDate.now().minusYears(30))
+            .medAktørId(new AktørId("12345678910"))
+            .medPersonIdent(new PersonIdent("12345678910"))
+            .medAdresse("testadresse")
+            .medNavn("test testesen")
+            .build();
     private static Personinfo personinfoUtland = new Personinfo.Builder()
             .medStatsborgerskap(Landkode.UDEFINERT)
             .medFødselsdato(LocalDate.now().minusYears(30))
@@ -69,6 +77,9 @@ public final class FaktagrunnlagBuilder {
     private static StatsborgerskapPeriode norskStatsborgerskapSeksÅr = new StatsborgerskapPeriode(
             new Periode(LocalDate.now().minusYears(6), Tid.TIDENES_ENDE),
             Landkode.NORGE);
+    private static StatsborgerskapPeriode svenskStatsborger = new StatsborgerskapPeriode(
+            new Periode(LocalDate.now().minusYears(6), Tid.TIDENES_ENDE),
+            Landkode.SVERIGE);
     private static StatsborgerskapPeriode norskStatsborgerskapEtÅr = new StatsborgerskapPeriode(
             new Periode(LocalDate.now().minusYears(1), Tid.TIDENES_ENDE),
             Landkode.NORGE);
@@ -76,6 +87,11 @@ public final class FaktagrunnlagBuilder {
             .medAktørId("12345678910")
             .leggTil(norskAdresseSeksÅr)
             .leggTil(norskStatsborgerskapSeksÅr)
+            .build();
+    private static PersonhistorikkInfo svenskMenNorgeSeksÅr = new PersonhistorikkInfo.Builder()
+            .medAktørId("12345678910")
+            .leggTil(norskAdresseSeksÅr)
+            .leggTil(svenskStatsborger)
             .build();
     private static PersonhistorikkInfo norgeEtÅr = new PersonhistorikkInfo.Builder()
             .medAktørId("12345678910")
@@ -89,6 +105,15 @@ public final class FaktagrunnlagBuilder {
     static TpsFakta beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder = new TpsFakta.Builder()
             .medForelder(forelderNorsk)
             .medAnnenForelder(forelderNorsk)
+            .medBarn(barnGyldigAlder)
+            .build();
+    private static Forelder foreldreIkkeNorskMenBoddNorge = new Forelder.Builder()
+            .medPersoninfo(personinfoSvensk)
+            .medPersonhistorikkInfo(svenskMenNorgeSeksÅr)
+            .build();
+    static TpsFakta beggeForeldreIkkeNorskMenBoddFemINorge = new TpsFakta.Builder()
+            .medForelder(foreldreIkkeNorskMenBoddNorge)
+            .medAnnenForelder(foreldreIkkeNorskMenBoddNorge)
             .medBarn(barnGyldigAlder)
             .build();
     private static Forelder forelderUtland = new Forelder.Builder()
@@ -131,6 +156,13 @@ public final class FaktagrunnlagBuilder {
                 .build();
     }
 
+    public static Faktagrunnlag beggeForeldreIkkeNorskStatsborgerMenBorINorge() {
+        return new Faktagrunnlag.Builder()
+                .medTpsFakta(beggeForeldreIkkeNorskMenBoddFemINorge)
+                .medSøknad(utenBarnehageplass())
+                .build();
+    }
+
     private static Søknad utenBarnehageplass() {
         try {
             return mapper.readValue(new File(getFile("soknadUtenBarnehageplass.json")), Søknad.class);
@@ -141,7 +173,7 @@ public final class FaktagrunnlagBuilder {
 
     private static Søknad medBarnehageplass() {
         try {
-            return mapper.readValue(new File(getFile("soknadMedBarnehageplass.json")), Søknad.class);
+            return mapper.readValue(new File(getFile("soknadFullBarnehageplass.json")), Søknad.class);
         } catch (IOException e) {
             throw new IOError(e);
         }
