@@ -15,12 +15,14 @@ import java.util.Optional;
 
 public class Regelresultat {
 
+    private final VilkårType vilkårType;
     private final Faktagrunnlag faktagrunnlag;
     private final Evaluation evaluation;
     private final EvaluationSummary evaluationSummary;
     private final ObjectMapper objectMapper = new JacksonJsonConfig().objectMapper();
 
-    public Regelresultat(Faktagrunnlag faktagrunnlag, Evaluation evaluation) {
+    public Regelresultat(VilkårType vilkårType, Faktagrunnlag faktagrunnlag, Evaluation evaluation) {
+        this.vilkårType = vilkårType;
         this.faktagrunnlag = faktagrunnlag;
         this.evaluation = evaluation;
         this.evaluationSummary = new EvaluationSummary(this.evaluation);
@@ -62,4 +64,7 @@ public class Regelresultat {
         return first.map(evaluation -> evaluation.getEvaluationProperties().get(tag)).orElse(null);
     }
 
+    public VilkårType getVilkårType() {
+        return vilkårType;
+    }
 }

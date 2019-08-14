@@ -5,15 +5,22 @@ import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅ
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Sluttpunkt;
+import no.nav.familie.ks.sak.app.behandling.vilkår.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barn.regel.HarIkkeGradertBarnehageplass;
-import no.nav.fpsak.nare.RuleService;
 import no.nav.fpsak.nare.Ruleset;
+import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BarneVilkår implements RuleService<Faktagrunnlag>, InngangsvilkårRegel {
+@RuleDocumentation(VilkårType.Constants.BARNEHAGE_KODE)
+public class BarneVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
+
+    @Override
+    public VilkårType getVilkårType() {
+        return VilkårType.BARNEHAGE;
+    }
 
     @Override
     public Evaluation evaluer(Faktagrunnlag input) {

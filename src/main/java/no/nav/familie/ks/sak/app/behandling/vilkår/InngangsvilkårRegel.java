@@ -1,10 +1,14 @@
 package no.nav.familie.ks.sak.app.behandling.vilkår;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.fpsak.nare.evaluation.Evaluation;
+import no.nav.fpsak.nare.RuleService;
 
-public interface InngangsvilkårRegel {
+public interface InngangsvilkårRegel<T> extends RuleService<T> {
 
-    Evaluation evaluer(Faktagrunnlag input);
+    VilkårType getVilkårType();
+
+    default T konverterInput(Faktagrunnlag faktagrunnlag) {
+        return (T) faktagrunnlag;
+    }
 
 }

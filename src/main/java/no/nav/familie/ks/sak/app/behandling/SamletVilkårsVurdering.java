@@ -4,31 +4,33 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårÅrsak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Regelresultat;
+import no.nav.familie.ks.sak.app.behandling.vilkår.VilkårType;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SamletVilkårsVurdering {
 
-    private final List<Evaluation> vurderinger;
+    private final Map<VilkårType, Evaluation> vurderinger;
     private final Faktagrunnlag faktagrunnlag;
 
-    SamletVilkårsVurdering(List<Evaluation> vurderinger, Faktagrunnlag faktagrunnlag) {
+    SamletVilkårsVurdering(Map<VilkårType, Evaluation> vurderinger, Faktagrunnlag faktagrunnlag) {
         this.vurderinger = vurderinger;
         this.faktagrunnlag = faktagrunnlag;
     }
 
     public List<Regelresultat> getResultater() {
-        return vurderinger.stream()
-                .map(evaluation -> new Regelresultat(faktagrunnlag, evaluation))
+        return vurderinger.entrySet().stream()
+                .map(entry -> new Regelresultat(entry.getKey(), faktagrunnlag, entry.getValue()))
                 .collect(Collectors.toList());
     }
 
     public UtfallType getUtfallType() {
-        final var utfall = vurderinger.stream()
-                .map(evaluation -> new Regelresultat(faktagrunnlag, evaluation))
+        final var utfall = getResultater()
+                .stream()
                 .map(Regelresultat::getUtfallType)
                 .distinct()
                 .collect(Collectors.toList());
@@ -39,8 +41,8 @@ public class SamletVilkårsVurdering {
     }
 
     public Set<VilkårÅrsak> getÅrsakType() {
-        return vurderinger.stream()
-                .map(evaluation -> new Regelresultat(faktagrunnlag, evaluation))
+        return getResultater()
+                .stream()
                 .filter(it -> it.getUtfallType().equals(getUtfallType()))
                 .map(Regelresultat::getUtfallÅrsak)
                 .collect(Collectors.toSet());
