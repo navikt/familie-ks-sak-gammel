@@ -87,7 +87,7 @@ public class Oppslag {
         return null;
     }
 
-    private Personinfo finnBarnSøktFor(Søknad søknad, Personinfo personinfo) {
+    private Personinfo finnBarnSøktFor(Søknad søknad, Personinfo forelder) {
         return hentPersonFor("123");
         // TODO: Fnr for valgt barn bør sendes med søknad.
         // TODO: Sjekk om barn er i familierelasjon og returner personinfo for barn
@@ -121,6 +121,23 @@ public class Oppslag {
                 throw new OppslagException(response.body());
             } else {
                 return mapper.readValue(response.body(), PersonhistorikkInfo.class);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+        }
+    }
+
+    private Personinfo hentPersoninfoFor(String aktørId) {
+        URI uri = URI.create(oppslagServiceUri + "/personopplysning/info?id=" + aktørId );
+        logger.info("Henter personinfo fra " + oppslagServiceUri);
+        try {
+            HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != HttpStatus.OK.value()) {
+                logger.warn("Kall mot oppslag feilet ved uthenting av personinfo: " + response.body());
+                throw new OppslagException(response.body());
+            } else {
+                return mapper.readValue(response.body(), Personinfo.class);
             }
         } catch (IOException | InterruptedException e) {
             logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
