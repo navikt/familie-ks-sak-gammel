@@ -2,7 +2,11 @@ package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Periode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status.PersonstatusType;
 
 public class Familierelasjon {
     private PersonIdent personIdent;
@@ -15,8 +19,12 @@ public class Familierelasjon {
      * @deprecated bruk ctor med PersonIdent
      */
     @Deprecated
-    public Familierelasjon(String fnr, RelasjonsRolleType relasjonsrolle, LocalDate fødselsdato,
-                           String adresse, Boolean harSammeBosted) {
+    @JsonCreator
+    public Familierelasjon(@JsonProperty("fnr") String fnr,
+                           @JsonProperty("relasjonsrolle") RelasjonsRolleType relasjonsrolle,
+                           @JsonProperty("fødselsdato") LocalDate fødselsdato,
+                           @JsonProperty("adresse") String adresse,
+                           @JsonProperty("harSammeBosted") Boolean harSammeBosted) {
 
         this(PersonIdent.fra(fnr), relasjonsrolle, fødselsdato, adresse, harSammeBosted);
     }
