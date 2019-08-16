@@ -19,7 +19,7 @@
     "skalSlutteIBarnehageKommune": ""
   },
   "familieforhold": {
-    "annenForelderFodselsnummer": "",
+    "annenForelderFødselsnummer": "",
     "annenForelderNavn": "",
     "borForeldreneSammenMedBarnet": "JA"
   },
@@ -30,7 +30,8 @@
     "skalBoMedBarnetINorgeNesteTolvMaaneder": "JA"
   },
   "mineBarn": {
-    "fodselsdato": "2018-12-12",
+    "fødselsdato": "2018-12-12",
+    "fødselsnummer": "11111111111",
     "navn": "Jakob",
     "erFlerling": "NEI"
   },

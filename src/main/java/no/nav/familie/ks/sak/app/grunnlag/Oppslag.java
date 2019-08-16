@@ -2,8 +2,6 @@ package no.nav.familie.ks.sak.app.grunnlag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.sts.StsRestClient;
@@ -62,8 +60,8 @@ public class Oppslag {
 
     public TpsFakta hentTpsFakta(Søknad søknad, String personident) {
         Forelder forelder = genererForelder(hentAktørId(personident));
-        Forelder annenForelder = finnAnnenForelder(søknad);
-        Personinfo barn = finnBarnSøktFor(søknad, forelder.getPersoninfo());
+        Forelder annenForelder = hentAnnenForelder(søknad);
+        Personinfo barn = hentBarnSøktFor(søknad);
         return new TpsFakta.Builder()
                 .medForelder(forelder)
                 .medBarn(barn)
@@ -74,12 +72,12 @@ public class Oppslag {
     private Forelder genererForelder(String aktørId) {
         return new Forelder.Builder()
                 .medPersonhistorikkInfo(hentHistorikkFor(aktørId))
-                .medPersoninfo(hentPersonFor(aktørId))
+                .medPersoninfo(hentPersoninfoFor(aktørId))
                 .build();
     }
 
-    private Forelder finnAnnenForelder(Søknad søknad) {
-        String personident = søknad.familieforhold.annenForelderFodselsnummer;
+    private Forelder hentAnnenForelder(Søknad søknad) {
+        String personident = søknad.familieforhold.annenForelderFødselsnummer;
         if (!personident.isEmpty()) {
             String aktørId = hentAktørId(personident);
             return genererForelder(aktørId);
@@ -87,10 +85,10 @@ public class Oppslag {
         return null;
     }
 
-    private Personinfo finnBarnSøktFor(Søknad søknad, Personinfo forelder) {
-        return hentPersonFor("123");
-        // TODO: Fnr for valgt barn bør sendes med søknad.
-        // TODO: Sjekk om barn er i familierelasjon og returner personinfo for barn
+    private Personinfo hentBarnSøktFor(Søknad søknad) {
+        String fødselsnummer = søknad.getMineBarn().getFødselsnummer();
+        String aktørId = hentAktørId(fødselsnummer);
+        return hentPersoninfoFor(aktørId);
     }
 
     private String hentAktørId(String personident) {
@@ -147,15 +145,5 @@ public class Oppslag {
 
     private String formaterDato(LocalDate date) {
         return date.format(DateTimeFormatter.ISO_DATE);
-    }
-
-    private Personinfo hentPersonFor(String aktørId) {
-        //TODO: Hent når implementert i oppslag. Personinfo brukes foreløpig ikke i noen regler.
-        return Personinfo.builder()
-                .medAktørId(new AktørId("1111111111111"))
-                .medPersonIdent(new PersonIdent("11111111111"))
-                .medNavn("Navn Navnesen")
-                .medFødselsdato(LocalDate.now())
-                .build();
     }
 }
