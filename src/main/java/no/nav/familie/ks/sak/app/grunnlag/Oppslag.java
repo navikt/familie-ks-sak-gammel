@@ -2,8 +2,6 @@ package no.nav.familie.ks.sak.app.grunnlag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.sts.StsRestClient;
@@ -62,8 +60,8 @@ public class Oppslag {
 
     public TpsFakta hentTpsFakta(Søknad søknad, String personident) {
         Forelder forelder = genererForelder(hentAktørId(personident));
-        Forelder annenForelder = finnAnnenForelder(søknad);
-        Personinfo barn = finnBarnSøktFor(søknad, forelder.getPersoninfo());
+        Forelder annenForelder = hentAnnenForelder(søknad);
+        Personinfo barn = hentBarnSøktFor(søknad);
         return new TpsFakta.Builder()
                 .medForelder(forelder)
                 .medBarn(barn)
@@ -74,12 +72,12 @@ public class Oppslag {
     private Forelder genererForelder(String aktørId) {
         return new Forelder.Builder()
                 .medPersonhistorikkInfo(hentHistorikkFor(aktørId))
-                .medPersoninfo(hentPersonFor(aktørId))
+                .medPersoninfo(hentPersoninfoFor(aktørId))
                 .build();
     }
 
-    private Forelder finnAnnenForelder(Søknad søknad) {
-        String personident = søknad.familieforhold.annenForelderFodselsnummer;
+    private Forelder hentAnnenForelder(Søknad søknad) {
+        String personident = søknad.familieforhold.annenForelderFødselsnummer;
         if (!personident.isEmpty()) {
             String aktørId = hentAktørId(personident);
             return genererForelder(aktørId);
@@ -87,10 +85,10 @@ public class Oppslag {
         return null;
     }
 
-    private Personinfo finnBarnSøktFor(Søknad søknad, Personinfo personinfo) {
-        return hentPersonFor("123");
-        // TODO: Fnr for valgt barn bør sendes med søknad.
-        // TODO: Sjekk om barn er i familierelasjon og returner personinfo for barn
+    private Personinfo hentBarnSøktFor(Søknad søknad) {
+        String fødselsnummer = søknad.getMineBarn().getFødselsnummer();
+        String aktørId = hentAktørId(fødselsnummer);
+        return hentPersoninfoFor(aktørId);
     }
 
     private String hentAktørId(String personident) {
@@ -128,17 +126,24 @@ public class Oppslag {
         }
     }
 
-    private String formaterDato(LocalDate date) {
-        return date.format(DateTimeFormatter.ISO_DATE);
+    private Personinfo hentPersoninfoFor(String aktørId) {
+        URI uri = URI.create(oppslagServiceUri + "/personopplysning/info?id=" + aktørId );
+        logger.info("Henter personinfo fra " + oppslagServiceUri);
+        try {
+            HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != HttpStatus.OK.value()) {
+                logger.warn("Kall mot oppslag feilet ved uthenting av personinfo: " + response.body());
+                throw new OppslagException(response.body());
+            } else {
+                return mapper.readValue(response.body(), Personinfo.class);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+        }
     }
 
-    private Personinfo hentPersonFor(String aktørId) {
-        //TODO: Hent når implementert i oppslag. Personinfo brukes foreløpig ikke i noen regler.
-        return Personinfo.builder()
-                .medAktørId(new AktørId("1111111111111"))
-                .medPersonIdent(new PersonIdent("11111111111"))
-                .medNavn("Navn Navnesen")
-                .medFødselsdato(LocalDate.now())
-                .build();
+    private String formaterDato(LocalDate date) {
+        return date.format(DateTimeFormatter.ISO_DATE);
     }
 }

@@ -6,22 +6,27 @@ import java.time.format.DateTimeParseException;
 
 public class Barn {
     private String navn;
-    private String fodselsdato;
+    private String fødselsdato;
+    private String fødselsnummer;
     private String erFlerling;
 
     public String getNavn() {
         return navn;
     }
 
-    public LocalDate getFodselsdato() {
-        if (fodselsdato == null) {
+    public LocalDate getFødselsdato() {
+        if (fødselsdato == null) {
             return null;
         }
         try {
-            return LocalDate.parse(fodselsdato, DateTimeFormatter.ISO_DATE);
+            return LocalDate.parse(fødselsdato, DateTimeFormatter.ISO_DATE);
         } catch (DateTimeParseException e) {
             return null;
         }
+    }
+
+    public String getFødselsnummer() {
+        return fødselsnummer;
     }
 
     public String getErFlerling() {
