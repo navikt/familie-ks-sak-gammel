@@ -85,13 +85,17 @@ public class Oppslag {
     private Forelder hentAnnenForelder(Personinfo barn, Forelder forelder) {
         Set<RelasjonsRolleType> foreldreRelasjoner = new HashSet<>(Arrays.asList(RelasjonsRolleType.FARA, RelasjonsRolleType.MEDMOR, RelasjonsRolleType.MORA));
         PersonIdent søker = forelder.getPersoninfo().getPersonIdent();
-        Optional<String> annenForelder = barn.getFamilierelasjoner().stream()
-                .filter( relasjon ->  ! relasjon.getPersonIdent().equals(søker))
-                .filter( relasjon -> foreldreRelasjoner.contains(relasjon.getRelasjonsrolle()))
-                .map( relasjon -> relasjon.getPersonIdent().getIdent() )
-                .findFirst();
-
-        return annenForelder.map(this::genererForelder).orElse(null);
+        try {
+            Optional<String> annenForelder = barn.getFamilierelasjoner().stream()
+                    .filter( relasjon ->  ! relasjon.getPersonIdent().equals(søker))
+                    .filter( relasjon -> foreldreRelasjoner.contains(relasjon.getRelasjonsrolle()))
+                    .map( relasjon -> relasjon.getPersonIdent().getIdent() )
+                    .findFirst();
+            return genererForelder(hentAktørId(annenForelder.get()));
+        }
+        catch (NullPointerException e) {
+            return null;
+        }
     }
 
     private Personinfo hentBarnSøktFor(Søknad søknad) {
