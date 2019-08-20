@@ -1,38 +1,34 @@
-package no.nav.familie.ks.sak.app.behandling.domene.søknad;
+package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
 import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 
 import javax.persistence.*;
 
-@Entity(name = "SøknadGrunnlag")
+@Entity
 @Table(name = "GR_SOKNAD")
-public class SøknadGrunnlagEntitet extends BaseEntitet {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class SøknadGrunnlag extends BaseEntitet<Long> {
 
     @OneToOne
     @JoinColumn(name = "behandling_id", nullable = false, updatable = false, unique = true)
     private Behandling behandling;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "soknad_id", nullable = false, updatable = false, unique = true)
-    private SøknadEntitet søknad;
+    private Søknad søknad;
 
     @Column(name = "aktiv", nullable = false)
     private boolean aktiv = true;
 
-    SøknadGrunnlagEntitet() {
+    SøknadGrunnlag() {
     }
 
-    SøknadGrunnlagEntitet(Behandling behandling, SøknadEntitet søknad) {
+    SøknadGrunnlag(Behandling behandling, Søknad søknad) {
         this.behandling = behandling;
         this.søknad = søknad;
     }
 
-    public SøknadEntitet getSøknad() {
+    public Søknad getSøknad() {
         return søknad;
     }
 

@@ -1,15 +1,13 @@
 package no.nav.familie.ks.sak.app.behandling.domene;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity(name = "Fagsak")
 @Table(name = "FAGSAK")
-public class Fagsak extends BaseEntitet {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Fagsak extends BaseEntitet<Long> {
 
     @Column(name = "aktoer_id", nullable = false)
     private String aktørId;
@@ -68,7 +66,7 @@ public class Fagsak extends BaseEntitet {
     @Override
     public String toString() {
         return "Fagsak{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", aktørId='" + aktørId + '\'' +
                 ", saksnummer='" + saksnummer + '\'' +
                 '}';

@@ -1,15 +1,14 @@
 package no.nav.familie.ks.sak.app.behandling.domene;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity(name = "Behandling")
 @Table(name = "BEHANDLING")
-public class Behandling extends BaseEntitet {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Behandling extends BaseEntitet<Long> {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "fagsak_id", nullable = false, updatable = false)
@@ -26,6 +25,14 @@ public class Behandling extends BaseEntitet {
 
     public static Behandling.Builder forFørstegangssøknad(Fagsak fagsak) {
         return new Builder(fagsak);
+    }
+
+    @Override
+    public String toString() {
+        return "Behandling{" +
+                "id=" + getId() +
+                "fagsak=" + fagsak +
+                '}';
     }
 
     public Fagsak getFagsak() {

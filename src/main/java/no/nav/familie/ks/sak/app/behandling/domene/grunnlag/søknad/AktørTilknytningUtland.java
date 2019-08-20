@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.domene.søknad;
+package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
 import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 import no.nav.familie.ks.sak.app.grunnlag.søknad.TilknytningTilUtland;
@@ -8,11 +8,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "SO_AKTOER_TILKNYTNING_UTLAND")
-public class AktørTilknytningUtland extends BaseEntitet {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class AktørTilknytningUtland extends BaseEntitet<Long> {
 
     @Column(name = "aktoer", nullable = false, updatable = false)
     private String aktør;
@@ -30,9 +26,8 @@ public class AktørTilknytningUtland extends BaseEntitet {
     AktørTilknytningUtland() {
     }
 
-    public AktørTilknytningUtland(String aktør, OppgittUtlandsTilknytning utlandsTilknytning, TilknytningTilUtland.TilknytningTilUtlandVerdier tilknytningTilUtland, String tilknytningTilUtlandForklaring) {
+    public AktørTilknytningUtland(String aktør, TilknytningTilUtland.TilknytningTilUtlandVerdier tilknytningTilUtland, String tilknytningTilUtlandForklaring) {
         this.aktør = aktør;
-        this.utlandsTilknytning = utlandsTilknytning;
         this.tilknytningTilUtland = tilknytningTilUtland;
         this.tilknytningTilUtlandForklaring = tilknytningTilUtlandForklaring;
     }
@@ -50,19 +45,19 @@ public class AktørTilknytningUtland extends BaseEntitet {
         return Objects.hash(aktør);
     }
 
+    AktørTilknytningUtland setUtlandsTilknytning(OppgittUtlandsTilknytning utlandsTilknytning) {
+        this.utlandsTilknytning = utlandsTilknytning;
+        return this;
+    }
+
     public class Builder {
         private String aktør;
-        private OppgittUtlandsTilknytning utlandsTilknytning;
         private TilknytningTilUtland.TilknytningTilUtlandVerdier tilknytningTilUtland;
         private String tilknytningTilUtlandForklaring;
 
         public Builder setAktør(String aktør) {
+            Objects.requireNonNull(aktør, "aktør");
             this.aktør = aktør;
-            return this;
-        }
-
-        public Builder setUtlandsTilknytning(OppgittUtlandsTilknytning utlandsTilknytning) {
-            this.utlandsTilknytning = utlandsTilknytning;
             return this;
         }
 
@@ -77,7 +72,7 @@ public class AktørTilknytningUtland extends BaseEntitet {
         }
 
         public AktørTilknytningUtland build() {
-            return new AktørTilknytningUtland(aktør, utlandsTilknytning, tilknytningTilUtland, tilknytningTilUtlandForklaring);
+            return new AktørTilknytningUtland(aktør, tilknytningTilUtland, tilknytningTilUtlandForklaring);
         }
     }
 }

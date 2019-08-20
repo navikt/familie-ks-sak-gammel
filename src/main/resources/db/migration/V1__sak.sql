@@ -168,25 +168,25 @@ CREATE TABLE SO_FAMILIEFORHOLD
     ENDRET_TID                  TIMESTAMP(3)
 );
 
-create table GR_BARN_OG_BARNEHAGE
+create table GR_BARNEHAGE_BARN
 (
-    ID            serial primary key,
-    BEHANDLING_ID bigint references BEHANDLING (id)   not null,
-    OPPGITT_ID    bigint REFERENCES SO_FAMILIEFORHOLD (ID),
-    AKTIV         boolean      default true           not null,
-    VERSJON       bigint       default 0              not null,
-    OPPRETTET_AV  VARCHAR(20)  default 'VL'           not null,
-    OPPRETTET_TID TIMESTAMP(3) default localtimestamp not null,
-    ENDRET_AV     VARCHAR(20),
-    ENDRET_TID    TIMESTAMP(3)
+    ID                        serial primary key,
+    BEHANDLING_ID             bigint references BEHANDLING (id)   not null,
+    OPPGITT_FAMILIEFORHOLD_ID bigint REFERENCES SO_FAMILIEFORHOLD (ID),
+    AKTIV                     boolean      default true           not null,
+    VERSJON                   bigint       default 0              not null,
+    OPPRETTET_AV              VARCHAR(20)  default 'VL'           not null,
+    OPPRETTET_TID             TIMESTAMP(3) default localtimestamp not null,
+    ENDRET_AV                 VARCHAR(20),
+    ENDRET_TID                TIMESTAMP(3)
 );
 
-create index on GR_BARN_OG_BARNEHAGE (BEHANDLING_ID);
-create index on GR_BARN_OG_BARNEHAGE (OPPGITT_ID);
-create index on GR_BARN_OG_BARNEHAGE (AKTIV);
+create index on GR_BARNEHAGE_BARN (BEHANDLING_ID);
+create index on GR_BARNEHAGE_BARN (OPPGITT_FAMILIEFORHOLD_ID);
+create index on GR_BARNEHAGE_BARN (AKTIV);
 
 CREATE UNIQUE INDEX UIDX_GR_BARN_OG_BARNEHAGE_01
-    ON GR_BARN_OG_BARNEHAGE
+    ON GR_BARNEHAGE_BARN
         (
          (CASE
               WHEN AKTIV = true

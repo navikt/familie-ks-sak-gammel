@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.domene;
+package no.nav.familie.ks.sak.app.behandling.domene.kodeverk;
 
 import java.util.Arrays;
 

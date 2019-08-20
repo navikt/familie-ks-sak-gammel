@@ -1,18 +1,14 @@
-package no.nav.familie.ks.sak.app.behandling.domene.søknad;
+package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
 import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
-import no.nav.familie.ks.sak.app.behandling.domene.Standpunkt;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "SO_AKTOER_ARBEID_YTELSE_UTLAND")
-public class AktørArbeidYtelseUtland extends BaseEntitet {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class AktørArbeidYtelseUtland extends BaseEntitet<Long> {
 
     @Column(name = "aktoer", nullable = false, updatable = false)
     private String aktørId;

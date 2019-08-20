@@ -3,10 +3,10 @@ package no.nav.familie.ks.sak;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.behandling.*;
-import no.nav.familie.ks.sak.app.behandling.domene.Standpunkt;
-import no.nav.familie.ks.sak.app.behandling.domene.søknad.OppgittFamilieforhold;
-import no.nav.familie.ks.sak.app.behandling.domene.søknad.SøknadBarn;
-import no.nav.familie.ks.sak.app.behandling.domene.søknad.SøknadEntitet;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barn;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.OppgittFamilieforhold;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
@@ -53,15 +53,15 @@ public class Saksbehandling {
         familieforholdBuilder.setBarna(Set.of(søknadBarnBuilder.build()));
         familieforholdBuilder.setBorBeggeForeldreSammen(Standpunkt.map(søknad.familieforhold.borForeldreneSammenMedBarnet).equals(Standpunkt.JA));
 
-        new SøknadEntitet()
+        new Søknad();
     }
 
-    private SøknadBarn.Builder mapSøknadBarn(Søknad søknad) {
-        final var builder = new SøknadBarn.Builder();
+    private Barn.Builder mapSøknadBarn(Søknad søknad) {
+        final var builder = new Barn.Builder();
         final var mineBarn = søknad.getMineBarn();
         final var barnehageplass = søknad.barnehageplass;
         builder.setAktørId(mineBarn.getFødselsnummer())
-                .setBarnehageStatus(barnehageplass.barnBarnehageplassStatus);
+                .setBarnehageStatus(BarnehageplassStatus.map(barnehageplass.barnBarnehageplassStatus.name()));
         switch (barnehageplass.barnBarnehageplassStatus) {
             case harBarnehageplass:
                 builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.harBarnehageplassAntallTimer))

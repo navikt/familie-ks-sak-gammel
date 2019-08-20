@@ -1,5 +1,7 @@
 package no.nav.familie.ks.sak.app.behandling.domene;
 
+import org.springframework.data.jpa.domain.AbstractPersistable;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -10,14 +12,14 @@ import java.time.LocalDateTime;
  * opprettet eller oppdatert en rad, og når).
  */
 @MappedSuperclass
-public abstract class BaseEntitet implements Serializable {
+public abstract class BaseEntitet<T extends Serializable> extends AbstractPersistable<T> implements Serializable {
 
     private static final String BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES = "VL";
 
-    @Column(name = "opprettet_av", nullable = false, updatable=false)
+    @Column(name = "opprettet_av", nullable = false, updatable = false)
     private String opprettetAv;
 
-    @Column(name = "opprettet_tid", nullable = false, updatable=false)
+    @Column(name = "opprettet_tid", nullable = false, updatable = false)
     private LocalDateTime opprettetTidspunkt; // NOSONAR
 
     @Column(name = "endret_av")
@@ -29,6 +31,11 @@ public abstract class BaseEntitet implements Serializable {
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
+
+    private static String finnBrukernavn() {
+        String brukerident = null; // FIXME hent fra auth context
+        return brukerident != null ? brukerident : BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES;
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -56,11 +63,5 @@ public abstract class BaseEntitet implements Serializable {
 
     public LocalDateTime getEndretTidspunkt() {
         return endretTidspunkt;
-    }
-
-
-    private static String finnBrukernavn() {
-        String brukerident = null; // FIXME hent fra auth context
-        return brukerident != null ? brukerident : BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES;
     }
 }

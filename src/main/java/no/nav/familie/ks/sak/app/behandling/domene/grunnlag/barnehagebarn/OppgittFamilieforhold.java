@@ -1,21 +1,21 @@
-package no.nav.familie.ks.sak.app.behandling.domene.søknad;
+package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn;
 
 import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "SO_FAMILIEFORHOLD")
-public class OppgittFamilieforhold extends BaseEntitet {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class OppgittFamilieforhold extends BaseEntitet<Long> {
 
     @OneToMany(mappedBy = "familieforhold")
-    private Set<SøknadBarn> barna;
+    private Set<Barn> barna;
 
     @Column(name = "bor_begge_sammen_med_barnet")
     private boolean borBeggeForeldreSammen;
@@ -24,12 +24,12 @@ public class OppgittFamilieforhold extends BaseEntitet {
         // hibernate
     }
 
-    private OppgittFamilieforhold(Set<SøknadBarn> barna, boolean borBeggeForeldreSammen) {
+    private OppgittFamilieforhold(Set<Barn> barna, boolean borBeggeForeldreSammen) {
         this.barna = barna.stream().peek(barn -> barn.setOppgittFamilieforhold(this)).collect(Collectors.toSet());
         this.borBeggeForeldreSammen = borBeggeForeldreSammen;
     }
 
-    public Set<SøknadBarn> getBarna() {
+    public Set<Barn> getBarna() {
         return barna;
     }
 
@@ -40,17 +40,18 @@ public class OppgittFamilieforhold extends BaseEntitet {
     @Override
     public String toString() {
         return "OppgittFamilieforhold{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", barna=" + barna +
                 ", borBeggeForeldreSammen=" + borBeggeForeldreSammen +
                 '}';
     }
 
     public static class Builder {
-        private Set<SøknadBarn> barna;
+        private Set<Barn> barna;
         private boolean borBeggeForeldreSammen;
 
-        public Builder setBarna(Set<SøknadBarn> barna) {
+        public Builder setBarna(Set<Barn> barna) {
+            Objects.requireNonNull(barna, "barna");
             this.barna = barna;
             return this;
         }

@@ -1,9 +1,7 @@
-package no.nav.familie.ks.sak.app.behandling.domene.søknad;
+package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn;
 
 import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
-import no.nav.familie.ks.sak.app.grunnlag.Søknad;
-import no.nav.familie.ks.sak.app.grunnlag.søknad.Barnehageplass;
-import no.nav.familie.ks.sak.util.DateParser;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -11,11 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "SO_BARN")
-public class SøknadBarn extends BaseEntitet {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Barn extends BaseEntitet<Long> {
 
     @ManyToOne
     @JoinColumn(name = "familieforhold_id")
@@ -25,7 +19,7 @@ public class SøknadBarn extends BaseEntitet {
     private String aktørId;
 
     @Column(name = "barnehage_status", nullable = false, updatable = false)
-    private Barnehageplass.BarnehageplassVerdier barnehageStatus;
+    private BarnehageplassStatus barnehageStatus;
 
     @Column(name = "barnehage_antall_timer", nullable = true, updatable = false)
     private int barnehageAntallTimer;
@@ -36,41 +30,16 @@ public class SøknadBarn extends BaseEntitet {
     @Column(name = "barnehage_kommune", nullable = true, updatable = false)
     private String barnehageKommune;
 
-    SøknadBarn() {
+    Barn() {
         // hibernate
     }
 
-    SøknadBarn(OppgittFamilieforhold familieforhold, String aktørId, Barnehageplass.BarnehageplassVerdier barnehageStatus, int barnehageAntallTimer, LocalDate barnehageDato, String barnehageKommune) {
-        this.familieforhold = familieforhold;
+    Barn(String aktørId, BarnehageplassStatus barnehageStatus, int barnehageAntallTimer, LocalDate barnehageDato, String barnehageKommune) {
         this.aktørId = aktørId;
         this.barnehageStatus = barnehageStatus;
         this.barnehageAntallTimer = barnehageAntallTimer;
         this.barnehageDato = barnehageDato;
         this.barnehageKommune = barnehageKommune;
-    }
-
-    SøknadBarn(Søknad søknad) {
-        this.barnehageStatus = søknad.barnehageplass.barnBarnehageplassStatus;
-        this.aktørId = søknad.getMineBarn().getFødselsnummer(); // FIXME veksle inn til aktørId
-
-        switch (this.barnehageStatus) {
-            case harBarnehageplass:
-                this.barnehageAntallTimer = Integer.parseInt(søknad.barnehageplass.harBarnehageplassAntallTimer);
-                this.barnehageDato = DateParser.parseSøknadDato(søknad.barnehageplass.harBarnehageplassDato);
-                this.barnehageKommune = søknad.barnehageplass.harBarnehageplassKommune;
-            case harSluttetIBarnehage:
-                this.barnehageAntallTimer = Integer.parseInt(søknad.barnehageplass.harSluttetIBarnehageAntallTimer);
-                this.barnehageDato = DateParser.parseSøknadDato(søknad.barnehageplass.harSluttetIBarnehageDato);
-                this.barnehageKommune = søknad.barnehageplass.harSluttetIBarnehageKommune;
-            case skalSlutteIBarnehage:
-                this.barnehageAntallTimer = Integer.parseInt(søknad.barnehageplass.skalSlutteIBarnehageAntallTimer);
-                this.barnehageDato = DateParser.parseSøknadDato(søknad.barnehageplass.skalSlutteIBarnehageDato);
-                this.barnehageKommune = søknad.barnehageplass.skalSlutteIBarnehageKommune;
-            case skalBegynneIBarnehage:
-                this.barnehageAntallTimer = Integer.parseInt(søknad.barnehageplass.skalBegynneIBarnehageAntallTimer);
-                this.barnehageDato = DateParser.parseSøknadDato(søknad.barnehageplass.skalBegynneIBarnehageDato);
-                this.barnehageKommune = søknad.barnehageplass.skalBegynneIBarnehageKommune;
-        }
     }
 
     public String getAktørId() {
@@ -93,7 +62,7 @@ public class SøknadBarn extends BaseEntitet {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SøknadBarn that = (SøknadBarn) o;
+        Barn that = (Barn) o;
         return Objects.equals(aktørId, that.aktørId);
     }
 
@@ -105,7 +74,7 @@ public class SøknadBarn extends BaseEntitet {
     @Override
     public String toString() {
         return "SøknadBarn{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", familieforhold=" + familieforhold +
                 ", aktørId='" + aktørId + '\'' +
                 ", barnehageStatus=" + barnehageStatus +
@@ -115,29 +84,24 @@ public class SøknadBarn extends BaseEntitet {
                 '}';
     }
 
-    void setOppgittFamilieforhold(OppgittFamilieforhold oppgittFamilieforhold) {
+    Barn setOppgittFamilieforhold(OppgittFamilieforhold oppgittFamilieforhold) {
         this.familieforhold = oppgittFamilieforhold;
+        return this;
     }
 
     public static class Builder {
-        private OppgittFamilieforhold familieforhold;
         private String aktørId;
-        private Barnehageplass.BarnehageplassVerdier barnehageStatus;
+        private BarnehageplassStatus barnehageStatus;
         private int barnehageAntallTimer;
         private LocalDate barnehageDato;
         private String barnehageKommune;
-
-        public Builder setFamilieforhold(OppgittFamilieforhold familieforhold) {
-            this.familieforhold = familieforhold;
-            return this;
-        }
 
         public Builder setAktørId(String aktørId) {
             this.aktørId = aktørId;
             return this;
         }
 
-        public Builder setBarnehageStatus(Barnehageplass.BarnehageplassVerdier barnehageStatus) {
+        public Builder setBarnehageStatus(BarnehageplassStatus barnehageStatus) {
             this.barnehageStatus = barnehageStatus;
             return this;
         }
@@ -157,8 +121,8 @@ public class SøknadBarn extends BaseEntitet {
             return this;
         }
 
-        public SøknadBarn build() {
-            return new SøknadBarn(familieforhold, aktørId, barnehageStatus, barnehageAntallTimer, barnehageDato, barnehageKommune);
+        public Barn build() {
+            return new Barn(aktørId, barnehageStatus, barnehageAntallTimer, barnehageDato, barnehageKommune);
         }
     }
 }
