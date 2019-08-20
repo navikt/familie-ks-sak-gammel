@@ -41,7 +41,7 @@ public class MedlemskapsVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
                 .hvis(new HarVærtBosattFemÅrINorge(),
                         rs.hvisRegel(MinstEnErNorskStatsborger.ID, "Vurder om minst en av søker eller annen part er norsk statsborger")
                                 .hvis(new MinstEnErNorskStatsborger(), Sluttpunkt.oppfylt(getVilkårType().getKode() + "-INNVILGET-1", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT))
-                                .ellers(Sluttpunkt.ikkeOppfylt(getVilkårType().getKode() + "-AVSLAG-1", VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_I_NORGE_FEM_ÅR)))
+                                .ellers(Sluttpunkt.ikkeOppfylt(getVilkårType().getKode() + "-AVSLAG-1", VilkårIkkeOppfyltÅrsak.IKKE_NORSK_STATSBORGER)))
                 .ellers(Sluttpunkt.ikkeOppfylt(getVilkårType().getKode() + "-AVSLAG-2", VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_I_NORGE_FEM_ÅR));
     }
 }

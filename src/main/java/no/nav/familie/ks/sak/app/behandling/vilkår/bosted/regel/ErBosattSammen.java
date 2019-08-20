@@ -9,23 +9,21 @@ import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
 
-@RuleDocumentation(BosattSammen.ID)
-public class BosattSammen extends LeafSpecification<Faktagrunnlag> {
+@RuleDocumentation(ErBosattSammen.ID)
+public class ErBosattSammen extends LeafSpecification<Faktagrunnlag> {
 
     public static final String ID = "KS-BOSTED-1";
 
-    public BosattSammen() {
+    public ErBosattSammen() {
         super(ID);
     }
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
         TpsFakta tpsFakta = grunnlag.getTpsFakta();
-
-        if (borSammen(tpsFakta.getBarn(), identFor(tpsFakta.getForelder()))) {
-            if (tpsFakta.getAnnenForelder() != null) {
-                return borSammen(tpsFakta.getBarn(), identFor(tpsFakta.getAnnenForelder())) ? ja() : nei();
-            }
+        if (tpsFakta.getAnnenForelder() != null &&
+                borSammen(tpsFakta.getBarn(), identFor(tpsFakta.getForelder())) &&
+                borSammen(tpsFakta.getBarn(), identFor(tpsFakta.getAnnenForelder()))) {
             return ja();
         } else {
             return nei();

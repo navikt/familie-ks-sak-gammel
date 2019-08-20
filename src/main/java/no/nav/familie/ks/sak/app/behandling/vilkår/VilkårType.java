@@ -4,7 +4,7 @@ public enum VilkårType {
 
     MEDLEMSKAP(Constants.MEDLEMSKAP_KODE, "Medlemskap til folketrygden"),
     BARNEHAGE(Constants.BARNEHAGE_KODE, "Retten til basert på plass i barnehage"),
-    BOSTED(Constants.BOSTED_KODE, "Forelder/foreldre bor sammen med barn (MVP)");
+    BOSTED(Constants.BOSTED_KODE, "Barn bor sammen med begge foreldre (MVP)");
 
     private final String kode;
     private final String beskrivelse;
