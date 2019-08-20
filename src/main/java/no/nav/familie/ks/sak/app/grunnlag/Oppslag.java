@@ -5,6 +5,7 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.integrasjon.sts.StsRestClient;
 import no.nav.log.MDCConstants;
@@ -28,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class Oppslag {
@@ -66,6 +68,8 @@ public class Oppslag {
 
     public TpsFakta hentTpsFakta(Søknad søknad, String personident) {
         Forelder forelder = genererForelder(hentAktørId(personident));
+        logger.info("Har hentet annen forelder med PersonIdent: " + forelder.getPersoninfo().getPersonIdent().toString().length());
+        logger.info("Har hentet annen forelder med Ident: " + forelder.getPersoninfo().getPersonIdent().getIdent().length());
         Personinfo barn = hentBarnSøktFor(søknad);
         Forelder annenForelder = hentAnnenForelder(barn, forelder);
         return new TpsFakta.Builder()
@@ -84,16 +88,19 @@ public class Oppslag {
 
     private Forelder hentAnnenForelder(Personinfo barn, Forelder forelder) {
         Set<RelasjonsRolleType> foreldreRelasjoner = new HashSet<>(Arrays.asList(RelasjonsRolleType.FARA, RelasjonsRolleType.MEDMOR, RelasjonsRolleType.MORA));
-        PersonIdent søker = forelder.getPersoninfo().getPersonIdent();
+        String søker = forelder.getPersoninfo().getPersonIdent().getIdent();
         try {
             Optional<String> annenForelder = barn.getFamilierelasjoner().stream()
-                    .filter( relasjon ->  ! relasjon.getPersonIdent().equals(søker))
                     .filter( relasjon -> foreldreRelasjoner.contains(relasjon.getRelasjonsrolle()))
                     .map( relasjon -> relasjon.getPersonIdent().getIdent() )
+                    .filter( ident ->  ! ident.equals(søker))
                     .findFirst();
             return genererForelder(hentAktørId(annenForelder.get()));
         }
         catch (NullPointerException e) {
+            logger.info("Fant ikke annen forelder ");
+            logger.info(e.toString());
+            logger.info(barn.getFamilierelasjoner().stream().map(Familierelasjon::getRelasjonsrolle).collect(Collectors.toList()).toString());
             return null;
         }
     }
