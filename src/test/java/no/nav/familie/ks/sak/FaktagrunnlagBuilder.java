@@ -9,6 +9,8 @@ import no.nav.familie.ks.sak.app.integrasjon.felles.ws.Tid;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.*;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdressePeriode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdresseType;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.StatsborgerskapPeriode;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
@@ -17,6 +19,8 @@ import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashSet;
 
 public final class FaktagrunnlagBuilder {
 
@@ -46,12 +50,19 @@ public final class FaktagrunnlagBuilder {
             .medAdresse("annen adresse")
             .medNavn("test testesen")
             .build();
+    private static Familierelasjon norskForelderRelasjon = new Familierelasjon(
+            personinfoNorsk.getPersonIdent().getIdent(),
+            RelasjonsRolleType.FARA,
+            null,
+            null,
+            true);
     private static Personinfo barnGyldigAlder = new Personinfo.Builder()
             .medFødselsdato(LocalDate.now().minusMonths(13))
             .medAktørId(new AktørId("12345678910"))
             .medPersonIdent(new PersonIdent("12345678910"))
             .medAdresse("testadresse")
             .medNavn("test testesen")
+            .medFamilierelasjon(new HashSet<>(Collections.singleton(norskForelderRelasjon)))
             .build();
     private static Personinfo barnUgyldigAlder = new Personinfo.Builder()
             .medFødselsdato(LocalDate.now().minusMonths(5))
