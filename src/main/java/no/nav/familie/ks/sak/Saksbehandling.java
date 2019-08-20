@@ -3,18 +3,24 @@ package no.nav.familie.ks.sak;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.behandling.*;
+import no.nav.familie.ks.sak.app.behandling.domene.Standpunkt;
+import no.nav.familie.ks.sak.app.behandling.domene.søknad.OppgittFamilieforhold;
+import no.nav.familie.ks.sak.app.behandling.domene.søknad.SøknadBarn;
+import no.nav.familie.ks.sak.app.behandling.domene.søknad.SøknadEntitet;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Oppslag;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.util.DateParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
+import java.util.Set;
 
 @Service
 public class Saksbehandling {
@@ -33,10 +39,53 @@ public class Saksbehandling {
 
     public Vedtak behandle(String søknadJson, String personident) {
         Søknad søknad = tilSøknad(søknadJson);
+        mapTilDommene(søknad);
         Faktagrunnlag faktagrunnlag = fastsettFakta(søknad, personident);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(faktagrunnlag);
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
         return vedtak;
+    }
+
+    private void mapTilDommene(Søknad søknad) {
+        final var søknadBarnBuilder = mapSøknadBarn(søknad);
+
+        final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
+        familieforholdBuilder.setBarna(Set.of(søknadBarnBuilder.build()));
+        familieforholdBuilder.setBorBeggeForeldreSammen(Standpunkt.map(søknad.familieforhold.borForeldreneSammenMedBarnet).equals(Standpunkt.JA));
+
+        new SøknadEntitet()
+    }
+
+    private SøknadBarn.Builder mapSøknadBarn(Søknad søknad) {
+        final var builder = new SøknadBarn.Builder();
+        final var mineBarn = søknad.getMineBarn();
+        final var barnehageplass = søknad.barnehageplass;
+        builder.setAktørId(mineBarn.getFødselsnummer())
+                .setBarnehageStatus(barnehageplass.barnBarnehageplassStatus);
+        switch (barnehageplass.barnBarnehageplassStatus) {
+            case harBarnehageplass:
+                builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.harBarnehageplassAntallTimer))
+                        .setBarnehageDato(DateParser.parseSøknadDato(barnehageplass.harBarnehageplassDato))
+                        .setBarnehageKommune(barnehageplass.harBarnehageplassKommune);
+                break;
+            case harSluttetIBarnehage:
+                builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.harSluttetIBarnehageAntallTimer))
+                        .setBarnehageDato(DateParser.parseSøknadDato(barnehageplass.harSluttetIBarnehageDato))
+                        .setBarnehageKommune(barnehageplass.harSluttetIBarnehageKommune);
+                break;
+            case skalSlutteIBarnehage:
+                builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.skalSlutteIBarnehageAntallTimer))
+                        .setBarnehageDato(DateParser.parseSøknadDato(barnehageplass.skalSlutteIBarnehageDato))
+                        .setBarnehageKommune(barnehageplass.skalSlutteIBarnehageKommune);
+                break;
+            case skalBegynneIBarnehage:
+                builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.skalBegynneIBarnehageAntallTimer))
+                        .setBarnehageDato(DateParser.parseSøknadDato(barnehageplass.skalBegynneIBarnehageDato))
+                        .setBarnehageKommune(barnehageplass.skalBegynneIBarnehageKommune);
+                break;
+        }
+
+        return builder;
     }
 
     public Vedtak behandle(Søknad søknad, String personident) {

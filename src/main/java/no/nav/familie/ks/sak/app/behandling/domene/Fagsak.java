@@ -1,13 +1,14 @@
-package no.nav.familie.ks.sak.app.behandling.Domene;
+package no.nav.familie.ks.sak.app.behandling.domene;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity(name = "Fagsak")
 @Table(name = "FAGSAK")
 public class Fagsak extends BaseEntitet {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FAGSAK")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "aktoer_id", nullable = false)
@@ -18,7 +19,6 @@ public class Fagsak extends BaseEntitet {
      */
     @Column(name = "saksnummer", nullable = false)
     private String saksnummer;
-
 
     Fagsak() {
         // Hibernate
@@ -49,5 +49,28 @@ public class Fagsak extends BaseEntitet {
 
     public String getSaksnummer() {
         return saksnummer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Fagsak fagsak = (Fagsak) o;
+        return Objects.equals(aktørId, fagsak.aktørId) &&
+                Objects.equals(saksnummer, fagsak.saksnummer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(aktørId, saksnummer);
+    }
+
+    @Override
+    public String toString() {
+        return "Fagsak{" +
+                "id=" + id +
+                ", aktørId='" + aktørId + '\'' +
+                ", saksnummer='" + saksnummer + '\'' +
+                '}';
     }
 }

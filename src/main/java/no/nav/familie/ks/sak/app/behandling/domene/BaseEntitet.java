@@ -1,14 +1,8 @@
-package no.nav.familie.ks.sak.app.behandling.Domene;
+package no.nav.familie.ks.sak.app.behandling.domene;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Version;
 
 
 /**
@@ -16,7 +10,7 @@ import javax.persistence.Version;
  * opprettet eller oppdatert en rad, og når).
  */
 @MappedSuperclass
-public class BaseEntitet implements Serializable {
+public abstract class BaseEntitet implements Serializable {
 
     private static final String BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES = "VL";
 

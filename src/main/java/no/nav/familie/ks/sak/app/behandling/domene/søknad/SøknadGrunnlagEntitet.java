@@ -1,7 +1,7 @@
-package no.nav.familie.ks.sak.app.behandling.Domene.Søknad;
+package no.nav.familie.ks.sak.app.behandling.domene.søknad;
 
-import no.nav.familie.ks.sak.app.behandling.Domene.BaseEntitet;
-import no.nav.familie.ks.sak.app.behandling.Domene.Behandling;
+import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
+import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 
 import javax.persistence.*;
 
@@ -10,7 +10,7 @@ import javax.persistence.*;
 public class SøknadGrunnlagEntitet extends BaseEntitet {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GR_SOKNAD")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne

@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.Domene;
+package no.nav.familie.ks.sak.app.behandling.domene;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Behandling extends BaseEntitet {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_BEHANDLING")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false)
@@ -20,7 +20,7 @@ public class Behandling extends BaseEntitet {
     }
 
     private Behandling(Fagsak fagsak) {
-        Objects.requireNonNull(fagsak, "Behandling må tilknyttes parent Fagsak"); //$NON-NLS-1$
+        Objects.requireNonNull(fagsak, "Behandling må tilknyttes parent Fagsak");
         this.fagsak = fagsak;
     }
 
