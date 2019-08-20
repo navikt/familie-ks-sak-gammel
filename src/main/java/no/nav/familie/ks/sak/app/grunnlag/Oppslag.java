@@ -2,8 +2,10 @@ package no.nav.familie.ks.sak.app.grunnlag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.integrasjon.sts.StsRestClient;
 import no.nav.log.MDCConstants;
 import org.slf4j.Logger;
@@ -22,6 +24,10 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class Oppslag {
@@ -60,8 +66,8 @@ public class Oppslag {
 
     public TpsFakta hentTpsFakta(Søknad søknad, String personident) {
         Forelder forelder = genererForelder(hentAktørId(personident));
-        Forelder annenForelder = hentAnnenForelder(søknad);
         Personinfo barn = hentBarnSøktFor(søknad);
+        Forelder annenForelder = hentAnnenForelder(barn, forelder);
         return new TpsFakta.Builder()
                 .medForelder(forelder)
                 .medBarn(barn)
@@ -76,13 +82,16 @@ public class Oppslag {
                 .build();
     }
 
-    private Forelder hentAnnenForelder(Søknad søknad) {
-        String personident = søknad.familieforhold.annenForelderFødselsnummer;
-        if (!personident.isEmpty()) {
-            String aktørId = hentAktørId(personident);
-            return genererForelder(aktørId);
-        }
-        return null;
+    private Forelder hentAnnenForelder(Personinfo barn, Forelder forelder) {
+        Set<RelasjonsRolleType> foreldreRelasjoner = new HashSet<>(Arrays.asList(RelasjonsRolleType.FARA, RelasjonsRolleType.MEDMOR, RelasjonsRolleType.MORA));
+        PersonIdent søker = forelder.getPersoninfo().getPersonIdent();
+        Optional<String> annenForelder = barn.getFamilierelasjoner().stream()
+                .filter( relasjon ->  ! relasjon.getPersonIdent().equals(søker))
+                .filter( relasjon -> foreldreRelasjoner.contains(relasjon.getRelasjonsrolle()))
+                .map( relasjon -> relasjon.getPersonIdent().getIdent() )
+                .findFirst();
+
+        return annenForelder.map(this::genererForelder).orElse(null);
     }
 
     private Personinfo hentBarnSøktFor(Søknad søknad) {
