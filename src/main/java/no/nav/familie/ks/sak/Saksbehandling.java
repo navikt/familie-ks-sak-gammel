@@ -3,89 +3,46 @@ package no.nav.familie.ks.sak;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.behandling.*;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barn;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.OppgittFamilieforhold;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.grunnlag.Oppslag;
+import no.nav.familie.ks.sak.app.grunnlag.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
-import no.nav.familie.ks.sak.util.DateParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
-import java.util.Set;
 
 @Service
 public class Saksbehandling {
 
     private VurderSamletTjeneste vurderSamletTjeneste;
     private PeriodeOppretter periodeOppretter = new PeriodeOppretter();
+    private BehandlingslagerTjeneste behandlingslagerTjeneste;
     private ObjectMapper mapper;
-    private Oppslag oppslag;
+    private OppslagTjeneste oppslag;
 
     @Autowired
-    public Saksbehandling(Oppslag oppslag, VurderSamletTjeneste vurderSamletTjeneste, ObjectMapper objectMapper) {
+    public Saksbehandling(OppslagTjeneste oppslag,
+                          VurderSamletTjeneste vurderSamletTjeneste,
+                          BehandlingslagerTjeneste behandlingslagerTjeneste,
+                          ObjectMapper objectMapper) {
         this.oppslag = oppslag;
         this.vurderSamletTjeneste = vurderSamletTjeneste;
+        this.behandlingslagerTjeneste = behandlingslagerTjeneste;
         this.mapper = objectMapper;
     }
 
     public Vedtak behandle(String søknadJson, String personident) {
         Søknad søknad = tilSøknad(søknadJson);
-        mapTilDommene(søknad);
+        behandlingslagerTjeneste.trekkUtOgPersister(søknad);
         Faktagrunnlag faktagrunnlag = fastsettFakta(søknad, personident);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(faktagrunnlag);
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
         return vedtak;
-    }
-
-    private void mapTilDommene(Søknad søknad) {
-        final var søknadBarnBuilder = mapSøknadBarn(søknad);
-
-        final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
-        familieforholdBuilder.setBarna(Set.of(søknadBarnBuilder.build()));
-        familieforholdBuilder.setBorBeggeForeldreSammen(Standpunkt.map(søknad.familieforhold.borForeldreneSammenMedBarnet).equals(Standpunkt.JA));
-
-        new Søknad();
-    }
-
-    private Barn.Builder mapSøknadBarn(Søknad søknad) {
-        final var builder = new Barn.Builder();
-        final var mineBarn = søknad.getMineBarn();
-        final var barnehageplass = søknad.barnehageplass;
-        builder.setAktørId(mineBarn.getFødselsnummer())
-                .setBarnehageStatus(BarnehageplassStatus.map(barnehageplass.barnBarnehageplassStatus.name()));
-        switch (barnehageplass.barnBarnehageplassStatus) {
-            case harBarnehageplass:
-                builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.harBarnehageplassAntallTimer))
-                        .setBarnehageDato(DateParser.parseSøknadDato(barnehageplass.harBarnehageplassDato))
-                        .setBarnehageKommune(barnehageplass.harBarnehageplassKommune);
-                break;
-            case harSluttetIBarnehage:
-                builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.harSluttetIBarnehageAntallTimer))
-                        .setBarnehageDato(DateParser.parseSøknadDato(barnehageplass.harSluttetIBarnehageDato))
-                        .setBarnehageKommune(barnehageplass.harSluttetIBarnehageKommune);
-                break;
-            case skalSlutteIBarnehage:
-                builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.skalSlutteIBarnehageAntallTimer))
-                        .setBarnehageDato(DateParser.parseSøknadDato(barnehageplass.skalSlutteIBarnehageDato))
-                        .setBarnehageKommune(barnehageplass.skalSlutteIBarnehageKommune);
-                break;
-            case skalBegynneIBarnehage:
-                builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.skalBegynneIBarnehageAntallTimer))
-                        .setBarnehageDato(DateParser.parseSøknadDato(barnehageplass.skalBegynneIBarnehageDato))
-                        .setBarnehageKommune(barnehageplass.skalBegynneIBarnehageKommune);
-                break;
-        }
-
-        return builder;
     }
 
     public Vedtak behandle(Søknad søknad, String personident) {

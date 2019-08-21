@@ -9,12 +9,11 @@ import javax.persistence.*;
 @Table(name = "GR_SOKNAD")
 public class SøknadGrunnlag extends BaseEntitet<Long> {
 
-    @OneToOne
-    @JoinColumn(name = "behandling_id", nullable = false, updatable = false, unique = true)
-    private Behandling behandling;
+    @Column(name = "behandling_id", nullable = false, updatable = false)
+    private Long behandlingId;
 
-    @ManyToOne
-    @JoinColumn(name = "soknad_id", nullable = false, updatable = false, unique = true)
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "soknad_id", nullable = false, updatable = false)
     private Søknad søknad;
 
     @Column(name = "aktiv", nullable = false)
@@ -23,8 +22,8 @@ public class SøknadGrunnlag extends BaseEntitet<Long> {
     SøknadGrunnlag() {
     }
 
-    SøknadGrunnlag(Behandling behandling, Søknad søknad) {
-        this.behandling = behandling;
+    public SøknadGrunnlag(Behandling behandling, Søknad søknad) {
+        this.behandlingId = behandling.getId();
         this.søknad = søknad;
     }
 

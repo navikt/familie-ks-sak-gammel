@@ -39,7 +39,6 @@ public class AktørArbeidYtelseUtland extends BaseEntitet<Long> {
     }
 
     private AktørArbeidYtelseUtland(String aktørId,
-                                    OppgittUtlandsTilknytning utlandsTilknytning,
                                     Standpunkt arbeidIUtlandet,
                                     String arbeidIUtlandetForklaring,
                                     Standpunkt ytelseIUtlandet,
@@ -47,7 +46,6 @@ public class AktørArbeidYtelseUtland extends BaseEntitet<Long> {
                                     Standpunkt kontantstøtteIUtlandet,
                                     String kontantstøtteIUtlandetForklaring) {
         this.aktørId = aktørId;
-        this.utlandsTilknytning = utlandsTilknytning;
         this.arbeidIUtlandet = arbeidIUtlandet;
         this.arbeidIUtlandetForklaring = arbeidIUtlandetForklaring;
         this.ytelseIUtlandet = ytelseIUtlandet;
@@ -84,6 +82,10 @@ public class AktørArbeidYtelseUtland extends BaseEntitet<Long> {
         return kontantstøtteIUtlandetForklaring;
     }
 
+    void setUtlandsTilknytning(OppgittUtlandsTilknytning utlandsTilknytning) {
+        this.utlandsTilknytning = utlandsTilknytning;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -97,9 +99,8 @@ public class AktørArbeidYtelseUtland extends BaseEntitet<Long> {
         return Objects.hash(aktørId);
     }
 
-    public class Builder {
+    public static class Builder {
         private String aktørId;
-        private OppgittUtlandsTilknytning utlandsTilknytning;
         private Standpunkt arbeidIUtlandet;
         private String arbeidIUtlandetForklaring;
         private Standpunkt ytelseIUtlandet;
@@ -109,11 +110,6 @@ public class AktørArbeidYtelseUtland extends BaseEntitet<Long> {
 
         public Builder setAktørId(String aktørId) {
             this.aktørId = aktørId;
-            return this;
-        }
-
-        public Builder setUtlandsTilknytning(OppgittUtlandsTilknytning utlandsTilknytning) {
-            this.utlandsTilknytning = utlandsTilknytning;
             return this;
         }
 
@@ -148,7 +144,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet<Long> {
         }
 
         public AktørArbeidYtelseUtland build() {
-            return new AktørArbeidYtelseUtland(aktørId, utlandsTilknytning, arbeidIUtlandet, arbeidIUtlandetForklaring, ytelseIUtlandet, ytelseIUtlandetForklaring, kontantstøtteIUtlandet, kontantstøtteIUtlandetForklaring);
+            return new AktørArbeidYtelseUtland(aktørId, arbeidIUtlandet, arbeidIUtlandetForklaring, ytelseIUtlandet, ytelseIUtlandetForklaring, kontantstøtteIUtlandet, kontantstøtteIUtlandetForklaring);
         }
     }
 }

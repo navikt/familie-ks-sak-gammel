@@ -1,10 +1,10 @@
 package no.nav.familie.ks.sak.app.behandling;
 
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårÅrsak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Regelresultat;
-import no.nav.familie.ks.sak.app.behandling.vilkår.VilkårType;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 
 import java.util.List;

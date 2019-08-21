@@ -4,19 +4,29 @@ import java.util.Arrays;
 
 public enum Standpunkt {
 
-    JA("Ja"), NEI("Nei"), UBESVART("Ubesvart");
+    JA("JA", "Ja"), NEI("NEI", "Nei"), UBESVART("UBESVART", "Ubesvart");
 
+    private String kode;
     private String beskrivelse;
 
-    Standpunkt(String beskrivelse) {
+    Standpunkt(String kode, String beskrivelse) {
+        this.kode = kode;
         this.beskrivelse = beskrivelse;
     }
 
     public static Standpunkt map(String verdi) {
-        return Arrays.stream(Standpunkt.values()).filter(it -> it.name().equalsIgnoreCase(verdi)).findAny().orElse(Standpunkt.UBESVART);
+        return Arrays.stream(Standpunkt.values()).filter(it -> it.getKode().equals(verdi)).findFirst().orElseThrow(IllegalArgumentException::new);
+    }
+
+    public static Standpunkt map(String verdi, Standpunkt defaultValue) {
+        return Arrays.stream(Standpunkt.values()).filter(it -> it.getKode().equals(verdi)).findFirst().orElse(defaultValue);
     }
 
     public String getBeskrivelse() {
         return beskrivelse;
+    }
+
+    public String getKode() {
+        return kode;
     }
 }

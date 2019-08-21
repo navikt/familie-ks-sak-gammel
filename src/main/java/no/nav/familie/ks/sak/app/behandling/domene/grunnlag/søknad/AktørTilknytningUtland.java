@@ -49,30 +49,4 @@ public class AktørTilknytningUtland extends BaseEntitet<Long> {
         this.utlandsTilknytning = utlandsTilknytning;
         return this;
     }
-
-    public class Builder {
-        private String aktør;
-        private TilknytningTilUtland.TilknytningTilUtlandVerdier tilknytningTilUtland;
-        private String tilknytningTilUtlandForklaring;
-
-        public Builder setAktør(String aktør) {
-            Objects.requireNonNull(aktør, "aktør");
-            this.aktør = aktør;
-            return this;
-        }
-
-        public Builder setTilknytningTilUtland(TilknytningTilUtland.TilknytningTilUtlandVerdier tilknytningTilUtland) {
-            this.tilknytningTilUtland = tilknytningTilUtland;
-            return this;
-        }
-
-        public Builder setTilknytningTilUtlandForklaring(String tilknytningTilUtlandForklaring) {
-            this.tilknytningTilUtlandForklaring = tilknytningTilUtlandForklaring;
-            return this;
-        }
-
-        public AktørTilknytningUtland build() {
-            return new AktørTilknytningUtland(aktør, tilknytningTilUtland, tilknytningTilUtlandForklaring);
-        }
-    }
 }

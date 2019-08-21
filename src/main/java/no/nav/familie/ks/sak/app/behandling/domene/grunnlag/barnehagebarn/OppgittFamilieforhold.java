@@ -2,10 +2,7 @@ package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn;
 
 import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,7 +11,7 @@ import java.util.stream.Collectors;
 @Table(name = "SO_FAMILIEFORHOLD")
 public class OppgittFamilieforhold extends BaseEntitet<Long> {
 
-    @OneToMany(mappedBy = "familieforhold")
+    @OneToMany(mappedBy = "familieforhold", cascade = CascadeType.PERSIST)
     private Set<Barn> barna;
 
     @Column(name = "bor_begge_sammen_med_barnet")

@@ -3,35 +3,52 @@ package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "SO_SOKNAD")
 public class Søknad extends BaseEntitet<Long> {
 
     @Column(name = "innsendt_tidspunkt", nullable = false, updatable = false)
-    private LocalDate innsendtTidspunkt;
+    private LocalDateTime innsendtTidspunkt;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "OPPGITT_UTLAND_ID", updatable = false, nullable = false)
     private OppgittUtlandsTilknytning utlandsTilknytning;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "OPPGITT_ERKLAERING_ID", updatable = false, nullable = false)
+    private OppgittErklæring erklæring;
 
     Søknad() {
         // hibernate
     }
 
-    /**
-     * Deep copy.
-     */
-    Søknad(LocalDate innsendingstidspunkt) {
-        this.innsendtTidspunkt = innsendingstidspunkt;
+    public Søknad(LocalDateTime innsendtTidspunkt, OppgittUtlandsTilknytning utlandsTilknytning, OppgittErklæring erklæring) {
+        this.innsendtTidspunkt = innsendtTidspunkt;
+        this.utlandsTilknytning = utlandsTilknytning;
+        this.erklæring = erklæring;
     }
 
-    public LocalDate getInnsendtTidspunkt() {
+    public OppgittErklæring getErklæring() {
+        return erklæring;
+    }
+
+    public LocalDateTime getInnsendtTidspunkt() {
         return innsendtTidspunkt;
     }
 
     public OppgittUtlandsTilknytning getUtlandsTilknytning() {
         return utlandsTilknytning;
+    }
+
+    @Override
+    public String toString() {
+        return "Søknad{" +
+                "id=" + getId() +
+                "innsendtTidspunkt=" + innsendtTidspunkt +
+                ", utlandsTilknytning=" + utlandsTilknytning +
+                ", erklæring=" + erklæring +
+                '}';
     }
 }

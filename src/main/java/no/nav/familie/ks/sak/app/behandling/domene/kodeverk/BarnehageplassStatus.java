@@ -9,23 +9,23 @@ public enum BarnehageplassStatus {
     SKAL_BEGYNNE("skalBegynneIBarnehage", "Skal begynne i barnehage"),
     SKAL_SLUTTE("skalSlutteIBarnehage", "Skal slutte i barnehage");
 
-    private String eksternKode;
+    private String kode;
     private String beskrivelse;
 
     BarnehageplassStatus(String eksternKode, String beskrivelse) {
-        this.eksternKode = eksternKode;
+        this.kode = eksternKode;
         this.beskrivelse = beskrivelse;
     }
 
     public static BarnehageplassStatus map(String eksternKode) {
-        return Arrays.stream(BarnehageplassStatus.values()).filter(it -> it.getEksternKode().equals(eksternKode)).findFirst().orElseThrow(IllegalArgumentException::new);
+        return Arrays.stream(BarnehageplassStatus.values()).filter(it -> it.getKode().equals(eksternKode)).findFirst().orElseThrow(IllegalArgumentException::new);
     }
 
     public String getBeskrivelse() {
         return beskrivelse;
     }
 
-    public String getEksternKode() {
-        return eksternKode;
+    public String getKode() {
+        return kode;
     }
 }
