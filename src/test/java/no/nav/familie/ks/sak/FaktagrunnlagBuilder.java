@@ -51,9 +51,8 @@ public final class FaktagrunnlagBuilder {
             .medNavn("test testesen")
             .build();
     private static Familierelasjon norskForelderRelasjon = new Familierelasjon(
-            personinfoNorsk.getPersonIdent().getIdent(),
+            personinfoNorsk.getAktørId(),
             RelasjonsRolleType.FARA,
-            null,
             null,
             true);
     private static Personinfo barnGyldigAlder = new Personinfo.Builder()
