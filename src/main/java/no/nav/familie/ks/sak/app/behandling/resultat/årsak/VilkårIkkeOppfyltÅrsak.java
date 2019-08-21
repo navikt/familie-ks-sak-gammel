@@ -8,7 +8,7 @@ public enum VilkårIkkeOppfyltÅrsak implements VilkårÅrsak {
     BARN_UTENFOR_KONTANTSTØTTE_ALDER(8305, "Barn utenfor kontantstøtte alder"),
     IKKE_NORSK_STATSBORGER(8304, "Ikke norsk statsborger"),
     IKKE_BEGGE_FORELDRE(8307, "Begge foreldre er ikke registrert på barn i TPS"),
-    IKKE_BOSATT_SAMMEN(8306, "Foreldre ikke bosatt med barn");
+    IKKE_BOSATT_SAMMEN(8306, "Barn er ikke bosatt sammen med begge foreldre");
 
     private final int årsakKode;
     private final String beskrivelse;

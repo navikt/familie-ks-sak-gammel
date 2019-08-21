@@ -10,12 +10,12 @@ import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
 
-@RuleDocumentation(ErBosattSammen.ID)
-public class ErBosattSammen extends LeafSpecification<Faktagrunnlag> {
+@RuleDocumentation(ErBarnBosattMedForeldre.ID)
+public class ErBarnBosattMedForeldre extends LeafSpecification<Faktagrunnlag> {
 
     public static final String ID = "KS-BOSTED-1";
 
-    public ErBosattSammen() {
+    public ErBarnBosattMedForeldre() {
         super(ID);
     }
 
