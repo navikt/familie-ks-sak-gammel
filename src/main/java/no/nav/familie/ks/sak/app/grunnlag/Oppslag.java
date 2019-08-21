@@ -24,10 +24,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class Oppslag {
@@ -93,7 +90,7 @@ public class Oppslag {
                     .findFirst();
             return genererForelder(annenForelder.get().getId());
         }
-        catch (NullPointerException e) {
+        catch (NoSuchElementException e) {
             return null;
         }
     }
