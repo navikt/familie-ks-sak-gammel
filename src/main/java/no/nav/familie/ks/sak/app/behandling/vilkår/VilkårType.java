@@ -3,7 +3,8 @@ package no.nav.familie.ks.sak.app.behandling.vilkår;
 public enum VilkårType {
 
     MEDLEMSKAP(Constants.MEDLEMSKAP_KODE, "Medlemskap til folketrygden"),
-    BARNEHAGE(Constants.BARNEHAGE_KODE, "Retten til basert på plass i barnehage");
+    BARNEHAGE(Constants.BARNEHAGE_KODE, "Retten til basert på plass i barnehage"),
+    BOSTED(Constants.BOSTED_KODE, "Barn bor sammen med begge foreldre (MVP)");
 
     private final String kode;
     private final String beskrivelse;
@@ -24,5 +25,6 @@ public enum VilkårType {
     public static class Constants {
         public static final String MEDLEMSKAP_KODE = "MEDL";
         public static final String BARNEHAGE_KODE = "BARN";
+        public static final String BOSTED_KODE = "BOSTED";
     }
 }
