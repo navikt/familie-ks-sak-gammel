@@ -1,7 +1,5 @@
 package no.nav.familie.ks.sak.app.behandling.domene;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -12,9 +10,13 @@ import java.time.LocalDateTime;
  * opprettet eller oppdatert en rad, og når).
  */
 @MappedSuperclass
-public abstract class BaseEntitet<T extends Serializable> extends AbstractPersistable<T> implements Serializable {
+public abstract class BaseEntitet<T extends Serializable> implements Serializable {
 
     private static final String BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES = "VL";
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private T id;
 
     @Column(name = "opprettet_av", nullable = false, updatable = false)
     private String opprettetAv;
@@ -47,6 +49,10 @@ public abstract class BaseEntitet<T extends Serializable> extends AbstractPersis
     protected void onUpdate() {
         endretAv = finnBrukernavn();
         endretTidspunkt = LocalDateTime.now();
+    }
+
+    public T getId() {
+        return id;
     }
 
     public String getOpprettetAv() {
