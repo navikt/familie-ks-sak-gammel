@@ -11,7 +11,7 @@ create table GR_PERSONOPPLYSNINGER
     AKTIV              boolean      default true           not null
 );
 
-CREATE UNIQUE INDEX UIDX_GR_SOKNAD_01
+CREATE UNIQUE INDEX UIDX_GR_PERSONOPPLYSNINGER_01
     ON GR_PERSONOPPLYSNINGER
         (
          (CASE
