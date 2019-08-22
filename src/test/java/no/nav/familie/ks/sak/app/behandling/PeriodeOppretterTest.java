@@ -5,7 +5,7 @@ import no.nav.familie.ks.sak.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;
+import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.BarnehageVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.grunnlag.Oppslag;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
@@ -27,7 +27,7 @@ public class PeriodeOppretterTest {
     private static final String PERSONIDENT = "123";
 
     private final Oppslag oppslagMock = mock(Oppslag.class);
-    private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår()));
+    private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarnehageVilkår(), new MedlemskapsVilkår()));
     private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, new JacksonJsonConfig().objectMapper());
 
     @Test

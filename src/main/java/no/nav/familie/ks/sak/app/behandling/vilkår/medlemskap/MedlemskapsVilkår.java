@@ -6,8 +6,8 @@ import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårOppfyltÅrsak
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Sluttpunkt;
 import no.nav.familie.ks.sak.app.behandling.vilkår.VilkårType;
+import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.regel.HarNorskStatsborgerskap;
 import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.regel.HarVærtBosattFemÅrINorge;
-import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.regel.MinstEnErNorskStatsborger;
 import no.nav.fpsak.nare.Ruleset;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
@@ -37,11 +37,11 @@ public class MedlemskapsVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
     @SuppressWarnings("unchecked")
     public Specification<Faktagrunnlag> getSpecification() {
         final var rs = new Ruleset<Faktagrunnlag>();
-        return rs.hvisRegel(HarVærtBosattFemÅrINorge.ID, "Vurder om søker har vært bosatt i fem år")
+        return rs.hvisRegel(HarVærtBosattFemÅrINorge.ID, "Vurder om søker har vært bosatt i Norge siste fem år")
                 .hvis(new HarVærtBosattFemÅrINorge(),
-                        rs.hvisRegel(MinstEnErNorskStatsborger.ID, "Vurder om minst en av søker eller annen part er norsk statsborger")
-                                .hvis(new MinstEnErNorskStatsborger(), Sluttpunkt.oppfylt(getVilkårType().getKode() + "-INNVILGET-1", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT))
-                                .ellers(Sluttpunkt.ikkeOppfylt(getVilkårType().getKode() + "-AVSLAG-1", VilkårIkkeOppfyltÅrsak.IKKE_NORSK_STATSBORGER)))
+                        rs.hvisRegel(HarNorskStatsborgerskap.ID, "Vurder om foreldre har vært norske statsborgere siste fem år")
+                                .hvis(new HarNorskStatsborgerskap(), Sluttpunkt.oppfylt(getVilkårType().getKode() + "-INNVILGET-1", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT))
+                                .ellers(Sluttpunkt.ikkeOppfylt(getVilkårType().getKode() + "-AVSLAG-1", VilkårIkkeOppfyltÅrsak.IKKE_NORSKE_STATSBORGERE_FEM_ÅR)))
                 .ellers(Sluttpunkt.ikkeOppfylt(getVilkårType().getKode() + "-AVSLAG-2", VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_I_NORGE_FEM_ÅR));
     }
 }

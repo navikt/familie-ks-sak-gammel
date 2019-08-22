@@ -59,6 +59,7 @@ public final class FaktagrunnlagBuilder {
             .medFødselsdato(LocalDate.now().minusMonths(13))
             .medAktørId(new AktørId("12345678910"))
             .medPersonIdent(new PersonIdent("12345678910"))
+            .medStatsborgerskap(Landkode.NORGE)
             .medAdresse("testadresse")
             .medNavn("test testesen")
             .medFamilierelasjon(new HashSet<>(Collections.singleton(norskForelderRelasjon)))
@@ -67,6 +68,7 @@ public final class FaktagrunnlagBuilder {
             .medFødselsdato(LocalDate.now().minusMonths(5))
             .medAktørId(new AktørId("12345678910"))
             .medPersonIdent(new PersonIdent("12345678910"))
+            .medStatsborgerskap(Landkode.NORGE)
             .medAdresse("testadresse")
             .medNavn("test testesen")
             .build();

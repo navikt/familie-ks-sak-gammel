@@ -4,7 +4,8 @@ public enum VilkårType {
 
     MEDLEMSKAP(Constants.MEDLEMSKAP_KODE, "Medlemskap til folketrygden"),
     BARNEHAGE(Constants.BARNEHAGE_KODE, "Retten til basert på plass i barnehage"),
-    BOSTED(Constants.BOSTED_KODE, "Barn bor sammen med begge foreldre (MVP)");
+    BOSTED(Constants.BOSTED_KODE, "Barn bor sammen med begge foreldre (MVP)"),
+    BARN(Constants.BARN_KODE, "Barn er norsk statsborger");;
 
     private final String kode;
     private final String beskrivelse;
@@ -24,7 +25,8 @@ public enum VilkårType {
 
     public static class Constants {
         public static final String MEDLEMSKAP_KODE = "MEDL";
-        public static final String BARNEHAGE_KODE = "BARN";
-        public static final String BOSTED_KODE = "BOSTED";
+        public static final String BARNEHAGE_KODE = "BHAG";
+        public static final String BOSTED_KODE = "BOST";
+        public static final String BARN_KODE = "BARN";
     }
 }
