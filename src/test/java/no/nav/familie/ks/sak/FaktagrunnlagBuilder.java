@@ -79,6 +79,13 @@ public final class FaktagrunnlagBuilder {
                     new Periode(LocalDate.now().minusYears(6), Tid.TIDENES_ENDE)
             )
             .build();
+    private static AdressePeriode utenlandskAdresseSeksÅr = new AdressePeriode.Builder()
+            .medLand(Landkode.UDEFINERT.getKode())
+            .medAdresseType(AdresseType.BOSTEDSADRESSE)
+            .medGyldighetsperiode(
+                    new Periode(LocalDate.now().minusYears(6), Tid.TIDENES_ENDE)
+            )
+            .build();
     private static AdressePeriode norskAdresseEtÅr = new AdressePeriode.Builder()
             .medLand(STATSBORGERSKAP_GYLDIG)
             .medAdresseType(AdresseType.BOSTEDSADRESSE)
@@ -105,6 +112,11 @@ public final class FaktagrunnlagBuilder {
             .leggTil(norskAdresseSeksÅr)
             .leggTil(svenskStatsborger)
             .build();
+    private static PersonhistorikkInfo norskMenUtlandEtÅr = new PersonhistorikkInfo.Builder()
+            .medAktørId("12345678910")
+            .leggTil(utenlandskAdresseSeksÅr)
+            .leggTil(norskStatsborgerskapSeksÅr)
+            .build();
     private static PersonhistorikkInfo norgeEtÅr = new PersonhistorikkInfo.Builder()
             .medAktørId("12345678910")
             .leggTil(norskAdresseEtÅr)
@@ -113,6 +125,10 @@ public final class FaktagrunnlagBuilder {
     private static Forelder forelderNorsk = new Forelder.Builder()
             .medPersoninfo(personinfoNorsk)
             .medPersonhistorikkInfo(norgeSeksÅr)
+            .build();
+    private static Forelder forelderNorskMenBoddIUtland = new Forelder.Builder()
+            .medPersoninfo(personinfoNorsk)
+            .medPersonhistorikkInfo(norskMenUtlandEtÅr)
             .build();
     static TpsFakta beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder = new TpsFakta.Builder()
             .medForelder(forelderNorsk)
@@ -126,6 +142,11 @@ public final class FaktagrunnlagBuilder {
     static TpsFakta beggeForeldreIkkeNorskMenBoddFemINorge = new TpsFakta.Builder()
             .medForelder(foreldreIkkeNorskMenBoddNorge)
             .medAnnenForelder(foreldreIkkeNorskMenBoddNorge)
+            .medBarn(barnGyldigAlder)
+            .build();
+    static TpsFakta beggeForeldreNorskMenBoddIUtland = new TpsFakta.Builder()
+            .medForelder(forelderNorskMenBoddIUtland)
+            .medAnnenForelder(forelderNorskMenBoddIUtland)
             .medBarn(barnGyldigAlder)
             .build();
     private static Forelder forelderUtland = new Forelder.Builder()
@@ -172,6 +193,13 @@ public final class FaktagrunnlagBuilder {
         return new Faktagrunnlag.Builder()
                 .medTpsFakta(beggeForeldreIkkeNorskMenBoddFemINorge)
                 .medSøknad(utenBarnehageplass())
+                .build();
+    }
+
+    public static Faktagrunnlag beggeForeldreNorskStatsborgerskapMenBoddIUtland() {
+        return new Faktagrunnlag.Builder()
+                .medTpsFakta(beggeForeldreNorskMenBoddIUtland)
+                .medSøknad(medBarnehageplass())
                 .build();
     }
 
