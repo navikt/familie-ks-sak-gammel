@@ -213,6 +213,13 @@ public final class FaktagrunnlagBuilder {
                 .build();
     }
 
+    public static Faktagrunnlag familieNorskStatsborgerskapMedBarnehage() {
+        return new Faktagrunnlag.Builder()
+                .medTpsFakta(beggeForeldreOgBarnNorskStatsborger)
+                .medSøknad(medBarnehageplass())
+                .build();
+    }
+
     public static Faktagrunnlag aleneForelderNorskStatsborgerskapUtenBarnehage() {
         return new Faktagrunnlag.Builder()
                 .medTpsFakta(aleneForelderOgBarnNorskStatsborgerskap)

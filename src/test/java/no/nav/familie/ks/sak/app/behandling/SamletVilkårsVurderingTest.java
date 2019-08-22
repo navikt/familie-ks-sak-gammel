@@ -32,13 +32,13 @@ public class SamletVilkårsVurderingTest {
 
     @Test
     public void skal_gi_rett_utfall_når_ulike() {
-        final var faktagrunnlag = FaktagrunnlagBuilder.familieUtenlandskStatsborgerskapMedBarnehage();
+        final var faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapMedBarnehage();
 
         final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);
 
         final var alleUtfall = vurder.getResultater().stream().map(Regelresultat::getUtfallType).collect(Collectors.toList());
         assertThat(alleUtfall).hasSize(inngangsvilkår.size());
-        assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.IKKE_OPPFYLT, UtfallType.IKKE_OPPFYLT, UtfallType.OPPFYLT, UtfallType.IKKE_OPPFYLT);
+        assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.IKKE_OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT);
         assertThat(vurder.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
 
     }

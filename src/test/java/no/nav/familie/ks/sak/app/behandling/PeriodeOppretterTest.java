@@ -31,7 +31,7 @@ public class PeriodeOppretterTest {
     private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, new JacksonJsonConfig().objectMapper());
 
     @Test
-    public void at_søknad_med_gradert_barnehage_gir_feil() {
+    public void at_søknad_med_barnehage_gir_feil() {
         when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"), PERSONIDENT);
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
@@ -46,17 +46,6 @@ public class PeriodeOppretterTest {
         assertThat(vedtak.getStønadperiode().getTom()).isEqualTo(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getFødselsdato().plusMonths(MAKS_ALDER_I_MÅNEDER).withDayOfMonth(1));
         assertThat(vedtak.getStønadperiode().getProsent()).isEqualTo(100);
     }
-
-    @Test
-    public void at_søknad_med_full_barnehage_gir_stønadperiode() {
-        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
-        Vedtak vedtak = saksbehandling.behandle(getFile("soknadFullBarnehageplass.json"), PERSONIDENT);
-        assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
-        assertThat(vedtak.getStønadperiode().getFom()).isEqualTo(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getFødselsdato().plusMonths(MIN_ALDER_I_MÅNEDER).withDayOfMonth(1));
-        assertThat(vedtak.getStønadperiode().getTom()).isEqualTo(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getFødselsdato().plusMonths(MAKS_ALDER_I_MÅNEDER).withDayOfMonth(1));
-        assertThat(vedtak.getStønadperiode().getProsent()).isEqualTo(100);
-    }
-
     @Test
     public void at_periode_opprettes_korrekt_nå() {
         PeriodeOppretter periodeOppretter = new PeriodeOppretter();

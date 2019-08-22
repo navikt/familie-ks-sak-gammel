@@ -6,7 +6,7 @@ import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårOppfyltÅrsak
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Sluttpunkt;
 import no.nav.familie.ks.sak.app.behandling.vilkår.VilkårType;
-import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.regel.HarIkkeGradertBarnehageplass;
+import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.regel.GarkkeIBarnehage;
 import no.nav.fpsak.nare.Ruleset;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
@@ -36,8 +36,8 @@ public class BarnehageVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
     @SuppressWarnings("unchecked")
     public Specification<Faktagrunnlag> getSpecification() {
         final var rs = new Ruleset<Faktagrunnlag>();
-        return rs.hvisRegel(HarIkkeGradertBarnehageplass.ID, "Vurder om barnet har gradert barnehageplass")
-                    .hvis(new HarIkkeGradertBarnehageplass(), Sluttpunkt.oppfylt(getVilkårType() + "-INNVILGET-1", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT))
-                    .ellers(Sluttpunkt.ikkeOppfylt(getVilkårType() + "-AVSLAG-1", VilkårIkkeOppfyltÅrsak.GRADERT_BARNEHAGEPLASS));
+        return rs.hvisRegel(GarkkeIBarnehage.ID, "Vurder om barnet har barnehageplass")
+                    .hvis(new GarkkeIBarnehage(), Sluttpunkt.oppfylt(getVilkårType() + "-INNVILGET-1", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT))
+                    .ellers(Sluttpunkt.ikkeOppfylt(getVilkårType() + "-AVSLAG-1", VilkårIkkeOppfyltÅrsak.BARNEHAGEPLASS));
     }
 }
