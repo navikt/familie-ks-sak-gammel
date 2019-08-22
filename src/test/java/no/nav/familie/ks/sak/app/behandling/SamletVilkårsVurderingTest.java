@@ -21,7 +21,7 @@ public class SamletVilkårsVurderingTest {
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(inngangsvilkår);
 
     @Test
-    public void skal_gi_oppfylt_når_alle_er_oppfylt() {
+    public void gir_oppfylt_når_alle_er_oppfylt() {
         final var faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage();
         final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);
         final var alleUtfall = vurder.getResultater().stream().map(Regelresultat::getUtfallType).collect(Collectors.toList());
@@ -31,7 +31,7 @@ public class SamletVilkårsVurderingTest {
     }
 
     @Test
-    public void skal_gi_rett_utfall_når_ulike() {
+    public void gir_ikke_oppfylt_når_ikke_alle_er_oppfylt() {
         final var faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapMedBarnehage();
 
         final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);

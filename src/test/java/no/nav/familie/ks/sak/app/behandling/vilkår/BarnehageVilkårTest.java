@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BarnehageVilkårTest {
 
     @Test
-    public void at_søknad_med_barnehage_gir_ikke_oppfylt() {
+    public void søknad_med_barnehage_gir_ikke_oppfylt() {
         final var vilkår = new BarnehageVilkår();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapMedBarnehage();
         final var evaluering = vilkår.evaluer(faktagrunnlag);
@@ -19,7 +19,7 @@ public class BarnehageVilkårTest {
     }
 
     @Test
-    public void at_søknad_uten_barnehage_gir_oppfylt() {
+    public void søknad_uten_barnehage_gir_oppfylt() {
         final var vilkår = new BarnehageVilkår();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage();
         final var evaluering = vilkår.evaluer(faktagrunnlag);

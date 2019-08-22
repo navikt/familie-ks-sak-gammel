@@ -31,14 +31,14 @@ public class PeriodeOppretterTest {
     private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, new JacksonJsonConfig().objectMapper());
 
     @Test
-    public void at_søknad_med_barnehage_gir_feil() {
+    public void søknad_med_barnehage_gir_feil() {
         when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"), PERSONIDENT);
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
     }
 
     @Test
-    public void at_søknad_uten_barnehage_gir_stønadperiode() {
+    public void søknad_uten_barnehage_gir_stønadperiode() {
         when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"), PERSONIDENT);
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
@@ -47,7 +47,7 @@ public class PeriodeOppretterTest {
         assertThat(vedtak.getStønadperiode().getProsent()).isEqualTo(100);
     }
     @Test
-    public void at_periode_opprettes_korrekt_nå() {
+    public void periode_opprettes_korrekt_nå() {
         PeriodeOppretter periodeOppretter = new PeriodeOppretter();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage();
         LocalDate fødselsdatoBarn = faktagrunnlag.getTpsFakta().getBarn().getFødselsdato();
@@ -58,7 +58,7 @@ public class PeriodeOppretterTest {
     }
 
     @Test
-    public void at_periode_opprettes_korrekt_fremtidig() {
+    public void periode_opprettes_korrekt_fremtidig() {
         PeriodeOppretter periodeOppretter = new PeriodeOppretter();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieUtenlandskStatsborgerskapMedBarnehage();
         LocalDate fødselsdatoBarn = faktagrunnlag.getTpsFakta().getBarn().getFødselsdato();

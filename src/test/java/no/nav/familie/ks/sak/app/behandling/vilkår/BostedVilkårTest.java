@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BostedVilkårTest {
 
     @Test
-    public void at_kun_en_forelder_gir_ikke_oppfylt() {
+    public void kun_en_forelder_gir_ikke_oppfylt() {
         final var vilkår = new BostedVilkår();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.aleneForelderNorskStatsborgerskapUtenBarnehage();
         final var evaluering = vilkår.evaluer(faktagrunnlag);
@@ -19,7 +19,7 @@ public class BostedVilkårTest {
     }
 
     @Test
-    public void at_ikke_samme_bosted_gir_ikke_oppfylt() {
+    public void ikke_samme_bosted_gir_ikke_oppfylt() {
         final var vilkår = new BostedVilkår();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieMedEnForelderIUtland();
         final var evaluering = vilkår.evaluer(faktagrunnlag);
@@ -27,7 +27,7 @@ public class BostedVilkårTest {
     }
 
     @Test
-    public void at_to_foreldre_og_samme_bosted_gir_oppfylt() {
+    public void to_foreldre_og_samme_bosted_gir_oppfylt() {
         final var vilkår = new BostedVilkår();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage();
         final var evaluering = vilkår.evaluer(faktagrunnlag);

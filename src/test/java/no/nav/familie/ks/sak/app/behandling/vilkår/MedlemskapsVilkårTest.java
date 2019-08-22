@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MedlemskapsVilkårTest {
 
     @Test
-    public void skal_vurdere_begge_delvilkår() {
+    public void vurderer_begge_delvilkår() {
         final var vilkår = new MedlemskapsVilkår();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreIkkeNorskStatsborgerMenBorINorge();
         final var evaluering = vilkår.evaluer(faktagrunnlag);
@@ -19,7 +19,7 @@ public class MedlemskapsVilkårTest {
     }
 
     @Test
-    public void utenlandsk_statsborgerskap_skal_gi_ikke_oppfylt() {
+    public void utenlandsk_statsborgerskap_gir_ikke_oppfylt() {
         final var vilkår = new MedlemskapsVilkår();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreIkkeNorskStatsborgerMenBorINorge();
         final var evaluering = vilkår.evaluer(faktagrunnlag);
@@ -27,7 +27,7 @@ public class MedlemskapsVilkårTest {
     }
 
     @Test
-    public void utenlandsk_bosted_skal_gi_ikke_oppfylt() {
+    public void utenlandsk_bosted_gir_ikke_oppfylt() {
         final var vilkår = new MedlemskapsVilkår();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreNorskStatsborgerskapMenBoddIUtland();
         final var evaluering = vilkår.evaluer(faktagrunnlag);
@@ -36,7 +36,7 @@ public class MedlemskapsVilkårTest {
 
 
     @Test
-    public void norsk_statsborgerskap_og_bosted_fem_år_skal_gi_oppfylt() {
+    public void norsk_statsborgerskap_og_bosted_fem_år_gir_oppfylt() {
         final var vilkår = new MedlemskapsVilkår();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage();
         final var evaluering = vilkår.evaluer(faktagrunnlag);
