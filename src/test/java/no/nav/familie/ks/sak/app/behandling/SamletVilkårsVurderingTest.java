@@ -22,7 +22,7 @@ public class SamletVilkårsVurderingTest {
 
     @Test
     public void skal_gi_oppfylt_når_alle_er_oppfylt() {
-        final var faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder();
+        final var faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskap();
         final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);
         final var alleUtfall = vurder.getResultater().stream().map(Regelresultat::getUtfallType).collect(Collectors.toList());
         assertThat(alleUtfall).hasSize(inngangsvilkår.size());
@@ -32,7 +32,7 @@ public class SamletVilkårsVurderingTest {
 
     @Test
     public void skal_gi_rett_utfall_når_ulike() {
-        final var faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreUtenlandskeStatsborgereOgBarnForGammel();
+        final var faktagrunnlag = FaktagrunnlagBuilder.familieUtenlandskStatsborgerskap();
 
         final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);
 

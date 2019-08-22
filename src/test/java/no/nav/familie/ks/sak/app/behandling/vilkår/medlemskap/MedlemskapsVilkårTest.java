@@ -38,7 +38,7 @@ public class MedlemskapsVilkårTest {
     @Test
     public void norsk_statsborgerskap_og_bosted_fem_år_skal_gi_oppfylt() {
         final var vilkår = new MedlemskapsVilkår();
-        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder();
+        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskap();
         final var evaluering = vilkår.evaluer(faktagrunnlag);
         assertThat(evaluering.result()).isEqualByComparingTo(Resultat.JA);
     }
