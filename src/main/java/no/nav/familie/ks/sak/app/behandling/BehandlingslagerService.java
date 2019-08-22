@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class BehandlingslagerTjeneste {
+public class BehandlingslagerService {
 
     private FagsakRepository fagsakRepository;
     private BehandlingRepository behandlingRepository;
@@ -31,11 +31,11 @@ public class BehandlingslagerTjeneste {
     private OppslagTjeneste oppslagTjeneste;
 
     @Autowired
-    public BehandlingslagerTjeneste(FagsakRepository fagsakRepository,
-                                    BehandlingRepository behandlingRepository,
-                                    SøknadGrunnlagRepository søknadGrunnlagRepository,
-                                    BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository,
-                                    OppslagTjeneste oppslag) {
+    public BehandlingslagerService(FagsakRepository fagsakRepository,
+                                   BehandlingRepository behandlingRepository,
+                                   SøknadGrunnlagRepository søknadGrunnlagRepository,
+                                   BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository,
+                                   OppslagTjeneste oppslag) {
         this.fagsakRepository = fagsakRepository;
         this.behandlingRepository = behandlingRepository;
         this.søknadGrunnlagRepository = søknadGrunnlagRepository;

@@ -21,24 +21,24 @@ public class Saksbehandling {
 
     private VurderSamletTjeneste vurderSamletTjeneste;
     private PeriodeOppretter periodeOppretter = new PeriodeOppretter();
-    private BehandlingslagerTjeneste behandlingslagerTjeneste;
+    private BehandlingslagerService behandlingslagerService;
     private ObjectMapper mapper;
     private OppslagTjeneste oppslag;
 
     @Autowired
     public Saksbehandling(OppslagTjeneste oppslag,
                           VurderSamletTjeneste vurderSamletTjeneste,
-                          BehandlingslagerTjeneste behandlingslagerTjeneste,
+                          BehandlingslagerService behandlingslagerService,
                           ObjectMapper objectMapper) {
         this.oppslag = oppslag;
         this.vurderSamletTjeneste = vurderSamletTjeneste;
-        this.behandlingslagerTjeneste = behandlingslagerTjeneste;
+        this.behandlingslagerService = behandlingslagerService;
         this.mapper = objectMapper;
     }
 
     public Vedtak behandle(String søknadJson, String personident) {
         Søknad søknad = tilSøknad(søknadJson);
-        behandlingslagerTjeneste.trekkUtOgPersister(søknad);
+        behandlingslagerService.trekkUtOgPersister(søknad);
         Faktagrunnlag faktagrunnlag = fastsettFakta(søknad, personident);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(faktagrunnlag);
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);

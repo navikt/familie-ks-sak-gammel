@@ -28,7 +28,7 @@ public class PeriodeOppretterTest {
 
     private final OppslagTjeneste oppslagMock = mock(OppslagTjeneste.class);
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår()));
-    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, mock(BehandlingslagerTjeneste.class) , new JacksonJsonConfig().objectMapper());
+    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, mock(BehandlingslagerService.class) , new JacksonJsonConfig().objectMapper());
 
     @Test
     public void at_søknad_med_gradert_barnehage_gir_feil() {

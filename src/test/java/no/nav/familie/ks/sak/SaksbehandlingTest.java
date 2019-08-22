@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak;
 
-import no.nav.familie.ks.sak.app.behandling.BehandlingslagerTjeneste;
+import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService;
 import no.nav.familie.ks.sak.app.behandling.VurderSamletTjeneste;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
@@ -21,7 +21,7 @@ public class SaksbehandlingTest {
 
     private final OppslagTjeneste oppslagMock = mock(OppslagTjeneste.class);
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår()));
-    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, mock(BehandlingslagerTjeneste.class), new JacksonJsonConfig().objectMapper());
+    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, mock(BehandlingslagerService.class), new JacksonJsonConfig().objectMapper());
     private final String PERSONIDENT = "123";
 
     @Test

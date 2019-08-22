@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         classes = {ApplicationConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @DataJpaTest(excludeAutoConfiguration = FlywayAutoConfiguration.class)
-public class BehandlingslagerTjenesteTest {
+public class BehandlingslagerServiceTest {
 
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
@@ -39,7 +39,7 @@ public class BehandlingslagerTjenesteTest {
     private StsRestClient stsRestClient;
 
     @Autowired
-    private BehandlingslagerTjeneste tjeneste;
+    private BehandlingslagerService tjeneste;
 
     @Autowired
     private FagsakRepository fagsakRepository;
