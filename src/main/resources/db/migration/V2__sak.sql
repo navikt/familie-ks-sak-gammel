@@ -138,6 +138,18 @@ CREATE UNIQUE INDEX UIDX_GR_SOKNAD_01
 
 -- Barn grunnlag
 
+CREATE TABLE SO_FAMILIEFORHOLD
+(
+    ID                          serial primary key,
+    BOR_BEGGE_SAMMEN_MED_BARNET boolean not null,
+    VERSJON                     bigint       DEFAULT 0,
+    OPPRETTET_AV                VARCHAR(20)  DEFAULT 'VL',
+    OPPRETTET_TID               TIMESTAMP(3) DEFAULT localtimestamp,
+    ENDRET_AV                   VARCHAR(20),
+    ENDRET_TID                  TIMESTAMP(3)
+);
+
+
 CREATE TABLE SO_BARN
 (
     ID                     serial primary key,
@@ -156,17 +168,6 @@ CREATE TABLE SO_BARN
 
 create index on SO_BARN (AKTOER_ID);
 create index on SO_BARN (FAMILIEFORHOLD_ID);
-
-CREATE TABLE SO_FAMILIEFORHOLD
-(
-    ID                          serial primary key,
-    BOR_BEGGE_SAMMEN_MED_BARNET boolean not null,
-    VERSJON                     bigint       DEFAULT 0,
-    OPPRETTET_AV                VARCHAR(20)  DEFAULT 'VL',
-    OPPRETTET_TID               TIMESTAMP(3) DEFAULT localtimestamp,
-    ENDRET_AV                   VARCHAR(20),
-    ENDRET_TID                  TIMESTAMP(3)
-);
 
 create table GR_BARNEHAGE_BARN
 (
