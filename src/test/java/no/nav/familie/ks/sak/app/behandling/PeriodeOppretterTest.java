@@ -6,7 +6,7 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.BarnehageVilkår;
-import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.MedlemskapsVilkår;
+import no.nav.familie.ks.sak.app.behandling.vilkår.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.grunnlag.Oppslag;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import org.junit.Test;
@@ -60,7 +60,7 @@ public class PeriodeOppretterTest {
     @Test
     public void at_periode_opprettes_korrekt_nå() {
         PeriodeOppretter periodeOppretter = new PeriodeOppretter();
-        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskap();
+        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage();
         LocalDate fødselsdatoBarn = faktagrunnlag.getTpsFakta().getBarn().getFødselsdato();
         GradertPeriode stønadPeriode = periodeOppretter.opprettStønadPeriode(faktagrunnlag);
         assertThat(stønadPeriode.getFom()).isEqualTo(LocalDate.now().withDayOfMonth(1));
@@ -71,7 +71,7 @@ public class PeriodeOppretterTest {
     @Test
     public void at_periode_opprettes_korrekt_fremtidig() {
         PeriodeOppretter periodeOppretter = new PeriodeOppretter();
-        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieUtenlandskStatsborgerskap();
+        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieUtenlandskStatsborgerskapMedBarnehage();
         LocalDate fødselsdatoBarn = faktagrunnlag.getTpsFakta().getBarn().getFødselsdato();
         GradertPeriode stønadPeriode = periodeOppretter.opprettStønadPeriode(faktagrunnlag);
 

@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap;
+package no.nav.familie.ks.sak.app.behandling.vilkår;
 
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
@@ -38,7 +38,7 @@ public class MedlemskapsVilkårTest {
     @Test
     public void norsk_statsborgerskap_og_bosted_fem_år_skal_gi_oppfylt() {
         final var vilkår = new MedlemskapsVilkår();
-        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskap();
+        Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage();
         final var evaluering = vilkår.evaluer(faktagrunnlag);
         assertThat(evaluering.result()).isEqualByComparingTo(Resultat.JA);
     }

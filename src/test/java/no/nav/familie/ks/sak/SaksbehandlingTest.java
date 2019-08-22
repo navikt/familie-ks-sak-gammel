@@ -4,7 +4,7 @@ import no.nav.familie.ks.sak.app.behandling.VurderSamletTjeneste;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.BarnehageVilkår;
-import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.MedlemskapsVilkår;
+import no.nav.familie.ks.sak.app.behandling.vilkår.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.grunnlag.Oppslag;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import org.junit.Test;

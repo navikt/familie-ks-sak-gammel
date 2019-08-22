@@ -6,7 +6,7 @@ import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Regelresultat;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.BarnehageVilkår;
-import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.MedlemskapsVilkår;
+import no.nav.familie.ks.sak.app.behandling.vilkår.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.bosted.BostedVilkår;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class SamletVilkårsVurderingTest {
 
     @Test
     public void skal_gi_oppfylt_når_alle_er_oppfylt() {
-        final var faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskap();
+        final var faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage();
         final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);
         final var alleUtfall = vurder.getResultater().stream().map(Regelresultat::getUtfallType).collect(Collectors.toList());
         assertThat(alleUtfall).hasSize(inngangsvilkår.size());
@@ -32,13 +32,13 @@ public class SamletVilkårsVurderingTest {
 
     @Test
     public void skal_gi_rett_utfall_når_ulike() {
-        final var faktagrunnlag = FaktagrunnlagBuilder.familieUtenlandskStatsborgerskap();
+        final var faktagrunnlag = FaktagrunnlagBuilder.familieUtenlandskStatsborgerskapMedBarnehage();
 
         final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);
 
         final var alleUtfall = vurder.getResultater().stream().map(Regelresultat::getUtfallType).collect(Collectors.toList());
         assertThat(alleUtfall).hasSize(inngangsvilkår.size());
-        assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.OPPFYLT, UtfallType.IKKE_OPPFYLT, UtfallType.IKKE_OPPFYLT, UtfallType.OPPFYLT);
+        assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.IKKE_OPPFYLT, UtfallType.IKKE_OPPFYLT, UtfallType.OPPFYLT, UtfallType.IKKE_OPPFYLT);
         assertThat(vurder.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
 
     }

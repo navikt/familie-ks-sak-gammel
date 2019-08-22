@@ -199,21 +199,21 @@ public final class FaktagrunnlagBuilder {
         return beggeForeldreOgBarnUtenlandskeStatsborgere;
     }
 
-    public static Faktagrunnlag familieUtenlandskStatsborgerskap() {
+    public static Faktagrunnlag familieUtenlandskStatsborgerskapMedBarnehage() {
         return new Faktagrunnlag.Builder()
                 .medTpsFakta(beggeForeldreOgBarnUtenlandskeStatsborgere)
                 .medSøknad(medBarnehageplass())
                 .build();
     }
 
-    public static Faktagrunnlag familieNorskStatsborgerskap() {
+    public static Faktagrunnlag familieNorskStatsborgerskapUtenBarnehage() {
         return new Faktagrunnlag.Builder()
                 .medTpsFakta(beggeForeldreOgBarnNorskStatsborger)
                 .medSøknad(utenBarnehageplass())
                 .build();
     }
 
-    public static Faktagrunnlag aleneForelderNorskStatsborgerskap() {
+    public static Faktagrunnlag aleneForelderNorskStatsborgerskapUtenBarnehage() {
         return new Faktagrunnlag.Builder()
                 .medTpsFakta(aleneForelderOgBarnNorskStatsborgerskap)
                 .medSøknad(utenBarnehageplass())
