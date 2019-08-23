@@ -3,7 +3,6 @@ package no.nav.familie.ks.sak.app.behandling.vilkår.barnehage;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
-import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Sluttpunkt;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.regel.GårIkkeIBarnehage;
@@ -37,7 +36,7 @@ public class BarnehageVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
     public Specification<Faktagrunnlag> getSpecification() {
         final var rs = new Ruleset<Faktagrunnlag>();
         return rs.hvisRegel(GårIkkeIBarnehage.ID, "Vurder om barnet har barnehageplass")
-                    .hvis(new GårIkkeIBarnehage(), Sluttpunkt.oppfylt(getVilkårType() + "-INNVILGET-1", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT))
-                    .ellers(Sluttpunkt.ikkeOppfylt(getVilkårType() + "-AVSLAG-1", VilkårIkkeOppfyltÅrsak.BARNEHAGEPLASS));
+                    .hvis(new GårIkkeIBarnehage(), Sluttpunkt.oppfylt())
+                    .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.BARNEHAGEPLASS));
     }
 }

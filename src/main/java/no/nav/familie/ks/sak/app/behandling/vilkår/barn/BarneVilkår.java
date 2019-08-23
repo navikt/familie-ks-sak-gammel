@@ -3,7 +3,6 @@ package no.nav.familie.ks.sak.app.behandling.vilkår.barn;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
-import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Sluttpunkt;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barn.regel.ErNorskStatsborger;
@@ -37,7 +36,7 @@ public class BarneVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
     public Specification<Faktagrunnlag> getSpecification() {
         final var rs = new Ruleset<Faktagrunnlag>();
         return rs.hvisRegel(ErNorskStatsborger.ID, "Vurder om barnet har norsk statsborgerskap")
-                    .hvis(new ErNorskStatsborger(), Sluttpunkt.oppfylt(getVilkårType() + "-INNVILGET-1", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT))
-                    .ellers(Sluttpunkt.ikkeOppfylt(getVilkårType() + "-AVSLAG-1", VilkårIkkeOppfyltÅrsak.BARN_IKKE_NORSK_STATSBORGER));
+                    .hvis(new ErNorskStatsborger(), Sluttpunkt.oppfylt())
+                    .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.BARN_IKKE_NORSK_STATSBORGER));
     }
 }

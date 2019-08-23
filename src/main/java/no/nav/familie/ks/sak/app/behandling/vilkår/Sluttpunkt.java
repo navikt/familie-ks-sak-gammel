@@ -1,7 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.vilkår;
 
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
-import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårOppfyltÅrsak;
 
 public class Sluttpunkt {
 
@@ -9,12 +8,12 @@ public class Sluttpunkt {
         // For å hindre instanser
     }
 
-    public static VilkårUtfall oppfylt(String utfallKode, VilkårOppfyltÅrsak årsak) {
-        return new VilkårUtfall(utfallKode, årsak);
+    public static Oppfylt oppfylt() {
+        return new Oppfylt();
     }
 
-    public static VilkårUtfall ikkeOppfylt(String utfallKode, VilkårIkkeOppfyltÅrsak årsak) {
-        return new VilkårUtfall(utfallKode, årsak);
+    public static IkkeOppfylt ikkeOppfylt(VilkårIkkeOppfyltÅrsak årsak) {
+        return new IkkeOppfylt(årsak);
     }
 
 }
