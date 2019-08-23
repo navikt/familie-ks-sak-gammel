@@ -1,8 +1,9 @@
-package no.nav.familie.ks.sak.app.behandling.resultat;
+package no.nav.familie.ks.sak.app.behandling.domene.kodeverk;
 
 public enum UtfallType {
     IKKE_OPPFYLT("Ikke oppfylt"),
     OPPFYLT("Oppfylt"),
+    IKKE_VURDERT("Ikke vurdert"),
     UAVKLART("Uavklart"),
     MANUELL_BEHANDLING("Manuell behandling");
 

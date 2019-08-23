@@ -1,7 +1,7 @@
 package no.nav.familie.ks.sak.app.behandling;
 
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
-import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Regelresultat;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;

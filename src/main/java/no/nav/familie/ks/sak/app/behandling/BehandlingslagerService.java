@@ -43,7 +43,7 @@ public class BehandlingslagerService {
         this.oppslagTjeneste = oppslag;
     }
 
-    public void trekkUtOgPersister(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
+    public Behandling trekkUtOgPersister(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
         final var søkerAktørId = oppslagTjeneste.hentAktørId(søknad.person.fnr);
         final var fagsak = Fagsak.opprettNy(søkerAktørId, Long.toString(System.currentTimeMillis())); // TODO: Erstatt med gsaksnummer
         fagsakRepository.saveAndFlush(fagsak);
@@ -66,6 +66,8 @@ public class BehandlingslagerService {
 
         final var innsendtTidspunkt = LocalDateTime.ofInstant(søknad.innsendingsTidspunkt, ZoneId.systemDefault());
         søknadGrunnlagRepository.save(new SøknadGrunnlag(behandling, new Søknad(innsendtTidspunkt, oppgittUtlandsTilknytning, erklæring)));
+
+        return behandling;
     }
 
     private OppgittUtlandsTilknytning mapUtenlandsTilknytning(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad, String søkerAktørId) {
