@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak.config;
 
-import no.nav.log.LogFilter;
+import no.nav.familie.log.filter.LogFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringBootConfiguration;
@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootConfiguration
 @EnableJpaAuditing
-@ComponentScan({ "no.nav.familie.ks.sak" })
+@ComponentScan({"no.nav.familie.ks.sak"})
 public class ApplicationConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);

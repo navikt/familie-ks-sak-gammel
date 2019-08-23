@@ -1,8 +1,8 @@
 package no.nav.familie.ks.sak.app.behandling;
 
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
-import no.nav.familie.ks.sak.app.behandling.vilkår.VilkårType;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

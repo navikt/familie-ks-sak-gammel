@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.vilkår;
+package no.nav.familie.ks.sak.app.behandling.domene.kodeverk;
 
 public enum VilkårType {
 
