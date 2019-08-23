@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.vilkår.regel;
+package no.nav.familie.ks.sak.app.behandling.vilkår.medlemsskap.regel;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
