@@ -1,4 +1,7 @@
 {
+  "person": {
+    "fnr": "12345678901"
+  },
   "veiledning": {
     "bekreftelse": "JA"
   },

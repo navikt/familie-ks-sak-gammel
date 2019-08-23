@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/mottak")
@@ -30,9 +33,8 @@ public class MottaSøknadController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
-    public ResponseEntity mottaDokument(@RequestHeader(value="Nav-Personident") String personident,
-                                        @RequestBody Søknad søknad) {
-        Vedtak vedtak = saksbehandling.behandle(søknad, personident);
+    public ResponseEntity mottaDokument(@RequestBody Søknad søknad) {
+        Vedtak vedtak = saksbehandling.behandle(søknad);
         final var vilkårvurdering = vedtak.getVilkårvurdering();
         final var årsakType = vilkårvurdering.getÅrsakType().iterator().next();
         if (vilkårvurdering.getUtfallType().equals(UtfallType.OPPFYLT)) {

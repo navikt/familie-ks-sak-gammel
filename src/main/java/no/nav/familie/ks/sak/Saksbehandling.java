@@ -6,7 +6,7 @@ import no.nav.familie.ks.sak.app.behandling.*;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.grunnlag.Oppslag;
+import no.nav.familie.ks.sak.app.grunnlag.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,34 +21,41 @@ public class Saksbehandling {
 
     private VurderSamletTjeneste vurderSamletTjeneste;
     private PeriodeOppretter periodeOppretter = new PeriodeOppretter();
+    private BehandlingslagerService behandlingslagerService;
     private ObjectMapper mapper;
-    private Oppslag oppslag;
+    private OppslagTjeneste oppslag;
 
     @Autowired
-    public Saksbehandling(Oppslag oppslag, VurderSamletTjeneste vurderSamletTjeneste, ObjectMapper objectMapper) {
+    public Saksbehandling(OppslagTjeneste oppslag,
+                          VurderSamletTjeneste vurderSamletTjeneste,
+                          BehandlingslagerService behandlingslagerService,
+                          ObjectMapper objectMapper) {
         this.oppslag = oppslag;
         this.vurderSamletTjeneste = vurderSamletTjeneste;
+        this.behandlingslagerService = behandlingslagerService;
         this.mapper = objectMapper;
     }
 
-    public Vedtak behandle(String søknadJson, String personident) {
+    public Vedtak behandle(String søknadJson) {
         Søknad søknad = tilSøknad(søknadJson);
-        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad, personident);
+        behandlingslagerService.trekkUtOgPersister(søknad);
+        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(faktagrunnlag);
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
         return vedtak;
     }
 
-    public Vedtak behandle(Søknad søknad, String personident) {
-        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad, personident);
+    public Vedtak behandle(Søknad søknad) {
+        behandlingslagerService.trekkUtOgPersister(søknad);
+        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(faktagrunnlag);
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
         return vedtak;
     }
 
-    private Faktagrunnlag fastsettFakta(Søknad søknad, String personident) {
+    private Faktagrunnlag fastsettFakta(Søknad søknad) {
         // søknadsdata, TPS-data og evt. barnehagelister
-        TpsFakta tpsFakta = oppslag.hentTpsFakta(søknad, personident);
+        TpsFakta tpsFakta = oppslag.hentTpsFakta(søknad);
         return new Faktagrunnlag.Builder()
                 .medTpsFakta(tpsFakta)
                 .medSøknad(søknad)

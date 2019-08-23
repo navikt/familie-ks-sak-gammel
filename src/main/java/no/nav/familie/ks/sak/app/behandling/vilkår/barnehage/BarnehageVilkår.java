@@ -1,11 +1,11 @@
 package no.nav.familie.ks.sak.app.behandling.vilkår.barnehage;
 
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Sluttpunkt;
-import no.nav.familie.ks.sak.app.behandling.vilkår.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.regel.GarkkeIBarnehage;
 import no.nav.fpsak.nare.Ruleset;
 import no.nav.fpsak.nare.doc.RuleDocumentation;

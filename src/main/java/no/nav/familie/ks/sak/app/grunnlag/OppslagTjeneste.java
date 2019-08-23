@@ -1,13 +1,14 @@
 package no.nav.familie.ks.sak.app.grunnlag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.familie.http.client.NavHttpHeaders;
+import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
-import no.nav.familie.ks.sak.app.integrasjon.sts.StsRestClient;
-import no.nav.log.MDCConstants;
+import no.nav.familie.log.mdc.MDCConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -27,18 +28,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Component
-public class Oppslag {
+public class OppslagTjeneste {
 
-    private static final Logger logger = LoggerFactory.getLogger(Oppslag.class);
+    private static final Logger logger = LoggerFactory.getLogger(OppslagTjeneste.class);
     private URI oppslagServiceUri;
     private HttpClient client;
     private StsRestClient stsRestClient;
     private ObjectMapper mapper;
 
     @Autowired
-    public Oppslag(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
-                   StsRestClient stsRestClient,
-                   ObjectMapper objectMapper) {
+    public OppslagTjeneste(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
+                           StsRestClient stsRestClient,
+                           ObjectMapper objectMapper) {
         this.oppslagServiceUri = oppslagServiceUri;
         this.stsRestClient = stsRestClient;
         this.mapper = objectMapper;
@@ -56,13 +57,13 @@ public class Oppslag {
         return HttpRequest.newBuilder()
                 .uri(uri)
                 .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
-                .header("Nav-Call-Id", MDC.get(MDCConstants.MDC_CORRELATION_ID))
+                .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
                 .GET()
                 .build();
     }
 
-    public TpsFakta hentTpsFakta(Søknad søknad, String personident) {
-        Forelder forelder = genererForelder(hentAktørId(personident));
+    public TpsFakta hentTpsFakta(Søknad søknad) {
+        Forelder forelder = genererForelder(hentAktørId(søknad.person.fnr));
         Personinfo barn = hentBarnSøktFor(søknad);
         Forelder annenForelder = hentAnnenForelder(barn, forelder);
         return new TpsFakta.Builder()
@@ -101,7 +102,10 @@ public class Oppslag {
         return hentPersoninfoFor(aktørId);
     }
 
-    private String hentAktørId(String personident) {
+    public String hentAktørId(String personident) {
+        if (personident == null || personident.isEmpty()) {
+            return null;
+        }
         URI uri = URI.create(oppslagServiceUri + "/aktoer?ident=" + personident);
         logger.info("Henter aktørId fra " + oppslagServiceUri);
         try {
@@ -137,7 +141,7 @@ public class Oppslag {
     }
 
     private Personinfo hentPersoninfoFor(String aktørId) {
-        URI uri = URI.create(oppslagServiceUri + "/personopplysning/info?id=" + aktørId );
+        URI uri = URI.create(oppslagServiceUri + "/personopplysning/info?id=" + aktørId);
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
