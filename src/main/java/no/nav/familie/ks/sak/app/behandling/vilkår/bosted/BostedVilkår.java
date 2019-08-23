@@ -3,7 +3,6 @@ package no.nav.familie.ks.sak.app.behandling.vilkår.bosted;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
-import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Sluttpunkt;
 import no.nav.familie.ks.sak.app.behandling.vilkår.bosted.regel.ErBarnBosattMedForeldre;
@@ -40,8 +39,8 @@ public class BostedVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
         return rs.hvisRegel(HarRelasjonTilBeggeForeldre.ID, "Vurder om barnet har relasjon til begge foreldre (MVP)")
                     .hvis(new HarRelasjonTilBeggeForeldre(),
                         rs.hvisRegel(ErBarnBosattMedForeldre.ID, "Vurder om barnet bor sammen med foreldre")
-                            .hvis(new ErBarnBosattMedForeldre(), Sluttpunkt.oppfylt("BOSTED-INNVILGET-1", VilkårOppfyltÅrsak.VILKÅR_OPPFYLT))
-                            .ellers(Sluttpunkt.ikkeOppfylt(getVilkårType().getKode() + "-AVSLAG-1", VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_SAMMEN)))
-                    .ellers(Sluttpunkt.ikkeOppfylt(getVilkårType().getKode() + "-AVSLAG-2", VilkårIkkeOppfyltÅrsak.IKKE_BEGGE_FORELDRE));
+                            .hvis(new ErBarnBosattMedForeldre(), Sluttpunkt.oppfylt())
+                            .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_SAMMEN)))
+                    .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.IKKE_BEGGE_FORELDRE));
     }
 }
