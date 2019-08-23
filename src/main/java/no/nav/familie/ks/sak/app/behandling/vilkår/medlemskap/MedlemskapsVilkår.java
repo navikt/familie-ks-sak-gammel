@@ -1,12 +1,12 @@
-package no.nav.familie.ks.sak.app.behandling.vilkår.medlemsskap;
+package no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap;
 
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Sluttpunkt;
-import no.nav.familie.ks.sak.app.behandling.vilkår.medlemsskap.regel.HattNorskStatsborgerskapFemÅr;
-import no.nav.familie.ks.sak.app.behandling.vilkår.medlemsskap.regel.HarVærtBosattFemÅrINorge;
+import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.regel.HattNorskStatsborgerskapFemÅr;
+import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.regel.HarVærtBosattFemÅrINorge;
 import no.nav.fpsak.nare.Ruleset;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;

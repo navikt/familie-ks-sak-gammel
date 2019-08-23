@@ -6,7 +6,7 @@ import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Regelresultat;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.BarnehageVilkår;
-import no.nav.familie.ks.sak.app.behandling.vilkår.medlemsskap.MedlemskapsVilkår;
+import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.bosted.BostedVilkår;
 import org.junit.Test;
 
