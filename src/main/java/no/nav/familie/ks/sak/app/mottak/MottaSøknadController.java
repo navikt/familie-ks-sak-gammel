@@ -2,7 +2,7 @@ package no.nav.familie.ks.sak.app.mottak;
 
 import no.nav.familie.ks.sak.FunksjonelleMetrikker;
 import no.nav.familie.ks.sak.Saksbehandling;
-import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.security.oidc.api.ProtectedWithClaims;
