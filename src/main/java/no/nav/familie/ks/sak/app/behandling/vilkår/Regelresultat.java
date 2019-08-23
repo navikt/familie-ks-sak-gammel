@@ -3,16 +3,17 @@ package no.nav.familie.ks.sak.app.behandling.vilkår;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.behandling.VilkårRegelFeil;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårÅrsak;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import no.nav.fpsak.nare.evaluation.Evaluation;
+import no.nav.fpsak.nare.evaluation.Resultat;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSerializer;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSummary;
 
-import java.util.Optional;
+import java.util.Collection;
 
 public class Regelresultat {
 
@@ -29,16 +30,27 @@ public class Regelresultat {
         this.evaluationSummary = new EvaluationSummary(this.evaluation);
     }
 
-    private <T> T getProperty(String tag, Class<T> clazz) {
-        Object obj = getProperty(tag);
-        if (obj != null && !clazz.isAssignableFrom(obj.getClass())) {
-            throw new IllegalArgumentException("Kan ikke hente property " + tag + ". Forventet " + clazz.getSimpleName() + " men fant " + obj.getClass());
-        }
-        return (T) obj;
-    }
-
     public UtfallType getUtfallType() {
-        return getProperty(VilkårUtfall.UTFALL, UtfallType.class);
+        Collection<Evaluation> leafEvaluations = evaluationSummary.leafEvaluations();
+        for (Evaluation ev : leafEvaluations) {
+            if (ev.getOutcome() != null) {
+                Resultat res = ev.result();
+                switch (res) {
+                    case JA:
+                        return UtfallType.OPPFYLT;
+                    case NEI:
+                        return UtfallType.IKKE_OPPFYLT;
+                    case IKKE_VURDERT:
+                        return UtfallType.IKKE_VURDERT;
+                    default:
+                        throw new IllegalArgumentException("Ukjent Resultat:" + res + " ved evaluering av:" + ev);
+                }
+            } else {
+                return UtfallType.OPPFYLT;
+            }
+        }
+
+        throw new IllegalArgumentException("leafEvaluations.isEmpty():" + leafEvaluations);
     }
 
     public String getInputJson() {
@@ -54,15 +66,7 @@ public class Regelresultat {
     }
 
     public VilkårÅrsak getUtfallÅrsak() {
-        return getProperty(VilkårUtfall.ÅRSAK, VilkårÅrsak.class);
-    }
-
-    private Object getProperty(String tag) {
-        Optional<Evaluation> first = evaluationSummary.leafEvaluations().stream()
-                .filter(e -> e.getEvaluationProperties() != null)
-                .findFirst();
-
-        return first.map(evaluation -> evaluation.getEvaluationProperties().get(tag)).orElse(null);
+        return (VilkårÅrsak) evaluation.getOutcome();
     }
 
     public VilkårType getVilkårType() {
