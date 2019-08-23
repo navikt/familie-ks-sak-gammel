@@ -2,16 +2,18 @@ package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
 import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "SO_UTLAND")
-public class OppgittUtlandsTilknytning extends BaseEntitet<Long> {
+public class OppgittUtlandsTilknytning extends BaseEntitet {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "so_utland_seq")
+    @SequenceGenerator(name = "so_utland_seq")
+    private Long id;
 
     @OneToMany(mappedBy = "utlandsTilknytning", cascade = CascadeType.PERSIST)
     private Set<AktørArbeidYtelseUtland> aktørerArbeidYtelseIUtlandet;
@@ -38,7 +40,7 @@ public class OppgittUtlandsTilknytning extends BaseEntitet<Long> {
     @Override
     public String toString() {
         return "OppgittUtlandsTilknytning{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", aktørerArbeidYtelseIUtlandet=" + aktørerArbeidYtelseIUtlandet +
                 ", aktørerTilknytningTilUtlandet=" + aktørerTilknytningTilUtlandet +
                 '}';

@@ -8,7 +8,12 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "SO_AKTOER_TILKNYTNING_UTLAND")
-public class AktørTilknytningUtland extends BaseEntitet<Long> {
+public class AktørTilknytningUtland extends BaseEntitet {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "so_aktoer_tilknytning_utland_seq")
+    @SequenceGenerator(name = "so_aktoer_tilknytning_utland_seq")
+    private Long id;
 
     @Column(name = "aktoer", nullable = false, updatable = false)
     private String aktør;

@@ -9,7 +9,12 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "SO_BARN")
-public class Barn extends BaseEntitet<Long> {
+public class Barn extends BaseEntitet {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "so_barn_seq")
+    @SequenceGenerator(name = "so_barn_seq")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "familieforhold_id")
@@ -74,7 +79,7 @@ public class Barn extends BaseEntitet<Long> {
     @Override
     public String toString() {
         return "SøknadBarn{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", familieforhold=" + familieforhold +
                 ", aktørId='" + aktørId + '\'' +
                 ", barnehageStatus=" + barnehageStatus +

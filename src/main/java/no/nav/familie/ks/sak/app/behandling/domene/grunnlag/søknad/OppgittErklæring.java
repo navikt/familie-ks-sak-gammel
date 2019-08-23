@@ -2,14 +2,17 @@ package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
 import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "SO_ERKLAERING")
-public class OppgittErklæring extends BaseEntitet<Long> {
+public class OppgittErklæring extends BaseEntitet {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "so_erklaering_seq")
+    @SequenceGenerator(name = "so_erklaering_seq")
+    private Long id;
 
     @Column(name = "BARN_HJEMME", nullable = false, updatable = false)
     private boolean barnetHjemmeværendeOgIkkeAdoptert;
@@ -69,7 +72,7 @@ public class OppgittErklæring extends BaseEntitet<Long> {
     @Override
     public String toString() {
         return "OppgittErklæring{" +
-                "id=" + getId() +
+                "id=" + id +
                 "barnetHjemmeværendeOgIkkeAdoptert=" + barnetHjemmeværendeOgIkkeAdoptert +
                 ", borSammenMedBarnet=" + borSammenMedBarnet +
                 ", ikkeAvtaltDeltBosted=" + ikkeAvtaltDeltBosted +

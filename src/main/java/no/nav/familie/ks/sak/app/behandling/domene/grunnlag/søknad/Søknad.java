@@ -7,7 +7,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "SO_SOKNAD")
-public class Søknad extends BaseEntitet<Long> {
+public class Søknad extends BaseEntitet {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "so_soknad_seq")
+    @SequenceGenerator(name = "so_soknad_seq")
+    private Long id;
 
     @Column(name = "innsendt_tidspunkt", nullable = false, updatable = false)
     private LocalDateTime innsendtTidspunkt;
@@ -45,7 +50,7 @@ public class Søknad extends BaseEntitet<Long> {
     @Override
     public String toString() {
         return "Søknad{" +
-                "id=" + getId() +
+                "id=" + id +
                 "innsendtTidspunkt=" + innsendtTidspunkt +
                 ", utlandsTilknytning=" + utlandsTilknytning +
                 ", erklæring=" + erklæring +

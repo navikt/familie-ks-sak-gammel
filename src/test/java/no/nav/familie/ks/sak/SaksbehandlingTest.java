@@ -26,16 +26,16 @@ public class SaksbehandlingTest {
 
     @Test
     public void positivt_vedtak_ved_oppfylte_vilkår() {
-        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreNorskStatsborgerOgBarnHarGyldigAlder());
-        Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"), PERSONIDENT);
+        when(oppslagMock.hentTpsFakta(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreNorskStatsborgerOgBarnHarGyldigAlder());
+        Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"));
 
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
     }
 
     @Test
     public void negativt_vedtak_ved_ikke_oppfylte_vilkår() {
-        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreUtenlandskeStatsborgereOgBarnForGammel());
-        Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"), PERSONIDENT);
+        when(oppslagMock.hentTpsFakta(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreUtenlandskeStatsborgereOgBarnForGammel());
+        Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"));
 
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
     }

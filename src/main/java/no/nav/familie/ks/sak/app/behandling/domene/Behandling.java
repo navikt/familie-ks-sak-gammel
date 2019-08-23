@@ -1,14 +1,16 @@
 package no.nav.familie.ks.sak.app.behandling.domene;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity(name = "Behandling")
 @Table(name = "BEHANDLING")
-public class Behandling extends BaseEntitet<Long> {
+public class Behandling extends BaseEntitet {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "behandling_seq")
+    @SequenceGenerator(name = "behandling_seq")
+    private Long id;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "fagsak_id", nullable = false, updatable = false)
@@ -30,13 +32,17 @@ public class Behandling extends BaseEntitet<Long> {
     @Override
     public String toString() {
         return "Behandling{" +
-                "id=" + getId() +
+                "id=" + id +
                 "fagsak=" + fagsak +
                 '}';
     }
 
     public Fagsak getFagsak() {
         return fagsak;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public static class Builder {

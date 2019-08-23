@@ -9,7 +9,12 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "SO_FAMILIEFORHOLD")
-public class OppgittFamilieforhold extends BaseEntitet<Long> {
+public class OppgittFamilieforhold extends BaseEntitet {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "so_familieforhold_seq")
+    @SequenceGenerator(name = "so_familieforhold_seq")
+    private Long id;
 
     @OneToMany(mappedBy = "familieforhold", cascade = CascadeType.PERSIST)
     private Set<Barn> barna;
@@ -37,7 +42,7 @@ public class OppgittFamilieforhold extends BaseEntitet<Long> {
     @Override
     public String toString() {
         return "OppgittFamilieforhold{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", barna=" + barna +
                 ", borBeggeForeldreSammen=" + borBeggeForeldreSammen +
                 '}';

@@ -36,25 +36,26 @@ public class Saksbehandling {
         this.mapper = objectMapper;
     }
 
-    public Vedtak behandle(String søknadJson, String personident) {
+    public Vedtak behandle(String søknadJson) {
         Søknad søknad = tilSøknad(søknadJson);
         behandlingslagerService.trekkUtOgPersister(søknad);
-        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad, personident);
+        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(faktagrunnlag);
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
         return vedtak;
     }
 
-    public Vedtak behandle(Søknad søknad, String personident) {
-        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad, personident);
+    public Vedtak behandle(Søknad søknad) {
+        behandlingslagerService.trekkUtOgPersister(søknad);
+        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(faktagrunnlag);
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
         return vedtak;
     }
 
-    private Faktagrunnlag fastsettFakta(Søknad søknad, String personident) {
+    private Faktagrunnlag fastsettFakta(Søknad søknad) {
         // søknadsdata, TPS-data og evt. barnehagelister
-        TpsFakta tpsFakta = oppslag.hentTpsFakta(søknad, personident);
+        TpsFakta tpsFakta = oppslag.hentTpsFakta(søknad);
         return new Faktagrunnlag.Builder()
                 .medTpsFakta(tpsFakta)
                 .medSøknad(søknad)

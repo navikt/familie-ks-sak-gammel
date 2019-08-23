@@ -1,13 +1,16 @@
 package no.nav.familie.ks.sak.app.behandling.domene;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity(name = "Fagsak")
 @Table(name = "FAGSAK")
-public class Fagsak extends BaseEntitet<Long> {
+public class Fagsak extends BaseEntitet {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fagsak_seq")
+    @SequenceGenerator(name = "fagsak_seq")
+    private Long id;
 
     @Column(name = "aktoer_id", nullable = false)
     private String aktørId;
@@ -66,7 +69,7 @@ public class Fagsak extends BaseEntitet<Long> {
     @Override
     public String toString() {
         return "Fagsak{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", aktørId='" + aktørId + '\'' +
                 ", saksnummer='" + saksnummer + '\'' +
                 '}';

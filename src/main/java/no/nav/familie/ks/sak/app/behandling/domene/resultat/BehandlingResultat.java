@@ -9,7 +9,8 @@ import java.util.Set;
 public class BehandlingResultat extends BaseEntitet {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "behandling_resultat_seq")
+    @SequenceGenerator(name = "behandling_resultat_seq")
     private Long id;
 
     @ManyToOne

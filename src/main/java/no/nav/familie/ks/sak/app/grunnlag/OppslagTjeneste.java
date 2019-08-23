@@ -62,8 +62,8 @@ public class OppslagTjeneste {
                 .build();
     }
 
-    public TpsFakta hentTpsFakta(Søknad søknad, String personident) {
-        Forelder forelder = genererForelder(hentAktørId(personident));
+    public TpsFakta hentTpsFakta(Søknad søknad) {
+        Forelder forelder = genererForelder(hentAktørId(søknad.person.fnr));
         Personinfo barn = hentBarnSøktFor(søknad);
         Forelder annenForelder = hentAnnenForelder(barn, forelder);
         return new TpsFakta.Builder()

@@ -32,15 +32,15 @@ public class PeriodeOppretterTest {
 
     @Test
     public void at_søknad_med_gradert_barnehage_gir_feil() {
-        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreNorskStatsborgerOgBarnHarGyldigAlder());
-        Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"), PERSONIDENT);
+        when(oppslagMock.hentTpsFakta(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreNorskStatsborgerOgBarnHarGyldigAlder());
+        Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"));
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
     }
 
     @Test
     public void at_søknad_uten_barnehage_gir_stønadperiode() {
-        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreNorskStatsborgerOgBarnHarGyldigAlder());
-        Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"), PERSONIDENT);
+        when(oppslagMock.hentTpsFakta(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreNorskStatsborgerOgBarnHarGyldigAlder());
+        Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"));
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
         assertThat(vedtak.getStønadperiode().getFom()).isEqualTo(FaktagrunnlagBuilder.faktaBeggeForeldreNorskStatsborgerOgBarnHarGyldigAlder().getBarn().getFødselsdato().plusMonths(MIN_ALDER_I_MÅNEDER).withDayOfMonth(1));
         assertThat(vedtak.getStønadperiode().getTom()).isEqualTo(FaktagrunnlagBuilder.faktaBeggeForeldreNorskStatsborgerOgBarnHarGyldigAlder().getBarn().getFødselsdato().plusMonths(MAKS_ALDER_I_MÅNEDER).withDayOfMonth(1));
@@ -49,8 +49,8 @@ public class PeriodeOppretterTest {
 
     @Test
     public void at_søknad_med_full_barnehage_gir_stønadperiode() {
-        when(oppslagMock.hentTpsFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreNorskStatsborgerOgBarnHarGyldigAlder());
-        Vedtak vedtak = saksbehandling.behandle(getFile("soknadFullBarnehageplass.json"), PERSONIDENT);
+        when(oppslagMock.hentTpsFakta(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreNorskStatsborgerOgBarnHarGyldigAlder());
+        Vedtak vedtak = saksbehandling.behandle(getFile("soknadFullBarnehageplass.json"));
         assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
         assertThat(vedtak.getStønadperiode().getFom()).isEqualTo(FaktagrunnlagBuilder.faktaBeggeForeldreNorskStatsborgerOgBarnHarGyldigAlder().getBarn().getFødselsdato().plusMonths(MIN_ALDER_I_MÅNEDER).withDayOfMonth(1));
         assertThat(vedtak.getStønadperiode().getTom()).isEqualTo(FaktagrunnlagBuilder.faktaBeggeForeldreNorskStatsborgerOgBarnHarGyldigAlder().getBarn().getFødselsdato().plusMonths(MAKS_ALDER_I_MÅNEDER).withDayOfMonth(1));

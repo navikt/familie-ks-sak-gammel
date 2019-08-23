@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS SAK;
 
 CREATE TABLE FAGSAK
 (
-    ID            serial primary key,
+    ID            bigint primary key,
     SAKSNUMMER    varchar(19) not null unique,
     AKTOER_ID     VARCHAR(50) not null,
     VERSJON       bigint       DEFAULT 0,
@@ -11,6 +11,7 @@ CREATE TABLE FAGSAK
     ENDRET_AV     VARCHAR(20),
     ENDRET_TID    TIMESTAMP(3)
 );
+CREATE SEQUENCE FAGSAK_SEQ INCREMENT BY 50 START WITH 1000000 NO CYCLE;
 create index on FAGSAK (SAKSNUMMER);
 create index on FAGSAK (AKTOER_ID);
 
@@ -19,7 +20,7 @@ COMMENT ON COLUMN FAGSAK.AKTOER_ID is 'Søker som har stilt kravet';
 
 CREATE TABLE BEHANDLING
 (
-    ID            serial primary key,
+    ID            bigint primary key,
     SAK_ID        bigint references FAGSAK (id),
     VERSJON       bigint       DEFAULT 0,
     OPPRETTET_AV  VARCHAR(20)  DEFAULT 'VL',
@@ -29,22 +30,24 @@ CREATE TABLE BEHANDLING
 );
 
 create index on BEHANDLING (SAK_ID);
+CREATE SEQUENCE BEHANDLING_SEQ INCREMENT BY 50 START WITH 1000000 NO CYCLE;
 
 -- Søknadsgrunnlaget
 
 CREATE TABLE SO_UTLAND
 (
-    ID            serial primary key,
+    ID            bigint primary key,
     VERSJON       bigint       DEFAULT 0,
     OPPRETTET_AV  VARCHAR(20)  DEFAULT 'VL',
     OPPRETTET_TID TIMESTAMP(3) DEFAULT localtimestamp,
     ENDRET_AV     VARCHAR(20),
     ENDRET_TID    TIMESTAMP(3)
 );
+CREATE SEQUENCE SO_UTLAND_SEQ INCREMENT BY 50 START WITH 1000000 NO CYCLE;
 
 CREATE TABLE SO_AKTOER_TILKNYTNING_UTLAND
 (
-    ID                           serial primary key,
+    ID                           bigint primary key,
     UTLAND_ID                    bigint REFERENCES SO_UTLAND (ID) NOT NULL,
     AKTOER                       VARCHAR(50)                      not null,
     BODD_ELLER_JOBBET            varchar(10)                      NOT NULL DEFAULT 'UBESVART',
@@ -55,10 +58,11 @@ CREATE TABLE SO_AKTOER_TILKNYTNING_UTLAND
     ENDRET_AV                    VARCHAR(20),
     ENDRET_TID                   TIMESTAMP(3)
 );
+CREATE SEQUENCE SO_AKTOER_TILKNYTNING_UTLAND_SEQ INCREMENT BY 50 START WITH 1000000 NO CYCLE;
 
 CREATE TABLE SO_AKTOER_ARBEID_YTELSE_UTLAND
 (
-    ID                              serial primary key,
+    ID                              bigint primary key,
     UTLAND_ID                       bigint REFERENCES SO_UTLAND (ID) NOT NULL,
     AKTOER                          VARCHAR(50)                      not null,
     ARBEID_UTLAND                   varchar(10)                      NOT NULL DEFAULT 'UBESVART',
@@ -73,10 +77,11 @@ CREATE TABLE SO_AKTOER_ARBEID_YTELSE_UTLAND
     ENDRET_AV                       VARCHAR(20),
     ENDRET_TID                      TIMESTAMP(3)
 );
+CREATE SEQUENCE SO_AKTOER_ARBEID_YTELSE_UTLAND_SEQ INCREMENT BY 50 START WITH 1000000 NO CYCLE;
 
 CREATE TABLE SO_ERKLAERING
 (
-    ID                      serial primary key,
+    ID                      bigint primary key,
     BARN_HJEMME             boolean not null,
     BOR_SAMMEN_MED_BARNET   boolean not null,
     IKKE_AVTALT_DELT_BOSTED boolean not null,
@@ -87,6 +92,7 @@ CREATE TABLE SO_ERKLAERING
     ENDRET_AV               VARCHAR(20),
     ENDRET_TID              TIMESTAMP(3)
 );
+CREATE SEQUENCE SO_ERKLAERING_SEQ INCREMENT BY 50 START WITH 1000000 NO CYCLE;
 
 COMMENT ON COLUMN SO_ERKLAERING.BARN_HJEMME IS 'Barnet er ikke adoptert, i fosterhjem eller på institusjon.';
 COMMENT ON COLUMN SO_ERKLAERING.BOR_SAMMEN_MED_BARNET IS 'Søker bor i Norge sammen med barnet';
@@ -95,7 +101,7 @@ COMMENT ON COLUMN SO_ERKLAERING.BARN_I_NORGE IS 'Søker og barnet skal ikke opph
 
 CREATE TABLE SO_SOKNAD
 (
-    ID                    serial primary key,
+    ID                    bigint primary key,
     INNSENDT_TIDSPUNKT    timestamp(3)                         not null,
     OPPGITT_ERKLAERING_ID bigint REFERENCES SO_ERKLAERING (id) NOT NULL,
     OPPGITT_UTLAND_ID     bigint REFERENCES SO_UTLAND (id)     NOT NULL,
@@ -105,10 +111,11 @@ CREATE TABLE SO_SOKNAD
     ENDRET_AV             VARCHAR(20),
     ENDRET_TID            TIMESTAMP(3)
 );
+CREATE SEQUENCE SO_SOKNAD_SEQ INCREMENT BY 50 START WITH 1000000 NO CYCLE;
 
 create table GR_SOKNAD
 (
-    ID            serial primary key,
+    ID            bigint primary key,
     BEHANDLING_ID bigint references BEHANDLING (id)   not null,
     SOKNAD_ID     bigint REFERENCES SO_SOKNAD (ID),
     AKTIV         boolean      default true           not null,
@@ -118,6 +125,7 @@ create table GR_SOKNAD
     ENDRET_AV     VARCHAR(20),
     ENDRET_TID    TIMESTAMP(3)
 );
+CREATE SEQUENCE GR_SOKNAD_SEQ INCREMENT BY 50 START WITH 1000000 NO CYCLE;
 
 
 create index on GR_SOKNAD (BEHANDLING_ID);
@@ -140,7 +148,7 @@ CREATE UNIQUE INDEX UIDX_GR_SOKNAD_01
 
 CREATE TABLE SO_FAMILIEFORHOLD
 (
-    ID                          serial primary key,
+    ID                          bigint primary key,
     BOR_BEGGE_SAMMEN_MED_BARNET boolean not null,
     VERSJON                     bigint       DEFAULT 0,
     OPPRETTET_AV                VARCHAR(20)  DEFAULT 'VL',
@@ -148,11 +156,11 @@ CREATE TABLE SO_FAMILIEFORHOLD
     ENDRET_AV                   VARCHAR(20),
     ENDRET_TID                  TIMESTAMP(3)
 );
-
+CREATE SEQUENCE SO_FAMilieforhold_SEQ INCREMENT BY 50 START WITH 1000000 NO CYCLE;
 
 CREATE TABLE SO_BARN
 (
-    ID                     serial primary key,
+    ID                     bigint primary key,
     FAMILIEFORHOLD_ID      bigint REFERENCES SO_FAMILIEFORHOLD (ID) not null,
     AKTOER_ID              VARCHAR(50)                              not null,
     BARNEHAGE_STATUS       VARCHAR(50)                              NOT NULL,
@@ -165,13 +173,14 @@ CREATE TABLE SO_BARN
     ENDRET_AV              VARCHAR(20),
     ENDRET_TID             TIMESTAMP(3)
 );
+CREATE SEQUENCE SO_BARN_SEQ INCREMENT BY 50 START WITH 1000000 NO CYCLE;
 
 create index on SO_BARN (AKTOER_ID);
 create index on SO_BARN (FAMILIEFORHOLD_ID);
 
 create table GR_BARNEHAGE_BARN
 (
-    ID                        serial primary key,
+    ID                        bigint primary key,
     BEHANDLING_ID             bigint references BEHANDLING (id)   not null,
     OPPGITT_FAMILIEFORHOLD_ID bigint REFERENCES SO_FAMILIEFORHOLD (ID),
     AKTIV                     boolean      default true           not null,
@@ -181,6 +190,7 @@ create table GR_BARNEHAGE_BARN
     ENDRET_AV                 VARCHAR(20),
     ENDRET_TID                TIMESTAMP(3)
 );
+CREATE SEQUENCE GR_BARNEHAGE_BARN_SEQ INCREMENT BY 50 START WITH 1000000 NO CYCLE;
 
 create index on GR_BARNEHAGE_BARN (BEHANDLING_ID);
 create index on GR_BARNEHAGE_BARN (OPPGITT_FAMILIEFORHOLD_ID);

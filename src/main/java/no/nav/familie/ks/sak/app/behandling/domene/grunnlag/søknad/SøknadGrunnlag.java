@@ -7,7 +7,12 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "GR_SOKNAD")
-public class SøknadGrunnlag extends BaseEntitet<Long> {
+public class SøknadGrunnlag extends BaseEntitet {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gr_soknad_seq")
+    @SequenceGenerator(name = "gr_soknad_seq")
+    private Long id;
 
     @Column(name = "behandling_id", nullable = false, updatable = false)
     private Long behandlingId;

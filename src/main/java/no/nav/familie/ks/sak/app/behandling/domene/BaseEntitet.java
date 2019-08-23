@@ -10,13 +10,9 @@ import java.time.LocalDateTime;
  * opprettet eller oppdatert en rad, og når).
  */
 @MappedSuperclass
-public abstract class BaseEntitet<T extends Serializable> implements Serializable {
+public abstract class BaseEntitet implements Serializable {
 
     private static final String BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES = "VL";
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private T id;
 
     @Column(name = "opprettet_av", nullable = false, updatable = false)
     private String opprettetAv;
@@ -49,10 +45,6 @@ public abstract class BaseEntitet<T extends Serializable> implements Serializabl
     protected void onUpdate() {
         endretAv = finnBrukernavn();
         endretTidspunkt = LocalDateTime.now();
-    }
-
-    public T getId() {
-        return id;
     }
 
     public String getOpprettetAv() {

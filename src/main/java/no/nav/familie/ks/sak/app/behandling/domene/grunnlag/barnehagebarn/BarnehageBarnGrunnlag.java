@@ -7,7 +7,12 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "GR_BARNEHAGE_BARN")
-public class BarnehageBarnGrunnlag extends BaseEntitet<Long> {
+public class BarnehageBarnGrunnlag extends BaseEntitet {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gr_barnehage_barn_seq")
+    @SequenceGenerator(name = "gr_barnehage_barn_seq")
+    private Long id;
 
     @Column(name = "behandling_id", nullable = false, updatable = false)
     private Long behandlingId;
@@ -34,7 +39,7 @@ public class BarnehageBarnGrunnlag extends BaseEntitet<Long> {
     @Override
     public String toString() {
         return "BarnehageBarnGrunnlag{" +
-                "id=" + getId() +
+                "id=" + id +
                 "familieforhold=" + familieforhold +
                 ", aktiv=" + aktiv +
                 '}';
