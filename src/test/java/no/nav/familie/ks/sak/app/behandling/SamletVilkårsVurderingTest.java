@@ -5,6 +5,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Regelresultat;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;
+import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.BarnehageVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.bosted.BostedVilkår;
 import org.junit.Test;
@@ -16,28 +17,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SamletVilkårsVurderingTest {
 
-    private final List<InngangsvilkårRegel> inngangsvilkår = List.of(new BarneVilkår(), new MedlemskapsVilkår(), new BostedVilkår());
+    private final List<InngangsvilkårRegel> inngangsvilkår = List.of(new BarnehageVilkår(), new MedlemskapsVilkår(), new BostedVilkår(), new BarneVilkår());
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(inngangsvilkår);
 
     @Test
-    public void skal_gi_oppfylt_når_alle_er_oppfylt() {
-        final var faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreNorskStatsborgerOgBarnHarGyldigAlder();
+    public void gir_oppfylt_når_alle_er_oppfylt() {
+        final var faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage();
         final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);
         final var alleUtfall = vurder.getResultater().stream().map(Regelresultat::getUtfallType).collect(Collectors.toList());
         assertThat(alleUtfall).hasSize(inngangsvilkår.size());
-        assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT);
+        assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT);
         assertThat(vurder.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
     }
 
     @Test
-    public void skal_gi_rett_utfall_når_ulike() {
-        final var faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreUtenlandskeStatsborgereOgBarnForGammel();
+    public void gir_ikke_oppfylt_når_ikke_alle_er_oppfylt() {
+        final var faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapMedBarnehage();
 
         final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);
 
         final var alleUtfall = vurder.getResultater().stream().map(Regelresultat::getUtfallType).collect(Collectors.toList());
         assertThat(alleUtfall).hasSize(inngangsvilkår.size());
-        assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.OPPFYLT, UtfallType.IKKE_OPPFYLT, UtfallType.IKKE_OPPFYLT);
+        assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.IKKE_OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT);
         assertThat(vurder.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
 
     }
