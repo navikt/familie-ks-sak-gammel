@@ -2,10 +2,12 @@ package no.nav.familie.ks.sak.app.behandling.domene.resultat;
 
 import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
+import no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår.VilkårsResultat;
 
 import javax.persistence.*;
-import java.util.Set;
 
+@Entity
+@Table(name = "BEHANDLING_RESULTAT")
 public class BehandlingResultat extends BaseEntitet {
 
     @Id
@@ -13,12 +15,35 @@ public class BehandlingResultat extends BaseEntitet {
     @SequenceGenerator(name = "behandling_resultat_seq")
     private Long id;
 
+    @Column(name = "behandling_id", nullable = false, updatable = false)
+    private Long behandlingId;
+
     @ManyToOne
-    @JoinColumn(name = "BEHANDLING_ID", nullable = false, updatable = false)
-    private Behandling behandling;
+    @JoinColumn(name = "vilkars_resultat_id", updatable = false)
+    private VilkårsResultat vilkårsResultat;
 
-    @OneToMany(mappedBy = "behandlingResultat")
-    private Set<VilkårResultat> vilkårsResultat;
+    @Column(name = "aktiv")
+    private boolean aktiv = true;
 
+    BehandlingResultat() {
+    }
 
+    public BehandlingResultat(Behandling behandling, VilkårsResultat vilkårsResultat) {
+        this.behandlingId = behandling.getId();
+        this.vilkårsResultat = vilkårsResultat;
+    }
+
+    public VilkårsResultat getVilkårsResultat() {
+        return vilkårsResultat;
+    }
+
+    @Override
+    public String toString() {
+        return "BehandlingResultat{" +
+                "id=" + id +
+                ", behandlingId=" + behandlingId +
+                ", vilkårsResultat=" + vilkårsResultat +
+                ", aktiv=" + aktiv +
+                '}';
+    }
 }

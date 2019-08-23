@@ -3,7 +3,7 @@ package no.nav.familie.ks.sak.app.behandling;
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.medlemsskap.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;
@@ -28,8 +28,10 @@ public class PeriodeOppretterTest {
     private static final int MAKS_UTBETALINGSGRAD = 100;
 
     private final OppslagTjeneste oppslagMock = mock(OppslagTjeneste.class);
+
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår(), new BarnehageVilkår(), new BostedVilkår()));
-    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, mock(BehandlingslagerService.class) , new JacksonJsonConfig().objectMapper());
+
+    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, mock(BehandlingslagerService.class) , mock(ResultatService.class), new JacksonJsonConfig().objectMapper());
 
     @Test
     public void søknad_med_barnehage_gir_feil() {

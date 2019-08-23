@@ -1,8 +1,9 @@
 package no.nav.familie.ks.sak;
 
 import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService;
+import no.nav.familie.ks.sak.app.behandling.ResultatService;
 import no.nav.familie.ks.sak.app.behandling.VurderSamletTjeneste;
-import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.medlemsskap.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;
@@ -22,8 +23,8 @@ import static org.mockito.Mockito.when;
 public class SaksbehandlingTest {
 
     private final OppslagTjeneste oppslagMock = mock(OppslagTjeneste.class);
-    private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår(), new BarnehageVilkår(), new BostedVilkår()));
-    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, mock(BehandlingslagerService.class), new JacksonJsonConfig().objectMapper());
+    private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår()));
+    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, mock(BehandlingslagerService.class), mock(ResultatService.class), new JacksonJsonConfig().objectMapper());
 
     @Test
     public void positivt_vedtak_ved_oppfylte_vilkår() {

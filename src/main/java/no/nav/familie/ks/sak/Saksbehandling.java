@@ -3,8 +3,9 @@ package no.nav.familie.ks.sak;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.behandling.*;
+import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.behandling.resultat.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
@@ -22,6 +23,7 @@ public class Saksbehandling {
     private VurderSamletTjeneste vurderSamletTjeneste;
     private PeriodeOppretter periodeOppretter = new PeriodeOppretter();
     private BehandlingslagerService behandlingslagerService;
+    private ResultatService resultatService;
     private ObjectMapper mapper;
     private OppslagTjeneste oppslag;
 
@@ -29,26 +31,27 @@ public class Saksbehandling {
     public Saksbehandling(OppslagTjeneste oppslag,
                           VurderSamletTjeneste vurderSamletTjeneste,
                           BehandlingslagerService behandlingslagerService,
-                          ObjectMapper objectMapper) {
+                          ResultatService resultatService, ObjectMapper objectMapper) {
         this.oppslag = oppslag;
         this.vurderSamletTjeneste = vurderSamletTjeneste;
         this.behandlingslagerService = behandlingslagerService;
+        this.resultatService = resultatService;
         this.mapper = objectMapper;
     }
 
     public Vedtak behandle(String søknadJson) {
         Søknad søknad = tilSøknad(søknadJson);
-        behandlingslagerService.trekkUtOgPersister(søknad);
+        final var behandling = behandlingslagerService.trekkUtOgPersister(søknad);
         Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
-        SamletVilkårsVurdering vilkårvurdering = vurderVilkår(faktagrunnlag);
+        SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
         return vedtak;
     }
 
     public Vedtak behandle(Søknad søknad) {
-        behandlingslagerService.trekkUtOgPersister(søknad);
+        final var behandling = behandlingslagerService.trekkUtOgPersister(søknad);
         Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
-        SamletVilkårsVurdering vilkårvurdering = vurderVilkår(faktagrunnlag);
+        SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
         return vedtak;
     }
@@ -62,8 +65,11 @@ public class Saksbehandling {
                 .build();
     }
 
-    private SamletVilkårsVurdering vurderVilkår(Faktagrunnlag grunnlag) {
-        return vurderSamletTjeneste.vurder(grunnlag);
+    private SamletVilkårsVurdering vurderVilkår(Behandling behandling, Faktagrunnlag grunnlag) {
+        final var samletVilkårsVurdering = vurderSamletTjeneste.vurder(grunnlag);
+
+        resultatService.persisterResultat(behandling, samletVilkårsVurdering);
+        return samletVilkårsVurdering;
     }
 
     private GradertPeriode fastsettPeriode(Faktagrunnlag grunnlag) {
