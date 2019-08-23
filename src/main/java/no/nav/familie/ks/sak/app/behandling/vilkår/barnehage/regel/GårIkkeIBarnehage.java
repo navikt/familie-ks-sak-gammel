@@ -6,18 +6,18 @@ import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
 
-@RuleDocumentation(GårkkeIBarnehage.ID)
-public class GårkkeIBarnehage extends LeafSpecification<Faktagrunnlag> {
+@RuleDocumentation(GårIkkeIBarnehage.ID)
+public class GårIkkeIBarnehage extends LeafSpecification<Faktagrunnlag> {
 
     public static final String ID = "KS-BHAG-1";
 
-    public GårkkeIBarnehage() {
+    public GårIkkeIBarnehage() {
         super(ID);
     }
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
         BarnehageplassVerdier svar = grunnlag.getSøknad().barnehageplass.barnBarnehageplassStatus;
-        return svar.equals(BarnehageplassVerdier.gårIkkeIBarnehage) ? ja() : nei();
+        return svar.equals(BarnehageplassVerdier.garIkkeIBarnehage) ? ja() : nei();
     }
 }

@@ -28,7 +28,7 @@ public class Barnehageplass {
     }
 
     public enum BarnehageplassVerdier {
-        gårIkkeIBarnehage("Går ikke i barnehage"),
+        garIkkeIBarnehage("Går ikke i barnehage"),
         harBarnehageplass("Har barnehageplass"),
         harSluttetIBarnehage("Har sluttet i barnehage"),
         skalBegynneIBarnehage("Skal begynne i barnehage"),
