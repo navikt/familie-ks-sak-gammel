@@ -6,16 +6,14 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.security.oidc.api.ProtectedWithClaims;
+import no.nav.security.oidc.api.Unprotected;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/mottak")
@@ -50,5 +48,11 @@ public class MottaSøknadController {
         funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
 
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping(path = "sentry")
+    @Unprotected
+    public ResponseEntity testSentry() {
+        throw new UnsupportedOperationException("Test mot sentry");
     }
 }
