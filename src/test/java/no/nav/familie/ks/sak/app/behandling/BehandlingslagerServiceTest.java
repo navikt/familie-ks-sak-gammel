@@ -57,7 +57,7 @@ public class BehandlingslagerServiceTest {
 
     @Test
     public void skal_lagre_søknad_og_hente_opp_igjen() {
-        final var søknad = FaktagrunnlagBuilder.søknadMedBarnehageplass();
+        final var søknad = FaktagrunnlagBuilder.medBarnehageplass();
         tjeneste.trekkUtOgPersister(søknad);
 
         final var fagsaker = fagsakRepository.findAll();
