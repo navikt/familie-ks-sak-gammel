@@ -23,9 +23,17 @@ public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnla
         boolean arbeidIUtlandet = søknad.arbeidIUtlandet.arbeiderIUtlandetEllerKontinentalsokkel.equalsIgnoreCase("NEI");
         boolean utenlandskeYtelser = søknad.utenlandskeYtelser.mottarYtelserFraUtland.equalsIgnoreCase("NEI");
         boolean utenlandskKontantstotte = søknad.utenlandskKontantstotte.mottarKontantstotteFraUtlandet.equalsIgnoreCase("NEI");
+        boolean annenForelderIkkeTilknytningUtland = søknad.familieforhold.annenForelderNavn.isEmpty() || annenForelderTilknytningUtland(søknad);
 
-        return (boddEllerJobbetINorgeMinstFemAar && arbeidIUtlandet && utenlandskeYtelser && utenlandskKontantstotte)
+        return (boddEllerJobbetINorgeMinstFemAar && arbeidIUtlandet && utenlandskeYtelser && utenlandskKontantstotte && annenForelderIkkeTilknytningUtland)
                 ? ja()
                 : nei();
+    }
+
+    private boolean annenForelderTilknytningUtland(Søknad søknad) {
+        boolean boddEllerJobbetINorgeMinstFemAar = søknad.tilknytningTilUtland.annenForelderBoddEllerJobbetINorgeMinstFemAar.equals(TilknytningTilUtland.TilknytningTilUtlandVerdier.jaINorge);
+        boolean arbeidIUtlandet = søknad.arbeidIUtlandet.arbeiderAnnenForelderIUtlandet.equalsIgnoreCase("NEI");
+        boolean utenlandskeYtelser = søknad.utenlandskeYtelser.mottarAnnenForelderYtelserFraUtland.equalsIgnoreCase("NEI");
+        return boddEllerJobbetINorgeMinstFemAar && arbeidIUtlandet && utenlandskeYtelser;
     }
 }
