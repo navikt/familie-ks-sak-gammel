@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MedlemskapsVilkårTest {
+public class MedlemskapVilkårTest {
 
     @Test
     public void vurderer_begge_delvilkår() {
