@@ -206,6 +206,13 @@ public final class FaktagrunnlagBuilder {
                 .build();
     }
 
+    public static Faktagrunnlag familieUtenlandskStatsborgerskapMedTilknytningUtland() {
+        return new Faktagrunnlag.Builder()
+                .medTpsFakta(beggeForeldreOgBarnUtenlandskeStatsborgere)
+                .medSøknad(tilknytningUtland())
+                .build();
+    }
+
     public static Faktagrunnlag familieNorskStatsborgerskapUtenBarnehage() {
         return new Faktagrunnlag.Builder()
                 .medTpsFakta(beggeForeldreOgBarnNorskStatsborger)
@@ -259,6 +266,14 @@ public final class FaktagrunnlagBuilder {
     public static Søknad medBarnehageplass() {
         try {
             return mapper.readValue(new File(getFile("soknadFullBarnehageplass.json")), Søknad.class);
+        } catch (IOException e) {
+            throw new IOError(e);
+        }
+    }
+
+    private static Søknad tilknytningUtland() {
+        try {
+            return mapper.readValue(new File(getFile("soknadTilknytningUtland.json")), Søknad.class);
         } catch (IOException e) {
             throw new IOError(e);
         }

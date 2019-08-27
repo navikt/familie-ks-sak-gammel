@@ -9,7 +9,8 @@ public enum VilkårIkkeOppfyltÅrsak implements VilkårÅrsak {
     IKKE_NORSKE_STATSBORGERE_FEM_ÅR(8304, "Foreldre har ikke hatt norsk statsborgerskap sammenhegende siste fem år"),
     IKKE_BEGGE_FORELDRE(8307, "Begge foreldre er ikke registrert på barn i TPS"),
     IKKE_BOSATT_SAMMEN(8306, "Barn er ikke bosatt sammen med begge foreldre"),
-    BARN_IKKE_NORSK_STATSBORGER(8307, "Barn er ikke norsk statsborger");
+    BARN_IKKE_NORSK_STATSBORGER(8308, "Barn er ikke norsk statsborger"),
+    OPPGITT_TILKNYTNING_UTLAND(8309, "Søker har svart ja på spørsmål som indikerer tilknytning til utland");
 
     private final int årsakKode;
     private final String beskrivelse;
