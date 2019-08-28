@@ -4,7 +4,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 
 public enum VilkårOppfyltÅrsak implements VilkårUtfallÅrsak {
 
-    VILKÅR_OPPFYLT(8601, "Vilkår for å søke kontantstøtte er godkjent");
+    VILKÅR_OPPFYLT(8601, "Vilkår oppfylt");
 
     private final int årsakKode;
     private final String beskrivelse;
