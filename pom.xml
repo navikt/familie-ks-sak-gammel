@@ -131,7 +131,7 @@
         <dependency>
             <groupId>no.nav.fpsak.tidsserie</groupId>
             <artifactId>fpsak-tidsserie</artifactId>
-            <version>2.0_20190729133326_93cd9c3</version>
+            <version>2.0_20180831125757_006dad2</version>
         </dependency>
 
         <!-- Logging -->
