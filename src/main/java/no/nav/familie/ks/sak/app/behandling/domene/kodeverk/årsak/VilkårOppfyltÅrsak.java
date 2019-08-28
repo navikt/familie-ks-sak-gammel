@@ -1,6 +1,8 @@
-package no.nav.familie.ks.sak.app.behandling.resultat.årsak;
+package no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak;
 
-public enum VilkårOppfyltÅrsak implements VilkårÅrsak {
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
+
+public enum VilkårOppfyltÅrsak implements VilkårUtfallÅrsak {
 
     VILKÅR_OPPFYLT(8601, "Vilkår for å søke kontantstøtte er godkjent");
 
@@ -20,6 +22,11 @@ public enum VilkårOppfyltÅrsak implements VilkårÅrsak {
     @Override
     public String getBeskrivelse() {
         return beskrivelse;
+    }
+
+    @Override
+    public VilkårType getVilkårType() {
+        return null; // Irrelevant, dette er dekket av selve RuleSettet
     }
 
     @Override
