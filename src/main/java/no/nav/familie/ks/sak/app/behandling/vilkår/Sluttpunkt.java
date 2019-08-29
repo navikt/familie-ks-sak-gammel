@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.vilkår;
 
-import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
 
 public class Sluttpunkt {
 
