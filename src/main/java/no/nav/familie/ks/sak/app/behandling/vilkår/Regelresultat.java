@@ -6,7 +6,7 @@ import no.nav.familie.ks.sak.app.behandling.VilkårRegelFeil;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårÅrsak;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårUtfallÅrsak;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.evaluation.Resultat;
@@ -65,8 +65,8 @@ public class Regelresultat {
         return EvaluationSerializer.asJson(evaluation);
     }
 
-    public VilkårÅrsak getUtfallÅrsak() {
-        return (VilkårÅrsak) evaluation.getOutcome();
+    public VilkårUtfallÅrsak getUtfallÅrsak() {
+        return (VilkårUtfallÅrsak) evaluation.getOutcome();
     }
 
     public VilkårType getVilkårType() {
