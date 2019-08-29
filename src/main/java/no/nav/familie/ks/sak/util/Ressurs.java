@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app;
+package no.nav.familie.ks.sak.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

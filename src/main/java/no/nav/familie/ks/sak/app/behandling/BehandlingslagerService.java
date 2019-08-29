@@ -1,7 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.nav.familie.ks.sak.app.Ressurs;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
@@ -18,6 +17,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRe
 import no.nav.familie.ks.sak.app.grunnlag.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.rest.Behandling.*;
 import no.nav.familie.ks.sak.util.DateParser;
+import no.nav.familie.ks.sak.util.Ressurs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
