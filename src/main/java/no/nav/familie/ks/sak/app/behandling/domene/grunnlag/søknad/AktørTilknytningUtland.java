@@ -54,4 +54,16 @@ public class AktørTilknytningUtland extends BaseEntitet {
         this.utlandsTilknytning = utlandsTilknytning;
         return this;
     }
+
+    public String getAktør() {
+        return aktør;
+    }
+
+    public TilknytningTilUtland.TilknytningTilUtlandVerdier getTilknytningTilUtland() {
+        return tilknytningTilUtland;
+    }
+
+    public String getTilknytningTilUtlandForklaring() {
+        return tilknytningTilUtlandForklaring;
+    }
 }

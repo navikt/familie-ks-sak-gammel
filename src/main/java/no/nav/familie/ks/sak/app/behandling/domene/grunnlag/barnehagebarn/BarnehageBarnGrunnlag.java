@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 
@@ -43,5 +44,9 @@ public class BarnehageBarnGrunnlag extends BaseEntitet {
                 "familieforhold=" + familieforhold +
                 ", aktiv=" + aktiv +
                 '}';
+    }
+
+    public Long getBehandlingId() {
+        return behandlingId;
     }
 }

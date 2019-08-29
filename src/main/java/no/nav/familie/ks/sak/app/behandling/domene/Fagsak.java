@@ -44,6 +44,10 @@ public class Fagsak extends BaseEntitet {
         return new Fagsak(aktørId, saksnummer);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getAktørId() {
         return aktørId;
     }

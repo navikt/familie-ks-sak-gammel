@@ -5,6 +5,7 @@ import no.nav.familie.ks.sak.app.behandling.SamletVilkårsVurdering;
 
 public class Vedtak {
 
+    private Long behandlingsId;
     private GradertPeriode stønadperiode;
     private SamletVilkårsVurdering vilkårvurdering;
 
@@ -15,6 +16,14 @@ public class Vedtak {
 
     public Vedtak(SamletVilkårsVurdering vilkårvurdering) {
         this.vilkårvurdering = vilkårvurdering;
+    }
+
+    public void setBehandlingsId(Long behandlingsId) {
+        this.behandlingsId = behandlingsId;
+    }
+
+    public Long getBehandlingsId() {
+        return behandlingsId;
     }
 
     public GradertPeriode getStønadperiode() {

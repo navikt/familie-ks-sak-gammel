@@ -1,5 +1,7 @@
 package no.nav.familie.ks.sak.app.behandling;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.familie.ks.sak.app.Ressurs;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
@@ -11,36 +13,44 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Oppgit
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.*;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
+import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingResultat;
+import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository;
 import no.nav.familie.ks.sak.app.grunnlag.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.rest.Behandling.*;
 import no.nav.familie.ks.sak.util.DateParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class BehandlingslagerService {
 
     private FagsakRepository fagsakRepository;
     private BehandlingRepository behandlingRepository;
+    private BehandlingresultatRepository behandlingresultatRepository;
     private SøknadGrunnlagRepository søknadGrunnlagRepository;
     private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
     private OppslagTjeneste oppslagTjeneste;
+    private ObjectMapper objectMapper;
 
     @Autowired
     public BehandlingslagerService(FagsakRepository fagsakRepository,
                                    BehandlingRepository behandlingRepository,
+                                   BehandlingresultatRepository behandlingresultatRepository,
                                    SøknadGrunnlagRepository søknadGrunnlagRepository,
                                    BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository,
-                                   OppslagTjeneste oppslag) {
+                                   OppslagTjeneste oppslag,
+                                   ObjectMapper objectMapper) {
         this.fagsakRepository = fagsakRepository;
         this.behandlingRepository = behandlingRepository;
+        this.behandlingresultatRepository = behandlingresultatRepository;
         this.søknadGrunnlagRepository = søknadGrunnlagRepository;
         this.barnehageBarnGrunnlagRepository = barnehageBarnGrunnlagRepository;
         this.oppslagTjeneste = oppslag;
+        this.objectMapper = objectMapper;
     }
 
     public Behandling trekkUtOgPersister(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
@@ -140,6 +150,83 @@ public class BehandlingslagerService {
         }
 
         return builder;
+    }
+
+    public Ressurs hentFagsakForSaksbehandler(Long fagsakId) {
+        Optional<Fagsak> fagsak = fagsakRepository.findById(fagsakId);
+        List<Behandling> behandlinger = behandlingRepository.finnBehandlinger(fagsakId);
+
+        // Grunnlag fra søknag
+        List<RestBehandling> restBehandlinger = new ArrayList<>();
+        behandlinger.forEach(behandling -> {
+            SøknadGrunnlag søknadGrunnlag = søknadGrunnlagRepository.finnGrunnlag(behandling.getId());
+            BarnehageBarnGrunnlag barnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.getId());
+
+            Set<RestBarn> barna = new HashSet<>();
+            barnehageBarnGrunnlag.getFamilieforhold().getBarna().forEach(barn ->
+                    barna.add(
+                            new RestBarn(
+                            barn.getAktørId(),
+                            barn.getBarnehageStatus(),
+                            barn.getBarnehageAntallTimer(),
+                            barn.getBarnehageDato(),
+                            barn.getBarnehageKommune())));
+            RestOppgittFamilieforhold familieforhold = new RestOppgittFamilieforhold(barna, barnehageBarnGrunnlag.getFamilieforhold().isBorBeggeForeldreSammen());
+
+            Set<RestAktørArbeidYtelseUtland> aktørerArbeidYtelseUtland = new HashSet<>();
+            Set<RestAktørTilknytningUtland> aktørerTilknytningUtland = new HashSet<>();
+            søknadGrunnlag.getSøknad().getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet().forEach(aktørArbeidYtelseUtland ->
+                    aktørerArbeidYtelseUtland.add(
+                            new RestAktørArbeidYtelseUtland(
+                                    aktørArbeidYtelseUtland.getAktørId(),
+                                    aktørArbeidYtelseUtland.getArbeidIUtlandet(),
+                                    aktørArbeidYtelseUtland.getArbeidIUtlandetForklaring(),
+                                    aktørArbeidYtelseUtland.getYtelseIUtlandet(),
+                                    aktørArbeidYtelseUtland.getYtelseIUtlandetForklaring(),
+                                    aktørArbeidYtelseUtland.getKontantstøtteIUtlandet(),
+                                    aktørArbeidYtelseUtland.getKontantstøtteIUtlandetForklaring())));
+            søknadGrunnlag.getSøknad().getUtlandsTilknytning().getAktørerTilknytningTilUtlandet().forEach(aktørTilknytningUtland ->
+                    aktørerTilknytningUtland.add(
+                            new RestAktørTilknytningUtland(
+                                    aktørTilknytningUtland.getAktør(),
+                                    aktørTilknytningUtland.getTilknytningTilUtland(),
+                                    aktørTilknytningUtland.getTilknytningTilUtlandForklaring())));
+
+            RestOppgittUtlandsTilknytning oppgittUtlandsTilknytning = new RestOppgittUtlandsTilknytning(aktørerArbeidYtelseUtland, aktørerTilknytningUtland);
+
+            OppgittErklæring erklæring = søknadGrunnlag.getSøknad().getErklæring();
+            RestOppgittErklæring oppgittErklæring = new RestOppgittErklæring(erklæring.isBarnetHjemmeværendeOgIkkeAdoptert(), erklæring.isBorSammenMedBarnet(), erklæring.isIkkeAvtaltDeltBosted(), erklæring. isBarnINorgeNeste12Måneder());
+
+            RestSøknad søknad = new RestSøknad(søknadGrunnlag.getSøknad().getInnsendtTidspunkt(), familieforhold, oppgittUtlandsTilknytning, oppgittErklæring);
+
+
+            // Grunnlag fra regelkjøring
+            BehandlingResultat behandlingsresultat = behandlingresultatRepository.finnBehandlingsresultat(behandling.getId());
+            Set<RestVilkårsresultat> restVilkårsResultat = new HashSet<>();
+            behandlingsresultat.getVilkårsResultat().getVilkårsResultat().forEach(vilkårResultat ->
+                    restVilkårsResultat.add(
+                            new RestVilkårsresultat(
+                                    vilkårResultat.getVilkårType(),
+                                    vilkårResultat.getUtfall())));
+
+            RestBehandlingsresultat restBehandlingsresultat = new RestBehandlingsresultat(restVilkårsResultat, behandlingsresultat.isAktiv());
+
+            restBehandlinger.add(new RestBehandling(behandling.getId(), søknad, restBehandlingsresultat));
+        });
+
+
+        if (fagsak.isPresent()) {
+            RestFagsak restFagsak = new RestFagsak(fagsak.get(), restBehandlinger);
+
+            return new Ressurs.Builder().byggVellyketRessurs(objectMapper.valueToTree(restFagsak));
+        } else {
+            return new Ressurs.Builder()
+                    .byggFeiletRessurs("Fant ikke fagsak med id " + fagsakId);
+        }
+    }
+
+    public List<Fagsak> hentFagsaker() {
+        return fagsakRepository.findAll();
     }
 
 }

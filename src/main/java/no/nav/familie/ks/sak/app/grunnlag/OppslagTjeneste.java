@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.grunnlag;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
@@ -7,6 +8,7 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
 import no.nav.familie.log.mdc.MDCConstants;
 import org.slf4j.Logger;
@@ -14,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -32,18 +36,28 @@ public class OppslagTjeneste {
 
     private static final Logger logger = LoggerFactory.getLogger(OppslagTjeneste.class);
     private URI oppslagServiceUri;
+    private URI stsUrl;
     private HttpClient client;
     private StsRestClient stsRestClient;
     private ObjectMapper mapper;
+    private Environment env;
 
     @Autowired
     public OppslagTjeneste(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
+                           @Value("${STS_URL}") URI stsUrl,
                            StsRestClient stsRestClient,
-                           ObjectMapper objectMapper) {
+                           ObjectMapper objectMapper,
+                           Environment env) {
         this.oppslagServiceUri = oppslagServiceUri;
+        this.stsUrl = stsUrl;
         this.stsRestClient = stsRestClient;
         this.mapper = objectMapper;
         this.client = create();
+        this.env = env;
+    }
+
+    private boolean erDevProfil() {
+        return Arrays.stream(env.getActiveProfiles()).anyMatch(profile -> profile.equalsIgnoreCase("dev"));
     }
 
     private HttpClient create() {
@@ -53,10 +67,31 @@ public class OppslagTjeneste {
                 .build();
     }
 
+    private String getSystemOIDCToken() {
+        if (erDevProfil()) {
+            try {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(stsUrl)
+                        .GET()
+                        .build();
+
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                JsonNode jsonNode = mapper.readTree(response.body());
+                return jsonNode.get("access_token").asText();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+                return "";
+            }
+        } else {
+            return stsRestClient.getSystemOIDCToken();
+        }
+    }
+
     private HttpRequest request(URI uri) {
         return HttpRequest.newBuilder()
                 .uri(uri)
-                .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
+                .header("Authorization", "Bearer " + getSystemOIDCToken())
                 .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
                 .GET()
                 .build();
@@ -83,17 +118,14 @@ public class OppslagTjeneste {
     private Forelder hentAnnenForelder(Personinfo barn, Forelder forelder) {
         Set<RelasjonsRolleType> foreldreRelasjoner = new HashSet<>(Arrays.asList(RelasjonsRolleType.FARA, RelasjonsRolleType.MEDMOR, RelasjonsRolleType.MORA));
         AktørId søker = forelder.getPersoninfo().getAktørId();
-        try {
-            Optional<AktørId> annenForelder = barn.getFamilierelasjoner().stream()
-                    .filter( relasjon -> foreldreRelasjoner.contains(relasjon.getRelasjonsrolle()))
-                    .map( relasjon -> relasjon.getAktørId() )
-                    .filter( aktørId ->  ! aktørId.equals(søker))
-                    .findFirst();
-            return genererForelder(annenForelder.get().getId());
-        }
-        catch (NoSuchElementException e) {
-            return null;
-        }
+
+        Optional<AktørId> annenForelder = barn.getFamilierelasjoner().stream()
+                .filter( relasjon -> foreldreRelasjoner.contains(relasjon.getRelasjonsrolle()))
+                .map(Familierelasjon::getAktørId)
+                .filter( aktørId ->  ! aktørId.equals(søker))
+                .findFirst();
+
+        return annenForelder.map(aktørId -> genererForelder(aktørId.getId())).orElse(null);
     }
 
     private Personinfo hentBarnSøktFor(Søknad søknad) {
@@ -103,6 +135,10 @@ public class OppslagTjeneste {
     }
 
     public String hentAktørId(String personident) {
+        if (erDevProfil()) {
+            return personident;
+        }
+
         if (personident == null || personident.isEmpty()) {
             return null;
         }
