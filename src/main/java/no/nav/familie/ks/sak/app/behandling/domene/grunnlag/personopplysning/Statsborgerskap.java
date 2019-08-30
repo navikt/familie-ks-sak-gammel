@@ -29,7 +29,7 @@ public class Statsborgerskap extends BaseEntitet {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "po_informasjon_id", nullable = false, updatable = false)
-    private PersonInformasjon personopplysningInformasjon;
+    private PersonopplysningerInformasjon personopplysningInformasjon;
 
     Statsborgerskap() {
     }
@@ -40,7 +40,7 @@ public class Statsborgerskap extends BaseEntitet {
         this.statsborgerskap = statsborgerskap.getStatsborgerskap();
     }
 
-    void setPersonopplysningInformasjon(PersonInformasjon personopplysningInformasjon) {
+    void setPersonopplysningInformasjon(PersonopplysningerInformasjon personopplysningInformasjon) {
         this.personopplysningInformasjon = personopplysningInformasjon;
     }
 

@@ -5,9 +5,9 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 import javax.persistence.*;
 import java.util.*;
 
-@Entity(name = "PersonopplysningInformasjon")
+@Entity
 @Table(name = "PO_INFORMASJON")
-public class PersonInformasjon extends BaseEntitet {
+public class PersonopplysningerInformasjon extends BaseEntitet {
 
     private static final String REF_NAME = "personopplysningInformasjon";
 
@@ -15,22 +15,22 @@ public class PersonInformasjon extends BaseEntitet {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PO_INFORMASJON")
     private Long id;
 
-    @OneToMany(mappedBy = REF_NAME)
+    @OneToMany(mappedBy = REF_NAME, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<PersonAdresse> adresser = new ArrayList<>();
 
-    @OneToMany(mappedBy = REF_NAME)
+    @OneToMany(mappedBy = REF_NAME, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<Personopplysning> personopplysninger = new ArrayList<>();
 
-    @OneToMany(mappedBy = REF_NAME)
+    @OneToMany(mappedBy = REF_NAME, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<PersonRelasjon> relasjoner = new ArrayList<>();
 
-    @OneToMany(mappedBy = REF_NAME)
+    @OneToMany(mappedBy = REF_NAME, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<Statsborgerskap> statsborgerskap = new ArrayList<>();
 
-    PersonInformasjon() {
+    PersonopplysningerInformasjon() {
     }
 
-    PersonInformasjon(PersonInformasjon aggregat) {
+    PersonopplysningerInformasjon(PersonopplysningerInformasjon aggregat) {
         if (Optional.ofNullable(aggregat.getAdresser()).isPresent()) {
             aggregat.getAdresser()
                 .forEach(e -> {
@@ -65,25 +65,25 @@ public class PersonInformasjon extends BaseEntitet {
         }
     }
 
-    public PersonInformasjon leggTilAdresse(PersonAdresse adresse) {
+    public PersonopplysningerInformasjon leggTilAdresse(PersonAdresse adresse) {
         adresse.setPersonopplysningInformasjon(this);
         adresser.add(adresse);
         return this;
     }
 
-    public PersonInformasjon leggTilPersonrelasjon(PersonRelasjon relasjon) {
+    public PersonopplysningerInformasjon leggTilPersonrelasjon(PersonRelasjon relasjon) {
         relasjon.setPersonopplysningInformasjon(this);
         this.relasjoner.add(relasjon);
         return this;
     }
 
-    public PersonInformasjon leggTilPersonopplysning(Personopplysning personopplysning) {
+    public PersonopplysningerInformasjon leggTilPersonopplysning(Personopplysning personopplysning) {
         personopplysning.setPersonopplysningInformasjon(this);
         this.personopplysninger.add(personopplysning);
         return this;
     }
 
-    public PersonInformasjon leggTilStatsborgerskap(Statsborgerskap statsborgerskap) {
+    public PersonopplysningerInformasjon leggTilStatsborgerskap(Statsborgerskap statsborgerskap) {
         statsborgerskap.setPersonopplysningInformasjon(this);
         this.statsborgerskap.add(statsborgerskap);
         return this;
@@ -92,7 +92,7 @@ public class PersonInformasjon extends BaseEntitet {
     /**
      * Rydder bort alt unntatt personopplysninger
      */
-    PersonInformasjon tilbakestill() {
+    PersonopplysningerInformasjon tilbakestill() {
         this.adresser.clear();
         this.relasjoner.clear();
         return this;
@@ -118,7 +118,7 @@ public class PersonInformasjon extends BaseEntitet {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PersonInformasjon that = (PersonInformasjon) o;
+        PersonopplysningerInformasjon that = (PersonopplysningerInformasjon) o;
         return Objects.equals(adresser, that.adresser) &&
             Objects.equals(personopplysninger, that.personopplysninger) &&
             Objects.equals(relasjoner, that.relasjoner);

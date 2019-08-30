@@ -35,7 +35,7 @@ public class Personopplysning extends BaseEntitet {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "po_informasjon_id", nullable = false, updatable = false)
-    private PersonInformasjon personopplysningInformasjon;
+    private PersonopplysningerInformasjon personopplysningInformasjon;
 
     Personopplysning() {
     }
@@ -48,7 +48,7 @@ public class Personopplysning extends BaseEntitet {
         this.statsborgerskap = personopplysning.getStatsborgerskap();
     }
 
-    void setPersonopplysningInformasjon(PersonInformasjon personopplysningInformasjon) {
+    void setPersonopplysningInformasjon(PersonopplysningerInformasjon personopplysningInformasjon) {
         this.personopplysningInformasjon = personopplysningInformasjon;
     }
 

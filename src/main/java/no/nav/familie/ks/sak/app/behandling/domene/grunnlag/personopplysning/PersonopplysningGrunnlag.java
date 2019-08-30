@@ -28,12 +28,12 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
 
     @ManyToOne
     @JoinColumn(name = "registerinformasjon_id", updatable = false)
-    private PersonInformasjon registrertePersonopplysninger;
+    private PersonopplysningerInformasjon registrertePersonopplysninger;
 
     PersonopplysningGrunnlag() {
     }
 
-    public PersonopplysningGrunnlag(Behandling behandling, AktørId oppgittAnnenPart, PersonInformasjon registrertePersonopplysninger) {
+    PersonopplysningGrunnlag(Behandling behandling, AktørId oppgittAnnenPart, PersonopplysningerInformasjon registrertePersonopplysninger) {
         this.behandlingId = behandling.getId();
         this.oppgittAnnenPart = oppgittAnnenPart;
         this.registrertePersonopplysninger = registrertePersonopplysninger;
@@ -57,7 +57,7 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
     }
 
 
-    public Optional<PersonInformasjon> getRegisterVersjon() {
+    public Optional<PersonopplysningerInformasjon> getRegisterVersjon() {
         return Optional.ofNullable(registrertePersonopplysninger);
     }
 
