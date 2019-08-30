@@ -1,9 +1,9 @@
 package no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.regel;
 
-import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.Tid;
+import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.Forelder;
-import no.nav.familie.ks.sak.app.integrasjon.felles.ws.Tid;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.StatsborgerskapPeriode;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;

@@ -1,6 +1,7 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
-import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 import no.nav.familie.ks.sak.app.grunnlag.søknad.TilknytningTilUtland;
 
 import javax.persistence.*;
@@ -15,8 +16,9 @@ public class AktørTilknytningUtland extends BaseEntitet {
     @SequenceGenerator(name = "so_aktoer_tilknytning_utland_seq")
     private Long id;
 
-    @Column(name = "aktoer", nullable = false, updatable = false)
-    private String aktør;
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer", updatable = false, nullable = false)))
+    private AktørId aktørId;
 
     @ManyToOne
     @JoinColumn(name = "UTLAND_ID")
@@ -31,8 +33,8 @@ public class AktørTilknytningUtland extends BaseEntitet {
     AktørTilknytningUtland() {
     }
 
-    public AktørTilknytningUtland(String aktør, TilknytningTilUtland.TilknytningTilUtlandVerdier tilknytningTilUtland, String tilknytningTilUtlandForklaring) {
-        this.aktør = aktør;
+    public AktørTilknytningUtland(AktørId aktør, TilknytningTilUtland.TilknytningTilUtlandVerdier tilknytningTilUtland, String tilknytningTilUtlandForklaring) {
+        this.aktørId = aktør;
         this.tilknytningTilUtland = tilknytningTilUtland;
         this.tilknytningTilUtlandForklaring = tilknytningTilUtlandForklaring;
     }
@@ -42,12 +44,12 @@ public class AktørTilknytningUtland extends BaseEntitet {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AktørTilknytningUtland that = (AktørTilknytningUtland) o;
-        return aktør.equals(that.aktør);
+        return aktørId.equals(that.aktørId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(aktør);
+        return Objects.hash(aktørId);
     }
 
     AktørTilknytningUtland setUtlandsTilknytning(OppgittUtlandsTilknytning utlandsTilknytning) {

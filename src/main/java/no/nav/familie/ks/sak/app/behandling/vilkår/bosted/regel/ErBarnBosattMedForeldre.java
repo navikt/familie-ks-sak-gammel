@@ -1,9 +1,9 @@
 package no.nav.familie.ks.sak.app.behandling.vilkår.bosted.regel;
 
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.Forelder;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
 import no.nav.fpsak.nare.doc.RuleDocumentation;

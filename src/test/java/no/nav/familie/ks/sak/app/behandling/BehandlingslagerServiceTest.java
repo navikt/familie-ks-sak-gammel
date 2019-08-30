@@ -8,6 +8,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.rest.Behandling.RestBehandling;
@@ -64,7 +65,7 @@ public class BehandlingslagerServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        Mockito.when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> i.getArguments()[0]);
+        Mockito.when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
         when(oppslagTjeneste.hentTpsFakta(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
     }
 
@@ -75,7 +76,7 @@ public class BehandlingslagerServiceTest {
 
         final var fagsaker = fagsakRepository.findAll();
         assertThat(fagsaker).hasSize(1);
-        assertThat(fagsaker.get(0).getAktørId()).isEqualTo(søknad.person.fnr);
+        assertThat(fagsaker.get(0).getAktørId().getId()).isEqualTo(søknad.person.fnr);
         final var behandlinger = behandlingRepository.findAll();
         assertThat(behandlinger).hasSize(1);
         final var behandling = behandlinger.get(0);

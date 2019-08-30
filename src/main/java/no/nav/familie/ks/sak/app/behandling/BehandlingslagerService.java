@@ -14,6 +14,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingResultat;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.grunnlag.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.rest.Behandling.*;
 import no.nav.familie.ks.sak.util.DateParser;
@@ -80,7 +81,7 @@ public class BehandlingslagerService {
         return behandling;
     }
 
-    private OppgittUtlandsTilknytning mapUtenlandsTilknytning(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad, String søkerAktørId) {
+    private OppgittUtlandsTilknytning mapUtenlandsTilknytning(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad, AktørId søkerAktørId) {
         final var tilknytningTilUtland = søknad.tilknytningTilUtland;
         final var arbeidIUtlandet = søknad.arbeidIUtlandet;
         final var utenlandskeYtelser = søknad.utenlandskeYtelser;

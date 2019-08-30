@@ -1,16 +1,20 @@
 package no.nav.familie.ks.sak;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.AdresseType;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.Tid;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.Forelder;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
-import no.nav.familie.ks.sak.app.integrasjon.felles.ws.Tid;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.*;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Periode;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdressePeriode;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdresseType;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.StatsborgerskapPeriode;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;

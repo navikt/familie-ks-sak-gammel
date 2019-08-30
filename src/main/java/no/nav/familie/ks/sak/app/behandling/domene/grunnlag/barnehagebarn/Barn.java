@@ -1,7 +1,8 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn;
 
-import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -20,8 +21,9 @@ public class Barn extends BaseEntitet {
     @JoinColumn(name = "familieforhold_id")
     private OppgittFamilieforhold familieforhold;
 
-    @Column(name = "aktoer_id", nullable = false, updatable = false)
-    private String aktørId;
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", updatable = false)))
+    private AktørId aktørId;
 
     @Column(name = "barnehage_status", nullable = false, updatable = false)
     private BarnehageplassStatus barnehageStatus;
@@ -39,7 +41,7 @@ public class Barn extends BaseEntitet {
         // hibernate
     }
 
-    Barn(String aktørId, BarnehageplassStatus barnehageStatus, int barnehageAntallTimer, LocalDate barnehageDato, String barnehageKommune) {
+    Barn(AktørId aktørId, BarnehageplassStatus barnehageStatus, int barnehageAntallTimer, LocalDate barnehageDato, String barnehageKommune) {
         this.aktørId = aktørId;
         this.barnehageStatus = barnehageStatus;
         this.barnehageAntallTimer = barnehageAntallTimer;
@@ -47,7 +49,7 @@ public class Barn extends BaseEntitet {
         this.barnehageKommune = barnehageKommune;
     }
 
-    public String getAktørId() {
+    public AktørId getAktørId() {
         return aktørId;
     }
 
@@ -83,14 +85,14 @@ public class Barn extends BaseEntitet {
     @Override
     public String toString() {
         return "SøknadBarn{" +
-                "id=" + id +
-                ", familieforhold=" + familieforhold +
-                ", aktørId='" + aktørId + '\'' +
-                ", barnehageStatus=" + barnehageStatus +
-                ", barnehageAntallTimer=" + barnehageAntallTimer +
-                ", barnehageDato=" + barnehageDato +
-                ", barnehageKommune='" + barnehageKommune + '\'' +
-                '}';
+            "id=" + id +
+            ", familieforhold=" + familieforhold +
+            ", aktørId='" + aktørId + '\'' +
+            ", barnehageStatus=" + barnehageStatus +
+            ", barnehageAntallTimer=" + barnehageAntallTimer +
+            ", barnehageDato=" + barnehageDato +
+            ", barnehageKommune='" + barnehageKommune + '\'' +
+            '}';
     }
 
     Barn setOppgittFamilieforhold(OppgittFamilieforhold oppgittFamilieforhold) {
@@ -99,14 +101,14 @@ public class Barn extends BaseEntitet {
     }
 
     public static class Builder {
-        private String aktørId;
+        private AktørId aktørId;
         private BarnehageplassStatus barnehageStatus;
         private int barnehageAntallTimer;
         private LocalDate barnehageDato;
         private String barnehageKommune;
 
         public Builder setAktørId(String aktørId) {
-            this.aktørId = aktørId;
+            this.aktørId = new AktørId(aktørId);
             return this;
         }
 

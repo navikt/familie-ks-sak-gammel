@@ -1,10 +1,11 @@
 package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon;
 
-import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+
+import java.time.LocalDate;
 
 public class Familierelasjon {
     private AktørId aktørId;

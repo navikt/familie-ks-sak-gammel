@@ -3,8 +3,9 @@ package no.nav.familie.ks.sak.app.grunnlag;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
@@ -57,18 +58,18 @@ public class OppslagTjeneste {
 
     private HttpClient create() {
         return HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .version(HttpClient.Version.HTTP_1_1)
-                .build();
+            .connectTimeout(Duration.ofSeconds(10))
+            .version(HttpClient.Version.HTTP_1_1)
+            .build();
     }
 
     private HttpRequest request(URI uri) {
         return HttpRequest.newBuilder()
-                .uri(uri)
-                .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
-                .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
-                .GET()
-                .build();
+            .uri(uri)
+            .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
+            .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
+            .GET()
+            .build();
     }
 
     private HttpRequest requestMedPersonident(URI uri, String personident) {
@@ -86,17 +87,17 @@ public class OppslagTjeneste {
         Personinfo barn = hentBarnSøktFor(søknad);
         Forelder annenForelder = hentAnnenForelder(barn, forelder);
         return new TpsFakta.Builder()
-                .medForelder(forelder)
-                .medBarn(barn)
-                .medAnnenForelder(annenForelder)
-                .build();
+            .medForelder(forelder)
+            .medBarn(barn)
+            .medAnnenForelder(annenForelder)
+            .build();
     }
 
-    private Forelder genererForelder(String aktørId) {
+    private Forelder genererForelder(AktørId aktørId) {
         return new Forelder.Builder()
-                .medPersonhistorikkInfo(hentHistorikkFor(aktørId))
-                .medPersoninfo(hentPersoninfoFor(aktørId))
-                .build();
+            .medPersonhistorikkInfo(hentHistorikkFor(aktørId))
+            .medPersoninfo(hentPersoninfoFor(aktørId))
+            .build();
     }
 
     private Forelder hentAnnenForelder(Personinfo barn, Forelder forelder) {
@@ -104,25 +105,21 @@ public class OppslagTjeneste {
         AktørId søker = forelder.getPersoninfo().getAktørId();
 
         Optional<AktørId> annenForelder = barn.getFamilierelasjoner().stream()
-                .filter( relasjon -> foreldreRelasjoner.contains(relasjon.getRelasjonsrolle()))
-                .map(Familierelasjon::getAktørId)
-                .filter( aktørId ->  ! aktørId.equals(søker))
-                .findFirst();
+            .filter(relasjon -> foreldreRelasjoner.contains(relasjon.getRelasjonsrolle()))
+            .map(Familierelasjon::getAktørId)
+            .filter(aktørId -> !aktørId.equals(søker))
+            .findFirst();
 
         return annenForelder.map(aktørId -> genererForelder(aktørId.getId())).orElse(null);
     }
 
     private Personinfo hentBarnSøktFor(Søknad søknad) {
         String fødselsnummer = søknad.getMineBarn().getFødselsnummer();
-        String aktørId = hentAktørId(fødselsnummer);
+        var aktørId = hentAktørId(fødselsnummer);
         return hentPersoninfoFor(aktørId);
     }
 
-    public String hentAktørId(String personident) throws OppslagException {
-        if (erDevProfil()) {
-            return personident;
-        }
-
+    public AktørId hentAktørId(String personident) {
         if (personident == null || personident.isEmpty()) {
             throw new OppslagException("Ved henting av aktør id er personident null eller tom");
         }
@@ -138,7 +135,8 @@ public class OppslagTjeneste {
                 if (aktørId == null || aktørId.isEmpty()) {
                     throw new OppslagException("AktørId fra oppslagstjenesten er tom");
                 } else {
-                    return aktørId;
+                    return return new AktørId(aktørId);
+                    ;
                 }
             }
         } catch (IOException | InterruptedException e) {
@@ -147,9 +145,9 @@ public class OppslagTjeneste {
         }
     }
 
-    private PersonhistorikkInfo hentHistorikkFor(String aktørId) {
+    private PersonhistorikkInfo hentHistorikkFor(AktørId aktørId) {
         final var iDag = LocalDate.now();
-        URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?id=" + aktørId + "&fomDato=" + formaterDato(iDag.minusYears(6)) + "&tomDato=" + formaterDato(iDag));
+        URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?id=" + aktørId.getId() + "&fomDato=" + formaterDato(iDag.minusYears(6)) + "&tomDato=" + formaterDato(iDag));
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
@@ -165,8 +163,8 @@ public class OppslagTjeneste {
         }
     }
 
-    private Personinfo hentPersoninfoFor(String aktørId) {
-        URI uri = URI.create(oppslagServiceUri + "/personopplysning/info?id=" + aktørId);
+    private Personinfo hentPersoninfoFor(AktørId aktørId) {
+        URI uri = URI.create(oppslagServiceUri + "/personopplysning/info?id=" + aktørId.getId());
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());

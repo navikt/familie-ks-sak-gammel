@@ -1,10 +1,11 @@
 package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse;
 
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.AdresseType;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Periode;
+
+import java.util.Objects;
 
 public class AdressePeriode {
 
