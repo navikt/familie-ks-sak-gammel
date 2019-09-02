@@ -152,7 +152,7 @@ public class BehandlingslagerService {
         return builder;
     }
 
-    public Ressurs hentFagsakForSaksbehandler(Long fagsakId) {
+    RestFagsak hentRestFagsak(Long fagsakId) {
         Optional<Fagsak> fagsak = fagsakRepository.findById(fagsakId);
         List<Behandling> behandlinger = behandlingRepository.finnBehandlinger(fagsakId);
 
@@ -214,10 +214,13 @@ public class BehandlingslagerService {
             restBehandlinger.add(new RestBehandling(behandling.getId(), søknad, restBehandlingsresultat));
         });
 
+        return fagsak.map(fagsak1 -> new RestFagsak(fagsak1, restBehandlinger)).orElse(null);
+    }
 
-        if (fagsak.isPresent()) {
-            RestFagsak restFagsak = new RestFagsak(fagsak.get(), restBehandlinger);
+    public Ressurs hentRessursFagsak(Long fagsakId) {
+        RestFagsak restFagsak = hentRestFagsak(fagsakId);
 
+        if (restFagsak != null) {
             return new Ressurs.Builder().byggVellyketRessurs(objectMapper.valueToTree(restFagsak));
         } else {
             return new Ressurs.Builder()

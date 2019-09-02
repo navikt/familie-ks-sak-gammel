@@ -12,4 +12,12 @@ public class RestFagsak {
         this.fagsak = fagsak;
         this.behandlinger = behandlinger;
     }
+
+    public Fagsak getFagsak() {
+        return fagsak;
+    }
+
+    public List<RestBehandling> getBehandlinger() {
+        return behandlinger;
+    }
 }

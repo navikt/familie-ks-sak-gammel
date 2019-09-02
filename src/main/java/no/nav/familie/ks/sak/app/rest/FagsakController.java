@@ -34,7 +34,7 @@ public class FagsakController {
     @Unprotected
     public Ressurs fagsak(@PathVariable Long fagsakId) {
         try {
-            return behandlingslagerService.hentFagsakForSaksbehandler(fagsakId);
+            return behandlingslagerService.hentRessursFagsak(fagsakId);
         } catch (Exception e) {
             logger.error("Henting av fagsak feilet", e);
             return new Ressurs.Builder().byggFeiletRessurs("Henting av fagsak feilet");
@@ -58,6 +58,6 @@ public class FagsakController {
     public Ressurs fagsak(@RequestBody no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
         Long behandlingsId = saksbehandling.behandle(søknad).getBehandlingsId();
 
-        return behandlingslagerService.hentFagsakForSaksbehandler(behandlingsId);
+        return behandlingslagerService.hentRessursFagsak(behandlingsId);
     }
 }
