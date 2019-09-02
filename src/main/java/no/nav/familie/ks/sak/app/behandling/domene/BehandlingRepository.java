@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface BehandlingRepository extends JpaRepository<Behandling, Long> {
 
-    @Query(value="SELECT * FROM BEHANDLING b WHERE b.fagsak_id = :fagsakId", nativeQuery = true)
+    @Query(value="SELECT b, f FROM Behandling b JOIN b.fagsak f WHERE f.id = :fagsakId")
     List<Behandling> finnBehandlinger(Long fagsakId);
 }

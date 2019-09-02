@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface BehandlingresultatRepository extends JpaRepository<BehandlingResultat, Long> {
 
-    @Query(value="SELECT * FROM BEHANDLING_RESULTAT br WHERE br.behandling_id = :behandlingsId and br.aktiv = true", nativeQuery = true)
+    @Query(value="SELECT br FROM BehandlingResultat br WHERE br.behandlingId = :behandlingsId and br.aktiv = true")
     BehandlingResultat finnBehandlingsresultat(Long behandlingsId);
 }

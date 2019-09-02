@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface SøknadGrunnlagRepository extends JpaRepository<SøknadGrunnlag, Long> {
 
-    @Query(value="SELECT * FROM GR_SOKNAD s WHERE s.behandling_id = :behandlingsId and s.aktiv = true", nativeQuery = true)
+    @Query(value="SELECT s FROM SøknadGrunnlag s WHERE s.behandlingId = :behandlingsId and s.aktiv = true")
     SøknadGrunnlag finnGrunnlag(Long behandlingsId);
 }

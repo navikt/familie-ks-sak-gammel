@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface BarnehageBarnGrunnlagRepository extends JpaRepository<BarnehageBarnGrunnlag, Long> {
 
-    @Query(value="SELECT * FROM GR_BARNEHAGE_BARN b WHERE b.behandling_id = :behandlingsId and b.aktiv = true", nativeQuery = true)
+    @Query(value="SELECT b FROM BarnehageBarnGrunnlag b WHERE b.behandlingId = :behandlingsId and b.aktiv = true")
     BarnehageBarnGrunnlag finnGrunnlag(Long behandlingsId);
 }
