@@ -27,7 +27,7 @@ public class PersonopplysningerInformasjon extends BaseEntitet {
     @OneToMany(mappedBy = REF_NAME, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<Statsborgerskap> statsborgerskap = new ArrayList<>();
 
-    PersonopplysningerInformasjon() {
+    public PersonopplysningerInformasjon() {
     }
 
     PersonopplysningerInformasjon(PersonopplysningerInformasjon aggregat) {

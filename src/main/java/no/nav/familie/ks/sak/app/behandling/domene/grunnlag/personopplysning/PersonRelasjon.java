@@ -44,8 +44,11 @@ public class PersonRelasjon extends BaseEntitet {
         this.harSammeBosted = relasjon.getHarSammeBosted();
     }
 
-    void setFraAktørId(AktørId fraAktørId) {
+    public PersonRelasjon(AktørId fraAktørId, AktørId tilAktørId, RelasjonsRolleType relasjonsrolle, Boolean harSammeBosted) {
         this.fraAktørId = fraAktørId;
+        this.tilAktørId = tilAktørId;
+        this.relasjonsrolle = relasjonsrolle;
+        this.harSammeBosted = harSammeBosted;
     }
 
     void setPersonopplysningInformasjon(PersonopplysningerInformasjon personopplysningInformasjon) {
@@ -54,6 +57,10 @@ public class PersonRelasjon extends BaseEntitet {
 
     public AktørId getFraAktørId() {
         return fraAktørId;
+    }
+
+    void setFraAktørId(AktørId fraAktørId) {
+        this.fraAktørId = fraAktørId;
     }
 
     public AktørId getTilAktørId() {

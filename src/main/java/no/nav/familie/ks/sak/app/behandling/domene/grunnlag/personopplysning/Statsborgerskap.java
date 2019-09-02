@@ -40,6 +40,15 @@ public class Statsborgerskap extends BaseEntitet {
         this.statsborgerskap = statsborgerskap.getStatsborgerskap();
     }
 
+    public Statsborgerskap(AktørId aktørId, DatoIntervallEntitet periode, Landkode statsborgerskap) {
+        Objects.requireNonNull(aktørId, "AktørId");
+        Objects.requireNonNull(periode, "periode");
+        Objects.requireNonNull(statsborgerskap, "statsborgerskap");
+        this.aktørId = aktørId;
+        this.periode = periode;
+        this.statsborgerskap = statsborgerskap;
+    }
+
     void setPersonopplysningInformasjon(PersonopplysningerInformasjon personopplysningInformasjon) {
         this.personopplysningInformasjon = personopplysningInformasjon;
     }

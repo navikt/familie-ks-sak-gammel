@@ -9,7 +9,8 @@ import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.MedlemskapsVilkå
 import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.BarnehageVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.bosted.BostedVilkår;
-import no.nav.familie.ks.sak.app.grunnlag.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import org.junit.Test;
 
@@ -31,18 +32,18 @@ public class PeriodeOppretterTest {
 
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår(), new BarnehageVilkår(), new BostedVilkår()));
 
-    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, mock(BehandlingslagerService.class) , mock(ResultatService.class), new JacksonJsonConfig().objectMapper());
+    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, mock(BehandlingslagerService.class), mock(RegisterInnhentingService.class) , mock(ResultatService.class), new JacksonJsonConfig().objectMapper());
 
     @Test
     public void søknad_med_barnehage_gir_feil() {
-        when(oppslagMock.hentTpsFakta(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
+        when(oppslagMock.hentTpsFakta(any(), any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"));
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
     }
 
     @Test
     public void at_søknad_uten_barnehage_gir_stønadperiode() {
-        when(oppslagMock.hentTpsFakta(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
+        when(oppslagMock.hentTpsFakta(any(), any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"));
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.OPPFYLT);
         assertThat(vedtak.getStønadperiode().getFom()).isEqualTo(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getFødselsdato().plusMonths(MIN_ALDER_I_MÅNEDER).withDayOfMonth(1));

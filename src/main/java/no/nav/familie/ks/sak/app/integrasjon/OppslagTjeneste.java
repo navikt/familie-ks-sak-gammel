@@ -1,10 +1,11 @@
-package no.nav.familie.ks.sak.app.grunnlag;
+package no.nav.familie.ks.sak.app.integrasjon;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.grunnlag.Forelder;
+import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
@@ -28,7 +29,6 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 @Component
 public class OppslagTjeneste {
@@ -77,15 +77,16 @@ public class OppslagTjeneste {
             .uri(uri)
             .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
             .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
-            .header("Nav-Personident", personident)
+            .header(Nav, personident)
             .GET()
             .build();
     }
 
-    public TpsFakta hentTpsFakta(Søknad søknad) {
-        Forelder forelder = genererForelder(hentAktørId(søknad.person.fnr));
-        Personinfo barn = hentBarnSøktFor(søknad);
-        Forelder annenForelder = hentAnnenForelder(barn, forelder);
+    @Deprecated
+    public TpsFakta hentTpsFakta(String søkerFnr, String annenPartFnr, String barnFnr) {
+        Forelder forelder = genererForelder(hentAktørId(søkerFnr));
+        Personinfo barn = hentBarnSøktFor(barnFnr);
+        Forelder annenForelder = genererForelder(hentAktørId(annenPartFnr));
         return new TpsFakta.Builder()
             .medForelder(forelder)
             .medBarn(barn)
@@ -115,6 +116,7 @@ public class OppslagTjeneste {
 
     private Personinfo hentBarnSøktFor(Søknad søknad) {
         String fødselsnummer = søknad.getMineBarn().getFødselsnummer();
+    private Personinfo hentBarnSøktFor(String fødselsnummer) {
         var aktørId = hentAktørId(fødselsnummer);
         return hentPersoninfoFor(aktørId);
     }
@@ -145,7 +147,7 @@ public class OppslagTjeneste {
         }
     }
 
-    private PersonhistorikkInfo hentHistorikkFor(AktørId aktørId) {
+    public PersonhistorikkInfo hentHistorikkFor(AktørId aktørId) {
         final var iDag = LocalDate.now();
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?id=" + aktørId.getId() + "&fomDato=" + formaterDato(iDag.minusYears(6)) + "&tomDato=" + formaterDato(iDag));
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
@@ -163,7 +165,7 @@ public class OppslagTjeneste {
         }
     }
 
-    private Personinfo hentPersoninfoFor(AktørId aktørId) {
+    public Personinfo hentPersoninfoFor(AktørId aktørId) {
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/info?id=" + aktørId.getId());
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {

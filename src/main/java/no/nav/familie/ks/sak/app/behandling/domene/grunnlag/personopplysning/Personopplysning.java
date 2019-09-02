@@ -48,6 +48,10 @@ public class Personopplysning extends BaseEntitet {
         this.statsborgerskap = personopplysning.getStatsborgerskap();
     }
 
+    public Personopplysning(AktørId aktørId) {
+        this.aktørId = aktørId;
+    }
+
     void setPersonopplysningInformasjon(PersonopplysningerInformasjon personopplysningInformasjon) {
         this.personopplysningInformasjon = personopplysningInformasjon;
     }
@@ -68,12 +72,22 @@ public class Personopplysning extends BaseEntitet {
         this.statsborgerskap = statsborgerskap;
     }
 
+    public Personopplysning medStatsborgerskap(Landkode statsborgerskap) {
+        this.statsborgerskap = statsborgerskap;
+        return this;
+    }
+
     public String getNavn() {
         return navn;
     }
 
     void setNavn(String navn) {
         this.navn = navn;
+    }
+
+    public Personopplysning medNavn(String navn) {
+        this.navn = navn;
+        return this;
     }
 
     public LocalDate getFødselsdato() {
@@ -84,12 +98,22 @@ public class Personopplysning extends BaseEntitet {
         this.fødselsdato = fødselsdato;
     }
 
+    public Personopplysning medFødselsdato(LocalDate fødselsdato) {
+        this.fødselsdato = fødselsdato;
+        return this;
+    }
+
     public LocalDate getDødsdato() {
         return dødsdato;
     }
 
     void setDødsdato(LocalDate dødsdato) {
         this.dødsdato = dødsdato;
+    }
+
+    public Personopplysning medDødsdato(LocalDate dødsdato) {
+        this.dødsdato = dødsdato;
+        return this;
     }
 
     @Override

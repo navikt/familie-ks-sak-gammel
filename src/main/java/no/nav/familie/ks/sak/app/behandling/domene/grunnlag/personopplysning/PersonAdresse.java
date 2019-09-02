@@ -25,7 +25,7 @@ public class PersonAdresse extends BaseEntitet {
     private DatoIntervallEntitet periode;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "adresse_type",  nullable = false)
+    @Column(name = "adresse_type", nullable = false)
     private AdresseType adresseType;
 
     @Column(name = "adresselinje1")
@@ -71,6 +71,11 @@ public class PersonAdresse extends BaseEntitet {
         this.periode = adresse.getPeriode();
     }
 
+    public PersonAdresse(AktørId aktørId, DatoIntervallEntitet periode) {
+        this.aktørId = aktørId;
+        this.periode = periode;
+    }
+
     void setPersonopplysningInformasjon(PersonopplysningerInformasjon personopplysningInformasjon) {
         this.personopplysningInformasjon = personopplysningInformasjon;
     }
@@ -83,12 +88,22 @@ public class PersonAdresse extends BaseEntitet {
         this.adresseType = adresseType;
     }
 
+    public PersonAdresse medAdresseType(AdresseType adresseType) {
+        this.adresseType = adresseType;
+        return this;
+    }
+
     public String getAdresselinje1() {
         return adresselinje1;
     }
 
     void setAdresselinje1(String adresselinje1) {
         this.adresselinje1 = adresselinje1;
+    }
+
+    public PersonAdresse medAdresselinje1(String adresselinje1) {
+        this.adresselinje1 = adresselinje1;
+        return this;
     }
 
     public String getAdresselinje2() {
@@ -99,12 +114,22 @@ public class PersonAdresse extends BaseEntitet {
         this.adresselinje2 = adresselinje2;
     }
 
+    public PersonAdresse medAdresselinje2(String adresselinje2) {
+        this.adresselinje2 = adresselinje2;
+        return this;
+    }
+
     public String getAdresselinje3() {
         return adresselinje3;
     }
 
     void setAdresselinje3(String adresselinje3) {
         this.adresselinje3 = adresselinje3;
+    }
+
+    public PersonAdresse medAdresselinje3(String adresselinje3) {
+        this.adresselinje3 = adresselinje3;
+        return this;
     }
 
     public String getAdresselinje4() {
@@ -115,12 +140,22 @@ public class PersonAdresse extends BaseEntitet {
         this.adresselinje4 = adresselinje4;
     }
 
+    public PersonAdresse medAdresselinje4(String adresselinje4) {
+        this.adresselinje4 = adresselinje4;
+        return this;
+    }
+
     public String getPostnummer() {
         return postnummer;
     }
 
     void setPostnummer(String postnummer) {
         this.postnummer = postnummer;
+    }
+
+    public PersonAdresse medPostnummer(String postnummer) {
+        this.postnummer = postnummer;
+        return this;
     }
 
     public String getPoststed() {
@@ -131,12 +166,22 @@ public class PersonAdresse extends BaseEntitet {
         this.poststed = poststed;
     }
 
+    public PersonAdresse medPoststed(String poststed) {
+        this.poststed = poststed;
+        return this;
+    }
+
     public Landkode getLand() {
         return land;
     }
 
     void setLand(Landkode land) {
         this.land = land;
+    }
+
+    public PersonAdresse medLand(Landkode land) {
+        this.land = land;
+        return this;
     }
 
     public AktørId getAktørId() {
