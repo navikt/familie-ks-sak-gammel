@@ -2,9 +2,14 @@ package no.nav.familie.ks.sak.util;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class DateParser {
     public static LocalDate parseSøknadDato(String dato) {
-        return LocalDate.parse(dato, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        try {
+            return LocalDate.parse(dato);
+        } catch (DateTimeParseException e) {
+            return LocalDate.parse(dato, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        }
     }
 }
