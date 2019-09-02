@@ -7,6 +7,6 @@ import java.util.Optional;
 
 interface PersonopplysningRepository extends JpaRepository<PersonopplysningGrunnlag, Long> {
 
-    @Query("SELECT gr FROM PersonopplysningGrunnlag WHERE behandlingId = ?1 AND aktiv = true")
+    @Query("SELECT gr FROM PersonopplysningGrunnlag gr WHERE behandlingId = ?1 AND aktiv = true")
     Optional<PersonopplysningGrunnlag> findByBehandlingAndAktiv(Long behandlingId);
 }
