@@ -38,13 +38,9 @@ public class MottaSøknadController {
         final var vilkårvurdering = vedtak.getVilkårvurdering();
         final var årsakType = vilkårvurdering.getÅrsakType().iterator().next();
         if (vilkårvurdering.getUtfallType().equals(UtfallType.OPPFYLT)) {
-            log.info("Søknad kan behandles automatisk. Årsak " +
-                    årsakType.getÅrsakKode() + ": " +
-                    årsakType.getBeskrivelse());
+            log.info("Søknad kan behandles automatisk. Årsak={}", årsakType);
         } else {
-            log.info("Søknad kan ikke behandles automatisk. Årsak " +
-                    årsakType.getÅrsakKode() + ": " +
-                    årsakType.getBeskrivelse());
+            log.info("Søknad kan ikke behandles automatisk. Årsak={}", årsakType);
         }
 
         funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
