@@ -9,5 +9,5 @@ import java.util.List;
 public interface BehandlingRepository extends JpaRepository<Behandling, Long> {
 
     @Query(value="SELECT * FROM BEHANDLING b WHERE b.fagsak_id = :fagsakId", nativeQuery = true)
-    List<Behandling> finnBehandlinger(@Param("fagsakId") Long fagsakId);
+    List<Behandling> finnBehandlinger(Long fagsakId);
 }

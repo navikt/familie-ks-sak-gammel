@@ -31,7 +31,6 @@ public class FagsakController {
     }
 
     @GetMapping(path = "/fagsak/{fagsakId}")
-    @Unprotected
     public Ressurs fagsak(@PathVariable Long fagsakId) {
         try {
             return behandlingslagerService.hentRessursFagsak(fagsakId);
@@ -42,7 +41,6 @@ public class FagsakController {
     }
 
     @GetMapping(path = "/fagsak")
-    @Unprotected
     public Ressurs fagsak() {
         try {
             List<Fagsak> fagsaker = behandlingslagerService.hentFagsaker();
@@ -54,7 +52,6 @@ public class FagsakController {
     }
 
     @PostMapping(path = "/behandle")
-    @Unprotected
     public Ressurs fagsak(@RequestBody no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
         Long behandlingsId = saksbehandling.behandle(søknad).getBehandlingsId();
 

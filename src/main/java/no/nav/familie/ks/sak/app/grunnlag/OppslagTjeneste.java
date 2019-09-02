@@ -38,7 +38,6 @@ public class OppslagTjeneste {
 
     private static final Logger logger = LoggerFactory.getLogger(OppslagTjeneste.class);
     private URI oppslagServiceUri;
-    private URI stsUrl;
     private HttpClient client;
     private StsRestClient stsRestClient;
     private ObjectMapper mapper;
@@ -46,12 +45,10 @@ public class OppslagTjeneste {
 
     @Autowired
     public OppslagTjeneste(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
-                           @Value("${STS_URL}") URI stsUrl,
                            StsRestClient stsRestClient,
                            ObjectMapper objectMapper,
                            Environment env) {
         this.oppslagServiceUri = oppslagServiceUri;
-        this.stsUrl = stsUrl;
         this.stsRestClient = stsRestClient;
         this.mapper = objectMapper;
         this.client = create();
@@ -69,31 +66,10 @@ public class OppslagTjeneste {
                 .build();
     }
 
-    private String getSystemOIDCToken() {
-        if (erDevProfil()) {
-            try {
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(stsUrl)
-                        .GET()
-                        .build();
-
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-                JsonNode jsonNode = mapper.readTree(response.body());
-                return jsonNode.get("access_token").asText();
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-                return "";
-            }
-        } else {
-            return stsRestClient.getSystemOIDCToken();
-        }
-    }
-
     private HttpRequest request(URI uri) {
         return HttpRequest.newBuilder()
                 .uri(uri)
-                .header("Authorization", "Bearer " + getSystemOIDCToken())
+                .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
                 .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
                 .GET()
                 .build();

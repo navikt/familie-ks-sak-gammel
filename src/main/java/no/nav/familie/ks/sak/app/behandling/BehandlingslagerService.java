@@ -201,15 +201,15 @@ public class BehandlingslagerService {
 
 
             // Grunnlag fra regelkjøring
-            BehandlingResultat behandlingsresultat = behandlingresultatRepository.finnBehandlingsresultat(behandling.getId());
-            Set<RestVilkårsresultat> restVilkårsResultat = new HashSet<>();
-            behandlingsresultat.getVilkårsResultat().getVilkårsResultat().forEach(vilkårResultat ->
+            BehandlingResultat behandlingResultat = behandlingresultatRepository.finnBehandlingsresultat(behandling.getId());
+            Set<RestVilkårsResultat> restVilkårsResultat = new HashSet<>();
+            behandlingResultat.getVilkårsResultat().getVilkårsResultat().forEach(vilkårResultat ->
                     restVilkårsResultat.add(
-                            new RestVilkårsresultat(
+                            new RestVilkårsResultat(
                                     vilkårResultat.getVilkårType(),
                                     vilkårResultat.getUtfall())));
 
-            RestBehandlingsresultat restBehandlingsresultat = new RestBehandlingsresultat(restVilkårsResultat, behandlingsresultat.isAktiv());
+            RestBehandlingsresultat restBehandlingsresultat = new RestBehandlingsresultat(restVilkårsResultat, behandlingResultat.isAktiv());
 
             restBehandlinger.add(new RestBehandling(behandling.getId(), søknad, restBehandlingsresultat));
         });
