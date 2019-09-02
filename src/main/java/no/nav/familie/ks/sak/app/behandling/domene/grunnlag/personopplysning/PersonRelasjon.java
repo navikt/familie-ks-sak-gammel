@@ -90,6 +90,8 @@ public class PersonRelasjon extends BaseEntitet {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PersonRelasjonEntitet{");
+        sb.append("fraAktør=").append(fraAktørId);
+        sb.append("tilAktør=").append(tilAktørId);
         sb.append("relasjonsrolle=").append(relasjonsrolle);
         sb.append('}');
         return sb.toString();

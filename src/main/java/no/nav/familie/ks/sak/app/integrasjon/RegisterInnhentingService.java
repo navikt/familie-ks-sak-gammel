@@ -24,7 +24,8 @@ public class RegisterInnhentingService {
 
     public void innhentPersonopplysninger(Behandling behandling, Søknad søknad) {
         final var søkerAktørId = behandling.getFagsak().getAktørId();
-        final var annenPartAktørId = oppslagTjeneste.hentAktørId(søknad.getFamilieforhold().getAnnenForelderFødselsnummer());
+        final var annenForelderFødselsnummer = søknad.getFamilieforhold().getAnnenForelderFødselsnummer();
+        final var annenPartAktørId = annenForelderFødselsnummer != null && !annenForelderFødselsnummer.isEmpty() ? oppslagTjeneste.hentAktørId(annenForelderFødselsnummer) : null;
         final var barnAktørId = oppslagTjeneste.hentAktørId(søknad.getMineBarn().getFødselsnummer());
         final var informasjon = new PersonopplysningerInformasjon();
 
@@ -35,6 +36,7 @@ public class RegisterInnhentingService {
         Personinfo annenPartPersoninfo = null;
 
         if (annenPartAktørId != null) {
+            personopplysningService.lagre(behandling, annenPartAktørId);
             annenPartPersoninfo = oppslagTjeneste.hentPersoninfoFor(annenPartAktørId);
             mapPersonopplysninger(annenPartAktørId, annenPartPersoninfo, informasjon);
         }

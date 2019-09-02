@@ -3,7 +3,7 @@ package no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.regel;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.Tid;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.grunnlag.Forelder;
+import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.StatsborgerskapPeriode;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
@@ -29,15 +29,15 @@ public class HattNorskStatsborgerskapFemÅr extends LeafSpecification<Faktagrunn
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        Forelder forelder = grunnlag.getTpsFakta().getForelder();
-        Forelder annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
+        PersonMedHistorikk forelder = grunnlag.getTpsFakta().getForelder();
+        PersonMedHistorikk annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
         if (norskStatsborgerskapFemÅr(forelder) && norskStatsborgerskapFemÅr(annenForelder)) {
             return ja();
         }
         return nei(VilkårIkkeOppfyltÅrsak.IKKE_NORSKE_STATSBORGERE_FEM_ÅR);
     }
 
-    private boolean norskStatsborgerskapFemÅr(Forelder forelder) {
+    private boolean norskStatsborgerskapFemÅr(PersonMedHistorikk forelder) {
         if (forelder == null) {
             return false;
         }

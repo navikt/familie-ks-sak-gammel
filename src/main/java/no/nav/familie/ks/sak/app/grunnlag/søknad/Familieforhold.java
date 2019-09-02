@@ -25,4 +25,8 @@ public class Familieforhold {
     public String getAnnenForelderFødselsnummer() {
         return annenForelderFødselsnummer;
     }
+
+    public void setAnnenForelderFødselsnummer(String ident) {
+        this.annenForelderFødselsnummer = ident;
+    }
 }

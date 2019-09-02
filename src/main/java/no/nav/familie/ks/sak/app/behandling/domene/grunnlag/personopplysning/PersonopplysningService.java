@@ -51,7 +51,9 @@ public class PersonopplysningService {
         });
         final var informasjon = aktivtGrunnlag.flatMap(PersonopplysningGrunnlag::getRegisterVersjon).orElse(null);
         final var nyttGrunnlag = new PersonopplysningGrunnlag(behandling, annenPart, informasjon);
-        informasjonRepository.save(informasjon);
+        if (informasjon != null) {
+            informasjonRepository.save(informasjon);
+        }
         personopplysningRepository.saveAndFlush(nyttGrunnlag);
     }
 }

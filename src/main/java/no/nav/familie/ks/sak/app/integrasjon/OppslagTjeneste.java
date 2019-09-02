@@ -1,23 +1,21 @@
 package no.nav.familie.ks.sak.app.integrasjon;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.familie.http.client.HttpClientUtil;
 import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
-import no.nav.familie.ks.sak.app.grunnlag.Forelder;
+import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
 import no.nav.familie.log.mdc.MDCConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +24,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -38,29 +35,15 @@ public class OppslagTjeneste {
     private HttpClient client;
     private StsRestClient stsRestClient;
     private ObjectMapper mapper;
-    private Environment env;
 
     @Autowired
     public OppslagTjeneste(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
                            StsRestClient stsRestClient,
-                           ObjectMapper objectMapper,
-                           Environment env) {
+                           ObjectMapper objectMapper) {
         this.oppslagServiceUri = oppslagServiceUri;
         this.stsRestClient = stsRestClient;
         this.mapper = objectMapper;
-        this.client = create();
-        this.env = env;
-    }
-
-    private boolean erDevProfil() {
-        return Arrays.stream(env.getActiveProfiles()).anyMatch(profile -> profile.equalsIgnoreCase("dev"));
-    }
-
-    private HttpClient create() {
-        return HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(10))
-            .version(HttpClient.Version.HTTP_1_1)
-            .build();
+        this.client = HttpClientUtil.create();
     }
 
     private HttpRequest request(URI uri) {
@@ -77,45 +60,30 @@ public class OppslagTjeneste {
             .uri(uri)
             .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
             .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
-            .header(Nav, personident)
+            .header(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident)
             .GET()
             .build();
     }
 
     @Deprecated
     public TpsFakta hentTpsFakta(String søkerFnr, String annenPartFnr, String barnFnr) {
-        Forelder forelder = genererForelder(hentAktørId(søkerFnr));
+        PersonMedHistorikk forelder = genererForelder(hentAktørId(søkerFnr));
         Personinfo barn = hentBarnSøktFor(barnFnr);
-        Forelder annenForelder = genererForelder(hentAktørId(annenPartFnr));
+        PersonMedHistorikk annenForelder = genererForelder(hentAktørId(annenPartFnr));
         return new TpsFakta.Builder()
             .medForelder(forelder)
-            .medBarn(barn)
+            .medBarn(new PersonMedHistorikk.Builder().medInfo(barn).build())
             .medAnnenForelder(annenForelder)
             .build();
     }
 
-    private Forelder genererForelder(AktørId aktørId) {
-        return new Forelder.Builder()
-            .medPersonhistorikkInfo(hentHistorikkFor(aktørId))
-            .medPersoninfo(hentPersoninfoFor(aktørId))
+    private PersonMedHistorikk genererForelder(AktørId aktørId) {
+        return new PersonMedHistorikk.Builder()
+            .medPersonhistorikk(hentHistorikkFor(aktørId))
+            .medInfo(hentPersoninfoFor(aktørId))
             .build();
     }
 
-    private Forelder hentAnnenForelder(Personinfo barn, Forelder forelder) {
-        Set<RelasjonsRolleType> foreldreRelasjoner = new HashSet<>(Arrays.asList(RelasjonsRolleType.FARA, RelasjonsRolleType.MEDMOR, RelasjonsRolleType.MORA));
-        AktørId søker = forelder.getPersoninfo().getAktørId();
-
-        Optional<AktørId> annenForelder = barn.getFamilierelasjoner().stream()
-            .filter(relasjon -> foreldreRelasjoner.contains(relasjon.getRelasjonsrolle()))
-            .map(Familierelasjon::getAktørId)
-            .filter(aktørId -> !aktørId.equals(søker))
-            .findFirst();
-
-        return annenForelder.map(aktørId -> genererForelder(aktørId.getId())).orElse(null);
-    }
-
-    private Personinfo hentBarnSøktFor(Søknad søknad) {
-        String fødselsnummer = søknad.getMineBarn().getFødselsnummer();
     private Personinfo hentBarnSøktFor(String fødselsnummer) {
         var aktørId = hentAktørId(fødselsnummer);
         return hentPersoninfoFor(aktørId);
@@ -137,8 +105,7 @@ public class OppslagTjeneste {
                 if (aktørId == null || aktørId.isEmpty()) {
                     throw new OppslagException("AktørId fra oppslagstjenesten er tom");
                 } else {
-                    return return new AktørId(aktørId);
-                    ;
+                    return new AktørId(aktørId);
                 }
             }
         } catch (IOException | InterruptedException e) {

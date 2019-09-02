@@ -18,6 +18,10 @@ public class Person {
         return fnr;
     }
 
+    public void setFnr(String fnr) {
+        this.fnr = fnr;
+    }
+
     public String getNavn() {
         return navn;
     }
