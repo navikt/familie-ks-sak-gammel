@@ -34,7 +34,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
     @Column(name = "YTELSE_UTLAND_FORKLARING")
     private String ytelseIUtlandetForklaring;
 
-    @Column(name = "KONTANTSTOTTE_UTLAND", nullable = false, updatable = false)
+    @Column(name = "KONTANTSTOTTE_UTLAND", nullable = true, updatable = false)
     private Standpunkt kontantstøtteIUtlandet = Standpunkt.UBESVART;
 
     @Column(name = "KONTANTSTOTTE_UTLAND_FORKLARING")
