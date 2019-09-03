@@ -20,7 +20,7 @@ public class Barn extends BaseEntitet {
     @JoinColumn(name = "familieforhold_id")
     private OppgittFamilieforhold familieforhold;
 
-    @Column(name = "aktor_id", nullable = false, updatable = false)
+    @Column(name = "aktoer_id", nullable = false, updatable = false)
     private String aktørId;
 
     @Column(name = "barnehage_status", nullable = false, updatable = false)
@@ -49,6 +49,10 @@ public class Barn extends BaseEntitet {
 
     public String getAktørId() {
         return aktørId;
+    }
+
+    public BarnehageplassStatus getBarnehageStatus() {
+        return barnehageStatus;
     }
 
     public int getBarnehageAntallTimer() {

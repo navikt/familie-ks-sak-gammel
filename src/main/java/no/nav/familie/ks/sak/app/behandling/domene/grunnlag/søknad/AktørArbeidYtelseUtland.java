@@ -110,7 +110,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
         private String arbeidIUtlandetForklaring;
         private Standpunkt ytelseIUtlandet;
         private String ytelseIUtlandetForklaring;
-        private Standpunkt kontantstøtteIUtlandet;
+        private Standpunkt kontantstøtteIUtlandet = Standpunkt.UBESVART;
         private String kontantstøtteIUtlandetForklaring;
 
         public Builder setAktørId(String aktørId) {

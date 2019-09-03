@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 
@@ -38,5 +39,9 @@ public class SøknadGrunnlag extends BaseEntitet {
 
     public boolean isAktiv() {
         return aktiv;
+    }
+
+    public Long getBehandlingId() {
+        return behandlingId;
     }
 }

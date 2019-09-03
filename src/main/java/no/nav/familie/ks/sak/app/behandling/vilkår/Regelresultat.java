@@ -5,8 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.behandling.VilkårRegelFeil;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårOppfyltÅrsak;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårUtfallÅrsak;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårÅrsak;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.evaluation.Resultat;
@@ -65,8 +66,11 @@ public class Regelresultat {
         return EvaluationSerializer.asJson(evaluation);
     }
 
-    public VilkårÅrsak getUtfallÅrsak() {
-        return (VilkårÅrsak) evaluation.getOutcome();
+    public VilkårUtfallÅrsak getUtfallÅrsak() {
+        if (getUtfallType().equals(UtfallType.OPPFYLT)) {
+            return VilkårOppfyltÅrsak.VILKÅR_OPPFYLT;
+        }
+        return (VilkårUtfallÅrsak) evaluation.getOutcome();
     }
 
     public VilkårType getVilkårType() {
