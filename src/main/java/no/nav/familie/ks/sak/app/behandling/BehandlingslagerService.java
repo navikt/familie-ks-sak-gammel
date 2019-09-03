@@ -129,22 +129,22 @@ public class BehandlingslagerService {
         switch (barnehageplass.barnBarnehageplassStatus) {
             case harBarnehageplass:
                 builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.harBarnehageplassAntallTimer))
-                        .setBarnehageDato(DateParser.parseSøknadDato(barnehageplass.harBarnehageplassDato))
+                        .setBarnehageDato(DateParser.parseInputDatoFraSøknad(barnehageplass.harBarnehageplassDato))
                         .setBarnehageKommune(barnehageplass.harBarnehageplassKommune);
                 break;
             case harSluttetIBarnehage:
                 builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.harSluttetIBarnehageAntallTimer))
-                        .setBarnehageDato(DateParser.parseSøknadDato(barnehageplass.harSluttetIBarnehageDato))
+                        .setBarnehageDato(DateParser.parseInputDatoFraSøknad(barnehageplass.harSluttetIBarnehageDato))
                         .setBarnehageKommune(barnehageplass.harSluttetIBarnehageKommune);
                 break;
             case skalSlutteIBarnehage:
                 builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.skalSlutteIBarnehageAntallTimer))
-                        .setBarnehageDato(DateParser.parseSøknadDato(barnehageplass.skalSlutteIBarnehageDato))
+                        .setBarnehageDato(DateParser.parseInputDatoFraSøknad(barnehageplass.skalSlutteIBarnehageDato))
                         .setBarnehageKommune(barnehageplass.skalSlutteIBarnehageKommune);
                 break;
             case skalBegynneIBarnehage:
                 builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.skalBegynneIBarnehageAntallTimer))
-                        .setBarnehageDato(DateParser.parseSøknadDato(barnehageplass.skalBegynneIBarnehageDato))
+                        .setBarnehageDato(DateParser.parseInputDatoFraSøknad(barnehageplass.skalBegynneIBarnehageDato))
                         .setBarnehageKommune(barnehageplass.skalBegynneIBarnehageKommune);
                 break;
         }

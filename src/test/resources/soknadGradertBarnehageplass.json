@@ -15,7 +15,7 @@
     "skalBegynneIBarnehageDato": "2019-01-01",
     "skalBegynneIBarnehageKommune": "Oslo",
     "skalSlutteIBarnehageAntallTimer": "",
-    "skalSlutteIBarnehageDato": "2019-01-03",
+    "skalSlutteIBarnehageDato": "01.03.2019",
     "skalSlutteIBarnehageKommune": "Trondheim"
   },
   "familieforhold": {
@@ -30,7 +30,7 @@
     "skalBoMedBarnetINorgeNesteTolvMaaneder": "JA"
   },
   "mineBarn": {
-    "fødselsdato": "2018-12-12",
+    "fødselsdato": "12.12.2018",
     "fødselsnummer": "11111111111",
     "navn": "Jakob",
     "erFlerling": "NEI"
