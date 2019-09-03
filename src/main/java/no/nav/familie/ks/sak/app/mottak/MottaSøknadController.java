@@ -45,10 +45,4 @@ public class MottaSøknadController {
 
         return new ResponseEntity(HttpStatus.OK);
     }
-
-    @GetMapping(path = "sentry")
-    @Unprotected
-    public ResponseEntity testSentry() {
-        throw new UnsupportedOperationException("Test mot sentry");
-    }
 }
