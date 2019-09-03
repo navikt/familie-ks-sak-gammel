@@ -51,6 +51,10 @@ public class Barn extends BaseEntitet {
         return aktørId;
     }
 
+    public BarnehageplassStatus getBarnehageStatus() {
+        return barnehageStatus;
+    }
+
     public int getBarnehageAntallTimer() {
         return barnehageAntallTimer;
     }

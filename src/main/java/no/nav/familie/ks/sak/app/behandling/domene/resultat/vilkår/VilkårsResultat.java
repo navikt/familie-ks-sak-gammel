@@ -46,6 +46,10 @@ public class VilkårsResultat extends BaseEntitet {
         throw new IllegalStateException("Ukjent utfall :" + utfall);
     }
 
+    public Set<VilkårResultat> getVilkårsResultat() {
+        return vilkårsResultat;
+    }
+
     @Override
     public String toString() {
         return "VilkårsResultat{" +

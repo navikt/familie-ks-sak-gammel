@@ -7,6 +7,7 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.RelasjonsRolleType;
 import no.nav.familie.log.mdc.MDCConstants;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +27,10 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class OppslagTjeneste {
@@ -35,15 +40,22 @@ public class OppslagTjeneste {
     private HttpClient client;
     private StsRestClient stsRestClient;
     private ObjectMapper mapper;
+    private Environment env;
 
     @Autowired
     public OppslagTjeneste(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
                            StsRestClient stsRestClient,
-                           ObjectMapper objectMapper) {
+                           ObjectMapper objectMapper,
+                           Environment env) {
         this.oppslagServiceUri = oppslagServiceUri;
         this.stsRestClient = stsRestClient;
         this.mapper = objectMapper;
         this.client = create();
+        this.env = env;
+    }
+
+    private boolean erDevProfil() {
+        return Arrays.stream(env.getActiveProfiles()).anyMatch(profile -> profile.equalsIgnoreCase("dev"));
     }
 
     private HttpClient create() {
@@ -83,17 +95,14 @@ public class OppslagTjeneste {
     private Forelder hentAnnenForelder(Personinfo barn, Forelder forelder) {
         Set<RelasjonsRolleType> foreldreRelasjoner = new HashSet<>(Arrays.asList(RelasjonsRolleType.FARA, RelasjonsRolleType.MEDMOR, RelasjonsRolleType.MORA));
         AktørId søker = forelder.getPersoninfo().getAktørId();
-        try {
-            Optional<AktørId> annenForelder = barn.getFamilierelasjoner().stream()
-                    .filter( relasjon -> foreldreRelasjoner.contains(relasjon.getRelasjonsrolle()))
-                    .map( relasjon -> relasjon.getAktørId() )
-                    .filter( aktørId ->  ! aktørId.equals(søker))
-                    .findFirst();
-            return genererForelder(annenForelder.get().getId());
-        }
-        catch (NoSuchElementException e) {
-            return null;
-        }
+
+        Optional<AktørId> annenForelder = barn.getFamilierelasjoner().stream()
+                .filter( relasjon -> foreldreRelasjoner.contains(relasjon.getRelasjonsrolle()))
+                .map(Familierelasjon::getAktørId)
+                .filter( aktørId ->  ! aktørId.equals(søker))
+                .findFirst();
+
+        return annenForelder.map(aktørId -> genererForelder(aktørId.getId())).orElse(null);
     }
 
     private Personinfo hentBarnSøktFor(Søknad søknad) {
@@ -103,6 +112,10 @@ public class OppslagTjeneste {
     }
 
     public String hentAktørId(String personident) {
+        if (erDevProfil()) {
+            return personident;
+        }
+
         if (personident == null || personident.isEmpty()) {
             return null;
         }

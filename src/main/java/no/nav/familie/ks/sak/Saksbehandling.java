@@ -44,15 +44,17 @@ public class Saksbehandling {
         final var behandling = behandlingslagerService.trekkUtOgPersister(søknad);
         Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
-        Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
-        return vedtak;
+
+        return fattVedtak(vilkårvurdering, faktagrunnlag);
     }
 
     public Vedtak behandle(Søknad søknad) {
         final var behandling = behandlingslagerService.trekkUtOgPersister(søknad);
         Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
+
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
+        vedtak.setBehandlingsId(behandling.getId());
         return vedtak;
     }
 
