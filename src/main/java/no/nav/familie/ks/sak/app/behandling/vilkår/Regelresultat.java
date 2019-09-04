@@ -74,7 +74,7 @@ public class Regelresultat {
             }
         }
 
-        throw new IllegalStateException("skjer dette?");
+        throw new IllegalStateException("Utfall mangler årsak. LeafSpesification er ikke riktig definert.");
     }
 
     public VilkårType getVilkårType() {

@@ -43,6 +43,7 @@ public class SamletVilkårsVurdering {
                 .collect(Collectors.toList());
     }
 
+    // FIXME vurder om samlet utfall også kan være manuell_behandling
     public UtfallType getSamletUtfallType() {
         final var utfall = getResultater()
                 .stream()
