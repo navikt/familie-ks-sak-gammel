@@ -66,7 +66,15 @@ public class FunksjonelleMetrikker {
         final var vilkårvurdering = vedtak.getVilkårvurdering();
         søkerUtfall.get(vilkårvurdering.getSamletUtfallType().name()).increment();
         if (vilkårvurdering.getSamletUtfallType().equals(UtfallType.IKKE_OPPFYLT)) {
-            vilkårvurdering.getResultater().forEach(r -> vilkårIkkeOppfylt.get(r.getUtfallÅrsak().getKode()).increment());
+            vilkårvurdering.getResultater().forEach(r -> {
+
+                Counter counter = vilkårIkkeOppfylt.get(r.getUtfallÅrsak().getKode());
+                if (counter == null) {
+                    System.out.println(r.getUtfallÅrsak());
+                } else {
+                    counter.increment();
+                }
+            });
         }
 
         barnehagestatus.get(søknad.barnehageplass.barnBarnehageplassStatus.name()).increment();

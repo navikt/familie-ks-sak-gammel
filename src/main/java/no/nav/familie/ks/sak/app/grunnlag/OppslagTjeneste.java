@@ -119,13 +119,12 @@ public class OppslagTjeneste {
     }
 
     public String hentAktørId(String personident) throws OppslagException {
-        System.out.println(personident == null);
         if (erDevProfil()) {
             return personident;
         }
 
         if (personident == null || personident.isEmpty()) {
-            return null;
+            throw new OppslagException("Ved henting av aktør id er personident null eller tom");
         }
         URI uri = URI.create(oppslagServiceUri + "/aktoer");
         logger.info("Henter aktørId fra " + oppslagServiceUri);
@@ -136,7 +135,6 @@ public class OppslagTjeneste {
                 throw new OppslagException(response.body());
             } else {
                 String aktørId = mapper.readValue(response.body(), String.class);
-                System.out.println(aktørId);
                 if (aktørId == null || aktørId.isEmpty()) {
                     throw new OppslagException("AktørId fra oppslagstjenesten er tom");
                 } else {
