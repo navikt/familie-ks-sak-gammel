@@ -27,7 +27,7 @@ public class SamletVilkårsVurderingTest {
         final var alleUtfall = vurder.getResultater().stream().map(Regelresultat::getUtfallType).collect(Collectors.toList());
         assertThat(alleUtfall).hasSize(inngangsvilkår.size());
         assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT);
-        assertThat(vurder.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(vurder.getSamletUtfallType()).isEqualTo(UtfallType.OPPFYLT);
     }
 
     @Test
@@ -39,7 +39,20 @@ public class SamletVilkårsVurderingTest {
         final var alleUtfall = vurder.getResultater().stream().map(Regelresultat::getUtfallType).collect(Collectors.toList());
         assertThat(alleUtfall).hasSize(inngangsvilkår.size());
         assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.IKKE_OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT);
-        assertThat(vurder.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(vurder.getSamletUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+
+    }
+
+    @Test
+    public void har_utfall_årsak_på_alle_regel_resultater() {
+        final var faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapMedBarnehage();
+
+        final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);
+        final var resultater = vurder.getResultater();
+
+        for (Regelresultat resultat : resultater) {
+            assertThat(resultat.getUtfallÅrsak()).isNotNull();
+        }
 
     }
 }

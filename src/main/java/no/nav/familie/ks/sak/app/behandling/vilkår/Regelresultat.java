@@ -67,10 +67,14 @@ public class Regelresultat {
     }
 
     public VilkårUtfallÅrsak getUtfallÅrsak() {
-        if (getUtfallType().equals(UtfallType.OPPFYLT)) {
-            return VilkårOppfyltÅrsak.VILKÅR_OPPFYLT;
+        Collection<Evaluation> leafEvaluations = evaluationSummary.leafEvaluations();
+        for (Evaluation ev : leafEvaluations) {
+            if (ev.getOutcome() != null) {
+                return (VilkårUtfallÅrsak) ev.getOutcome();
+            }
         }
-        return (VilkårUtfallÅrsak) evaluation.getOutcome();
+
+        throw new IllegalStateException("skjer dette?");
     }
 
     public VilkårType getVilkårType() {

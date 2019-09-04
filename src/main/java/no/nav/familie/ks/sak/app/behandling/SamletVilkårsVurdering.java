@@ -43,7 +43,7 @@ public class SamletVilkårsVurdering {
                 .collect(Collectors.toList());
     }
 
-    public UtfallType getUtfallType() {
+    public UtfallType getSamletUtfallType() {
         final var utfall = getResultater()
                 .stream()
                 .map(Regelresultat::getUtfallType)
@@ -53,13 +53,5 @@ public class SamletVilkårsVurdering {
             return utfall.get(0);
         }
         return UtfallType.IKKE_OPPFYLT;
-    }
-
-    public Set<VilkårUtfallÅrsak> getÅrsakType() {
-        return getResultater()
-                .stream()
-                .filter(it -> it.getUtfallType().equals(getUtfallType()))
-                .map(Regelresultat::getUtfallÅrsak)
-                .collect(Collectors.toSet());
     }
 }
