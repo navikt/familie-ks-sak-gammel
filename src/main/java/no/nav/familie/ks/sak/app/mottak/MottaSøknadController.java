@@ -37,7 +37,6 @@ public class MottaSøknadController {
         Vedtak vedtak = saksbehandling.behandle(søknad);
         final var vilkårvurdering = vedtak.getVilkårvurdering();
         final var samletUtfallType = vilkårvurdering.getSamletUtfallType();
-        System.out.println("Samlet utfalltype: " + samletUtfallType);
         if (samletUtfallType.equals(UtfallType.OPPFYLT)) {
             log.info("Søknad kan behandles automatisk. Årsak={}", samletUtfallType);
         } else {

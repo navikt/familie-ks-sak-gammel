@@ -68,12 +68,7 @@ public class FunksjonelleMetrikker {
 
         vilkårvurdering.getResultater().forEach(r -> {
             if (r.getUtfallType().equals(UtfallType.IKKE_OPPFYLT)) {
-                Counter counter = vilkårIkkeOppfylt.get(r.getUtfallÅrsak().getKode());
-                if (counter == null) {
-                    System.out.println(r.getUtfallÅrsak());
-                } else {
-                    counter.increment();
-                }
+                vilkårIkkeOppfylt.get(r.getUtfallÅrsak().getKode()).increment();
             }
         });
 
