@@ -27,10 +27,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class OppslagTjeneste {
@@ -65,14 +62,23 @@ public class OppslagTjeneste {
                 .build();
     }
 
-    private HttpRequest request(URI uri, String... headers) {
+    private HttpRequest request(URI uri) {
         return HttpRequest.newBuilder()
                 .uri(uri)
                 .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
                 .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
-                .headers(headers)
                 .GET()
                 .build();
+    }
+
+    private HttpRequest requestMedPersonident(URI uri, String personident) {
+        return HttpRequest.newBuilder()
+            .uri(uri)
+            .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
+            .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
+            .header("Nav-Personident", personident)
+            .GET()
+            .build();
     }
 
     public TpsFakta hentTpsFakta(Søknad søknad) {
@@ -123,8 +129,7 @@ public class OppslagTjeneste {
         URI uri = URI.create(oppslagServiceUri + "/aktoer");
         logger.info("Henter aktørId fra " + oppslagServiceUri);
         try {
-
-            HttpResponse<String> response = client.send(request(uri, "Nav-Personident", personident), HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(requestMedPersonident(uri, personident), HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != HttpStatus.OK.value()) {
                 logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + response.body());
                 throw new OppslagException(response.body());
