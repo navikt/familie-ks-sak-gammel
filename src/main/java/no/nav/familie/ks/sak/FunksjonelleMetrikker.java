@@ -65,17 +65,17 @@ public class FunksjonelleMetrikker {
 
         final var vilkårvurdering = vedtak.getVilkårvurdering();
         søkerUtfall.get(vilkårvurdering.getSamletUtfallType().name()).increment();
-        if (vilkårvurdering.getSamletUtfallType().equals(UtfallType.IKKE_OPPFYLT)) {
-            vilkårvurdering.getResultater().forEach(r -> {
 
+        vilkårvurdering.getResultater().forEach(r -> {
+            if (r.getUtfallType().equals(UtfallType.IKKE_OPPFYLT)) {
                 Counter counter = vilkårIkkeOppfylt.get(r.getUtfallÅrsak().getKode());
                 if (counter == null) {
                     System.out.println(r.getUtfallÅrsak());
                 } else {
                     counter.increment();
                 }
-            });
-        }
+            }
+        });
 
         barnehagestatus.get(søknad.barnehageplass.barnBarnehageplassStatus.name()).increment();
         boddEllerJobbetINorgeEllerEøsIFemÅr.get(søknad.tilknytningTilUtland.boddEllerJobbetINorgeMinstFemAar.name()).increment();
