@@ -13,11 +13,6 @@ public class Oppfylt extends LeafSpecification {
 
     @Override
     public Evaluation evaluate(Object grunnlag) {
-        return ja();
-    }
-
-    @Override
-    public String beskrivelse() {
-        return VilkårOppfyltÅrsak.VILKÅR_OPPFYLT.getBeskrivelse();
+        return ja(VilkårOppfyltÅrsak.VILKÅR_OPPFYLT);
     }
 }

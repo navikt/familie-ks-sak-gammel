@@ -79,7 +79,7 @@ public class Saksbehandling {
     }
 
     private Vedtak fattVedtak(SamletVilkårsVurdering vilkårvurdering, Faktagrunnlag faktagrunnlag) {
-        UtfallType utfallType = vilkårvurdering.getUtfallType();
+        UtfallType utfallType = vilkårvurdering.getSamletUtfallType();
         switch (utfallType) {
             case IKKE_OPPFYLT:
                 return new Vedtak(vilkårvurdering);
