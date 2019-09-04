@@ -118,7 +118,8 @@ public class OppslagTjeneste {
         return hentPersoninfoFor(aktørId);
     }
 
-    public String hentAktørId(String personident) {
+    public String hentAktørId(String personident) throws OppslagException {
+        System.out.println(personident == null);
         if (erDevProfil()) {
             return personident;
         }
@@ -134,7 +135,13 @@ public class OppslagTjeneste {
                 logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + response.body());
                 throw new OppslagException(response.body());
             } else {
-                return mapper.readValue(response.body(), String.class);
+                String aktørId = mapper.readValue(response.body(), String.class);
+                System.out.println(aktørId);
+                if (aktørId == null || aktørId.isEmpty()) {
+                    throw new OppslagException("AktørId fra oppslagstjenesten er tom");
+                } else {
+                    return aktørId;
+                }
             }
         } catch (IOException | InterruptedException e) {
             logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
