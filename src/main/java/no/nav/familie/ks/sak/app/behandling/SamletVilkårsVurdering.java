@@ -45,11 +45,16 @@ public class SamletVilkårsVurdering {
 
     // FIXME vurder om samlet utfall også kan være manuell_behandling
     public UtfallType getSamletUtfallType() {
-        return getResultater()
+        final var utfall = getResultater()
                 .stream()
                 .map(Regelresultat::getUtfallType)
                 .distinct()
-                .findFirst()
-                .orElse(UtfallType.IKKE_OPPFYLT);
+                .collect(Collectors.toList());
+
+        if (utfall.size() == 1) {
+            return utfall.get(0);
+        } else {
+            return UtfallType.IKKE_OPPFYLT;
+        }
     }
 }
