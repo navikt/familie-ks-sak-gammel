@@ -50,9 +50,11 @@ public class SamletVilkårsVurdering {
                 .map(Regelresultat::getUtfallType)
                 .distinct()
                 .collect(Collectors.toList());
+
         if (utfall.size() == 1) {
             return utfall.get(0);
+        } else {
+            return UtfallType.IKKE_OPPFYLT;
         }
-        return UtfallType.IKKE_OPPFYLT;
     }
 }

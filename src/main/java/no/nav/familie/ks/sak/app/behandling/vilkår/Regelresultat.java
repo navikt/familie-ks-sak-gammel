@@ -80,4 +80,9 @@ public class Regelresultat {
     public VilkårType getVilkårType() {
         return vilkårType;
     }
+
+    @Override
+    public String toString() {
+        return getUtfallÅrsak().getKode();
+    }
 }
