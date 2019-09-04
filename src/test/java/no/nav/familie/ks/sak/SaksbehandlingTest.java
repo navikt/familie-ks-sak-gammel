@@ -29,7 +29,7 @@ public class SaksbehandlingTest {
         when(oppslagMock.hentTpsFakta(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"));
 
-        assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.OPPFYLT);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class SaksbehandlingTest {
         when(oppslagMock.hentTpsFakta(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnUtenlandskeStatsborgere());
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"));
 
-        assertThat(vedtak.getVilkårvurdering().getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
     }
 
     private String getFile(String filnavn) {
