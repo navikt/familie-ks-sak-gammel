@@ -65,11 +65,12 @@ public class OppslagTjeneste {
                 .build();
     }
 
-    private HttpRequest request(URI uri) {
+    private HttpRequest request(URI uri, String... headers) {
         return HttpRequest.newBuilder()
                 .uri(uri)
                 .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
                 .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
+                .headers(headers)
                 .GET()
                 .build();
     }
@@ -119,10 +120,11 @@ public class OppslagTjeneste {
         if (personident == null || personident.isEmpty()) {
             return null;
         }
-        URI uri = URI.create(oppslagServiceUri + "/aktoer?ident=" + personident);
+        URI uri = URI.create(oppslagServiceUri + "/aktoer");
         logger.info("Henter aktørId fra " + oppslagServiceUri);
         try {
-            HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
+
+            HttpResponse<String> response = client.send(request(uri, "Nav-Personident", personident), HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != HttpStatus.OK.value()) {
                 logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + response.body());
                 throw new OppslagException(response.body());
