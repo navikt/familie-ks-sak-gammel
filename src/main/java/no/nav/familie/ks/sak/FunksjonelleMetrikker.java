@@ -75,7 +75,7 @@ public class FunksjonelleMetrikker {
         barnehagestatus.get(søknad.barnehageplass.barnBarnehageplassStatus.name()).increment();
         boddEllerJobbetINorgeEllerEøsIFemÅr.get(søknad.tilknytningTilUtland.boddEllerJobbetINorgeMinstFemAar.name()).increment();
 
-        if (søknad.utenlandskKontantstotte.mottarKontantstotteFraUtlandet.equals(Standpunkt.JA.toString())) {
+        if (søknad.utenlandskKontantstotte.mottarKontantstotteFraUtlandet.equals(Standpunkt.JA.getKode())) {
             mottarKontantstotteFraUtlandet.increment();
         }
     }
