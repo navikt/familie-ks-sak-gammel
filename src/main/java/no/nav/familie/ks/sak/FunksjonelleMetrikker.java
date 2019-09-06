@@ -3,14 +3,16 @@ package no.nav.familie.ks.sak;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
-import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårOppfyltÅrsak;
+import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.søknad.Barnehageplass;
 import no.nav.familie.ks.sak.app.grunnlag.søknad.TilknytningTilUtland;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -19,6 +21,8 @@ import java.util.Map;
 
 @Component
 public class FunksjonelleMetrikker {
+    private static final Logger log = LoggerFactory.getLogger(FunksjonelleMetrikker.class);
+
     private final HashMap<String, Counter> søkerUtfall = new HashMap<>();
     private final HashMap<String, Counter> vilkårIkkeOppfylt = new HashMap<>();
     private final Map<VilkårType, Map<String, Counter>> vilkårsUtfall = new HashMap<>();
@@ -64,11 +68,21 @@ public class FunksjonelleMetrikker {
         antallSøknaderMottatt.increment();
 
         final var vilkårvurdering = vedtak.getVilkårvurdering();
-        søkerUtfall.get(vilkårvurdering.getSamletUtfallType().name()).increment();
+        final Counter samletUtfall = søkerUtfall.get(vilkårvurdering.getSamletUtfallType().name());
+        if (samletUtfall != null) {
+            søkerUtfall.get(vilkårvurdering.getSamletUtfallType().name()).increment();
+        } else {
+            log.info("Fant ikke counter for samlet utfall: " + vilkårvurdering.getSamletUtfallType().name());
+        }
 
         vilkårvurdering.getResultater().forEach(r -> {
             if (r.getUtfallType().equals(UtfallType.IKKE_OPPFYLT)) {
-                vilkårIkkeOppfylt.get(r.getUtfallÅrsak().getKode()).increment();
+                final Counter counter = vilkårIkkeOppfylt.get(r.getUtfallÅrsak().getKode());
+                if (counter != null) {
+                    counter.increment();
+                } else {
+                    log.info("Fant ikke counter for årsak til ikke oppfylt vilkår: " + r.getUtfallÅrsak().getKode());
+                }
             }
         });
 
