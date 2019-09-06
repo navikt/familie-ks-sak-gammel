@@ -8,17 +8,17 @@ public enum VilkårIkkeOppfyltÅrsak implements VilkårUtfallÅrsak {
     IKKE_FEM_ÅR_MEDLEMSKAP(8301, "Må ha vært medlem av den norske folketrygden i minst fem år", VilkårType.MEDLEMSKAP),
     IKKE_BOSATT_I_NORGE_FEM_ÅR(8303, "Ikke vært bosatt i Norge sammenhengende siste fem år", VilkårType.MEDLEMSKAP),
     IKKE_NORSKE_STATSBORGERE_FEM_ÅR(8304, "Foreldre har ikke hatt norsk statsborgerskap sammenhegende siste fem år", VilkårType.MEDLEMSKAP),
-    OPPGITT_TILKNYTNING_UTLAND(8309, "Søker har svart ja på spørsmål som indikerer tilknytning til utland", VilkårType.UTLAND),
 
-    // Bosted?! Er ikke dette også medlemskap?
+    // §2: Vilkår knyttet til barnet
+    BARN_IKKE_NORSK_STATSBORGER(8307, "Barn er ikke norsk statsborger", VilkårType.BARN),
+
+    // §3: Vilkår knyttet til støttemottaker
     IKKE_BEGGE_FORELDRE(8307, "Begge foreldre er ikke registrert på barn i TPS", VilkårType.BOSTED),
     IKKE_BOSATT_SAMMEN(8306, "Barn er ikke bosatt sammen med begge foreldre", VilkårType.BOSTED),
 
-    // Retten til?
-    BARNEHAGEPLASS(8302, "Søknaden inneholder barnehageplass", VilkårType.BARNEHAGE),
-
-    // Barn
-    BARN_IKKE_NORSK_STATSBORGER(8307, "Barn er ikke norsk statsborger", VilkårType.BARN);
+    // MVP
+    OPPGITT_TILKNYTNING_UTLAND(8309, "Søker har svart ja på spørsmål som indikerer tilknytning til utland", VilkårType.UTLAND),
+    BARNEHAGEPLASS(8302, "Søknaden inneholder barnehageplass", VilkårType.BARNEHAGE);
 
     private final int årsakKode;
     private final String beskrivelse;

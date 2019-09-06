@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.vilkår.bosted.regel;
+package no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted.regel;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;

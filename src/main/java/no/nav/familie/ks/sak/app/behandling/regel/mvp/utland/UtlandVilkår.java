@@ -1,11 +1,11 @@
-package no.nav.familie.ks.sak.app.behandling.vilkår.barn;
+package no.nav.familie.ks.sak.app.behandling.regel.mvp.utland;
 
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
-import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
+import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Sluttpunkt;
-import no.nav.familie.ks.sak.app.behandling.vilkår.barn.regel.ErNorskStatsborger;
+import no.nav.familie.ks.sak.app.behandling.regel.mvp.utland.regel.IkkeOppgittTilknytningUtland;
 import no.nav.fpsak.nare.Ruleset;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
@@ -13,12 +13,12 @@ import no.nav.fpsak.nare.specification.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-@RuleDocumentation(VilkårType.Constants.BARN_KODE)
-public class BarneVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
+@RuleDocumentation(VilkårType.Constants.UTLAND_KODE)
+public class UtlandVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
 
     @Override
     public VilkårType getVilkårType() {
-        return VilkårType.BARN;
+        return VilkårType.UTLAND;
     }
 
     @Override
@@ -35,8 +35,8 @@ public class BarneVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
     @SuppressWarnings("unchecked")
     public Specification<Faktagrunnlag> getSpecification() {
         final var rs = new Ruleset<Faktagrunnlag>();
-        return rs.hvisRegel(ErNorskStatsborger.ID, "Vurder om barnet har norsk statsborgerskap")
-                    .hvis(new ErNorskStatsborger(), Sluttpunkt.oppfylt())
-                    .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.BARN_IKKE_NORSK_STATSBORGER));
+        return rs.hvisRegel(IkkeOppgittTilknytningUtland.ID, "Vurder om søker ikke har tilknytning til utland (MVP)")
+                    .hvis(new IkkeOppgittTilknytningUtland(), Sluttpunkt.oppfylt())
+                    .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.OPPGITT_TILKNYTNING_UTLAND));
     }
 }

@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.vilkår.utland.regel;
+package no.nav.familie.ks.sak.app.behandling.regel.mvp.utland.regel;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;

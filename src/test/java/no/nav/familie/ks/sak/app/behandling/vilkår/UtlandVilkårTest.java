@@ -2,7 +2,7 @@ package no.nav.familie.ks.sak.app.behandling.vilkår;
 
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.behandling.vilkår.utland.UtlandVilkår;
+import no.nav.familie.ks.sak.app.behandling.regel.mvp.utland.UtlandVilkår;
 import no.nav.fpsak.nare.evaluation.Resultat;
 import org.junit.Test;
 

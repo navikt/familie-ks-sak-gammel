@@ -4,11 +4,11 @@ import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Regelresultat;
-import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;
-import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.BarnehageVilkår;
-import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.MedlemskapsVilkår;
-import no.nav.familie.ks.sak.app.behandling.vilkår.bosted.BostedVilkår;
-import no.nav.familie.ks.sak.app.behandling.vilkår.utland.UtlandVilkår;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.BarneVilkår;
+import no.nav.familie.ks.sak.app.behandling.regel.mvp.barnehage.BarnehageVilkår;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.MedlemskapsVilkår;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted.BostedVilkår;
+import no.nav.familie.ks.sak.app.behandling.regel.mvp.utland.UtlandVilkår;
 import org.junit.Test;
 
 import java.util.List;
