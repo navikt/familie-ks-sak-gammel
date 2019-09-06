@@ -37,13 +37,14 @@ public class MottaSøknadController {
         Vedtak vedtak = saksbehandling.behandle(søknad);
         final var vilkårvurdering = vedtak.getVilkårvurdering();
         final var samletUtfallType = vilkårvurdering.getSamletUtfallType();
+
+        funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
+
         if (samletUtfallType.equals(UtfallType.OPPFYLT)) {
             log.info("Søknad kan behandles automatisk. Årsak={}", samletUtfallType);
         } else {
             log.info("Søknad kan ikke behandles automatisk. Årsak={}", vilkårvurdering.getResultater());
         }
-
-        funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
 
         return new ResponseEntity(HttpStatus.OK);
     }
