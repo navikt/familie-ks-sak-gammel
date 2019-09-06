@@ -36,15 +36,11 @@ public class MottaSøknadController {
     public ResponseEntity mottaDokument(@RequestBody Søknad søknad) {
         Vedtak vedtak = saksbehandling.behandle(søknad);
         final var vilkårvurdering = vedtak.getVilkårvurdering();
-        final var årsakType = vilkårvurdering.getÅrsakType().iterator().next();
-        if (vilkårvurdering.getUtfallType().equals(UtfallType.OPPFYLT)) {
-            log.info("Søknad kan behandles automatisk. Årsak " +
-                    årsakType.getÅrsakKode() + ": " +
-                    årsakType.getBeskrivelse());
+        final var samletUtfallType = vilkårvurdering.getSamletUtfallType();
+        if (samletUtfallType.equals(UtfallType.OPPFYLT)) {
+            log.info("Søknad kan behandles automatisk. Årsak={}", samletUtfallType);
         } else {
-            log.info("Søknad kan ikke behandles automatisk. Årsak " +
-                    årsakType.getÅrsakKode() + ": " +
-                    årsakType.getBeskrivelse());
+            log.info("Søknad kan ikke behandles automatisk. Årsak={}", vilkårvurdering.getResultater());
         }
 
         funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);

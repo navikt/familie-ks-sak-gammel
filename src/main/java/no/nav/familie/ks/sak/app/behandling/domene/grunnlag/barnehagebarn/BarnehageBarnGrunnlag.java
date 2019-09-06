@@ -44,4 +44,12 @@ public class BarnehageBarnGrunnlag extends BaseEntitet {
                 ", aktiv=" + aktiv +
                 '}';
     }
+
+    public Long getBehandlingId() {
+        return behandlingId;
+    }
+
+    public boolean isAktiv() {
+        return aktiv;
+    }
 }

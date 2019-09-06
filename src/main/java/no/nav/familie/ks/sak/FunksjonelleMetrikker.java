@@ -2,11 +2,12 @@ package no.nav.familie.ks.sak;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårIkkeOppfyltÅrsak;
-import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårOppfyltÅrsak;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.søknad.Barnehageplass;
 import no.nav.familie.ks.sak.app.grunnlag.søknad.TilknytningTilUtland;
@@ -21,11 +22,11 @@ public class FunksjonelleMetrikker {
     private final HashMap<String, Counter> søkerUtfall = new HashMap<>();
     private final HashMap<String, Counter> vilkårIkkeOppfylt = new HashMap<>();
     private final Map<VilkårType, Map<String, Counter>> vilkårsUtfall = new HashMap<>();
+    private final Counter antallSøknaderMottatt = Metrics.counter("soknad.kontantstotte.funksjonell.antallsoknader");
 
     private final HashMap<String, Counter> barnehagestatus = new HashMap<>();
     private final HashMap<String, Counter> boddEllerJobbetINorgeEllerEøsIFemÅr = new HashMap<>();
     private final Counter mottarKontantstotteFraUtlandet = Metrics.counter("soknad.kontantstotte.funksjonell.mottarKontantstotteFraUtlandet", "status", "JA");
-
 
     public FunksjonelleMetrikker() {
         Arrays.stream(UtfallType.values()).forEach(utfallType -> søkerUtfall.put(
@@ -60,19 +61,22 @@ public class FunksjonelleMetrikker {
     }
 
     public void tellFunksjonelleMetrikker(Søknad søknad, Vedtak vedtak) {
+        antallSøknaderMottatt.increment();
+
         final var vilkårvurdering = vedtak.getVilkårvurdering();
-        søkerUtfall.get(vilkårvurdering.getUtfallType().name()).increment();
-        if (vilkårvurdering.getUtfallType().equals(UtfallType.IKKE_OPPFYLT)) {
-            vilkårIkkeOppfylt.get(Integer.toString(vilkårvurdering.getÅrsakType().iterator().next().getÅrsakKode())).increment();
-        }
+        søkerUtfall.get(vilkårvurdering.getSamletUtfallType().name()).increment();
+
+        vilkårvurdering.getResultater().forEach(r -> {
+            if (r.getUtfallType().equals(UtfallType.IKKE_OPPFYLT)) {
+                vilkårIkkeOppfylt.get(r.getUtfallÅrsak().getKode()).increment();
+            }
+        });
 
         barnehagestatus.get(søknad.barnehageplass.barnBarnehageplassStatus.name()).increment();
         boddEllerJobbetINorgeEllerEøsIFemÅr.get(søknad.tilknytningTilUtland.boddEllerJobbetINorgeMinstFemAar.name()).increment();
 
-        if (søknad.utenlandskKontantstotte.mottarKontantstotteFraUtlandet.equals("JA")) {
+        if (søknad.utenlandskKontantstotte.mottarKontantstotteFraUtlandet.equals(Standpunkt.JA.getKode())) {
             mottarKontantstotteFraUtlandet.increment();
         }
-
-        vilkårvurdering.getResultater().forEach(r -> vilkårsUtfall.get(r.getVilkårType()).get(r.getUtfallÅrsak().getKode()).increment());
     }
 }

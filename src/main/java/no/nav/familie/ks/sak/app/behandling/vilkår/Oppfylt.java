@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.vilkår;
 
-import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårOppfyltÅrsak;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårOppfyltÅrsak;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
 
@@ -13,11 +13,6 @@ public class Oppfylt extends LeafSpecification {
 
     @Override
     public Evaluation evaluate(Object grunnlag) {
-        return ja();
-    }
-
-    @Override
-    public String beskrivelse() {
-        return VilkårOppfyltÅrsak.VILKÅR_OPPFYLT.getBeskrivelse();
+        return ja(VilkårOppfyltÅrsak.VILKÅR_OPPFYLT);
     }
 }

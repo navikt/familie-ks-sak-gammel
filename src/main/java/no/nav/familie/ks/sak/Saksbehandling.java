@@ -44,15 +44,17 @@ public class Saksbehandling {
         final var behandling = behandlingslagerService.trekkUtOgPersister(søknad);
         Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
-        Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
-        return vedtak;
+
+        return fattVedtak(vilkårvurdering, faktagrunnlag);
     }
 
     public Vedtak behandle(Søknad søknad) {
         final var behandling = behandlingslagerService.trekkUtOgPersister(søknad);
         Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
+
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
+        vedtak.setBehandlingsId(behandling.getId());
         return vedtak;
     }
 
@@ -77,7 +79,7 @@ public class Saksbehandling {
     }
 
     private Vedtak fattVedtak(SamletVilkårsVurdering vilkårvurdering, Faktagrunnlag faktagrunnlag) {
-        UtfallType utfallType = vilkårvurdering.getUtfallType();
+        UtfallType utfallType = vilkårvurdering.getSamletUtfallType();
         switch (utfallType) {
             case IKKE_OPPFYLT:
                 return new Vedtak(vilkårvurdering);

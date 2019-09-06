@@ -37,6 +37,14 @@ public class BehandlingResultat extends BaseEntitet {
         return vilkårsResultat;
     }
 
+    public Long getBehandlingId() {
+        return behandlingId;
+    }
+
+    public boolean isAktiv() {
+        return aktiv;
+    }
+
     @Override
     public String toString() {
         return "BehandlingResultat{" +

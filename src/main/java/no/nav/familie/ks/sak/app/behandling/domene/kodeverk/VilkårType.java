@@ -2,18 +2,29 @@ package no.nav.familie.ks.sak.app.behandling.domene.kodeverk;
 
 public enum VilkårType {
 
-    MEDLEMSKAP(Constants.MEDLEMSKAP_KODE, "Medlemskap til folketrygden"),
-    BARNEHAGE(Constants.BARNEHAGE_KODE, "Kun søkere uten barnehage behandles automatisk (MVP)"),
-    BOSTED(Constants.BOSTED_KODE, "Barn bor sammen med begge foreldre (MVP)"),
-    BARN(Constants.BARN_KODE, "Barn er norsk statsborger"),
-    UTLAND(Constants.UTLAND_KODE, "Søker har ikke oppgitt noen tilknytning til utland (MVP)");
+    MEDLEMSKAP(Constants.MEDLEMSKAP_KODE, "Medlemskap til folketrygden", "lovreferanse"),
+    BARNEHAGE(Constants.BARNEHAGE_KODE, "Retten til basert på plass i barnehage", "lovreferanse"),
+    BOSTED(Constants.BOSTED_KODE, "Barn bor sammen med begge foreldre (MVP)", "lovreferanse"),
+    BARN(Constants.BARN_KODE, "Barn er norsk statsborger", "lovreferanse"),
+    UTLAND(Constants.UTLAND_KODE, "Søker har ikke oppgitt noen tilknytning til utland (MVP)", "lovreferanse");
 
     private final String kode;
     private final String beskrivelse;
+    private final String lovreferanse;
 
-    VilkårType(String kode, String beskrivelse) {
+    VilkårType(String kode, String beskrivelse, String lovreferanse) {
         this.kode = kode;
         this.beskrivelse = beskrivelse;
+        this.lovreferanse = lovreferanse;
+    }
+
+    /**
+     * Benyttes i skriv til brukeren etc.
+     *
+     * @return
+     */
+    public String getLovReferanse() {
+        return lovreferanse;
     }
 
     public String getKode() {
@@ -22,6 +33,15 @@ public enum VilkårType {
 
     public String getBeskrivelse() {
         return beskrivelse;
+    }
+
+    @Override
+    public String toString() {
+        return "VilkårType{" +
+                "ref='" + name() + '\'' +
+                "kode='" + kode + '\'' +
+                ", lovreferanse='" + lovreferanse + '\'' +
+                '}';
     }
 
     public static class Constants {

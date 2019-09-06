@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.behandling.VilkårRegelFeil;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårUtfallÅrsak;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.behandling.resultat.årsak.VilkårÅrsak;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.evaluation.Resultat;
@@ -65,11 +65,23 @@ public class Regelresultat {
         return EvaluationSerializer.asJson(evaluation);
     }
 
-    public VilkårÅrsak getUtfallÅrsak() {
-        return (VilkårÅrsak) evaluation.getOutcome();
+    public VilkårUtfallÅrsak getUtfallÅrsak() {
+        Collection<Evaluation> leafEvaluations = evaluationSummary.leafEvaluations();
+        for (Evaluation ev : leafEvaluations) {
+            if (ev.getOutcome() != null) {
+                return (VilkårUtfallÅrsak) ev.getOutcome();
+            }
+        }
+
+        throw new IllegalStateException("Utfall mangler årsak. LeafSpesification er ikke riktig definert.");
     }
 
     public VilkårType getVilkårType() {
         return vilkårType;
+    }
+
+    @Override
+    public String toString() {
+        return getUtfallÅrsak().getKode();
     }
 }

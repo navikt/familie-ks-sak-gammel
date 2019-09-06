@@ -255,7 +255,7 @@ public final class FaktagrunnlagBuilder {
                 .build();
     }
 
-    private static Søknad utenBarnehageplass() {
+    public static Søknad utenBarnehageplass() {
         try {
             return mapper.readValue(new File(getFile("soknadUtenBarnehageplass.json")), Søknad.class);
         } catch (IOException e) {
