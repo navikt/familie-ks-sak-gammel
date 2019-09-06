@@ -7,7 +7,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.BarneVilkår;
-import no.nav.familie.ks.sak.app.behandling.regel.mvp.barnehage.BarnehageVilkår;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barnehage.BarnehageVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted.BostedVilkår;
 import no.nav.familie.ks.sak.app.grunnlag.OppslagTjeneste;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
