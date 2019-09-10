@@ -6,9 +6,7 @@ CREATE TABLE PO_INFORMASJON
     opprettet_av  VARCHAR(20)  DEFAULT 'VL'              NOT NULL,
     opprettet_tid TIMESTAMP(3) DEFAULT current_timestamp NOT NULL,
     endret_av     VARCHAR(20),
-    endret_tid    TIMESTAMP(3),
-
-    CONSTRAINT PK_PO_INFORMASJON PRIMARY KEY (id)
+    endret_tid    TIMESTAMP(3)
 );
 CREATE SEQUENCE PO_INFORMASJON_SEQ INCREMENT BY 50 START WITH 1000000 NO CYCLE;
 
