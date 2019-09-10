@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn;
 
-import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 
 import javax.persistence.*;
 import java.util.Objects;

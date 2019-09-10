@@ -1,8 +1,7 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 
 import javax.persistence.*;
 

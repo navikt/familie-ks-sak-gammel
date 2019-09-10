@@ -1,9 +1,10 @@
 package no.nav.familie.ks.sak.app.rest.Behandling;
 
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 
 public class RestAktørArbeidYtelseUtland {
-    private String aktørId;
+    private AktørId aktørId;
     private Standpunkt arbeidIUtlandet;
     private String arbeidIUtlandetForklaring;
     private Standpunkt ytelseIUtlandet;
@@ -11,7 +12,7 @@ public class RestAktørArbeidYtelseUtland {
     private Standpunkt kontantstøtteIUtlandet;
     private String kontantstøtteIUtlandetForklaring;
 
-    public RestAktørArbeidYtelseUtland(String aktørId, Standpunkt arbeidIUtlandet, String arbeidIUtlandetForklaring, Standpunkt ytelseIUtlandet, String ytelseIUtlandetForklaring, Standpunkt kontantstøtteIUtlandet, String kontantstøtteIUtlandetForklaring) {
+    public RestAktørArbeidYtelseUtland(AktørId aktørId, Standpunkt arbeidIUtlandet, String arbeidIUtlandetForklaring, Standpunkt ytelseIUtlandet, String ytelseIUtlandetForklaring, Standpunkt kontantstøtteIUtlandet, String kontantstøtteIUtlandetForklaring) {
         this.aktørId = aktørId;
         this.arbeidIUtlandet = arbeidIUtlandet;
         this.arbeidIUtlandetForklaring = arbeidIUtlandetForklaring;

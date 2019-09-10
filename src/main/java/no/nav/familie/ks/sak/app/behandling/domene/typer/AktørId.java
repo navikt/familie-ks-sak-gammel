@@ -1,14 +1,13 @@
-package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene;
+package no.nav.familie.ks.sak.app.behandling.domene.typer;
 
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.regex.Pattern;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Pattern.Flag;
-
-import com.fasterxml.jackson.annotation.JsonValue;
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Id som genereres fra NAV Aktør Register. Denne iden benyttes til interne forhold i Nav og vil ikke endres f.eks. dersom bruker går fra

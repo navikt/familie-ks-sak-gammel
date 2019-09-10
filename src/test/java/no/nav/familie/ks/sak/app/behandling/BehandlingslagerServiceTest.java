@@ -8,8 +8,9 @@ import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.grunnlag.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.rest.Behandling.RestBehandling;
 import no.nav.familie.ks.sak.app.rest.Behandling.RestFagsak;
 import no.nav.familie.ks.sak.config.ApplicationConfig;
@@ -37,8 +38,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = {ApplicationConfig.class},
-        loader = AnnotationConfigContextLoader.class)
+    classes = {ApplicationConfig.class},
+    loader = AnnotationConfigContextLoader.class)
 @DataJpaTest(excludeAutoConfiguration = FlywayAutoConfiguration.class)
 public class BehandlingslagerServiceTest {
 
@@ -64,8 +65,14 @@ public class BehandlingslagerServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        Mockito.when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> i.getArguments()[0]);
-        when(oppslagTjeneste.hentTpsFakta(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
+        Mockito.when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
+        when(oppslagTjeneste.hentTpsFakta(any(), any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
+        when(oppslagTjeneste.hentPersoninfoFor(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersoninfo(),
+            FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersoninfo(),
+            FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo());
+        when(oppslagTjeneste.hentHistorikkFor(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
+            FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersonhistorikkInfo(),
+            FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersonhistorikkInfo());
     }
 
     @Test
@@ -75,11 +82,11 @@ public class BehandlingslagerServiceTest {
 
         final var fagsaker = fagsakRepository.findAll();
         assertThat(fagsaker).hasSize(1);
-        assertThat(fagsaker.get(0).getAktørId()).isEqualTo(søknad.person.fnr);
+        assertThat(fagsaker.get(0).getAktørId()).isEqualTo(new AktørId(søknad.getPerson().getFnr()));
         final var behandlinger = behandlingRepository.findAll();
         assertThat(behandlinger).hasSize(1);
         final var behandling = behandlinger.get(0);
-        assertThat(behandling.getFagsak().getAktørId()).isEqualTo(søknad.person.fnr);
+        assertThat(behandling.getFagsak().getAktørId()).isEqualTo(new AktørId(søknad.getPerson().getFnr()));
         final var søknader = søknadGrunnlagRepository.findAll();
         final var søknad1 = søknader.get(0).getSøknad();
         assertThat(søknad1.getInnsendtTidspunkt()).isEqualTo(LocalDateTime.ofInstant(søknad.innsendingsTidspunkt, ZoneId.systemDefault()));
@@ -101,14 +108,12 @@ public class BehandlingslagerServiceTest {
 
         assertThat(behandling).isPresent();
 
-        if (behandling.isPresent()) {
-            final RestFagsak restFagsak = tjeneste.hentRestFagsak(behandling.get().getFagsak().getId());
-            assertThat(restFagsak).isNotNull();
-            assertThat(restFagsak.getFagsak().getId()).isEqualTo(behandling.get().getId());
+        final RestFagsak restFagsak = tjeneste.hentRestFagsak(behandling.get().getFagsak().getId());
+        assertThat(restFagsak).isNotNull();
+        assertThat(restFagsak.getFagsak().getId()).isEqualTo(behandling.get().getFagsak().getId());
 
-            final List<RestBehandling> restBehandlinger = restFagsak.getBehandlinger();
-            assertThat(restBehandlinger).hasSize(1);
-        }
+        final List<RestBehandling> restBehandlinger = restFagsak.getBehandlinger();
+        assertThat(restBehandlinger).hasSize(1);
     }
 
     @Test

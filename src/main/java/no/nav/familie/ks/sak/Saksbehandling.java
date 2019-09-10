@@ -7,9 +7,10 @@ import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.grunnlag.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class Saksbehandling {
     private VurderSamletTjeneste vurderSamletTjeneste;
     private PeriodeOppretter periodeOppretter = new PeriodeOppretter();
     private BehandlingslagerService behandlingslagerService;
+    private RegisterInnhentingService registerInnhentingService;
     private ResultatService resultatService;
     private ObjectMapper mapper;
     private OppslagTjeneste oppslag;
@@ -31,10 +33,13 @@ public class Saksbehandling {
     public Saksbehandling(OppslagTjeneste oppslag,
                           VurderSamletTjeneste vurderSamletTjeneste,
                           BehandlingslagerService behandlingslagerService,
-                          ResultatService resultatService, ObjectMapper objectMapper) {
+                          RegisterInnhentingService registerInnhentingService,
+                          ResultatService resultatService,
+                          ObjectMapper objectMapper) {
         this.oppslag = oppslag;
         this.vurderSamletTjeneste = vurderSamletTjeneste;
         this.behandlingslagerService = behandlingslagerService;
+        this.registerInnhentingService = registerInnhentingService;
         this.resultatService = resultatService;
         this.mapper = objectMapper;
     }
@@ -43,6 +48,7 @@ public class Saksbehandling {
         Søknad søknad = tilSøknad(søknadJson);
         final var behandling = behandlingslagerService.trekkUtOgPersister(søknad);
         Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
+        registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
 
         return fattVedtak(vilkårvurdering, faktagrunnlag);
@@ -51,6 +57,7 @@ public class Saksbehandling {
     public Vedtak behandle(Søknad søknad) {
         final var behandling = behandlingslagerService.trekkUtOgPersister(søknad);
         Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
+        registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
 
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
@@ -60,11 +67,11 @@ public class Saksbehandling {
 
     private Faktagrunnlag fastsettFakta(Søknad søknad) {
         // søknadsdata, TPS-data og evt. barnehagelister
-        TpsFakta tpsFakta = oppslag.hentTpsFakta(søknad);
+        TpsFakta tpsFakta = oppslag.hentTpsFakta(søknad.getPerson().getFnr(), søknad.getFamilieforhold().getAnnenForelderFødselsnummer(), søknad.getMineBarn().getFødselsnummer());
         return new Faktagrunnlag.Builder()
-                .medTpsFakta(tpsFakta)
-                .medSøknad(søknad)
-                .build();
+            .medTpsFakta(tpsFakta)
+            .medSøknad(søknad)
+            .build();
     }
 
     private SamletVilkårsVurdering vurderVilkår(Behandling behandling, Faktagrunnlag grunnlag) {
