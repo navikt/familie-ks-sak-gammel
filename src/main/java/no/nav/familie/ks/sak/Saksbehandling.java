@@ -45,13 +45,7 @@ public class Saksbehandling {
     }
 
     public Vedtak behandle(String søknadJson) {
-        Søknad søknad = tilSøknad(søknadJson);
-        final var behandling = behandlingslagerService.trekkUtOgPersister(søknad);
-        Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
-        registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
-        SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
-
-        return fattVedtak(vilkårvurdering, faktagrunnlag);
+        return behandle(tilSøknad(søknadJson));
     }
 
     public Vedtak behandle(Søknad søknad) {
