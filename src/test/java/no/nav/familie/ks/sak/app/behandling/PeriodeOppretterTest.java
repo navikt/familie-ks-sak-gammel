@@ -2,7 +2,10 @@ package no.nav.familie.ks.sak.app.behandling;
 
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.Saksbehandling;
+import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
+import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;
@@ -29,14 +32,16 @@ public class PeriodeOppretterTest {
     private static final int MAKS_UTBETALINGSGRAD = 100;
 
     private final OppslagTjeneste oppslagMock = mock(OppslagTjeneste.class);
+    private final BehandlingslagerService behandlingslagerMock = mock(BehandlingslagerService.class);
 
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår(), new BarnehageVilkår(), new BostedVilkår()));
 
-    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, mock(BehandlingslagerService.class), mock(RegisterInnhentingService.class) , mock(ResultatService.class), new JacksonJsonConfig().objectMapper());
+    private final Saksbehandling saksbehandling = new Saksbehandling(oppslagMock, vurderSamletTjeneste, behandlingslagerMock, mock(RegisterInnhentingService.class) , mock(ResultatService.class), new JacksonJsonConfig().objectMapper());
 
     @Test
     public void søknad_med_barnehage_gir_feil() {
         when(oppslagMock.hentTpsFakta(any(), any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
+        when(behandlingslagerMock.trekkUtOgPersister(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"));
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
     }
@@ -44,6 +49,7 @@ public class PeriodeOppretterTest {
     @Test
     public void at_søknad_uten_barnehage_gir_stønadperiode() {
         when(oppslagMock.hentTpsFakta(any(), any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
+        when(behandlingslagerMock.trekkUtOgPersister(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadUtenBarnehageplass.json"));
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.OPPFYLT);
         assertThat(vedtak.getStønadperiode().getFom()).isEqualTo(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo().getFødselsdato().plusMonths(MIN_ALDER_I_MÅNEDER).withDayOfMonth(1));
