@@ -18,10 +18,7 @@ public class ApplicationTestPropertyValues {
         pairs.add("spring.datasource.password=" + postgreSQLContainer.getPassword());
 
         pairs.add("spring.cloud.vault.database.role=" + postgreSQLContainer.getUsername());
-        pairs.add("spring.flyway.enabled=true");
-        pairs.add("spring.cloud.vault.database.enabled=false");
 
-        pairs.add("spring.cloud.vault.enabled=false");
         return TestPropertyValues.of(pairs);
     }
 
