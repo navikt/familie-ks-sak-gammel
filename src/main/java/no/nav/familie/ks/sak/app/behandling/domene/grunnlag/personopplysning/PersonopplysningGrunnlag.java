@@ -13,14 +13,14 @@ import java.util.Optional;
 public class PersonopplysningGrunnlag extends BaseEntitet {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GR_PERSONOPPLYSNINGER")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GR_PERSONOPPLYSNINGER_SEQ")
     private Long id;
 
     @Column(name = "behandling_id", updatable = false, nullable = false)
     private Long behandlingId;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", updatable = false)))
+    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "oppgitt_annen_part", updatable = false)))
     private AktørId oppgittAnnenPart;
 
     @Column(name = "aktiv", nullable = false)

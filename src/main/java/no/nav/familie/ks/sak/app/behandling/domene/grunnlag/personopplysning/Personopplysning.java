@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Personopplysning extends BaseEntitet {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PO_PERSONOPPLYSNING")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PO_PERSONOPPLYSNING_SEQ")
     private Long id;
 
     @Embedded
