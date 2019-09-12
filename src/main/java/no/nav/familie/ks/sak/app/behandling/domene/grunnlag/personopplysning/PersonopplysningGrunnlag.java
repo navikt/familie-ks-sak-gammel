@@ -9,11 +9,11 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Entity
-@Table(name = "GR_PERSONOPPLYSNING")
+@Table(name = "GR_PERSONOPPLYSNINGER")
 public class PersonopplysningGrunnlag extends BaseEntitet {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GR_PERSONOPPLYSNING")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GR_PERSONOPPLYSNINGER")
     private Long id;
 
     @Column(name = "behandling_id", updatable = false, nullable = false)
