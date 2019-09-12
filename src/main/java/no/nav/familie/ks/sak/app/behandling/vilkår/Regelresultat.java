@@ -1,14 +1,8 @@
 package no.nav.familie.ks.sak.app.behandling.vilkår;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import no.nav.familie.ks.sak.app.behandling.VilkårRegelFeil;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårUtfallÅrsak;
-import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.evaluation.Resultat;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSerializer;
@@ -19,14 +13,12 @@ import java.util.Collection;
 public class Regelresultat {
 
     private final VilkårType vilkårType;
-    private final Faktagrunnlag faktagrunnlag;
     private final Evaluation evaluation;
     private final EvaluationSummary evaluationSummary;
-    private final ObjectMapper objectMapper = new JacksonJsonConfig().objectMapper();
 
-    public Regelresultat(VilkårType vilkårType, Faktagrunnlag faktagrunnlag, Evaluation evaluation) {
+
+    public Regelresultat(VilkårType vilkårType, Evaluation evaluation) {
         this.vilkårType = vilkårType;
-        this.faktagrunnlag = faktagrunnlag;
         this.evaluation = evaluation;
         this.evaluationSummary = new EvaluationSummary(this.evaluation);
     }
@@ -52,14 +44,6 @@ public class Regelresultat {
         }
 
         throw new IllegalArgumentException("leafEvaluations.isEmpty():" + leafEvaluations);
-    }
-
-    public String getInputJson() {
-        try {
-            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(faktagrunnlag);
-        } catch (JsonProcessingException e) {
-            throw new VilkårRegelFeil("Kunne ikke serialisere regelinput for avklaring av uttaksperioder.", e);
-        }
     }
 
     public String getRegelSporingJson() {

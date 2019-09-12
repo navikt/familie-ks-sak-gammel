@@ -1,9 +1,7 @@
 package no.nav.familie.ks.sak;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.behandling.*;
-import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
@@ -52,7 +50,9 @@ public class Saksbehandling {
         final var behandling = behandlingslagerService.trekkUtOgPersister(søknad);
         Faktagrunnlag faktagrunnlag = fastsettFakta(søknad);
         registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
-        SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
+
+        SamletVilkårsVurdering vilkårvurdering = vurderSamletTjeneste.vurder(faktagrunnlag);
+        resultatService.persisterResultat(behandling, vilkårvurdering, faktagrunnlag);
 
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
         vedtak.setBehandlingsId(behandling.getId());
@@ -66,13 +66,6 @@ public class Saksbehandling {
             .medTpsFakta(tpsFakta)
             .medSøknad(søknad)
             .build();
-    }
-
-    private SamletVilkårsVurdering vurderVilkår(Behandling behandling, Faktagrunnlag grunnlag) {
-        final var samletVilkårsVurdering = vurderSamletTjeneste.vurder(grunnlag);
-
-        resultatService.persisterResultat(behandling, samletVilkårsVurdering);
-        return samletVilkårsVurdering;
     }
 
     private GradertPeriode fastsettPeriode(Faktagrunnlag grunnlag) {
@@ -89,14 +82,6 @@ public class Saksbehandling {
                 return new Vedtak(vilkårvurdering, stønadperiode);
             default:
                 throw new UnsupportedOperationException(String.format("Ukjent utfalltype: %s", utfallType.name()));
-        }
-    }
-
-    private String toJson(Faktagrunnlag grunnlag) {
-        try {
-            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(grunnlag);
-        } catch (JsonProcessingException e) {
-            throw new VilkårRegelFeil("Kunne ikke serialisere regelinput for avklaring av uttaksperioder.", e);
         }
     }
 

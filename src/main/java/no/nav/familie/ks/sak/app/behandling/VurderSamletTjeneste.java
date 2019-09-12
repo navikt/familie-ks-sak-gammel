@@ -33,6 +33,6 @@ public class VurderSamletTjeneste {
             vurderinger.put(vilkår.getVilkårType(), evaluering);
         });
 
-        return new SamletVilkårsVurdering(vurderinger, grunnlag);
+        return new SamletVilkårsVurdering(vurderinger);
     }
 }

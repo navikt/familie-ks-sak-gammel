@@ -6,6 +6,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRe
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår.VilkårResultat;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår.VilkårsResultat;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår.VilkårsResultatRepository;
+import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +24,10 @@ public class ResultatService {
         this.vilkårsResultatRepository = vilkårsResultatRepository;
     }
 
-    public void persisterResultat(Behandling behandling, SamletVilkårsVurdering samletVilkårsVurdering) {
+    public void persisterResultat(Behandling behandling, SamletVilkårsVurdering samletVilkårsVurdering, Faktagrunnlag faktagrunnlag) {
         final var vilkårsSet = new HashSet<VilkårResultat>();
         samletVilkårsVurdering.getResultater()
-                .forEach(vurdering -> vilkårsSet.add(new VilkårResultat(vurdering.getVilkårType(), vurdering.getUtfallType(), vurdering.getInputJson(), vurdering.getRegelSporingJson())));
+                .forEach(vurdering -> vilkårsSet.add(new VilkårResultat(vurdering.getVilkårType(), vurdering.getUtfallType(), faktagrunnlag.somJson(), vurdering.getRegelSporingJson())));
         final var vilkårsResultat = new VilkårsResultat(vilkårsSet);
 
         vilkårsResultatRepository.save(vilkårsResultat);

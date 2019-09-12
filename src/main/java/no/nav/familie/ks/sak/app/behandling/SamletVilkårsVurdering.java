@@ -3,24 +3,18 @@ package no.nav.familie.ks.sak.app.behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårUtfallÅrsak;
-import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Regelresultat;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SamletVilkårsVurdering {
-
     private final Map<VilkårType, Evaluation> vurderinger;
-    private final Faktagrunnlag faktagrunnlag;
 
-    SamletVilkårsVurdering(Map<VilkårType, Evaluation> vurderinger, Faktagrunnlag faktagrunnlag) {
+    SamletVilkårsVurdering(Map<VilkårType, Evaluation> vurderinger) {
         this.vurderinger = valider(vurderinger);
-        this.faktagrunnlag = faktagrunnlag;
     }
 
     private Map<VilkårType, Evaluation> valider(Map<VilkårType, Evaluation> vurderinger) {
@@ -39,7 +33,7 @@ public class SamletVilkårsVurdering {
 
     public List<Regelresultat> getResultater() {
         return vurderinger.entrySet().stream()
-                .map(entry -> new Regelresultat(entry.getKey(), faktagrunnlag, entry.getValue()))
+                .map(entry -> new Regelresultat(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
 
