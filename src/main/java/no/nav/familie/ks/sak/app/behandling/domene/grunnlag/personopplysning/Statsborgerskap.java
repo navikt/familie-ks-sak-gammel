@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Statsborgerskap extends BaseEntitet {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PO_STATSBORGERSKAP")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PO_STATSBORGERSKAP_SEQ")
     private Long id;
 
     @Embedded

@@ -57,10 +57,10 @@ public class BehandlingslagerService {
     public Behandling trekkUtOgPersister(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
         final var søkerAktørId = oppslagTjeneste.hentAktørId(søknad.getPerson().getFnr());
         final var fagsak = Fagsak.opprettNy(søkerAktørId, Long.toString(System.currentTimeMillis())); // TODO: Erstatt med gsaksnummer
-        fagsakRepository.saveAndFlush(fagsak);
+        fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak).build();
-        behandlingRepository.saveAndFlush(behandling);
+        behandlingRepository.save(behandling);
 
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
         familieforholdBuilder.setBarna(Set.of(mapSøknadBarn(søknad).build()));

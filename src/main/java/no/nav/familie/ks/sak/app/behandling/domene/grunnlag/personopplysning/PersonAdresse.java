@@ -14,7 +14,7 @@ import java.util.Objects;
 public class PersonAdresse extends BaseEntitet {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PO_ADRESSE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PO_ADRESSE_SEQ")
     private Long id;
 
     @Embedded
