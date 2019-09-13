@@ -70,7 +70,7 @@ public class OppslagTjeneste {
     public TpsFakta hentTpsFakta(String søkerFnr, String annenPartFnr, String barnFnr) {
         PersonMedHistorikk forelder = genererForelder(hentAktørId(søkerFnr));
         Personinfo barn = hentBarnSøktFor(barnFnr);
-        PersonMedHistorikk annenForelder = genererForelder(hentAktørId(annenPartFnr));
+        PersonMedHistorikk annenForelder = annenPartFnr != null && !annenPartFnr.isEmpty() ? genererForelder(hentAktørId(annenPartFnr)) : null;
         return new TpsFakta.Builder()
             .medForelder(forelder)
             .medBarn(new PersonMedHistorikk.Builder().medInfo(barn).build())
