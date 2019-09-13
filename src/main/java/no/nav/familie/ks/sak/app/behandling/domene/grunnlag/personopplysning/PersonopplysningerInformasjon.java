@@ -12,7 +12,7 @@ public class PersonopplysningerInformasjon extends BaseEntitet {
     private static final String REF_NAME = "personopplysningInformasjon";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PO_INFORMASJON")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PO_INFORMASJON_SEQ")
     private Long id;
 
     @OneToMany(mappedBy = REF_NAME, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
