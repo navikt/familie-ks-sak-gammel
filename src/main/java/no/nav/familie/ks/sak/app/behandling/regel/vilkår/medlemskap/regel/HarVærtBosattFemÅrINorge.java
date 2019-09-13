@@ -1,11 +1,11 @@
 package no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.regel;
 
-import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.AdresseType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
-import no.nav.familie.ks.sak.app.grunnlag.Forelder;
-import no.nav.familie.ks.sak.app.integrasjon.felles.ws.Tid;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.Tid;
+import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
+import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdressePeriode;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdresseType;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
@@ -31,15 +31,15 @@ public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag>
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        Forelder forelder = grunnlag.getTpsFakta().getForelder();
-        Forelder annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
+        PersonMedHistorikk forelder = grunnlag.getTpsFakta().getForelder();
+        PersonMedHistorikk annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
         if (bosattFemÅrINorge(forelder) || bosattFemÅrINorge(annenForelder)) {
             return ja();
         }
         return nei(VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_I_NORGE_FEM_ÅR);
     }
 
-    private boolean bosattFemÅrINorge(Forelder forelder) {
+    private boolean bosattFemÅrINorge(PersonMedHistorikk forelder) {
         if (forelder == null) {
             return false;
         }

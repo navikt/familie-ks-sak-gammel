@@ -11,9 +11,7 @@ public class Søknad {
 
     public Veiledning veiledning;
     public Instant innsendingsTidspunkt;
-    public Person person;
     public SokerKrav kravTilSoker;
-    public Familieforhold familieforhold;
     public Barnehageplass barnehageplass;
     public ArbeidIUtlandet arbeidIUtlandet;
     public UtenlandskKontantstotte utenlandskKontantstotte;
@@ -21,6 +19,8 @@ public class Søknad {
     public UtenlandskeYtelser utenlandskeYtelser;
     public Oppsummering oppsummering;
     public String sprak;
+    private Person person;
+    private Familieforhold familieforhold;
     private Barn mineBarn;
 
     public Søknad() {
@@ -35,6 +35,14 @@ public class Søknad {
         this.utenlandskKontantstotte = new UtenlandskKontantstotte();
         this.mineBarn = new Barn();
         this.tilknytningTilUtland = new TilknytningTilUtland();
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public Familieforhold getFamilieforhold() {
+        return familieforhold;
     }
 
     public boolean erGyldig() {

@@ -14,7 +14,8 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingResultat;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository;
-import no.nav.familie.ks.sak.app.grunnlag.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.rest.Behandling.*;
 import no.nav.familie.ks.sak.util.DateParser;
 import no.nav.familie.ks.sak.util.Ressurs;
@@ -54,7 +55,7 @@ public class BehandlingslagerService {
     }
 
     public Behandling trekkUtOgPersister(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
-        final var søkerAktørId = oppslagTjeneste.hentAktørId(søknad.person.fnr);
+        final var søkerAktørId = oppslagTjeneste.hentAktørId(søknad.getPerson().getFnr());
         final var fagsak = Fagsak.opprettNy(søkerAktørId, Long.toString(System.currentTimeMillis())); // TODO: Erstatt med gsaksnummer
         fagsakRepository.saveAndFlush(fagsak);
 
@@ -63,14 +64,14 @@ public class BehandlingslagerService {
 
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
         familieforholdBuilder.setBarna(Set.of(mapSøknadBarn(søknad).build()));
-        familieforholdBuilder.setBorBeggeForeldreSammen(konverterTilBoolean(søknad.familieforhold.borForeldreneSammenMedBarnet));
+        familieforholdBuilder.setBorBeggeForeldreSammen(konverterTilBoolean(søknad.getFamilieforhold().getBorForeldreneSammenMedBarnet()));
         barnehageBarnGrunnlagRepository.save(new BarnehageBarnGrunnlag(behandling, familieforholdBuilder.build()));
 
         final var kravTilSoker = søknad.kravTilSoker;
         final var erklæring = new OppgittErklæring(konverterTilBoolean(kravTilSoker.barnIkkeHjemme),
-                konverterTilBoolean(kravTilSoker.borSammenMedBarnet),
-                konverterTilBoolean(kravTilSoker.ikkeAvtaltDeltBosted),
-                konverterTilBoolean(kravTilSoker.skalBoMedBarnetINorgeNesteTolvMaaneder));
+            konverterTilBoolean(kravTilSoker.borSammenMedBarnet),
+            konverterTilBoolean(kravTilSoker.ikkeAvtaltDeltBosted),
+            konverterTilBoolean(kravTilSoker.skalBoMedBarnetINorgeNesteTolvMaaneder));
 
         final var oppgittUtlandsTilknytning = mapUtenlandsTilknytning(søknad, søkerAktørId);
 
@@ -80,7 +81,7 @@ public class BehandlingslagerService {
         return behandling;
     }
 
-    private OppgittUtlandsTilknytning mapUtenlandsTilknytning(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad, String søkerAktørId) {
+    private OppgittUtlandsTilknytning mapUtenlandsTilknytning(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad, AktørId søkerAktørId) {
         final var tilknytningTilUtland = søknad.tilknytningTilUtland;
         final var arbeidIUtlandet = søknad.arbeidIUtlandet;
         final var utenlandskeYtelser = søknad.utenlandskeYtelser;
@@ -91,26 +92,27 @@ public class BehandlingslagerService {
 
         tilknytningUtlandSet.add(new AktørTilknytningUtland(søkerAktørId, tilknytningTilUtland.boddEllerJobbetINorgeMinstFemAar, tilknytningTilUtland.boddEllerJobbetINorgeMinstFemAarForklaring));
         arbeidYtelseUtlandSet.add(new AktørArbeidYtelseUtland.Builder()
-                .setAktørId(søkerAktørId)
-                .setArbeidIUtlandet(Standpunkt.map(arbeidIUtlandet.arbeiderIUtlandetEllerKontinentalsokkel, Standpunkt.UBESVART))
-                .setArbeidIUtlandetForklaring(arbeidIUtlandet.arbeiderIUtlandetEllerKontinentalsokkelForklaring)
-                .setYtelseIUtlandet(Standpunkt.map(utenlandskeYtelser.mottarYtelserFraUtland, Standpunkt.UBESVART))
-                .setYtelseIUtlandetForklaring(utenlandskeYtelser.mottarYtelserFraUtlandForklaring)
-                .setKontantstøtteIUtlandet(Standpunkt.map(utenlandskKontantstotte.mottarKontantstotteFraUtlandet, Standpunkt.UBESVART))
-                .setKontantstøtteIUtlandetForklaring(utenlandskKontantstotte.mottarKontantstotteFraUtlandetTilleggsinfo)
-                .build());
+            .setAktørId(søkerAktørId)
+            .setArbeidIUtlandet(Standpunkt.map(arbeidIUtlandet.arbeiderIUtlandetEllerKontinentalsokkel, Standpunkt.UBESVART))
+            .setArbeidIUtlandetForklaring(arbeidIUtlandet.arbeiderIUtlandetEllerKontinentalsokkelForklaring)
+            .setYtelseIUtlandet(Standpunkt.map(utenlandskeYtelser.mottarYtelserFraUtland, Standpunkt.UBESVART))
+            .setYtelseIUtlandetForklaring(utenlandskeYtelser.mottarYtelserFraUtlandForklaring)
+            .setKontantstøtteIUtlandet(Standpunkt.map(utenlandskKontantstotte.mottarKontantstotteFraUtlandet, Standpunkt.UBESVART))
+            .setKontantstøtteIUtlandetForklaring(utenlandskKontantstotte.mottarKontantstotteFraUtlandetTilleggsinfo)
+            .build());
 
 
-        if (søknad.familieforhold.annenForelderFødselsnummer != null && !søknad.familieforhold.annenForelderFødselsnummer.isEmpty()) {
-            final var annenPartAktørId = oppslagTjeneste.hentAktørId(søknad.familieforhold.annenForelderFødselsnummer);
+        final var familieforhold = søknad.getFamilieforhold();
+        if (familieforhold.getAnnenForelderFødselsnummer() != null && !familieforhold.getAnnenForelderFødselsnummer().isEmpty()) {
+            final var annenPartAktørId = oppslagTjeneste.hentAktørId(familieforhold.getAnnenForelderFødselsnummer());
             tilknytningUtlandSet.add(new AktørTilknytningUtland(annenPartAktørId, tilknytningTilUtland.annenForelderBoddEllerJobbetINorgeMinstFemAar, tilknytningTilUtland.annenForelderBoddEllerJobbetINorgeMinstFemAarForklaring));
             arbeidYtelseUtlandSet.add(new AktørArbeidYtelseUtland.Builder()
-                    .setAktørId(annenPartAktørId)
-                    .setArbeidIUtlandet(Standpunkt.map(arbeidIUtlandet.arbeiderAnnenForelderIUtlandet, Standpunkt.UBESVART))
-                    .setArbeidIUtlandetForklaring(arbeidIUtlandet.arbeiderAnnenForelderIUtlandetForklaring)
-                    .setYtelseIUtlandet(Standpunkt.map(utenlandskeYtelser.mottarAnnenForelderYtelserFraUtland, Standpunkt.UBESVART))
-                    .setYtelseIUtlandetForklaring(utenlandskeYtelser.mottarAnnenForelderYtelserFraUtlandForklaring)
-                    .build());
+                .setAktørId(annenPartAktørId)
+                .setArbeidIUtlandet(Standpunkt.map(arbeidIUtlandet.arbeiderAnnenForelderIUtlandet, Standpunkt.UBESVART))
+                .setArbeidIUtlandetForklaring(arbeidIUtlandet.arbeiderAnnenForelderIUtlandetForklaring)
+                .setYtelseIUtlandet(Standpunkt.map(utenlandskeYtelser.mottarAnnenForelderYtelserFraUtland, Standpunkt.UBESVART))
+                .setYtelseIUtlandetForklaring(utenlandskeYtelser.mottarAnnenForelderYtelserFraUtlandForklaring)
+                .build());
         }
 
         return new OppgittUtlandsTilknytning(arbeidYtelseUtlandSet, tilknytningUtlandSet);
@@ -125,7 +127,7 @@ public class BehandlingslagerService {
         final var mineBarn = søknad.getMineBarn();
         final var barnehageplass = søknad.barnehageplass;
         builder.setAktørId(mineBarn.getFødselsnummer())
-                .setBarnehageStatus(BarnehageplassStatus.map(barnehageplass.barnBarnehageplassStatus.name()));
+            .setBarnehageStatus(BarnehageplassStatus.map(barnehageplass.barnBarnehageplassStatus.name()));
         switch (barnehageplass.barnBarnehageplassStatus) {
             case harBarnehageplass:
                 builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.harBarnehageplassAntallTimer))

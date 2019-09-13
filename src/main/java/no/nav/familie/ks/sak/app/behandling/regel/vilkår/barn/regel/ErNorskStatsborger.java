@@ -1,7 +1,7 @@
 package no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.regel;
 
-import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
+import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
@@ -18,7 +18,7 @@ public class ErNorskStatsborger extends LeafSpecification<Faktagrunnlag> {
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        Landkode statsborgerskap = grunnlag.getTpsFakta().getBarn().getStatsborgerskap();
+        Landkode statsborgerskap = grunnlag.getTpsFakta().getBarn().getPersoninfo().getStatsborgerskap();
         return statsborgerskap.erNorge() ? ja() : nei(VilkårIkkeOppfyltÅrsak.BARN_IKKE_NORSK_STATSBORGER);
     }
 }

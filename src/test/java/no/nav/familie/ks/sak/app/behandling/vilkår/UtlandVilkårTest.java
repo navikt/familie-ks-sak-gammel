@@ -23,6 +23,7 @@ public class UtlandVilkårTest {
         final var vilkår = new UtlandVilkår();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage();
         final var evaluering = vilkår.evaluer(faktagrunnlag);
+
         assertThat(evaluering.result()).isEqualByComparingTo(Resultat.JA);
     }
 }

@@ -1,5 +1,7 @@
 package no.nav.familie.ks.sak.app.mottak;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.ks.sak.FunksjonelleMetrikker;
 import no.nav.familie.ks.sak.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
@@ -24,6 +26,8 @@ public class MottaSøknadController {
 
     private static final Logger log = LoggerFactory.getLogger(MottaSøknadController.class);
 
+    private final Counter feiledeBehandlinger = Metrics.counter("soknad.kontantstotte.funksjonell.feiledebehandlinger");
+
     private final FunksjonelleMetrikker funksjonelleMetrikker;
     private final Saksbehandling saksbehandling;
 
@@ -34,16 +38,22 @@ public class MottaSøknadController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
     public ResponseEntity mottaDokument(@RequestBody Søknad søknad) {
-        Vedtak vedtak = saksbehandling.behandle(søknad);
-        final var vilkårvurdering = vedtak.getVilkårvurdering();
-        final var samletUtfallType = vilkårvurdering.getSamletUtfallType();
-        if (samletUtfallType.equals(UtfallType.OPPFYLT)) {
-            log.info("Søknad kan behandles automatisk. Årsak={}", samletUtfallType);
-        } else {
-            log.info("Søknad kan ikke behandles automatisk. Årsak={}", vilkårvurdering.getResultater());
-        }
+        try {
+            Vedtak vedtak = saksbehandling.behandle(søknad);
+            final var vilkårvurdering = vedtak.getVilkårvurdering();
+            final var samletUtfallType = vilkårvurdering.getSamletUtfallType();
 
-        funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
+            funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
+
+            if (samletUtfallType.equals(UtfallType.OPPFYLT)) {
+                log.info("Søknad kan behandles automatisk. Årsak={}", samletUtfallType);
+            } else {
+                log.info("Søknad kan ikke behandles automatisk. Årsak={}", vilkårvurdering.getResultater());
+            }
+        } catch (Exception e) {
+            log.error("Behandling feilet", e);
+            feiledeBehandlinger.increment();
+        }
 
         return new ResponseEntity(HttpStatus.OK);
     }

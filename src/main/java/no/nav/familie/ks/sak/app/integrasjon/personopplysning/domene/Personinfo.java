@@ -1,6 +1,10 @@
 package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene;
 
-import static java.util.Objects.requireNonNull;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.Adresseinfo;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status.PersonstatusType;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -9,10 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.Adresseinfo;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status.PersonstatusType;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
+import static java.util.Objects.requireNonNull;
 
 public class Personinfo {
 

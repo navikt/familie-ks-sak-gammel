@@ -1,7 +1,8 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
-import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -15,8 +16,9 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
     @SequenceGenerator(name = "so_aktoer_arbeid_ytelse_utland_seq")
     private Long id;
 
-    @Column(name = "aktoer", nullable = false, updatable = false)
-    private String aktørId;
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer", updatable = false, nullable = false)))
+    private AktørId aktørId;
 
     @ManyToOne
     @JoinColumn(name = "UTLAND_ID")
@@ -43,7 +45,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
     AktørArbeidYtelseUtland() {
     }
 
-    private AktørArbeidYtelseUtland(String aktørId,
+    private AktørArbeidYtelseUtland(AktørId aktørId,
                                     Standpunkt arbeidIUtlandet,
                                     String arbeidIUtlandetForklaring,
                                     Standpunkt ytelseIUtlandet,
@@ -59,7 +61,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
         this.kontantstøtteIUtlandetForklaring = kontantstøtteIUtlandetForklaring;
     }
 
-    public String getAktørId() {
+    public AktørId getAktørId() {
         return aktørId;
     }
 
@@ -105,7 +107,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
     }
 
     public static class Builder {
-        private String aktørId;
+        private AktørId aktørId;
         private Standpunkt arbeidIUtlandet;
         private String arbeidIUtlandetForklaring;
         private Standpunkt ytelseIUtlandet;
@@ -113,7 +115,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
         private Standpunkt kontantstøtteIUtlandet = Standpunkt.UBESVART;
         private String kontantstøtteIUtlandetForklaring;
 
-        public Builder setAktørId(String aktørId) {
+        public Builder setAktørId(AktørId aktørId) {
             this.aktørId = aktørId;
             return this;
         }
