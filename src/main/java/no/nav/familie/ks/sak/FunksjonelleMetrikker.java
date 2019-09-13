@@ -56,7 +56,7 @@ public class FunksjonelleMetrikker {
         Arrays.stream(VilkårType.values())
                 .forEach(v -> {
                     final var vilkårUtfallTypeMap = new HashMap<String, Counter>();
-                    Arrays.stream(VilkårIkkeOppfyltÅrsak.values()).forEach(årsak ->
+                    Arrays.stream(VilkårIkkeOppfyltÅrsak.values()).filter(it -> it.getVilkårType().equals(v)).forEach(årsak ->
                             vilkårUtfallTypeMap.put(Integer.toString(årsak.getÅrsakKode()), Metrics.counter("soknad.kontantstotte.funksjonell.vilkar." + v.getKode(), "status", årsak.getKode(), "beskrivelse", årsak.getBeskrivelse())));
                     Arrays.stream(VilkårOppfyltÅrsak.values()).forEach(årsak ->
                             vilkårUtfallTypeMap.put(Integer.toString(årsak.getÅrsakKode()), Metrics.counter("soknad.kontantstotte.funksjonell.vilkar." + v.getKode(), "status", årsak.getKode(), "beskrivelse", årsak.getBeskrivelse())));
