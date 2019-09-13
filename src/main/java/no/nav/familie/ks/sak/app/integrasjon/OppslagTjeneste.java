@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter;
 public class OppslagTjeneste {
 
     private static final Logger logger = LoggerFactory.getLogger(OppslagTjeneste.class);
+    private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
     private URI oppslagServiceUri;
     private HttpClient client;
     private StsRestClient stsRestClient;
@@ -69,7 +70,7 @@ public class OppslagTjeneste {
     public TpsFakta hentTpsFakta(String søkerFnr, String annenPartFnr, String barnFnr) {
         PersonMedHistorikk forelder = genererForelder(hentAktørId(søkerFnr));
         Personinfo barn = hentBarnSøktFor(barnFnr);
-        PersonMedHistorikk annenForelder = genererForelder(hentAktørId(annenPartFnr));
+        PersonMedHistorikk annenForelder = annenPartFnr != null && !annenPartFnr.isEmpty() ? genererForelder(hentAktørId(annenPartFnr)) : null;
         return new TpsFakta.Builder()
             .medForelder(forelder)
             .medBarn(new PersonMedHistorikk.Builder().medInfo(barn).build())
@@ -97,6 +98,8 @@ public class OppslagTjeneste {
         logger.info("Henter aktørId fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(requestMedPersonident(uri, personident), HttpResponse.BodyHandlers.ofString());
+            secureLogger.info("Vekslet inn fnr: {} til aktørId: {}", personident, response.body());
+
             if (response.statusCode() != HttpStatus.OK.value()) {
                 logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + response.body());
                 throw new OppslagException(response.body());
@@ -120,6 +123,8 @@ public class OppslagTjeneste {
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
+            secureLogger.info("Personhistorikk for {}: {}", aktørId, response.body());
+
             if (response.statusCode() != HttpStatus.OK.value()) {
                 logger.warn("Kall mot oppslag feilet ved uthenting av historikk: " + response.body());
                 throw new OppslagException(response.body());
@@ -137,6 +142,8 @@ public class OppslagTjeneste {
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
+            secureLogger.info("Personinfo for {}: {}", aktørId, response.body());
+
             if (response.statusCode() != HttpStatus.OK.value()) {
                 logger.warn("Kall mot oppslag feilet ved uthenting av personinfo: " + response.body());
                 throw new OppslagException(response.body());
