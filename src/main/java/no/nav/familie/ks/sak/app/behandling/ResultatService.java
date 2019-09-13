@@ -30,6 +30,6 @@ public class ResultatService {
         final var vilkårsResultat = new VilkårsResultat(vilkårsSet);
 
         vilkårsResultatRepository.save(vilkårsResultat);
-        behandlingresultatRepository.saveAndFlush(new BehandlingResultat(behandling, vilkårsResultat));
+        behandlingresultatRepository.save(new BehandlingResultat(behandling, vilkårsResultat));
     }
 }
