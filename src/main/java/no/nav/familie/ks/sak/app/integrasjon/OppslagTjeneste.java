@@ -98,7 +98,7 @@ public class OppslagTjeneste {
         logger.info("Henter aktørId fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(requestMedPersonident(uri, personident), HttpResponse.BodyHandlers.ofString());
-            secureLogger.debug("Vekslet inn fnr: {} til aktørId: {}", personident, response.body());
+            secureLogger.info("Vekslet inn fnr: {} til aktørId: {}", personident, response.body());
 
             if (response.statusCode() != HttpStatus.OK.value()) {
                 logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + response.body());
@@ -123,7 +123,7 @@ public class OppslagTjeneste {
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
-            secureLogger.debug("Personhistorikk for {}: {}", aktørId, response.body());
+            secureLogger.info("Personhistorikk for {}: {}", aktørId, response.body());
 
             if (response.statusCode() != HttpStatus.OK.value()) {
                 logger.warn("Kall mot oppslag feilet ved uthenting av historikk: " + response.body());
@@ -142,7 +142,7 @@ public class OppslagTjeneste {
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
-            secureLogger.debug("Personinfo for {}: {}", aktørId, response.body());
+            secureLogger.info("Personinfo for {}: {}", aktørId, response.body());
 
             if (response.statusCode() != HttpStatus.OK.value()) {
                 logger.warn("Kall mot oppslag feilet ved uthenting av personinfo: " + response.body());
