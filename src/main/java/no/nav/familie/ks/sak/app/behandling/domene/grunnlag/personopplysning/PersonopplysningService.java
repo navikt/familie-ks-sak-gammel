@@ -39,7 +39,7 @@ public class PersonopplysningService {
         final var oppgittAnnenPart = aktivtGrunnlag.flatMap(PersonopplysningGrunnlag::getOppgittAnnenPart).orElse(null);
         final var nyttGrunnlag = new PersonopplysningGrunnlag(behandling, oppgittAnnenPart, informasjon);
         informasjonRepository.save(informasjon);
-        personopplysningRepository.saveAndFlush(nyttGrunnlag);
+        personopplysningRepository.save(nyttGrunnlag);
     }
 
 
@@ -54,6 +54,6 @@ public class PersonopplysningService {
         if (informasjon != null) {
             informasjonRepository.save(informasjon);
         }
-        personopplysningRepository.saveAndFlush(nyttGrunnlag);
+        personopplysningRepository.save(nyttGrunnlag);
     }
 }
