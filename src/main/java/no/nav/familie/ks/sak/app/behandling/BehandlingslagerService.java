@@ -57,13 +57,18 @@ public class BehandlingslagerService {
     public Behandling trekkUtOgPersister(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
         final var søkerAktørId = oppslagTjeneste.hentAktørId(søknad.getPerson().getFnr());
         final var fagsak = Fagsak.opprettNy(søkerAktørId, Long.toString(System.currentTimeMillis())); // TODO: Erstatt med gsaksnummer
+        final Set<Barn> barna = new LinkedHashSet<>();
         fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak).build();
         behandlingRepository.save(behandling);
 
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
-        familieforholdBuilder.setBarna(Set.of(mapSøknadBarn(søknad).build()));
+        for (String fnr : søknad.getMineBarn().getFødselsnummer().split("[\\?og?]+")) { //TODO splitt opp barn i søknaden helt fra frontend.
+            barna.add(mapOgHentAktøridForBarnISøknad(søknad, fnr.trim()).build());
+        }
+
+        familieforholdBuilder.setBarna(barna);
         familieforholdBuilder.setBorBeggeForeldreSammen(konverterTilBoolean(søknad.getFamilieforhold().getBorForeldreneSammenMedBarnet()));
         barnehageBarnGrunnlagRepository.save(new BarnehageBarnGrunnlag(behandling, familieforholdBuilder.build()));
 
@@ -122,11 +127,14 @@ public class BehandlingslagerService {
         return Standpunkt.map(kode, Standpunkt.UBESVART).equals(Standpunkt.JA);
     }
 
-    private Barn.Builder mapSøknadBarn(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
+    private Barn.Builder mapOgHentAktøridForBarnISøknad(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad, String fnrBarn) {
         final var builder = new Barn.Builder();
-        final var mineBarn = søknad.getMineBarn();
+
         final var barnehageplass = søknad.barnehageplass;
-        builder.setAktørId(mineBarn.getFødselsnummer())
+
+        final var aktørId = oppslagTjeneste.hentAktørId(fnrBarn);
+
+        builder.setAktørId(aktørId.getId())
             .setBarnehageStatus(BarnehageplassStatus.map(barnehageplass.barnBarnehageplassStatus.name()));
         switch (barnehageplass.barnBarnehageplassStatus) {
             case harBarnehageplass:

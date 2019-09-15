@@ -6,6 +6,7 @@ import no.nav.familie.ks.sak.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barn;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
@@ -98,6 +99,20 @@ public class BehandlingslagerServiceTest {
         final var barnehageBarnGrunnlagList = barnehageBarnGrunnlagRepository.findAll();
         assertThat(barnehageBarnGrunnlagList).hasSize(1);
         assertThat(barnehageBarnGrunnlagList.get(0).getFamilieforhold()).isNotNull();
+    }
+
+    @Test
+    public void skal_lagre_søknad_og_hente_opp_igjen_med_tvillinger() {
+        final var søknad = FaktagrunnlagBuilder.medBarnehageplassOgTvillinger();
+        tjeneste.trekkUtOgPersister(søknad);
+
+        final var barnehageBarnGrunnlagList = barnehageBarnGrunnlagRepository.findAll();
+        assertThat(barnehageBarnGrunnlagList).hasSize(1);
+        assertThat(barnehageBarnGrunnlagList.get(0).getFamilieforhold().getBarna()).hasSize(2);
+        for (Barn barn : barnehageBarnGrunnlagList.get(0).getFamilieforhold().getBarna()) {
+            assertThat(barn.getAktørId().getId()).isNotEmpty();
+        }
+
     }
 
     @Test
