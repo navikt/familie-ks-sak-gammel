@@ -130,22 +130,22 @@ public class BehandlingslagerService {
             .setBarnehageStatus(BarnehageplassStatus.map(barnehageplass.barnBarnehageplassStatus.name()));
         switch (barnehageplass.barnBarnehageplassStatus) {
             case harBarnehageplass:
-                builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.harBarnehageplassAntallTimer))
+                builder.setBarnehageAntallTimer(Double.parseDouble(barnehageplass.harBarnehageplassAntallTimer))
                         .setBarnehageDato(DateParser.parseInputDatoFraSøknad(barnehageplass.harBarnehageplassDato))
                         .setBarnehageKommune(barnehageplass.harBarnehageplassKommune);
                 break;
             case harSluttetIBarnehage:
-                builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.harSluttetIBarnehageAntallTimer))
+                builder.setBarnehageAntallTimer(Double.parseDouble(barnehageplass.harSluttetIBarnehageAntallTimer))
                         .setBarnehageDato(DateParser.parseInputDatoFraSøknad(barnehageplass.harSluttetIBarnehageDato))
                         .setBarnehageKommune(barnehageplass.harSluttetIBarnehageKommune);
                 break;
             case skalSlutteIBarnehage:
-                builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.skalSlutteIBarnehageAntallTimer))
+                builder.setBarnehageAntallTimer(Double.parseDouble(barnehageplass.skalSlutteIBarnehageAntallTimer))
                         .setBarnehageDato(DateParser.parseInputDatoFraSøknad(barnehageplass.skalSlutteIBarnehageDato))
                         .setBarnehageKommune(barnehageplass.skalSlutteIBarnehageKommune);
                 break;
             case skalBegynneIBarnehage:
-                builder.setBarnehageAntallTimer(Integer.parseInt(barnehageplass.skalBegynneIBarnehageAntallTimer))
+                builder.setBarnehageAntallTimer(Double.parseDouble(barnehageplass.skalBegynneIBarnehageAntallTimer))
                         .setBarnehageDato(DateParser.parseInputDatoFraSøknad(barnehageplass.skalBegynneIBarnehageDato))
                         .setBarnehageKommune(barnehageplass.skalBegynneIBarnehageKommune);
                 break;
