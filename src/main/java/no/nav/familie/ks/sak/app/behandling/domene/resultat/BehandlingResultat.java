@@ -1,8 +1,8 @@
 package no.nav.familie.ks.sak.app.behandling.domene.resultat;
 
-import no.nav.familie.ks.sak.app.behandling.domene.BaseEntitet;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår.VilkårsResultat;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 
 import javax.persistence.*;
 

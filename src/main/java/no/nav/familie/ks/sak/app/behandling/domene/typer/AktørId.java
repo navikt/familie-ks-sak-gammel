@@ -1,14 +1,13 @@
-package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene;
+package no.nav.familie.ks.sak.app.behandling.domene.typer;
 
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.regex.Pattern;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Pattern.Flag;
-
-import com.fasterxml.jackson.annotation.JsonValue;
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Id som genereres fra NAV Aktør Register. Denne iden benyttes til interne forhold i Nav og vil ikke endres f.eks. dersom bruker går fra
@@ -42,7 +41,7 @@ public class AktørId implements Serializable, Comparable<AktørId> {
         Objects.requireNonNull(aktørId, "aktørId");
         if (!VALID.matcher(aktørId).matches()) {
             // skal ikke skje, funksjonelle feilmeldinger håndteres ikke her.
-            throw new IllegalArgumentException("Ugyldig aktørId, støtter kun A-Z/0-9/:/-/_ tegn. Var: " + aktørId.replaceAll(INVALID.pattern(), "?") + " (vasket)");
+            throw new IllegalArgumentException("Ugyldig aktørId, støtter kun A-Z/0-9/:/-/_ tegn.)");
         }
         this.aktørId = aktørId;
     }

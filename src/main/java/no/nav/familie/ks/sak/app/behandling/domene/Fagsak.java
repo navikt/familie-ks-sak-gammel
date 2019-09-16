@@ -1,5 +1,8 @@
 package no.nav.familie.ks.sak.app.behandling.domene;
 
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -12,8 +15,9 @@ public class Fagsak extends BaseEntitet {
     @SequenceGenerator(name = "fagsak_seq")
     private Long id;
 
-    @Column(name = "aktoer_id", nullable = false)
-    private String aktørId;
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", updatable = false)))
+    private AktørId aktørId;
 
     /**
      * Offisielt tildelt saksnummer fra GSAK.
@@ -25,22 +29,22 @@ public class Fagsak extends BaseEntitet {
         // Hibernate
     }
 
-    private Fagsak(String aktørId) {
+    private Fagsak(AktørId aktørId) {
         this(aktørId, null);
     }
 
-    public Fagsak(String aktørId, String saksnummer) {
+    public Fagsak(AktørId aktørId, String saksnummer) {
         this.aktørId = aktørId;
         if (saksnummer != null) {
             this.saksnummer = saksnummer;
         }
     }
 
-    public static Fagsak opprettNy(String aktørId) {
+    public static Fagsak opprettNy(AktørId aktørId) {
         return new Fagsak(aktørId);
     }
 
-    public static Fagsak opprettNy(String aktørId, String saksnummer) {
+    public static Fagsak opprettNy(AktørId aktørId, String saksnummer) {
         return new Fagsak(aktørId, saksnummer);
     }
 
@@ -48,7 +52,7 @@ public class Fagsak extends BaseEntitet {
         return id;
     }
 
-    public String getAktørId() {
+    public AktørId getAktørId() {
         return aktørId;
     }
 

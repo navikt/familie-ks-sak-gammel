@@ -1,11 +1,11 @@
 package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import no.nav.familie.ks.sak.app.integrasjon.felles.ws.Tid;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.Tid;
+
+import java.time.LocalDate;
+import java.util.Objects;
 
 public class Periode {
 

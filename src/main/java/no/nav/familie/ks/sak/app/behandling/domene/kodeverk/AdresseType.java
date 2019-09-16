@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse;
+package no.nav.familie.ks.sak.app.behandling.domene.kodeverk;
 
 public enum AdresseType {
     BOSTEDSADRESSE,

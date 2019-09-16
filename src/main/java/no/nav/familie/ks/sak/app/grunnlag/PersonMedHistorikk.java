@@ -5,11 +5,11 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 
 import java.util.Objects;
 
-public class Forelder {
+public class PersonMedHistorikk {
     private Personinfo personinfo;
     private PersonhistorikkInfo personhistorikkInfo;
 
-    private Forelder() {
+    private PersonMedHistorikk() {
     }
 
     public PersonhistorikkInfo getPersonhistorikkInfo() {
@@ -21,25 +21,24 @@ public class Forelder {
     }
 
     public static final class Builder {
-        private Forelder kladd;
+        private PersonMedHistorikk kladd;
 
         public Builder() {
-            kladd = new Forelder();
+            kladd = new PersonMedHistorikk();
         }
 
 
-        public Forelder.Builder medPersoninfo(Personinfo personinfo) {
+        public PersonMedHistorikk.Builder medInfo(Personinfo personinfo) {
             kladd.personinfo = personinfo;
             return this;
         }
 
-        public Forelder.Builder medPersonhistorikkInfo(PersonhistorikkInfo personhistorikkInfo) {
+        public PersonMedHistorikk.Builder medPersonhistorikk(PersonhistorikkInfo personhistorikkInfo) {
             kladd.personhistorikkInfo = personhistorikkInfo;
             return this;
         }
 
-        public Forelder build() {
-            Objects.requireNonNull(kladd.personhistorikkInfo, "Må ha personhistorikk om forelder");
+        public PersonMedHistorikk build() {
             Objects.requireNonNull(kladd.personinfo, "Må ha personinfo om søker");
             return kladd;
         }

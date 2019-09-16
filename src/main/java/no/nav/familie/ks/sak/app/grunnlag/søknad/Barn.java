@@ -29,6 +29,10 @@ public class Barn {
         return fødselsnummer;
     }
 
+    public void setFødselsnummer(String ident) {
+        this.fødselsnummer = ident;
+    }
+
     public String getErFlerling() {
         return erFlerling;
     }

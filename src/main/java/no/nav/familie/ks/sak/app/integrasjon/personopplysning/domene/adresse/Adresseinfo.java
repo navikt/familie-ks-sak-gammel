@@ -1,9 +1,10 @@
 package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse;
 
-import java.util.Objects;
-
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.AdresseType;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status.PersonstatusType;
+
+import java.util.Objects;
 
 public class Adresseinfo {
 
