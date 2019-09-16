@@ -8,11 +8,11 @@ import java.time.LocalDate;
 public class RestBarn {
     private AktørId aktørId;
     private BarnehageplassStatus barnehageStatus;
-    private int barnehageAntallTimer;
+    private Double barnehageAntallTimer;
     private LocalDate barnehageDato;
     private String barnehageKommune;
 
-    public RestBarn(AktørId aktørId, BarnehageplassStatus barnehageStatus, int barnehageAntallTimer, LocalDate barnehageDato, String barnehageKommune) {
+    public RestBarn(AktørId aktørId, BarnehageplassStatus barnehageStatus, Double barnehageAntallTimer, LocalDate barnehageDato, String barnehageKommune) {
         this.aktørId = aktørId;
         this.barnehageStatus = barnehageStatus;
         this.barnehageAntallTimer = barnehageAntallTimer;
