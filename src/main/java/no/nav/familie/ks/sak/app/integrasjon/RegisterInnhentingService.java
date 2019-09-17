@@ -29,8 +29,8 @@ public class RegisterInnhentingService {
     private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
     private PersonopplysningService personopplysningService;
     private OppslagTjeneste oppslagTjeneste;
-    private Counter oppgittAnnenPartStemmer = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart.stemmer");
-    private Counter oppgittAnnenPartStemmerIkke = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart.stemmerikke");
+    private Counter oppgittAnnenPartStemmer = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "JA");
+    private Counter oppgittAnnenPartStemmerIkke = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "NEI");
 
     @Autowired
     public RegisterInnhentingService(PersonopplysningService personopplysningService, OppslagTjeneste oppslagTjeneste) {
