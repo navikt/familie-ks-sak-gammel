@@ -74,7 +74,7 @@ public class RegisterInnhentingService {
                 } else {
                     secureLogger.info("Fant annen part: {}. Oppgitt annen part fra søker: {}", annenPartAktørId, oppgittAnnenPartAktørId);
                     oppgittAnnenPartStemmerIkke.increment();
-                    throw new RegisterInnhentingException("Oppgitt annen part fra søker stemmer ikke med registerinformasjon");
+                    throw new RegisterInnhentingException("Oppgitt annen part fra søker stemmer ikke med relasjonen vi fant på barnet fra TPS");
                 }
             } else {
                 mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), null, barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
