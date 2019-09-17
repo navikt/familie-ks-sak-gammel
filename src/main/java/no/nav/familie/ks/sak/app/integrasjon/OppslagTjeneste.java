@@ -66,30 +66,6 @@ public class OppslagTjeneste {
             .build();
     }
 
-    @Deprecated
-    public TpsFakta hentTpsFakta(String søkerFnr, String annenPartFnr, String barnFnr) {
-        PersonMedHistorikk forelder = genererForelder(hentAktørId(søkerFnr));
-        Personinfo barn = hentBarnSøktFor(barnFnr);
-        PersonMedHistorikk annenForelder = annenPartFnr != null && !annenPartFnr.isEmpty() ? genererForelder(hentAktørId(annenPartFnr)) : null;
-        return new TpsFakta.Builder()
-            .medForelder(forelder)
-            .medBarn(new PersonMedHistorikk.Builder().medInfo(barn).build())
-            .medAnnenForelder(annenForelder)
-            .build();
-    }
-
-    private PersonMedHistorikk genererForelder(AktørId aktørId) {
-        return new PersonMedHistorikk.Builder()
-            .medPersonhistorikk(hentHistorikkFor(aktørId))
-            .medInfo(hentPersoninfoFor(aktørId))
-            .build();
-    }
-
-    private Personinfo hentBarnSøktFor(String fødselsnummer) {
-        var aktørId = hentAktørId(fødselsnummer);
-        return hentPersoninfoFor(aktørId);
-    }
-
     public AktørId hentAktørId(String personident) {
         if (personident == null || personident.isEmpty()) {
             throw new OppslagException("Ved henting av aktør id er personident null eller tom");

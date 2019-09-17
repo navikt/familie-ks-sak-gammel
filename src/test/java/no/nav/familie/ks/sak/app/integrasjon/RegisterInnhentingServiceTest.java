@@ -2,6 +2,7 @@ package no.nav.familie.ks.sak.app.integrasjon;
 
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
+import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
@@ -35,9 +36,6 @@ import static org.mockito.Mockito.when;
 @DataJpaTest(excludeAutoConfiguration = FlywayAutoConfiguration.class)
 public class RegisterInnhentingServiceTest {
 
-    private final Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreBorINorgeOgErNorskeStatsborgere();
-    private final TpsFakta tpsFakta = faktagrunnlag.getTpsFakta();
-
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
     @MockBean
@@ -51,6 +49,9 @@ public class RegisterInnhentingServiceTest {
     @Autowired
     private BehandlingRepository behandlingRepository;
 
+    private final Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreBorINorgeOgErNorskeStatsborgere();
+    private final TpsFakta tpsFakta = faktagrunnlag.getTpsFakta();
+
     private AktørId søker = tpsFakta.getForelder().getPersoninfo().getAktørId();
     private Personinfo søkerPersoninfo = tpsFakta.getForelder().getPersoninfo();
     private PersonhistorikkInfo søkerPersonhistorikk = tpsFakta.getForelder().getPersonhistorikkInfo();
@@ -58,12 +59,12 @@ public class RegisterInnhentingServiceTest {
     private AktørId annenPart = tpsFakta.getAnnenForelder().getPersoninfo().getAktørId();
     private Personinfo annenPartPersoninfo = tpsFakta.getAnnenForelder().getPersoninfo();
     private PersonhistorikkInfo annenPartPersonhistorikk = tpsFakta.getAnnenForelder().getPersonhistorikkInfo();
-    private AktørId barn = tpsFakta.getBarn().getPersoninfo().getAktørId();
-    private Personinfo barnPersoninfo = tpsFakta.getBarn().getPersoninfo();
-    private PersonhistorikkInfo barnPersonhistorikk = tpsFakta.getBarn().getPersonhistorikkInfo();
+    private AktørId barn = tpsFakta.getBarna().get(0).getPersoninfo().getAktørId();
+    private Personinfo barnPersoninfo = tpsFakta.getBarna().get(0).getPersoninfo();
+    private PersonhistorikkInfo barnPersonhistorikk = tpsFakta.getBarna().get(0).getPersonhistorikkInfo();
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(oppslagTjeneste.hentAktørId(eq(søkerPersoninfo.getPersonIdent().getIdent()))).thenReturn(søker);
         when(oppslagTjeneste.hentPersoninfoFor(eq(søker))).thenReturn(søkerPersoninfo);
         when(oppslagTjeneste.hentHistorikkFor(eq(søker))).thenReturn(søkerPersonhistorikk);
@@ -72,24 +73,24 @@ public class RegisterInnhentingServiceTest {
         when(oppslagTjeneste.hentPersoninfoFor(eq(annenPart))).thenReturn(annenPartPersoninfo);
         when(oppslagTjeneste.hentHistorikkFor(eq(annenPart))).thenReturn(annenPartPersonhistorikk);
 
-        when(oppslagTjeneste.hentAktørId(eq(faktagrunnlag.getSøknad().getMineBarn().getFødselsnummer()))).thenReturn(barn);
+        when(oppslagTjeneste.hentAktørId(eq(tpsFakta.getBarna().get(0).getPersoninfo().getPersonIdent().getIdent()))).thenReturn(barn);
         when(oppslagTjeneste.hentPersoninfoFor(eq(barn))).thenReturn(barnPersoninfo);
         when(oppslagTjeneste.hentHistorikkFor(eq(barn))).thenReturn(barnPersonhistorikk);
     }
 
     @Test
-    public void skal_lagre_ned_respons() {
+    public void skal_lagre_ned_respons() throws RegisterInnhentingException {
         final var fagsak = Fagsak.opprettNy(søker, "123412341234");
         fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak).build();
         behandlingRepository.save(behandling);
 
-        tjeneste.innhentPersonopplysninger(behandling, faktagrunnlag.getSøknad());
+        tjeneste.innhentPersonopplysninger(behandling, FaktagrunnlagBuilder.hentSøknad());
 
         final var personopplysningGrunnlag = personopplysningService.hentHvisEksisterer(behandling);
 
-        assertThat(personopplysningGrunnlag).isPresent();
+        assert personopplysningGrunnlag.isPresent();
         final var registerVersjonOpt = personopplysningGrunnlag.get().getRegisterVersjon();
         assertThat(registerVersjonOpt).isPresent();
 

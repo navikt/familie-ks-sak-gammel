@@ -32,6 +32,11 @@ public class SøknadGrunnlag extends BaseEntitet {
         this.søknad = søknad;
     }
 
+    public SøknadGrunnlag(Long behandlingId, Søknad søknad) {
+        this.behandlingId = behandlingId;
+        this.søknad = søknad;
+    }
+
     public Søknad getSøknad() {
         return søknad;
     }

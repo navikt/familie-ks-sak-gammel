@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
@@ -17,6 +18,7 @@ public class Barn extends BaseEntitet {
     @SequenceGenerator(name = "so_barn_seq")
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "familieforhold_id")
     private OppgittFamilieforhold familieforhold;

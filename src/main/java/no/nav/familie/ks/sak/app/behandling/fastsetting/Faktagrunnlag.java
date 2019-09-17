@@ -1,5 +1,7 @@
 package no.nav.familie.ks.sak.app.behandling.fastsetting;
 
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlag;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 
@@ -9,8 +11,9 @@ import java.util.Objects;
 public class Faktagrunnlag {
 
     private final LocalDate behandlingstidspunkt;
+    private BarnehageBarnGrunnlag barnehageBarnGrunnlag;
+    private SøknadGrunnlag søknadGrunnlag;
     private TpsFakta tpsFakta;
-    private Søknad søknad;
 
     public Faktagrunnlag() {
         behandlingstidspunkt = LocalDate.now();
@@ -20,36 +23,44 @@ public class Faktagrunnlag {
         return behandlingstidspunkt;
     }
 
+    public BarnehageBarnGrunnlag getBarnehageBarnGrunnlag() {
+        return barnehageBarnGrunnlag;
+    }
+
+    public SøknadGrunnlag getSøknadGrunnlag() {
+        return søknadGrunnlag;
+    }
+
     public TpsFakta getTpsFakta() {
         return tpsFakta;
     }
 
-    public Søknad getSøknad() {
-        return søknad;
-    }
-
-
     public static final class Builder {
+
         private Faktagrunnlag kladd;
 
         public Builder() {
             kladd = new Faktagrunnlag();
         }
 
+        public Faktagrunnlag.Builder medBarnehageBarnGrunnlag(BarnehageBarnGrunnlag barnehageBarnGrunnlag) {
+            kladd.barnehageBarnGrunnlag = barnehageBarnGrunnlag;
+            return this;
+        }
+
+        public Faktagrunnlag.Builder medSøknadGrunnlag(SøknadGrunnlag søknadGrunnlag) {
+            kladd.søknadGrunnlag = søknadGrunnlag;
+            return this;
+        }
 
         public Faktagrunnlag.Builder medTpsFakta(TpsFakta tpsFakta) {
             kladd.tpsFakta = tpsFakta;
             return this;
         }
 
-        public Faktagrunnlag.Builder medSøknad(Søknad søknad) {
-            kladd.søknad = søknad;
-            return this;
-        }
-
         public Faktagrunnlag build() {
-            Objects.requireNonNull(kladd.søknad, "Må ha opplysninger fra fastsetting");
-            Objects.requireNonNull(kladd.søknad, "Må ha opplysninger fra TPS");
+            Objects.requireNonNull(kladd.søknadGrunnlag, "Må ha opplysninger fra fastsetting");
+            Objects.requireNonNull(kladd.tpsFakta, "Må ha opplysninger fra TPS");
             return kladd;
         }
     }

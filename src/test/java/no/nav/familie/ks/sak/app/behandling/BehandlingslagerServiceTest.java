@@ -9,8 +9,10 @@ import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingException;
 import no.nav.familie.ks.sak.app.rest.Behandling.RestBehandling;
 import no.nav.familie.ks.sak.app.rest.Behandling.RestFagsak;
 import no.nav.familie.ks.sak.config.ApplicationConfig;
@@ -34,6 +36,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -45,6 +48,7 @@ public class BehandlingslagerServiceTest {
 
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
+
     @MockBean
     private StsRestClient stsRestClient;
 
@@ -60,24 +64,33 @@ public class BehandlingslagerServiceTest {
     @Autowired
     private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
 
+    private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
+
     @Autowired
     private Saksbehandling saksbehandling;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Mockito.when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
-        when(oppslagTjeneste.hentTpsFakta(any(), any(), any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger());
-        when(oppslagTjeneste.hentPersoninfoFor(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersoninfo(),
-            FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersoninfo(),
-            FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo());
-        when(oppslagTjeneste.hentHistorikkFor(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
-            FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersonhistorikkInfo(),
-            FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersonhistorikkInfo());
+
+
+        when(oppslagTjeneste.hentPersoninfoFor(any()))
+            .thenReturn(
+                FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersoninfo(),
+                FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersoninfo(),
+                FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo()
+            );
+        when(oppslagTjeneste.hentHistorikkFor(any()))
+            .thenReturn(
+                FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
+                FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersonhistorikkInfo(),
+                FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersonhistorikkInfo()
+            );
     }
 
     @Test
     public void skal_lagre_søknad_og_hente_opp_igjen() {
-        final var søknad = FaktagrunnlagBuilder.medBarnehageplass();
+        final var søknad = FaktagrunnlagBuilder.medBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent());
         tjeneste.trekkUtOgPersister(søknad);
 
         final var fagsaker = fagsakRepository.findAll();
@@ -93,21 +106,24 @@ public class BehandlingslagerServiceTest {
         final var erklæring = søknad1.getErklæring();
         assertThat(erklæring).isNotNull();
         assertThat(søknad1.getUtlandsTilknytning()).isNotNull();
-        assertThat(søknad1.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet()).hasSize(1);
-        assertThat(søknad1.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet()).hasSize(1);
+        assertThat(søknad1.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet()).hasSize(2);
+        assertThat(søknad1.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet()).hasSize(2);
         final var barnehageBarnGrunnlagList = barnehageBarnGrunnlagRepository.findAll();
         assertThat(barnehageBarnGrunnlagList).hasSize(1);
         assertThat(barnehageBarnGrunnlagList.get(0).getFamilieforhold()).isNotNull();
     }
 
     @Test
-    public void hentRestFagsak() {
-        final var søknad = FaktagrunnlagBuilder.utenBarnehageplass();
+    public void hentRestFagsak() throws RegisterInnhentingException {
+        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
+
+        final var søknad = FaktagrunnlagBuilder.utenBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent());
         Vedtak vedtak = saksbehandling.behandle(søknad);
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
 
         assertThat(behandling).isPresent();
 
+        assert behandling.isPresent();
         final RestFagsak restFagsak = tjeneste.hentRestFagsak(behandling.get().getFagsak().getId());
         assertThat(restFagsak).isNotNull();
         assertThat(restFagsak.getFagsak().getId()).isEqualTo(behandling.get().getFagsak().getId());
@@ -117,10 +133,18 @@ public class BehandlingslagerServiceTest {
     }
 
     @Test
-    public void hentFagsaker() {
-        saksbehandling.behandle(FaktagrunnlagBuilder.medBarnehageplass());
-        saksbehandling.behandle(FaktagrunnlagBuilder.utenBarnehageplass());
+    public void hentFagsakMedBarnehageplass() throws RegisterInnhentingException {
+        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapMedBarnehage());
+        saksbehandling.behandle(FaktagrunnlagBuilder.medBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent()));
 
-        assertThat(tjeneste.hentFagsaker()).hasSize(2);
+        assertThat(tjeneste.hentFagsaker()).hasSize(1);
+    }
+
+    @Test
+    public void hentFagsakUtenBarnehageplass() throws RegisterInnhentingException {
+        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        saksbehandling.behandle(FaktagrunnlagBuilder.utenBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent()));
+
+        assertThat(tjeneste.hentFagsaker()).hasSize(1);
     }
 }

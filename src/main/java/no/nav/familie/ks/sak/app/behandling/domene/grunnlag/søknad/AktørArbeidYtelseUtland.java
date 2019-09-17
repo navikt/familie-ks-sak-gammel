@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
@@ -20,6 +21,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
     @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer", updatable = false, nullable = false)))
     private AktørId aktørId;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "UTLAND_ID")
     private OppgittUtlandsTilknytning utlandsTilknytning;

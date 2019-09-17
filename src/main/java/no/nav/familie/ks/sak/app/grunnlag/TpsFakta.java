@@ -1,9 +1,13 @@
 package no.nav.familie.ks.sak.app.grunnlag;
 
+import org.springframework.context.annotation.Profile;
+
+import java.util.List;
+
 public class TpsFakta {
 
     private PersonMedHistorikk forelder;
-    private PersonMedHistorikk barn;
+    private List<PersonMedHistorikk> barna;
     private PersonMedHistorikk annenForelder;
 
     private TpsFakta() {
@@ -13,8 +17,13 @@ public class TpsFakta {
         return forelder;
     }
 
+    public List<PersonMedHistorikk> getBarna() {
+        return barna;
+    }
+
+    @Profile("dev")
     public PersonMedHistorikk getBarn() {
-        return barn;
+        return barna.get(0);
     }
 
     public PersonMedHistorikk getAnnenForelder() {
@@ -33,8 +42,8 @@ public class TpsFakta {
             return this;
         }
 
-        public Builder medBarn(PersonMedHistorikk barn) {
-            kladd.barn = barn;
+        public Builder medBarn(List<PersonMedHistorikk> barna) {
+            kladd.barna = barna;
             return this;
         }
 
