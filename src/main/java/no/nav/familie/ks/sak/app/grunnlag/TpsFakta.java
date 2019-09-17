@@ -19,6 +19,7 @@ public class TpsFakta {
         return barna;
     }
 
+    @Deprecated // FIXME: legge til støtte for flerlinger i behandling
     public PersonMedHistorikk getBarn() {
         return barna.get(0);
     }

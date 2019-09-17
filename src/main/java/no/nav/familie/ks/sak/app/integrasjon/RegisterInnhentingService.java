@@ -29,8 +29,9 @@ public class RegisterInnhentingService {
     private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
     private PersonopplysningService personopplysningService;
     private OppslagTjeneste oppslagTjeneste;
-    private Counter oppgittAnnenPartStemmer = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "JA");
-    private Counter oppgittAnnenPartStemmerIkke = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "NEI");
+    private Counter oppgittAnnenPartStemmer = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "JA", "beskrivelse", "Ja");
+    private Counter oppgittAnnenPartStemmerIkke = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "NEI", "beskrivelse", "Nei");
+    private Counter oppgittAnnenPartIkkeOppgitt = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "IKKE_OPPGITT", "beskrivelse", "Ikke oppgitt");
 
     @Autowired
     public RegisterInnhentingService(PersonopplysningService personopplysningService, OppslagTjeneste oppslagTjeneste) {
@@ -51,32 +52,36 @@ public class RegisterInnhentingService {
         mapPersonopplysninger(søkerAktørId, søkerPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
         mapPersonopplysninger(barnAktørId, barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
 
-        final Optional<Familierelasjon> annenPartFamilierelasjon = barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
-            familierelasjon ->
-                (familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
-                    && familierelasjon.getAktørId() != søkerAktørId)
-            .findFirst();
-
         PersonMedHistorikk annenPartPersonMedHistorikk = null;
-        if (annenPartFamilierelasjon.isPresent()) {
-            AktørId annenPartAktørId = annenPartFamilierelasjon.get().getAktørId();
+        if (søknad.getFamilieforhold().getAnnenForelderFødselsnummer() != null && !søknad.getFamilieforhold().getAnnenForelderFødselsnummer().isEmpty()) {
+            final Optional<Familierelasjon> annenPartFamilierelasjon = barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
+                familierelasjon ->
+                    (familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
+                        && familierelasjon.getAktørId() != søkerAktørId)
+                .findFirst();
 
-            if (annenPartAktørId.equals(oppgittAnnenPartAktørId)) {
-                annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartAktørId);
+            if (annenPartFamilierelasjon.isPresent()) {
+                AktørId annenPartAktørId = annenPartFamilierelasjon.get().getAktørId();
 
-                personopplysningService.lagre(behandling, oppgittAnnenPartAktørId);
-                mapPersonopplysninger(annenPartAktørId, annenPartPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
+                if (annenPartAktørId.equals(oppgittAnnenPartAktørId)) {
+                    annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartAktørId);
 
-                oppgittAnnenPartStemmer.increment();
+                    personopplysningService.lagre(behandling, oppgittAnnenPartAktørId);
+                    mapPersonopplysninger(annenPartAktørId, annenPartPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
 
-                mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
+                    oppgittAnnenPartStemmer.increment();
+                    mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
+                } else {
+                    secureLogger.info("Fant annen part: {}. Oppgitt annen part fra søker: {}", annenPartAktørId, oppgittAnnenPartAktørId);
+                    oppgittAnnenPartStemmerIkke.increment();
+                    throw new RegisterInnhentingException("Oppgitt annen part fra søker stemmer ikke med registerinformasjon");
+                }
             } else {
-                secureLogger.info("Fant annen part: {}. Oppgitt annen part fra søker: {}", annenPartAktørId, oppgittAnnenPartAktørId);
-                oppgittAnnenPartStemmerIkke.increment();
-                throw new RegisterInnhentingException("Oppgitt annen part fra søker stemmer ikke med registerinformasjon");
+                mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), null, barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
             }
         } else {
             mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), null, barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
+            oppgittAnnenPartIkkeOppgitt.increment();
         }
 
         personopplysningService.lagre(behandling, personopplysningerInformasjon);
