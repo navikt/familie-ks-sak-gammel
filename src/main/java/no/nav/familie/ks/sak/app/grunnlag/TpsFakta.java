@@ -1,7 +1,5 @@
 package no.nav.familie.ks.sak.app.grunnlag;
 
-import org.springframework.context.annotation.Profile;
-
 import java.util.List;
 
 public class TpsFakta {
@@ -21,7 +19,6 @@ public class TpsFakta {
         return barna;
     }
 
-    @Profile("dev")
     public PersonMedHistorikk getBarn() {
         return barna.get(0);
     }

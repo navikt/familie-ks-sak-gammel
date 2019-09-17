@@ -74,7 +74,7 @@ public class BehandlingslagerService {
             konverterTilBoolean(kravTilSoker.ikkeAvtaltDeltBosted),
             konverterTilBoolean(kravTilSoker.skalBoMedBarnetINorgeNesteTolvMaaneder));
 
-        final var oppgittAnnenPartAktørId = søknad.getFamilieforhold().getAnnenForelderFødselsnummer() != null ? oppslagTjeneste.hentAktørId(søknad.getFamilieforhold().getAnnenForelderFødselsnummer()) : null;
+        final var oppgittAnnenPartAktørId = søknad.getFamilieforhold().getAnnenForelderFødselsnummer() != null && !søknad.getFamilieforhold().getAnnenForelderFødselsnummer().isEmpty() ? oppslagTjeneste.hentAktørId(søknad.getFamilieforhold().getAnnenForelderFødselsnummer()) : null;
         final var oppgittUtlandsTilknytning = SøknadTilGrunnlagMapper.mapUtenlandsTilknytning(søknad, søkerAktørId, oppgittAnnenPartAktørId);
 
         final var innsendtTidspunkt = LocalDateTime.ofInstant(søknad.innsendingsTidspunkt, ZoneId.systemDefault());
