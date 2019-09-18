@@ -2,6 +2,7 @@ package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -26,6 +27,12 @@ public class PersonIdent implements Comparable<PersonIdent> {
 
     @JsonValue
     private final String ident;
+
+    @JsonValue
+    private String identgruppe;
+
+    @JsonValue
+    private boolean gjeldende;
 
     public PersonIdent(String ident) {
         Objects.requireNonNull(ident, "ident kan ikke være null");
