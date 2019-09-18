@@ -6,6 +6,7 @@ import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.log.mdc.MDCConstants;
@@ -64,6 +65,16 @@ public class OppslagTjeneste {
             .build();
     }
 
+    private HttpRequest requestMedAktørId(URI uri, String aktørId) {
+        return HttpRequest.newBuilder()
+            .uri(uri)
+            .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
+            .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
+            .header("Nav-Aktorid", aktørId)
+            .GET()
+            .build();
+    }
+
     public AktørId hentAktørId(String personident) {
         if (personident == null || personident.isEmpty()) {
             throw new OppslagException("Ved henting av aktør id er personident null eller tom");
@@ -83,6 +94,34 @@ public class OppslagTjeneste {
                     throw new OppslagException("AktørId fra oppslagstjenesten er tom");
                 } else {
                     return new AktørId(aktørId);
+                }
+            }
+        } catch (IOException | InterruptedException e) {
+            secureLogger.info("Ukjent feil ved oppslag mot {}. {}", uri, e.getMessage());
+            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'.");
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.");
+        }
+    }
+
+    public PersonIdent hentPersonIdent(String aktørId) {
+        if (aktørId == null || aktørId.isEmpty()) {
+            throw new OppslagException("Ved henting av personident er aktørId null eller tom");
+        }
+        URI uri = URI.create(oppslagServiceUri + "/aktoer/fraaktorid");
+        logger.info("Henter fnr fra " + oppslagServiceUri);
+        try {
+            HttpResponse<String> response = client.send(requestMedAktørId(uri, aktørId), HttpResponse.BodyHandlers.ofString());
+            secureLogger.info("Vekslet inn aktørId: {} til fnr: {}", aktørId, response.body());
+
+            if (response.statusCode() != HttpStatus.OK.value()) {
+                logger.warn("Kall mot oppslag feilet ved uthenting av fnr: " + response.body());
+                throw new OppslagException(response.body());
+            } else {
+                String personIdent = mapper.readValue(response.body(), String.class);
+                if (personIdent == null || personIdent.isEmpty()) {
+                    throw new OppslagException("personIdent fra oppslagstjenesten er tom");
+                } else {
+                    return new PersonIdent(personIdent);
                 }
             }
         } catch (IOException | InterruptedException e) {

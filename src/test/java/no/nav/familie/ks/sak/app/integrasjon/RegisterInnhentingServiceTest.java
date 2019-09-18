@@ -65,14 +65,17 @@ public class RegisterInnhentingServiceTest {
 
     @Before
     public void setUp() {
+        when(oppslagTjeneste.hentPersonIdent(søkerPersoninfo.getAktørId().getId())).thenReturn(søkerPersoninfo.getPersonIdent());
         when(oppslagTjeneste.hentAktørId(eq(søkerPersoninfo.getPersonIdent().getIdent()))).thenReturn(søker);
         when(oppslagTjeneste.hentPersoninfoFor(eq(søker))).thenReturn(søkerPersoninfo);
         when(oppslagTjeneste.hentHistorikkFor(eq(søker))).thenReturn(søkerPersonhistorikk);
 
+        when(oppslagTjeneste.hentPersonIdent(annenPartPersoninfo.getAktørId().getId())).thenReturn(annenPartPersoninfo.getPersonIdent());
         when(oppslagTjeneste.hentAktørId(eq(annenPartPersoninfo.getPersonIdent().getIdent()))).thenReturn(annenPart);
         when(oppslagTjeneste.hentPersoninfoFor(eq(annenPart))).thenReturn(annenPartPersoninfo);
         when(oppslagTjeneste.hentHistorikkFor(eq(annenPart))).thenReturn(annenPartPersonhistorikk);
 
+        when(oppslagTjeneste.hentPersonIdent(tpsFakta.getBarna().get(0).getPersoninfo().getAktørId().getId())).thenReturn(tpsFakta.getBarna().get(0).getPersoninfo().getPersonIdent());
         when(oppslagTjeneste.hentAktørId(eq(tpsFakta.getBarna().get(0).getPersoninfo().getPersonIdent().getIdent()))).thenReturn(barn);
         when(oppslagTjeneste.hentPersoninfoFor(eq(barn))).thenReturn(barnPersoninfo);
         when(oppslagTjeneste.hentHistorikkFor(eq(barn))).thenReturn(barnPersonhistorikk);

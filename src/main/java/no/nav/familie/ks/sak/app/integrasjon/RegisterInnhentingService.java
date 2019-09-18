@@ -70,8 +70,9 @@ public class RegisterInnhentingService {
             if (annenPartFamilierelasjon.isPresent()) {
                 AktørId annenPartAktørId = annenPartFamilierelasjon.get().getAktørId();
                 annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartAktørId);
-                String annenPartPersonIdent = annenPartPersonMedHistorikk.getPersoninfo().getPersonIdent().getIdent();
+                String annenPartPersonIdent = oppslagTjeneste.hentPersonIdent(annenPartAktørId.getId()).getIdent();
 
+                logger.info("annenPart fnr: {}, oppgittAnnenPart fnr: {}", annenPartPersonIdent, oppgittAnnenPartPersonIdent);
                 if (annenPartPersonIdent.regionMatches(0, oppgittAnnenPartPersonIdent, 0, 6)) {
                     if (!annenPartPersonIdent.equals(oppgittAnnenPartPersonIdent)) {
                         oppgittAnnenPartStemmerDelvis.increment();

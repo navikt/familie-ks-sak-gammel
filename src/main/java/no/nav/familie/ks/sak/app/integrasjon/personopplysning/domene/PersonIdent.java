@@ -28,12 +28,6 @@ public class PersonIdent implements Comparable<PersonIdent> {
     @JsonValue
     private String ident;
 
-    @JsonValue
-    private String identgruppe;
-
-    @JsonValue
-    private boolean gjeldende;
-
     public PersonIdent() {
     }
 
@@ -109,22 +103,6 @@ public class PersonIdent implements Comparable<PersonIdent> {
 
     public String getIdent() {
         return ident;
-    }
-
-    public String getIdentgruppe() {
-        return identgruppe;
-    }
-
-    public void setIdentgruppe(String identgruppe) {
-        this.identgruppe = identgruppe;
-    }
-
-    public boolean isGjeldende() {
-        return gjeldende;
-    }
-
-    public void setGjeldende(boolean gjeldende) {
-        this.gjeldende = gjeldende;
     }
 
     public boolean erDnr() {
