@@ -17,6 +17,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingResultat;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.rest.Behandling.*;
 import no.nav.familie.ks.sak.util.Ressurs;
 import org.slf4j.Logger;
@@ -83,7 +84,7 @@ public class BehandlingslagerService {
         if (søknad.getFamilieforhold().getAnnenForelderFødselsnummer() != null && !søknad.getFamilieforhold().getAnnenForelderFødselsnummer().isEmpty()) {
             try {
                 oppgittAnnenPartAktørId = oppslagTjeneste.hentAktørId(søknad.getFamilieforhold().getAnnenForelderFødselsnummer());
-            } catch (Exception e) {
+            } catch (OppslagException e) {
                 oppgittAnnenPartAktørId = new AktørId(søknad.getFamilieforhold().getAnnenForelderFødselsnummer());
                 logger.warn("Oppslag på aktørid på oppgitt fnr på annen part feilet.");
                 secureLogger.info("Oppslag på aktørid på oppgitt fnr: {}, på annen part feilet.", søknad.getFamilieforhold().getAnnenForelderFødselsnummer());
