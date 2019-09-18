@@ -62,7 +62,7 @@ public class RegisterInnhentingService {
             final Optional<Familierelasjon> annenPartFamilierelasjon = barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
                 familierelasjon ->
                     (familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
-                        && familierelasjon.getAktørId() != søkerAktørId)
+                        && !familierelasjon.getAktørId().equals(søkerAktørId))
                 .findFirst();
 
             logger.info("Relasjoner til barnet: {}", barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner());
