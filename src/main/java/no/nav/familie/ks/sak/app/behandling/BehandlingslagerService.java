@@ -84,7 +84,7 @@ public class BehandlingslagerService {
             try {
                 oppgittAnnenPartAktørId = oppslagTjeneste.hentAktørId(søknad.getFamilieforhold().getAnnenForelderFødselsnummer());
             } catch (Exception e) {
-                oppgittAnnenPartAktørId = new AktørId("");
+                oppgittAnnenPartAktørId = new AktørId(søknad.getFamilieforhold().getAnnenForelderFødselsnummer());
                 logger.warn("Oppslag på aktørid på oppgitt fnr på annen part feilet.");
                 secureLogger.info("Oppslag på aktørid på oppgitt fnr: {}, på annen part feilet.", søknad.getFamilieforhold().getAnnenForelderFødselsnummer());
             }
