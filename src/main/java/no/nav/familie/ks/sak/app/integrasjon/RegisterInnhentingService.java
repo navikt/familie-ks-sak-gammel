@@ -45,8 +45,8 @@ public class RegisterInnhentingService {
 
     public TpsFakta innhentPersonopplysninger(Behandling behandling, Søknad søknad) {
         final var søkerAktørId = behandling.getFagsak().getAktørId();
-        final var annenForelderFødselsnummer = søknad.getFamilieforhold().getAnnenForelderFødselsnummer();
-        final var oppgittAnnenPartAktørId = annenForelderFødselsnummer != null && !annenForelderFødselsnummer.isEmpty() ? oppslagTjeneste.hentAktørId(annenForelderFødselsnummer) : null;
+        final var oppgittAnnenPartPersonIdent = søknad.getFamilieforhold().getAnnenForelderFødselsnummer();
+        final var oppgittAnnenPartAktørId = oppgittAnnenPartPersonIdent != null && !oppgittAnnenPartPersonIdent.isEmpty() ? oppslagTjeneste.hentAktørId(oppgittAnnenPartPersonIdent) : null;
         final var barnAktørId = oppslagTjeneste.hentAktørId(søknad.getMineBarn().getFødselsnummer());
         final var personopplysningerInformasjon = new PersonopplysningerInformasjon();
 
@@ -57,7 +57,6 @@ public class RegisterInnhentingService {
         mapPersonopplysninger(barnAktørId, barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
 
         PersonMedHistorikk annenPartPersonMedHistorikk = null;
-        String oppgittAnnenPartPersonIdent = søknad.getFamilieforhold().getAnnenForelderFødselsnummer();
         if (oppgittAnnenPartPersonIdent != null && !oppgittAnnenPartPersonIdent.isEmpty()) {
             final Optional<Familierelasjon> annenPartFamilierelasjon = barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
                 familierelasjon ->
@@ -65,6 +64,10 @@ public class RegisterInnhentingService {
                         && !familierelasjon.getAktørId().equals(søkerAktørId))
                 .findFirst();
 
+            logger.info("Filtrert relasjoner: {}", barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
+                familierelasjon ->
+                    (familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
+                        && !familierelasjon.getAktørId().equals(søkerAktørId)));
             logger.info("Relasjoner til barnet: {}", barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner());
 
             if (annenPartFamilierelasjon.isPresent()) {
