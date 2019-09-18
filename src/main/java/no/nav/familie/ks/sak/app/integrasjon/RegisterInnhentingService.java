@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RegisterInnhentingService {
@@ -67,7 +68,7 @@ public class RegisterInnhentingService {
             logger.info("Filtrert relasjoner: {}", barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
                 familierelasjon ->
                     (familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
-                        && !familierelasjon.getAktørId().equals(søkerAktørId)));
+                        && !familierelasjon.getAktørId().equals(søkerAktørId)).collect(Collectors.toList()));
             logger.info("Relasjoner til barnet: {}", barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner());
 
             if (annenPartFamilierelasjon.isPresent()) {
