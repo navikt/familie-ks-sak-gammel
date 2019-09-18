@@ -86,8 +86,9 @@ public class OppslagTjeneste {
                 }
             }
         } catch (IOException | InterruptedException e) {
-            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+            secureLogger.info("Ukjent feil ved oppslag mot {}. {}", uri, e.getMessage());
+            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'.");
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.");
         }
     }
 
@@ -106,8 +107,9 @@ public class OppslagTjeneste {
                 return mapper.readValue(response.body(), PersonhistorikkInfo.class);
             }
         } catch (IOException | InterruptedException e) {
-            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+            secureLogger.info("Ukjent feil ved oppslag mot {}. {}", uri, e.getMessage());
+            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'.");
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.");
         }
     }
 
@@ -125,8 +127,9 @@ public class OppslagTjeneste {
                 return mapper.readValue(response.body(), Personinfo.class);
             }
         } catch (IOException | InterruptedException e) {
-            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+            secureLogger.info("Ukjent feil ved oppslag mot {}. {}", uri, e.getMessage());
+            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'.");
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.");
         }
     }
 
