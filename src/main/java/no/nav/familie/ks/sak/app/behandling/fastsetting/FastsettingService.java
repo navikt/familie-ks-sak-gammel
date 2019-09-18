@@ -7,7 +7,6 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunn
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
-import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingException;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,7 +24,7 @@ public class FastsettingService {
         this.barnehageBarnGrunnlagRepository = barnehageBarnGrunnlagRepository;
     }
 
-    public Faktagrunnlag fastsettFakta(Behandling behandling, Søknad søknad) throws RegisterInnhentingException {
+    public Faktagrunnlag fastsettFakta(Behandling behandling, Søknad søknad) {
         SøknadGrunnlag søknadGrunnlag = søknadGrunnlagRepository.finnGrunnlag(behandling.getId());
         BarnehageBarnGrunnlag barnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.getId());
         TpsFakta tpsFakta = registerInnhentingService.innhentPersonopplysninger(behandling, søknad);

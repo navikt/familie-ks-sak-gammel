@@ -12,7 +12,6 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
-import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingException;
 import no.nav.familie.ks.sak.app.rest.Behandling.RestBehandling;
 import no.nav.familie.ks.sak.app.rest.Behandling.RestFagsak;
 import no.nav.familie.ks.sak.config.ApplicationConfig;
@@ -114,7 +113,7 @@ public class BehandlingslagerServiceTest {
     }
 
     @Test
-    public void hentRestFagsak() throws RegisterInnhentingException {
+    public void hentRestFagsak() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
 
         final var søknad = FaktagrunnlagBuilder.utenBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent());
@@ -133,7 +132,7 @@ public class BehandlingslagerServiceTest {
     }
 
     @Test
-    public void hentFagsakMedBarnehageplass() throws RegisterInnhentingException {
+    public void hentFagsakMedBarnehageplass() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapMedBarnehage());
         saksbehandling.behandle(FaktagrunnlagBuilder.medBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent()));
 
@@ -141,7 +140,7 @@ public class BehandlingslagerServiceTest {
     }
 
     @Test
-    public void hentFagsakUtenBarnehageplass() throws RegisterInnhentingException {
+    public void hentFagsakUtenBarnehageplass() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
         saksbehandling.behandle(FaktagrunnlagBuilder.utenBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent()));
 

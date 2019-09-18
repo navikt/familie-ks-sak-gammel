@@ -1,6 +1,5 @@
 package no.nav.familie.ks.sak;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.behandling.*;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
@@ -9,7 +8,6 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
-import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,11 +37,11 @@ public class Saksbehandling {
         this.mapper = objectMapper;
     }
 
-    public Vedtak behandle(String søknadJson) throws RegisterInnhentingException {
+    public Vedtak behandle(String søknadJson) {
         return behandle(tilSøknad(søknadJson));
     }
 
-    public Vedtak behandle(Søknad søknad) throws RegisterInnhentingException {
+    public Vedtak behandle(Søknad søknad) {
         final Behandling behandling = behandlingslagerService.trekkUtOgPersister(søknad);
         Faktagrunnlag faktagrunnlag = fastsettingService.fastsettFakta(behandling, søknad);
 

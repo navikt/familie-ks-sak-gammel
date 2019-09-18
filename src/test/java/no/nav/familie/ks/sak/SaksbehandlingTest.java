@@ -12,7 +12,6 @@ import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
-import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingException;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import org.junit.Test;
 
@@ -30,7 +29,7 @@ public class SaksbehandlingTest {
     private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, fastsettingServiceMock, mock(ResultatService.class), new JacksonJsonConfig().objectMapper());
 
     @Test
-    public void positivt_vedtak_ved_oppfylte_vilkår() throws RegisterInnhentingException {
+    public void positivt_vedtak_ved_oppfylte_vilkår() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
         when(behandlingslagerMock.trekkUtOgPersister(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
 
@@ -40,7 +39,7 @@ public class SaksbehandlingTest {
     }
 
     @Test
-    public void negativt_vedtak_ved_ikke_oppfylte_vilkår() throws RegisterInnhentingException {
+    public void negativt_vedtak_ved_ikke_oppfylte_vilkår() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieUtenlandskStatsborgerskapMedBarnehage());
         when(behandlingslagerMock.trekkUtOgPersister(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
 

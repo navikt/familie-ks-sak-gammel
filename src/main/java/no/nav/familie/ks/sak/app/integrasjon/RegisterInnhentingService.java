@@ -12,6 +12,7 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
@@ -27,11 +28,14 @@ import java.util.Optional;
 public class RegisterInnhentingService {
 
     private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
+    private static final Logger logger = LoggerFactory.getLogger(RegisterInnhentingService.class);
     private PersonopplysningService personopplysningService;
     private OppslagTjeneste oppslagTjeneste;
     private Counter oppgittAnnenPartStemmer = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "JA", "beskrivelse", "Ja");
     private Counter oppgittAnnenPartStemmerIkke = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "NEI", "beskrivelse", "Nei");
+    private Counter oppgittAnnenPartStemmerDelvis = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "DELVIS", "beskrivelse", "Første 6 tall er likt");
     private Counter oppgittAnnenPartIkkeOppgitt = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "IKKE_OPPGITT", "beskrivelse", "Ikke oppgitt");
+    private Counter oppgittAnnenPartIkkeFunnetITps = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "IKKE_FUNNET", "beskrivelse", "Ikke funnet i TPS");
 
     @Autowired
     public RegisterInnhentingService(PersonopplysningService personopplysningService, OppslagTjeneste oppslagTjeneste) {
@@ -39,7 +43,7 @@ public class RegisterInnhentingService {
         this.oppslagTjeneste = oppslagTjeneste;
     }
 
-    public TpsFakta innhentPersonopplysninger(Behandling behandling, Søknad søknad) throws RegisterInnhentingException {
+    public TpsFakta innhentPersonopplysninger(Behandling behandling, Søknad søknad) {
         final var søkerAktørId = behandling.getFagsak().getAktørId();
         final var annenForelderFødselsnummer = søknad.getFamilieforhold().getAnnenForelderFødselsnummer();
         final var oppgittAnnenPartAktørId = annenForelderFødselsnummer != null && !annenForelderFødselsnummer.isEmpty() ? oppslagTjeneste.hentAktørId(annenForelderFødselsnummer) : null;
@@ -53,30 +57,41 @@ public class RegisterInnhentingService {
         mapPersonopplysninger(barnAktørId, barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
 
         PersonMedHistorikk annenPartPersonMedHistorikk = null;
-        if (søknad.getFamilieforhold().getAnnenForelderFødselsnummer() != null && !søknad.getFamilieforhold().getAnnenForelderFødselsnummer().isEmpty()) {
+        String oppgittAnnenPartPersonIdent = søknad.getFamilieforhold().getAnnenForelderFødselsnummer();
+        if (oppgittAnnenPartPersonIdent != null && !oppgittAnnenPartPersonIdent.isEmpty()) {
             final Optional<Familierelasjon> annenPartFamilierelasjon = barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
                 familierelasjon ->
                     (familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
                         && familierelasjon.getAktørId() != søkerAktørId)
                 .findFirst();
 
+            logger.info("Relasjoner til barnet: {}", barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner());
+
             if (annenPartFamilierelasjon.isPresent()) {
                 AktørId annenPartAktørId = annenPartFamilierelasjon.get().getAktørId();
+                annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartAktørId);
+                String annenPartPersonIdent = annenPartPersonMedHistorikk.getPersoninfo().getPersonIdent().getIdent();
 
-                if (annenPartAktørId.equals(oppgittAnnenPartAktørId)) {
-                    annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartAktørId);
+                if (annenPartPersonIdent.regionMatches(0, oppgittAnnenPartPersonIdent, 0, 6)) {
+                    if (!annenPartPersonIdent.equals(oppgittAnnenPartPersonIdent)) {
+                        oppgittAnnenPartStemmerDelvis.increment();
+                    } else {
+                        oppgittAnnenPartStemmer.increment();
+                    }
 
                     personopplysningService.lagre(behandling, oppgittAnnenPartAktørId);
                     mapPersonopplysninger(annenPartAktørId, annenPartPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
 
-                    oppgittAnnenPartStemmer.increment();
                     mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
                 } else {
                     secureLogger.info("Fant annen part: {}. Oppgitt annen part fra søker: {}", annenPartAktørId, oppgittAnnenPartAktørId);
                     oppgittAnnenPartStemmerIkke.increment();
-                    throw new RegisterInnhentingException("Oppgitt annen part fra søker stemmer ikke med relasjonen vi fant på barnet fra TPS");
+                    mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), null, barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
+                    logger.debug("Oppgitt annen part fra søker stemmer ikke med relasjonen vi fant på barnet fra TPS");
                 }
             } else {
+                secureLogger.info("Fant ikke annen part i listen over relasjoner til barnet: {}", barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner());
+                oppgittAnnenPartIkkeFunnetITps.increment();
                 mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), null, barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
             }
         } else {

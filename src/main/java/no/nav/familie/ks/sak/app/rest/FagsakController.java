@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
-import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingException;
 import no.nav.familie.ks.sak.util.Ressurs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +51,7 @@ public class FagsakController {
     }
 
     @PostMapping(path = "/behandle")
-    public Ressurs fagsak(@RequestBody no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) throws RegisterInnhentingException {
+    public Ressurs fagsak(@RequestBody no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
         Long behandlingsId = saksbehandling.behandle(søknad).getBehandlingsId();
 
         return behandlingslagerService.hentRessursFagsak(behandlingsId);

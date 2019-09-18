@@ -8,7 +8,6 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
-import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingException;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
@@ -55,7 +54,7 @@ public class FagsakRepositoryTest {
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
 
     @Before
-    public void setUp() throws RegisterInnhentingException {
+    public void setUp() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
         when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
         when(oppslagTjeneste.hentPersoninfoFor(any())).thenReturn(FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersoninfo(),
@@ -71,7 +70,7 @@ public class FagsakRepositoryTest {
 
 
     @Test
-    public void skal_kjøre_flyway_migreringer_og_lagre_data_i_postgresql() throws RegisterInnhentingException {
+    public void skal_kjøre_flyway_migreringer_og_lagre_data_i_postgresql() {
 
         //given
         final var søknad = FaktagrunnlagBuilder.utenBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent());

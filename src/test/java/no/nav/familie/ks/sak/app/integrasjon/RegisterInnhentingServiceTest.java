@@ -79,7 +79,7 @@ public class RegisterInnhentingServiceTest {
     }
 
     @Test
-    public void skal_lagre_ned_respons() throws RegisterInnhentingException {
+    public void skal_lagre_ned_respons() {
         final var fagsak = Fagsak.opprettNy(søker, "123412341234");
         fagsakRepository.save(fagsak);
 
