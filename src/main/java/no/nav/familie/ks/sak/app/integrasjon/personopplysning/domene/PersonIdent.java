@@ -26,9 +26,16 @@ public class PersonIdent implements Comparable<PersonIdent> {
     private static final int PERSONNR_LENGDE = 5;
 
     @JsonValue
-    private final String ident;
+    private String ident;
+
+    @JsonValue
     private String identgruppe;
+
+    @JsonValue
     private boolean gjeldende;
+
+    public PersonIdent() {
+    }
 
     public PersonIdent(String ident) {
         Objects.requireNonNull(ident, "ident kan ikke være null");
