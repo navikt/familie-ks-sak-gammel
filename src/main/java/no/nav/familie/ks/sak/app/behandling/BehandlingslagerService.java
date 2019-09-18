@@ -15,9 +15,12 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunn
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingResultat;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.rest.Behandling.*;
 import no.nav.familie.ks.sak.util.Ressurs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +33,8 @@ import static no.nav.familie.ks.sak.util.Konvertering.konverterTilBoolean;
 @Service
 public class BehandlingslagerService {
 
+    private static final Logger logger = LoggerFactory.getLogger(BehandlingslagerService.class);
+    private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
     private FagsakRepository fagsakRepository;
     private BehandlingRepository behandlingRepository;
     private BehandlingresultatRepository behandlingresultatRepository;
@@ -74,7 +79,15 @@ public class BehandlingslagerService {
             konverterTilBoolean(kravTilSoker.ikkeAvtaltDeltBosted),
             konverterTilBoolean(kravTilSoker.skalBoMedBarnetINorgeNesteTolvMaaneder));
 
-        final var oppgittAnnenPartAktørId = søknad.getFamilieforhold().getAnnenForelderFødselsnummer() != null && !søknad.getFamilieforhold().getAnnenForelderFødselsnummer().isEmpty() ? oppslagTjeneste.hentAktørId(søknad.getFamilieforhold().getAnnenForelderFødselsnummer()) : null;
+        AktørId oppgittAnnenPartAktørId = null;
+        if (søknad.getFamilieforhold().getAnnenForelderFødselsnummer() != null && !søknad.getFamilieforhold().getAnnenForelderFødselsnummer().isEmpty()) {
+            try {
+                oppgittAnnenPartAktørId = oppslagTjeneste.hentAktørId(søknad.getFamilieforhold().getAnnenForelderFødselsnummer());
+            } catch (Exception e) {
+                logger.warn("Oppslag på aktørid på oppgitt fnr på annen part feilet.");
+                secureLogger.info("Oppslag på aktørid på oppgitt fnr: {}, på annen part feilet.", søknad.getFamilieforhold().getAnnenForelderFødselsnummer());
+            }
+        }
         final var oppgittUtlandsTilknytning = SøknadTilGrunnlagMapper.mapUtenlandsTilknytning(søknad, søkerAktørId, oppgittAnnenPartAktørId);
 
         final var innsendtTidspunkt = LocalDateTime.ofInstant(søknad.innsendingsTidspunkt, ZoneId.systemDefault());
