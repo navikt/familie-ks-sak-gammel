@@ -38,6 +38,7 @@ public class MottaSøknadController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
+    @Unprotected
     public ResponseEntity mottaDokument(@RequestBody Søknad søknad) {
         try {
             Vedtak vedtak = saksbehandling.behandle(søknad);
