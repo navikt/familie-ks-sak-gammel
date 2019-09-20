@@ -86,8 +86,9 @@ public class OppslagTjeneste {
             secureLogger.info("Vekslet inn fnr: {} til aktørId: {}", personident, response.body());
 
             if (response.statusCode() != HttpStatus.OK.value()) {
-                logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + response.body());
-                throw new OppslagException(response.body());
+                String feilmelding = response.headers().firstValue("message").orElse("Ingen feilmelding.");
+                logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + feilmelding);
+                throw new OppslagException(feilmelding);
             } else {
                 String aktørId = mapper.readValue(response.body(), String.class);
                 if (aktørId == null || aktørId.isEmpty()) {
@@ -141,8 +142,9 @@ public class OppslagTjeneste {
             secureLogger.info("Personhistorikk for {}: {}", aktørId, response.body());
 
             if (response.statusCode() != HttpStatus.OK.value()) {
-                logger.warn("Kall mot oppslag feilet ved uthenting av historikk: " + response.body());
-                throw new OppslagException(response.body());
+                String feilmelding = response.headers().firstValue("message").orElse("Ingen feilmelding.");
+                logger.warn("Kall mot oppslag feilet ved uthenting av historikk: " + feilmelding);
+                throw new OppslagException(feilmelding);
             } else {
                 return mapper.readValue(response.body(), PersonhistorikkInfo.class);
             }
@@ -161,8 +163,9 @@ public class OppslagTjeneste {
             secureLogger.info("Personinfo for {}: {}", aktørId, response.body());
 
             if (response.statusCode() != HttpStatus.OK.value()) {
-                logger.warn("Kall mot oppslag feilet ved uthenting av personinfo: " + response.body());
-                throw new OppslagException(response.body());
+                String feilmelding = response.headers().firstValue("message").orElse("Ingen feilmelding.");
+                logger.warn("Kall mot oppslag feilet ved uthenting av personinfo: " + feilmelding);
+                throw new OppslagException(feilmelding);
             } else {
                 return mapper.readValue(response.body(), Personinfo.class);
             }
