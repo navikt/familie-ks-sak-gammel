@@ -118,7 +118,7 @@ public class OppslagTjeneste {
                 secureLogger.info("Kall mot oppslag feilet ved uthenting av fnr: " + response.body());
                 throw new OppslagException(response.body());
             } else {
-                String personIdent = response.body();
+                String personIdent = mapper.readValue(response.body(), String.class);
                 if (personIdent == null || personIdent.isEmpty()) {
                     throw new OppslagException("personIdent fra oppslagstjenesten er tom");
                 } else {

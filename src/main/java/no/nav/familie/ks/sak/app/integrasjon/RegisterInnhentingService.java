@@ -47,7 +47,6 @@ public class RegisterInnhentingService {
     public TpsFakta innhentPersonopplysninger(Behandling behandling, Søknad søknad) {
         final var søkerAktørId = behandling.getFagsak().getAktørId();
         final var oppgittAnnenPartPersonIdent = søknad.getFamilieforhold().getAnnenForelderFødselsnummer();
-        final var oppgittAnnenPartAktørId = oppgittAnnenPartPersonIdent != null && !oppgittAnnenPartPersonIdent.isEmpty() ? oppslagTjeneste.hentAktørId(oppgittAnnenPartPersonIdent) : null;
         final var barnAktørId = oppslagTjeneste.hentAktørId(søknad.getMineBarn().getFødselsnummer());
         final var personopplysningerInformasjon = new PersonopplysningerInformasjon();
 
@@ -64,12 +63,13 @@ public class RegisterInnhentingService {
                     && !familierelasjon.getAktørId().equals(søkerAktørId))
             .findFirst();
 
+        AktørId annenPartAktørId = null;
         if (annenPartFamilierelasjon.isPresent()) {
-            AktørId annenPartAktørId = annenPartFamilierelasjon.get().getAktørId();
+            annenPartAktørId = annenPartFamilierelasjon.get().getAktørId();
             annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartAktørId);
             String annenPartPersonIdent = oppslagTjeneste.hentPersonIdent(annenPartAktørId.getId()).getIdent();
 
-            personopplysningService.lagre(behandling, oppgittAnnenPartAktørId);
+            personopplysningService.lagre(behandling, annenPartAktørId);
             mapPersonopplysninger(annenPartAktørId, annenPartPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
             mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
 
@@ -81,7 +81,7 @@ public class RegisterInnhentingService {
                         oppgittAnnenPartStemmer.increment();
                     }
                 } else {
-                    secureLogger.info("Fant annen part: {}. Oppgitt annen part fra søker: {}", annenPartAktørId, oppgittAnnenPartAktørId);
+                    secureLogger.info("Fant annen part: {}. Oppgitt annen part fra søker: {}", annenPartPersonIdent, oppgittAnnenPartPersonIdent);
                     oppgittAnnenPartStemmerIkke.increment();
                     logger.debug("Oppgitt annen part fra søker stemmer ikke med relasjonen vi fant på barnet fra TPS");
                 }
@@ -96,7 +96,7 @@ public class RegisterInnhentingService {
             oppgittAnnenPartIkkeOppgitt.increment();
         }
 
-        personopplysningService.lagre(behandling, personopplysningerInformasjon, oppgittAnnenPartAktørId);
+        personopplysningService.lagre(behandling, personopplysningerInformasjon, annenPartAktørId);
         return new TpsFakta.Builder()
             .medForelder(søkerPersonMedHistorikk)
             .medBarn(List.of(barnPersonMedHistorikk))
