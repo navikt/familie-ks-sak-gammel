@@ -7,6 +7,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
@@ -63,6 +64,9 @@ public class BehandlingslagerServiceTest {
     @Autowired
     private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
 
+    @MockBean
+    private PersonopplysningRepository personopplysningRepository;
+
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
 
     @Autowired
@@ -70,8 +74,11 @@ public class BehandlingslagerServiceTest {
 
     @Before
     public void setUp() {
-        Mockito.when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
-
+        when(personopplysningRepository.findByBehandlingAndAktiv(any()))
+            .thenReturn(
+                FaktagrunnlagBuilder.genererPersonopplysningGrunnlag(new AktørId(FaktagrunnlagBuilder.norskPersonAktør.getId()))
+            );
+        when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
 
         when(oppslagTjeneste.hentPersoninfoFor(any()))
             .thenReturn(
@@ -90,7 +97,8 @@ public class BehandlingslagerServiceTest {
     @Test
     public void skal_lagre_søknad_og_hente_opp_igjen() {
         final var søknad = FaktagrunnlagBuilder.medBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent());
-        tjeneste.trekkUtOgPersister(søknad);
+        Behandling nyBehandling = tjeneste.nyBehandling(søknad);
+        tjeneste.trekkUtOgPersister(nyBehandling, søknad);
 
         final var fagsaker = fagsakRepository.findAll();
         assertThat(fagsaker).hasSize(1);

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.SøknadTilGrunnlagMapper;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.OppgittFamilieforhold;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlag;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningerInformasjon;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittErklæring;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.AdresseType;
@@ -36,7 +38,7 @@ import static no.nav.familie.ks.sak.util.Konvertering.konverterTilBoolean;
 
 public final class FaktagrunnlagBuilder {
 
-    private static AktørId norskPersonAktør = new AktørId("00000000001");
+    public static AktørId norskPersonAktør = new AktørId("00000000001");
     public static PersonIdent norskPersonIdent = new PersonIdent("00000000001");
 
     private static AktørId utlandForelder = new AktørId("00000000002");
@@ -219,6 +221,11 @@ public final class FaktagrunnlagBuilder {
     private final static PersonIdent farPersonident = new PersonIdent("00000000002");
     private final static AktørId barnAktørId = new AktørId("1300000000003");
     private final static PersonIdent barnPersonident = new PersonIdent("00000000003");
+
+    public static Optional<PersonopplysningGrunnlag> genererPersonopplysningGrunnlag(AktørId annenPartAktørId) {
+        PersonopplysningGrunnlag personopplysningGrunnlag = new PersonopplysningGrunnlag(behandlingId, annenPartAktørId, new PersonopplysningerInformasjon());
+        return Optional.of(personopplysningGrunnlag);
+    }
 
     private static SøknadGrunnlag genererSøknadGrunnlag(Søknad innsendtSøknad, AktørId søkerAktørId, AktørId annenPartAktørId) {
         final var kravTilSoker = innsendtSøknad.kravTilSoker;

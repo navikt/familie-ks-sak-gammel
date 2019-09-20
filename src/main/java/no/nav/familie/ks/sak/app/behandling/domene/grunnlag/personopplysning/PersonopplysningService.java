@@ -30,14 +30,14 @@ public class PersonopplysningService {
         return personopplysningRepository.findByBehandlingAndAktiv(behandling.getId());
     }
 
-    public void lagre(Behandling behandling, PersonopplysningerInformasjon informasjon) {
+    public void lagre(Behandling behandling, PersonopplysningerInformasjon informasjon, AktørId oppgitAnnenPartAktørId) {
         final var aktivtGrunnlag = hentHvisEksisterer(behandling);
         aktivtGrunnlag.ifPresent(gr -> {
             gr.setAktiv(false);
             personopplysningRepository.saveAndFlush(gr);
         });
-        final var oppgittAnnenPart = aktivtGrunnlag.flatMap(PersonopplysningGrunnlag::getOppgittAnnenPart).orElse(null);
-        final var nyttGrunnlag = new PersonopplysningGrunnlag(behandling, oppgittAnnenPart, informasjon);
+        final var oppgittAnnenPart = aktivtGrunnlag.flatMap(PersonopplysningGrunnlag::getOppgittAnnenPart).orElse(oppgitAnnenPartAktørId);
+        final var nyttGrunnlag = new PersonopplysningGrunnlag(behandling.getId(), oppgittAnnenPart, informasjon);
         informasjonRepository.save(informasjon);
         personopplysningRepository.save(nyttGrunnlag);
     }
@@ -50,7 +50,7 @@ public class PersonopplysningService {
             personopplysningRepository.saveAndFlush(gr);
         });
         final var informasjon = aktivtGrunnlag.flatMap(PersonopplysningGrunnlag::getRegisterVersjon).orElse(null);
-        final var nyttGrunnlag = new PersonopplysningGrunnlag(behandling, annenPart, informasjon);
+        final var nyttGrunnlag = new PersonopplysningGrunnlag(behandling.getId(), annenPart, informasjon);
         if (informasjon != null) {
             informasjonRepository.save(informasjon);
         }

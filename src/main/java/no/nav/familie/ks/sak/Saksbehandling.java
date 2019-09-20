@@ -8,6 +8,8 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
+import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ public class Saksbehandling {
     private VurderSamletTjeneste vurderSamletTjeneste;
     private PeriodeOppretter periodeOppretter = new PeriodeOppretter();
     private BehandlingslagerService behandlingslagerService;
+    private RegisterInnhentingService registerInnhentingService;
     private FastsettingService fastsettingService;
     private ResultatService resultatService;
     private ObjectMapper mapper;
@@ -27,11 +30,13 @@ public class Saksbehandling {
     @Autowired
     public Saksbehandling(VurderSamletTjeneste vurderSamletTjeneste,
                           BehandlingslagerService behandlingslagerService,
+                          RegisterInnhentingService registerInnhentingService,
                           FastsettingService fastsettingService,
                           ResultatService resultatService,
                           ObjectMapper objectMapper) {
         this.vurderSamletTjeneste = vurderSamletTjeneste;
         this.behandlingslagerService = behandlingslagerService;
+        this.registerInnhentingService = registerInnhentingService;
         this.fastsettingService = fastsettingService;
         this.resultatService = resultatService;
         this.mapper = objectMapper;
@@ -42,8 +47,10 @@ public class Saksbehandling {
     }
 
     public Vedtak behandle(Søknad søknad) {
-        final Behandling behandling = behandlingslagerService.trekkUtOgPersister(søknad);
-        Faktagrunnlag faktagrunnlag = fastsettingService.fastsettFakta(behandling, søknad);
+        final Behandling behandling = behandlingslagerService.nyBehandling(søknad);
+        TpsFakta tpsFakta = registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
+        behandlingslagerService.trekkUtOgPersister(behandling, søknad);
+        Faktagrunnlag faktagrunnlag = fastsettingService.fastsettFakta(behandling, tpsFakta);
 
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
 

@@ -12,6 +12,7 @@ import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
+import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import org.junit.Test;
 
@@ -26,12 +27,13 @@ public class SaksbehandlingTest {
     private final BehandlingslagerService behandlingslagerMock = mock(BehandlingslagerService.class);
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår()));
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
-    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, fastsettingServiceMock, mock(ResultatService.class), new JacksonJsonConfig().objectMapper());
+    private final RegisterInnhentingService registerInnhentingServiceMock = mock(RegisterInnhentingService.class);
+    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(ResultatService.class), new JacksonJsonConfig().objectMapper());
 
     @Test
     public void positivt_vedtak_ved_oppfylte_vilkår() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        when(behandlingslagerMock.trekkUtOgPersister(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
+        when(behandlingslagerMock.nyBehandling(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
 
         Søknad innsendtSøknad = FaktagrunnlagBuilder.utenBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent());
         Vedtak vedtak = saksbehandling.behandle(innsendtSøknad);
@@ -41,7 +43,7 @@ public class SaksbehandlingTest {
     @Test
     public void negativt_vedtak_ved_ikke_oppfylte_vilkår() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieUtenlandskStatsborgerskapMedBarnehage());
-        when(behandlingslagerMock.trekkUtOgPersister(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
+        when(behandlingslagerMock.nyBehandling(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
 
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"));
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);

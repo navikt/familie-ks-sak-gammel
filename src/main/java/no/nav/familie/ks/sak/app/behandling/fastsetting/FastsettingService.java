@@ -5,29 +5,24 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barneh
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
-import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
-import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class FastsettingService {
-    private RegisterInnhentingService registerInnhentingService;
     private SøknadGrunnlagRepository søknadGrunnlagRepository;
     private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
 
     @Autowired
-    FastsettingService(RegisterInnhentingService registerInnhentingService, SøknadGrunnlagRepository søknadGrunnlagRepository, BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository) {
-        this.registerInnhentingService = registerInnhentingService;
+    FastsettingService(SøknadGrunnlagRepository søknadGrunnlagRepository, BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository) {
         this.søknadGrunnlagRepository = søknadGrunnlagRepository;
         this.barnehageBarnGrunnlagRepository = barnehageBarnGrunnlagRepository;
     }
 
-    public Faktagrunnlag fastsettFakta(Behandling behandling, Søknad søknad) {
+    public Faktagrunnlag fastsettFakta(Behandling behandling, TpsFakta tpsFakta) {
         SøknadGrunnlag søknadGrunnlag = søknadGrunnlagRepository.finnGrunnlag(behandling.getId());
         BarnehageBarnGrunnlag barnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.getId());
-        TpsFakta tpsFakta = registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
 
         return new Faktagrunnlag.Builder()
             .medBarnehageBarnGrunnlag(barnehageBarnGrunnlag)
