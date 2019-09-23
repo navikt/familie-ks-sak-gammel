@@ -88,17 +88,21 @@ public class BehandlingslagerService {
             konverterTilBoolean(kravTilSoker.ikkeAvtaltDeltBosted),
             konverterTilBoolean(kravTilSoker.skalBoMedBarnetINorgeNesteTolvMaaneder));
 
-        Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningRepository.findByBehandlingAndAktiv(behandling.getId());
+        final var familieforhold = søknad.getFamilieforhold();
         AktørId oppgittAnnenPartAktørId = null;
-        if (personopplysningGrunnlag.isPresent()) {
-            Optional<AktørId> oppgittAnnenPart = personopplysningGrunnlag.get().getOppgittAnnenPart();
-            if (oppgittAnnenPart.isPresent()) {
-                oppgittAnnenPartAktørId = oppgittAnnenPart.get();
+
+        if (familieforhold.getAnnenForelderFødselsnummer() != null && !familieforhold.getAnnenForelderFødselsnummer().isEmpty()) {
+            Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningRepository.findByBehandlingAndAktiv(behandling.getId());
+            if (personopplysningGrunnlag.isPresent()) {
+                Optional<AktørId> oppgittAnnenPart = personopplysningGrunnlag.get().getOppgittAnnenPart();
+                if (oppgittAnnenPart.isPresent()) {
+                    oppgittAnnenPartAktørId = oppgittAnnenPart.get();
+                } else {
+                    logger.warn("Annen part mangler i personopplysning grunnlaget, men søker har oppgitt annen part");
+                }
             } else {
-                logger.warn("Annen part mangler i personopplysning grunnlaget.");
+                logger.warn("Personopplysning grunnlaget mangler.");
             }
-        } else {
-            logger.warn("Personopplysning grunnlaget mangler.");
         }
 
         final var oppgittUtlandsTilknytning = SøknadTilGrunnlagMapper.mapUtenlandsTilknytning(søknad, behandling.getFagsak().getAktørId(), oppgittAnnenPartAktørId);
