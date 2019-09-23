@@ -45,9 +45,6 @@ public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnla
             annenPartOppfyllerKrav = ikkeTilknytningTilUtland(søker, annenPartMedHistorikk, søknad);
         }
 
-        logger.info("Søker oppfyler: {}", søkerOppfyllerKrav);
-        logger.info("Annen part oppfyler: {}", annenPartOppfyllerKrav);
-
         return søkerOppfyllerKrav && annenPartOppfyllerKrav ? ja() : nei();
     }
 
@@ -62,8 +59,6 @@ public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnla
         final Optional<AktørTilknytningUtland> aktørTilknytningTilUtlandet = aktørerTilknytningTilUtlandet.stream().filter(aktørTilknytningUtland ->
             aktørTilknytningUtland.getAktør().equals(aktør)).findFirst();
 
-        logger.info("TilknytningTilUtlandet: {}, {}", personMedHistorikk.getPersoninfo().getNavn(), aktørTilknytningTilUtlandet.isPresent());
-        logger.info("ArbeidYtelseUtland: {}, {}", personMedHistorikk.getPersoninfo().getNavn(), aktørArbeidYtelseUtland.isPresent());
         if (!aktørArbeidYtelseUtland.isPresent() || !aktørTilknytningTilUtlandet.isPresent()) {
             return false;
         }
@@ -73,7 +68,7 @@ public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnla
         boolean utenlandskeYtelser = aktørArbeidYtelseUtland.get().getYtelseIUtlandet().equals(Standpunkt.NEI);
 
         boolean utenlandskKontantstotte = true;
-        if (!aktør.equals(søker)) {
+        if (aktør.equals(søker)) {
             utenlandskKontantstotte = aktørArbeidYtelseUtland.get().getKontantstøtteIUtlandet().equals(Standpunkt.NEI);
         }
 
