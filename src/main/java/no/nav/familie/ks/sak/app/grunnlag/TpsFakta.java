@@ -1,9 +1,11 @@
 package no.nav.familie.ks.sak.app.grunnlag;
 
+import java.util.List;
+
 public class TpsFakta {
 
     private PersonMedHistorikk forelder;
-    private PersonMedHistorikk barn;
+    private List<PersonMedHistorikk> barna;
     private PersonMedHistorikk annenForelder;
 
     private TpsFakta() {
@@ -13,8 +15,13 @@ public class TpsFakta {
         return forelder;
     }
 
+    public List<PersonMedHistorikk> getBarna() {
+        return barna;
+    }
+
+    @Deprecated // FIXME: legge til støtte for flerlinger i behandling
     public PersonMedHistorikk getBarn() {
-        return barn;
+        return barna.get(0);
     }
 
     public PersonMedHistorikk getAnnenForelder() {
@@ -33,8 +40,8 @@ public class TpsFakta {
             return this;
         }
 
-        public Builder medBarn(PersonMedHistorikk barn) {
-            kladd.barn = barn;
+        public Builder medBarn(List<PersonMedHistorikk> barna) {
+            kladd.barna = barna;
             return this;
         }
 

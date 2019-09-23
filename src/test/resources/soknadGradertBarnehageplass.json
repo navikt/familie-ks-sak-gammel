@@ -19,8 +19,8 @@
     "skalSlutteIBarnehageKommune": "Trondheim"
   },
   "familieforhold": {
-    "annenForelderFødselsnummer": "",
-    "annenForelderNavn": "",
+    "annenForelderFødselsnummer": "00000000001",
+    "annenForelderNavn": "Annen forelder",
     "borForeldreneSammenMedBarnet": "JA"
   },
   "kravTilSoker": {
@@ -39,7 +39,7 @@
     "bekreftelse": "JA"
   },
   "tilknytningTilUtland": {
-    "annenForelderBoddEllerJobbetINorgeMinstFemAar": "Ubesvart",
+    "annenForelderBoddEllerJobbetINorgeMinstFemAar": "jaINorge",
     "annenForelderBoddEllerJobbetINorgeMinstFemAarForklaring": "",
     "boddEllerJobbetINorgeMinstFemAar": "jaINorge",
     "boddEllerJobbetINorgeMinstFemAarForklaring": ""
@@ -47,7 +47,7 @@
   "arbeidIUtlandet": {
     "arbeiderIUtlandetEllerKontinentalsokkel": "NEI",
     "arbeiderIUtlandetEllerKontinentalsokkelForklaring":"",
-    "arbeiderAnnenForelderIUtlandet": "UBESVART",
+    "arbeiderAnnenForelderIUtlandet": "NEI",
     "arbeiderAnnenForelderIUtlandetForklaring": ""
   },
   "utenlandskKontantstotte": {
@@ -55,7 +55,7 @@
     "mottarKontantstotteFraUtlandetTilleggsinfo": ""
   },
   "utenlandskeYtelser": {
-    "mottarAnnenForelderYtelserFraUtland": "UBESVART",
+    "mottarAnnenForelderYtelserFraUtland": "NEI",
     "mottarAnnenForelderYtelserFraUtlandForklaring": "",
     "mottarYtelserFraUtland": "NEI",
     "mottarYtelserFraUtlandForklaring": ""

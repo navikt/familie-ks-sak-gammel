@@ -17,7 +17,7 @@ public enum VilkårIkkeOppfyltÅrsak implements VilkårUtfallÅrsak {
     BARNEHAGEPLASS(8302, "Søknaden inneholder barnehageplass", VilkårType.BARNEHAGE),
 
     // Barn
-    BARN_IKKE_NORSK_STATSBORGER(8307, "Barn er ikke norsk statsborger", VilkårType.BARN);
+    BARN_IKKE_NORSK_STATSBORGER(8305, "Barn er ikke norsk statsborger", VilkårType.BARN);
 
     private final int årsakKode;
     private final String beskrivelse;

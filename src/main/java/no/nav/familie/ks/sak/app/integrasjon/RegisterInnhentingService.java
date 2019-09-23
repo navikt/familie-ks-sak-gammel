@@ -1,20 +1,42 @@
 package no.nav.familie.ks.sak.app.integrasjon;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.*;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Landkode;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.DatoIntervallEntitet;
+import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
+import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
+import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RegisterInnhentingService {
 
+    private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
+    private static final Logger logger = LoggerFactory.getLogger(RegisterInnhentingService.class);
     private PersonopplysningService personopplysningService;
     private OppslagTjeneste oppslagTjeneste;
+    private Counter oppgittAnnenPartStemmer = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "JA", "beskrivelse", "Oppgitt annen part stemmer");
+    private Counter oppgittAnnenPartStemmerIkke = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "NEI", "beskrivelse", "Oppgitt annen part stemmer ikke");
+    private Counter oppgittAnnenPartStemmerDelvis = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "DELVIS", "beskrivelse", "Første 6 tall av fnr er likt");
+    private Counter oppgittAnnenPartIkkeOppgitt = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "IKKE_OPPGITT", "beskrivelse", "Annen part er ikke oppgitt");
+    private Counter oppgittAnnenPartIkkeFunnetITps = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "IKKE_FUNNET", "beskrivelse", "Annen part er ikke funnet i TPS");
 
     @Autowired
     public RegisterInnhentingService(PersonopplysningService personopplysningService, OppslagTjeneste oppslagTjeneste) {
@@ -22,28 +44,73 @@ public class RegisterInnhentingService {
         this.oppslagTjeneste = oppslagTjeneste;
     }
 
-    public void innhentPersonopplysninger(Behandling behandling, Søknad søknad) {
+    public TpsFakta innhentPersonopplysninger(Behandling behandling, Søknad søknad) {
         final var søkerAktørId = behandling.getFagsak().getAktørId();
-        final var annenForelderFødselsnummer = søknad.getFamilieforhold().getAnnenForelderFødselsnummer();
-        final var annenPartAktørId = annenForelderFødselsnummer != null && !annenForelderFødselsnummer.isEmpty() ? oppslagTjeneste.hentAktørId(annenForelderFødselsnummer) : null;
+        final var oppgittAnnenPartPersonIdent = søknad.getFamilieforhold().getAnnenForelderFødselsnummer();
         final var barnAktørId = oppslagTjeneste.hentAktørId(søknad.getMineBarn().getFødselsnummer());
-        final var informasjon = new PersonopplysningerInformasjon();
+        final var personopplysningerInformasjon = new PersonopplysningerInformasjon();
 
-        final var søkerPersoninfo = oppslagTjeneste.hentPersoninfoFor(søkerAktørId);
-        final var barnPersoninfo = oppslagTjeneste.hentPersoninfoFor(barnAktørId);
-        mapPersonopplysninger(søkerAktørId, søkerPersoninfo, informasjon);
-        mapPersonopplysninger(barnAktørId, barnPersoninfo, informasjon);
-        Personinfo annenPartPersoninfo = null;
+        final PersonMedHistorikk søkerPersonMedHistorikk = hentPersonMedHistorikk(søkerAktørId);
+        final PersonMedHistorikk barnPersonMedHistorikk = hentPersonMedHistorikk(barnAktørId);
 
-        if (annenPartAktørId != null) {
+        mapPersonopplysninger(søkerAktørId, søkerPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
+        mapPersonopplysninger(barnAktørId, barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
+
+        PersonMedHistorikk annenPartPersonMedHistorikk = null;
+        final Optional<Familierelasjon> annenPartFamilierelasjon = barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
+            familierelasjon ->
+                (familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
+                    && !familierelasjon.getAktørId().equals(søkerAktørId))
+            .findFirst();
+
+        AktørId annenPartAktørId = null;
+        if (annenPartFamilierelasjon.isPresent()) {
+            annenPartAktørId = annenPartFamilierelasjon.get().getAktørId();
+            annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartAktørId);
+            String annenPartPersonIdent = oppslagTjeneste.hentPersonIdent(annenPartAktørId.getId()).getIdent();
+
             personopplysningService.lagre(behandling, annenPartAktørId);
-            annenPartPersoninfo = oppslagTjeneste.hentPersoninfoFor(annenPartAktørId);
-            mapPersonopplysninger(annenPartAktørId, annenPartPersoninfo, informasjon);
+            mapPersonopplysninger(annenPartAktørId, annenPartPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
+            mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
+
+            if (oppgittAnnenPartPersonIdent != null && !oppgittAnnenPartPersonIdent.isEmpty()) {
+                if (annenPartPersonIdent.regionMatches(0, oppgittAnnenPartPersonIdent, 0, 6)) {
+                    if (!annenPartPersonIdent.equals(oppgittAnnenPartPersonIdent)) {
+                        oppgittAnnenPartStemmerDelvis.increment();
+                    } else {
+                        oppgittAnnenPartStemmer.increment();
+                    }
+                } else {
+                    secureLogger.info("Fant annen part: {}. Oppgitt annen part fra søker: {}", annenPartPersonIdent, oppgittAnnenPartPersonIdent);
+                    oppgittAnnenPartStemmerIkke.increment();
+                    logger.info("Oppgitt annen part fra søker stemmer ikke med relasjonen vi fant på barnet fra TPS");
+                }
+            }
+        } else {
+            secureLogger.info("Fant ikke annen part i listen over relasjoner til barnet: {}", barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner());
+            oppgittAnnenPartIkkeFunnetITps.increment();
+            mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), null, barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
         }
 
-        mapRelasjoner(søkerPersoninfo, annenPartPersoninfo, barnPersoninfo, informasjon);
+        if (oppgittAnnenPartPersonIdent == null || oppgittAnnenPartPersonIdent.isEmpty()) {
+            oppgittAnnenPartIkkeOppgitt.increment();
+        }
 
-        personopplysningService.lagre(behandling, informasjon);
+        personopplysningService.lagre(behandling, personopplysningerInformasjon, annenPartAktørId);
+        return new TpsFakta.Builder()
+            .medForelder(søkerPersonMedHistorikk)
+            .medBarn(List.of(barnPersonMedHistorikk))
+            .medAnnenForelder(annenPartPersonMedHistorikk)
+            .build();
+    }
+
+    private PersonMedHistorikk hentPersonMedHistorikk(AktørId aktørId) {
+        final Personinfo personinfo = oppslagTjeneste.hentPersoninfoFor(aktørId);
+        final PersonhistorikkInfo personhistorikkInfo = oppslagTjeneste.hentHistorikkFor(aktørId);
+        return new PersonMedHistorikk.Builder()
+            .medInfo(personinfo)
+            .medPersonhistorikk(personhistorikkInfo)
+            .build();
     }
 
     private void mapRelasjoner(Personinfo søker, Personinfo annenPart, Personinfo barn, PersonopplysningerInformasjon informasjon) {
