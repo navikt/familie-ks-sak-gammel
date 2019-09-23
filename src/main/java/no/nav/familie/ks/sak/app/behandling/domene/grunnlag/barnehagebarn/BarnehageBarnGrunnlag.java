@@ -32,6 +32,11 @@ public class BarnehageBarnGrunnlag extends BaseEntitet {
         this.familieforhold = familieforhold;
     }
 
+    public BarnehageBarnGrunnlag(Long behandlingId, OppgittFamilieforhold familieforhold) {
+        this.behandlingId = behandlingId;
+        this.familieforhold = familieforhold;
+    }
+
     public OppgittFamilieforhold getFamilieforhold() {
         return familieforhold;
     }

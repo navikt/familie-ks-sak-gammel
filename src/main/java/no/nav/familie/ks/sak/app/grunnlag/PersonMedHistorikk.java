@@ -39,7 +39,7 @@ public class PersonMedHistorikk {
         }
 
         public PersonMedHistorikk build() {
-            Objects.requireNonNull(kladd.personinfo, "Må ha personinfo om søker");
+            Objects.requireNonNull(kladd.personinfo, "Må ha personinfo");
             return kladd;
         }
     }

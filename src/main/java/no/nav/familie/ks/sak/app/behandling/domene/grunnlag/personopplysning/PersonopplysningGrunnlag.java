@@ -1,6 +1,5 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning;
 
-import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 
@@ -30,11 +29,11 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
     @JoinColumn(name = "registerinformasjon_id", updatable = false)
     private PersonopplysningerInformasjon registrertePersonopplysninger;
 
-    PersonopplysningGrunnlag() {
+    public PersonopplysningGrunnlag() {
     }
 
-    PersonopplysningGrunnlag(Behandling behandling, AktørId oppgittAnnenPart, PersonopplysningerInformasjon registrertePersonopplysninger) {
-        this.behandlingId = behandling.getId();
+    public PersonopplysningGrunnlag(Long behandlingId, AktørId oppgittAnnenPart, PersonopplysningerInformasjon registrertePersonopplysninger) {
+        this.behandlingId = behandlingId;
         this.oppgittAnnenPart = oppgittAnnenPart;
         this.registrertePersonopplysninger = registrertePersonopplysninger;
     }

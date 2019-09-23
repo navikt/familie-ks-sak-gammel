@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
@@ -17,6 +18,7 @@ public class Barn extends BaseEntitet {
     @SequenceGenerator(name = "so_barn_seq")
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "familieforhold_id")
     private OppgittFamilieforhold familieforhold;
@@ -29,7 +31,7 @@ public class Barn extends BaseEntitet {
     private BarnehageplassStatus barnehageStatus;
 
     @Column(name = "barnehage_antall_timer", nullable = true, updatable = false)
-    private int barnehageAntallTimer;
+    private Double barnehageAntallTimer;
 
     @Column(name = "barnehage_dato", nullable = true, updatable = false)
     private LocalDate barnehageDato;
@@ -41,7 +43,7 @@ public class Barn extends BaseEntitet {
         // hibernate
     }
 
-    Barn(AktørId aktørId, BarnehageplassStatus barnehageStatus, int barnehageAntallTimer, LocalDate barnehageDato, String barnehageKommune) {
+    Barn(AktørId aktørId, BarnehageplassStatus barnehageStatus, Double barnehageAntallTimer, LocalDate barnehageDato, String barnehageKommune) {
         this.aktørId = aktørId;
         this.barnehageStatus = barnehageStatus;
         this.barnehageAntallTimer = barnehageAntallTimer;
@@ -57,7 +59,7 @@ public class Barn extends BaseEntitet {
         return barnehageStatus;
     }
 
-    public int getBarnehageAntallTimer() {
+    public Double getBarnehageAntallTimer() {
         return barnehageAntallTimer;
     }
 
@@ -103,7 +105,7 @@ public class Barn extends BaseEntitet {
     public static class Builder {
         private AktørId aktørId;
         private BarnehageplassStatus barnehageStatus;
-        private int barnehageAntallTimer;
+        private Double barnehageAntallTimer;
         private LocalDate barnehageDato;
         private String barnehageKommune;
 
@@ -117,7 +119,7 @@ public class Barn extends BaseEntitet {
             return this;
         }
 
-        public Builder setBarnehageAntallTimer(int barnehageAntallTimer) {
+        public Builder setBarnehageAntallTimer(double barnehageAntallTimer) {
             this.barnehageAntallTimer = barnehageAntallTimer;
             return this;
         }

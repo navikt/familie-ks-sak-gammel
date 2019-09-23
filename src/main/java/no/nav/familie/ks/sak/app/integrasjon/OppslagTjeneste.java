@@ -5,9 +5,8 @@ import no.nav.familie.http.client.HttpClientUtil;
 import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
-import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
-import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.log.mdc.MDCConstants;
@@ -31,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 public class OppslagTjeneste {
 
     private static final Logger logger = LoggerFactory.getLogger(OppslagTjeneste.class);
+    private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
     private URI oppslagServiceUri;
     private HttpClient client;
     private StsRestClient stsRestClient;
@@ -65,28 +65,14 @@ public class OppslagTjeneste {
             .build();
     }
 
-    @Deprecated
-    public TpsFakta hentTpsFakta(String søkerFnr, String annenPartFnr, String barnFnr) {
-        PersonMedHistorikk forelder = genererForelder(hentAktørId(søkerFnr));
-        Personinfo barn = hentBarnSøktFor(barnFnr);
-        PersonMedHistorikk annenForelder = genererForelder(hentAktørId(annenPartFnr));
-        return new TpsFakta.Builder()
-            .medForelder(forelder)
-            .medBarn(new PersonMedHistorikk.Builder().medInfo(barn).build())
-            .medAnnenForelder(annenForelder)
+    private HttpRequest requestMedAktørId(URI uri, String aktørId) {
+        return HttpRequest.newBuilder()
+            .uri(uri)
+            .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
+            .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
+            .header("Nav-Aktorid", aktørId)
+            .GET()
             .build();
-    }
-
-    private PersonMedHistorikk genererForelder(AktørId aktørId) {
-        return new PersonMedHistorikk.Builder()
-            .medPersonhistorikk(hentHistorikkFor(aktørId))
-            .medInfo(hentPersoninfoFor(aktørId))
-            .build();
-    }
-
-    private Personinfo hentBarnSøktFor(String fødselsnummer) {
-        var aktørId = hentAktørId(fødselsnummer);
-        return hentPersoninfoFor(aktørId);
     }
 
     public AktørId hentAktørId(String personident) {
@@ -97,9 +83,12 @@ public class OppslagTjeneste {
         logger.info("Henter aktørId fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(requestMedPersonident(uri, personident), HttpResponse.BodyHandlers.ofString());
+            secureLogger.info("Vekslet inn fnr: {} til aktørId: {}", personident, response.body());
+
             if (response.statusCode() != HttpStatus.OK.value()) {
-                logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + response.body());
-                throw new OppslagException(response.body());
+                String feilmelding = response.headers().firstValue("message").orElse("Ingen feilmelding.");
+                logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + feilmelding);
+                throw new OppslagException(feilmelding);
             } else {
                 String aktørId = mapper.readValue(response.body(), String.class);
                 if (aktørId == null || aktørId.isEmpty()) {
@@ -109,8 +98,38 @@ public class OppslagTjeneste {
                 }
             }
         } catch (IOException | InterruptedException e) {
-            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+            secureLogger.info("Ukjent feil ved oppslag mot {}. {}", uri, e.getMessage());
+            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'.");
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.");
+        }
+    }
+
+    public PersonIdent hentPersonIdent(String aktørId) {
+        if (aktørId == null || aktørId.isEmpty()) {
+            throw new OppslagException("Ved henting av personident er aktørId null eller tom");
+        }
+        URI uri = URI.create(oppslagServiceUri + "/aktoer/fraaktorid");
+        logger.info("Henter fnr fra " + oppslagServiceUri);
+        try {
+            HttpResponse<String> response = client.send(requestMedAktørId(uri, aktørId), HttpResponse.BodyHandlers.ofString());
+            secureLogger.info("Vekslet inn aktørId: {} til fnr: {}", aktørId, response.body());
+
+            if (response.statusCode() != HttpStatus.OK.value()) {
+                logger.warn("Kall mot oppslag feilet ved uthenting av fnr.");
+                secureLogger.info("Kall mot oppslag feilet ved uthenting av fnr: " + response.body());
+                throw new OppslagException(response.body());
+            } else {
+                String personIdent = response.body();
+                if (personIdent == null || personIdent.isEmpty()) {
+                    throw new OppslagException("personIdent fra oppslagstjenesten er tom");
+                } else {
+                    return new PersonIdent(personIdent);
+                }
+            }
+        } catch (IOException | InterruptedException e) {
+            secureLogger.info("Ukjent feil ved oppslag mot {}. {}", uri, e.getMessage());
+            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'.");
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.");
         }
     }
 
@@ -120,15 +139,19 @@ public class OppslagTjeneste {
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
+            secureLogger.info("Personhistorikk for {}: {}", aktørId, response.body());
+
             if (response.statusCode() != HttpStatus.OK.value()) {
-                logger.warn("Kall mot oppslag feilet ved uthenting av historikk: " + response.body());
-                throw new OppslagException(response.body());
+                String feilmelding = response.headers().firstValue("message").orElse("Ingen feilmelding.");
+                logger.warn("Kall mot oppslag feilet ved uthenting av historikk: " + feilmelding);
+                throw new OppslagException(feilmelding);
             } else {
                 return mapper.readValue(response.body(), PersonhistorikkInfo.class);
             }
         } catch (IOException | InterruptedException e) {
-            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+            secureLogger.info("Ukjent feil ved oppslag mot {}. {}", uri, e.getMessage());
+            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'.");
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.");
         }
     }
 
@@ -137,15 +160,19 @@ public class OppslagTjeneste {
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {
             HttpResponse<String> response = client.send(request(uri), HttpResponse.BodyHandlers.ofString());
+            secureLogger.info("Personinfo for {}: {}", aktørId, response.body());
+
             if (response.statusCode() != HttpStatus.OK.value()) {
-                logger.warn("Kall mot oppslag feilet ved uthenting av personinfo: " + response.body());
-                throw new OppslagException(response.body());
+                String feilmelding = response.headers().firstValue("message").orElse("Ingen feilmelding.");
+                logger.warn("Kall mot oppslag feilet ved uthenting av personinfo: " + feilmelding);
+                throw new OppslagException(feilmelding);
             } else {
                 return mapper.readValue(response.body(), Personinfo.class);
             }
         } catch (IOException | InterruptedException e) {
-            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'. " + e.getMessage());
+            secureLogger.info("Ukjent feil ved oppslag mot {}. {}", uri, e.getMessage());
+            logger.warn("Ukjent feil ved oppslag mot '" + uri + "'.");
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.");
         }
     }
 

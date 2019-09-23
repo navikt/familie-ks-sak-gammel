@@ -39,10 +39,11 @@ public class Familierelasjon {
 
     @Override
     public String toString() {
-        // tar ikke med aktørId i toString så det ikke lekkeri logger etc.
         return getClass().getSimpleName()
-                + "<relasjon=" + relasjonsrolle  //$NON-NLS-1$
-                + ", fødselsdato=" + fødselsdato //$NON-NLS-1$
-                + ">"; //$NON-NLS-1$
+                + "<aktørId=" + aktørId
+                + ", relasjon=" + relasjonsrolle
+                + ", fødselsdato=" + fødselsdato
+                + ", harSammeBosted=" + harSammeBosted
+                + ">";
     }
 }
