@@ -280,6 +280,14 @@ public final class FaktagrunnlagBuilder {
             .build();
     }
 
+    public static Faktagrunnlag familieUtenlandskStatsborgerskapMedTilknytningUtland() {
+        return new Faktagrunnlag.Builder()
+            .medTpsFakta(beggeForeldreOgBarnUtenlandskeStatsborgere)
+            .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(tilknytningUtland()))
+            .medSøknadGrunnlag(genererSøknadGrunnlag(tilknytningUtland(), morAktørId, farAktørId))
+            .build();
+    }
+
     public static Faktagrunnlag familieNorskStatsborgerskapUtenBarnehage() {
         return new Faktagrunnlag.Builder()
             .medTpsFakta(beggeForeldreOgBarnNorskStatsborger)
@@ -471,6 +479,14 @@ public final class FaktagrunnlagBuilder {
             Søknad søknad = mapper.readValue(new File(getFile("soknadGradertBarnehageplass.json")), Søknad.class);
             søknad.getFamilieforhold().setAnnenForelderFødselsnummer(annenPartFnr);
             return søknad;
+        } catch (IOException e) {
+            throw new IOError(e);
+        }
+    }
+
+    private static Søknad tilknytningUtland() {
+        try {
+            return mapper.readValue(new File(getFile("soknadTilknytningUtland.json")), Søknad.class);
         } catch (IOException e) {
             throw new IOError(e);
         }

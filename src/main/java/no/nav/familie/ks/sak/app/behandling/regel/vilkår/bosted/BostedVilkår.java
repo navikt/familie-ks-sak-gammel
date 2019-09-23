@@ -1,11 +1,12 @@
-package no.nav.familie.ks.sak.app.behandling.vilkår.barnehage;
+package no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted;
 
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Sluttpunkt;
-import no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.regel.GårIkkeIBarnehage;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted.regel.ErBarnBosattMedForeldre;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted.regel.HarRelasjonTilBeggeForeldre;
 import no.nav.fpsak.nare.Ruleset;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
@@ -13,12 +14,12 @@ import no.nav.fpsak.nare.specification.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-@RuleDocumentation(VilkårType.Constants.BARNEHAGE_KODE)
-public class BarnehageVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
+@RuleDocumentation(VilkårType.Constants.BOSTED_KODE)
+public class BostedVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
 
     @Override
     public VilkårType getVilkårType() {
-        return VilkårType.BARNEHAGE;
+        return VilkårType.BOSTED;
     }
 
     @Override
@@ -35,8 +36,11 @@ public class BarnehageVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
     @SuppressWarnings("unchecked")
     public Specification<Faktagrunnlag> getSpecification() {
         final var rs = new Ruleset<Faktagrunnlag>();
-        return rs.hvisRegel(GårIkkeIBarnehage.ID, "Vurder om barnet har barnehageplass")
-                    .hvis(new GårIkkeIBarnehage(), Sluttpunkt.oppfylt())
-                    .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.BARNEHAGEPLASS));
+        return rs.hvisRegel(HarRelasjonTilBeggeForeldre.ID, "Vurder om barnet har relasjon til begge foreldre (MVP)")
+                    .hvis(new HarRelasjonTilBeggeForeldre(),
+                        rs.hvisRegel(ErBarnBosattMedForeldre.ID, "Vurder om barnet bor sammen med foreldre")
+                            .hvis(new ErBarnBosattMedForeldre(), Sluttpunkt.oppfylt())
+                            .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_SAMMEN)))
+                    .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.IKKE_BEGGE_FORELDRE));
     }
 }

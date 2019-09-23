@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.vilkår.barnehage.regel;
+package no.nav.familie.ks.sak.app.behandling.regel.vilkår.barnehage.regel;
 
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barn;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus;

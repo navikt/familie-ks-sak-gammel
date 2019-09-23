@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.vilkår.barn.regel;
+package no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.regel;
 
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;

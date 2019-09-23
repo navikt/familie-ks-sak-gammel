@@ -2,13 +2,13 @@ package no.nav.familie.ks.sak.app.behandling.vilkår;
 
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.behandling.vilkår.medlemskap.MedlemskapsVilkår;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.MedlemskapsVilkår;
 import no.nav.fpsak.nare.evaluation.Resultat;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MedlemskapsVilkårTest {
+public class MedlemskapVilkårTest {
 
     @Test
     public void vurderer_begge_delvilkår() {
