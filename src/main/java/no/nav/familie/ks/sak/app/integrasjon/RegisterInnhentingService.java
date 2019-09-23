@@ -83,7 +83,7 @@ public class RegisterInnhentingService {
                 } else {
                     secureLogger.info("Fant annen part: {}. Oppgitt annen part fra søker: {}", annenPartPersonIdent, oppgittAnnenPartPersonIdent);
                     oppgittAnnenPartStemmerIkke.increment();
-                    logger.debug("Oppgitt annen part fra søker stemmer ikke med relasjonen vi fant på barnet fra TPS");
+                    logger.info("Oppgitt annen part fra søker stemmer ikke med relasjonen vi fant på barnet fra TPS");
                 }
             }
         } else {
