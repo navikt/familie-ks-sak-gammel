@@ -19,7 +19,6 @@ import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingResultat;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.rest.Behandling.*;
 import no.nav.familie.ks.sak.util.Ressurs;
 import org.slf4j.Logger;

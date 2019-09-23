@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.regel.mvp.utland.regel;
 
+import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørArbeidYtelseUtland;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørTilknytningUtland;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
@@ -12,6 +13,8 @@ import no.nav.familie.ks.sak.app.grunnlag.søknad.TilknytningTilUtland;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.Set;
@@ -19,6 +22,7 @@ import java.util.Set;
 @RuleDocumentation(IkkeOppgittTilknytningUtland.ID)
 public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnlag> {
 
+    private static final Logger logger = LoggerFactory.getLogger(IkkeOppgittTilknytningUtland.class);
     public static final String ID = "KS-UTL-1";
 
     public IkkeOppgittTilknytningUtland() {
@@ -41,6 +45,9 @@ public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnla
             annenPartOppfyllerKrav = ikkeTilknytningTilUtland(søker, annenPartMedHistorikk, søknad);
         }
 
+        logger.info("Søker oppfyler: {}", søkerOppfyllerKrav);
+        logger.info("Annen part oppfyler: {}", annenPartOppfyllerKrav);
+
         return søkerOppfyllerKrav && annenPartOppfyllerKrav ? ja() : nei();
     }
 
@@ -55,7 +62,8 @@ public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnla
         final Optional<AktørTilknytningUtland> aktørTilknytningTilUtlandet = aktørerTilknytningTilUtlandet.stream().filter(aktørTilknytningUtland ->
             aktørTilknytningUtland.getAktør().equals(aktør)).findFirst();
 
-
+        logger.info("TilknytningTilUtlandet: {}, {}", personMedHistorikk.getPersoninfo().getNavn(), aktørTilknytningTilUtlandet.isPresent());
+        logger.info("ArbeidYtelseUtland: {}, {}", personMedHistorikk.getPersoninfo().getNavn(), aktørArbeidYtelseUtland.isPresent());
         if (!aktørArbeidYtelseUtland.isPresent() || !aktørTilknytningTilUtlandet.isPresent()) {
             return false;
         }
