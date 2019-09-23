@@ -37,6 +37,13 @@ import java.util.*;
 import static no.nav.familie.ks.sak.util.Konvertering.konverterTilBoolean;
 
 public final class FaktagrunnlagBuilder {
+    private final static Long behandlingId = Long.valueOf("111111111");
+    private final static AktørId morAktørId = new AktørId("1300000000001");
+    private final static PersonIdent morPersonident = new PersonIdent("00000000001");
+    private final static AktørId farAktørId = new AktørId("1300000000002");
+    private final static PersonIdent farPersonident = new PersonIdent("00000000002");
+    private final static AktørId barnAktørId = new AktørId("1300000000003");
+    private final static PersonIdent barnPersonident = new PersonIdent("00000000003");
 
     public static AktørId norskPersonAktør = new AktørId("00000000001");
     public static PersonIdent norskPersonIdent = new PersonIdent("00000000001");
@@ -44,13 +51,16 @@ public final class FaktagrunnlagBuilder {
     private static AktørId utlandForelder = new AktørId("00000000002");
     private static PersonIdent utlandForelderIdent = new PersonIdent("00000000002");
 
+    private static AktørId barnNorskAktørId = new AktørId("11111111111");
+    private static PersonIdent barnNorskPersonIdent = new PersonIdent("11111111111");
+
     private static final String STATSBORGERSKAP_GYLDIG = "NOR";
     private static ObjectMapper mapper = new JacksonJsonConfig().objectMapper();
     private static Personinfo personinfoNorsk = new Personinfo.Builder()
         .medStatsborgerskap(Landkode.NORGE)
         .medFødselsdato(LocalDate.now().minusYears(30))
-        .medAktørId(norskPersonAktør)
-        .medPersonIdent(norskPersonIdent)
+        .medAktørId(morAktørId)
+        .medPersonIdent(morPersonident)
         .medAdresse("testadresse")
         .medNavn("test testesen")
         .build();
@@ -78,6 +88,11 @@ public final class FaktagrunnlagBuilder {
         .medAdresse("annen adresse")
         .medNavn("test testesen")
         .build();
+    private static Familierelasjon norskForelderRelasjonMor = new Familierelasjon(
+        personinfoNorsk.getAktørId(),
+        RelasjonsRolleType.MORA,
+        null,
+        true);
     private static Familierelasjon norskForelderRelasjon = new Familierelasjon(
         personinfoNorsk.getAktørId(),
         RelasjonsRolleType.FARA,
@@ -88,15 +103,29 @@ public final class FaktagrunnlagBuilder {
         RelasjonsRolleType.MORA,
         null,
         false);
+    private final static LocalDate barnNorskFødselsdato = LocalDate.now().minusMonths(13);
     private static PersonMedHistorikk barnNorsk = new PersonMedHistorikk.Builder().medInfo(new Personinfo.Builder()
         .medFødselsdato(LocalDate.now().minusMonths(13))
-        .medAktørId(new AktørId("12345678910"))
-        .medPersonIdent(new PersonIdent("12345678910"))
+        .medAktørId(barnNorskAktørId)
+        .medPersonIdent(barnNorskPersonIdent)
         .medStatsborgerskap(Landkode.NORGE)
         .medAdresse("testadresse")
         .medNavn("test testesen")
-        .medFamilierelasjon(new HashSet<>(Collections.singleton(norskForelderRelasjon)))
-        .build()).build();
+        .medFamilierelasjon(new HashSet<>(Collections.singleton(norskForelderRelasjonMor)))
+        .build()).medPersonhistorikk(new PersonhistorikkInfo.Builder()
+        .medAktørId(
+            barnNorskAktørId.getId())
+            .leggTil(AdressePeriode.builder()
+                .medAdresseType(AdresseType.BOSTEDSADRESSE)
+                .medAdresselinje1("Svingen")
+                .medPostnummer("0001")
+                .medPoststed("Oslo")
+                .medLand(no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Landkode.NORGE.getKode())
+                .medGyldighetsperiode(Periode.fraTilTidenesEnde(barnNorskFødselsdato))
+                .build())
+            .leggTil(new StatsborgerskapPeriode(Periode.fraTilTidenesEnde(barnNorskFødselsdato), Landkode.NORGE))
+            .build())
+        .build();
     private static PersonMedHistorikk barnUtland = new PersonMedHistorikk.Builder().medInfo(new Personinfo.Builder()
         .medFødselsdato(LocalDate.now().minusMonths(5))
         .medAktørId(new AktørId("12345678910"))
@@ -213,14 +242,6 @@ public final class FaktagrunnlagBuilder {
         .medAnnenForelder(foreldreIkkeNorskMenBoddNorge)
         .medBarn(List.of(barnNorsk))
         .build();
-
-    private final static Long behandlingId = Long.valueOf("111111111");
-    private final static AktørId morAktørId = new AktørId("1300000000001");
-    private final static PersonIdent morPersonident = new PersonIdent("00000000001");
-    private final static AktørId farAktørId = new AktørId("1300000000002");
-    private final static PersonIdent farPersonident = new PersonIdent("00000000002");
-    private final static AktørId barnAktørId = new AktørId("1300000000003");
-    private final static PersonIdent barnPersonident = new PersonIdent("00000000003");
 
     public static Optional<PersonopplysningGrunnlag> genererPersonopplysningGrunnlag(AktørId annenPartAktørId) {
         PersonopplysningGrunnlag personopplysningGrunnlag = new PersonopplysningGrunnlag(behandlingId, annenPartAktørId, new PersonopplysningerInformasjon());
@@ -394,6 +415,13 @@ public final class FaktagrunnlagBuilder {
         return søknad;
     }
 
+    public static Søknad hentSøknadUtenAnnenPart() {
+        final var søknad = utenBarnehageplassOgUtenAnnenPart();
+        søknad.getPerson().setFnr(morPersonident.getIdent());
+
+        return søknad;
+    }
+
     public static Faktagrunnlag beggeForeldreIkkeNorskStatsborgerMenBorINorge() {
         return new Faktagrunnlag.Builder()
             .medTpsFakta(beggeForeldreIkkeNorskMenBoddFemINorge)
@@ -408,6 +436,14 @@ public final class FaktagrunnlagBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(medBarnehageplass(norskPersonIdent.getIdent())))
             .medSøknadGrunnlag(genererSøknadGrunnlag(medBarnehageplass(norskPersonIdent.getIdent()), norskPersonAktør, norskPersonAktør))
             .build();
+    }
+
+    public static Søknad utenBarnehageplassOgUtenAnnenPart() {
+        try {
+            return mapper.readValue(new File(getFile("soknadUtenBarnehageplassUtenAnnenPart.json")), Søknad.class);
+        } catch (IOException e) {
+            throw new IOError(e);
+        }
     }
 
     public static Søknad utenBarnehageplass(String annenPartFnr) {

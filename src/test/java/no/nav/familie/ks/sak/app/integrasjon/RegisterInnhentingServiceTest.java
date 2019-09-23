@@ -26,6 +26,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -59,13 +60,11 @@ public class RegisterInnhentingServiceTest {
     private AktørId annenPart = tpsFakta.getAnnenForelder().getPersoninfo().getAktørId();
     private Personinfo annenPartPersoninfo = tpsFakta.getAnnenForelder().getPersoninfo();
     private PersonhistorikkInfo annenPartPersonhistorikk = tpsFakta.getAnnenForelder().getPersonhistorikkInfo();
-    private AktørId barn = tpsFakta.getBarna().get(0).getPersoninfo().getAktørId();
-    private Personinfo barnPersoninfo = tpsFakta.getBarna().get(0).getPersoninfo();
-    private PersonhistorikkInfo barnPersonhistorikk = tpsFakta.getBarna().get(0).getPersonhistorikkInfo();
 
     @Before
     public void setUp() {
-        when(oppslagTjeneste.hentPersonIdent(søkerPersoninfo.getAktørId().getId())).thenReturn(søkerPersoninfo.getPersonIdent());
+        when(oppslagTjeneste.hentPersonIdent(any())).thenReturn(søkerPersoninfo.getPersonIdent());
+
         when(oppslagTjeneste.hentAktørId(eq(søkerPersoninfo.getPersonIdent().getIdent()))).thenReturn(søker);
         when(oppslagTjeneste.hentPersoninfoFor(eq(søker))).thenReturn(søkerPersoninfo);
         when(oppslagTjeneste.hentHistorikkFor(eq(søker))).thenReturn(søkerPersonhistorikk);
@@ -74,15 +73,18 @@ public class RegisterInnhentingServiceTest {
         when(oppslagTjeneste.hentAktørId(eq(annenPartPersoninfo.getPersonIdent().getIdent()))).thenReturn(annenPart);
         when(oppslagTjeneste.hentPersoninfoFor(eq(annenPart))).thenReturn(annenPartPersoninfo);
         when(oppslagTjeneste.hentHistorikkFor(eq(annenPart))).thenReturn(annenPartPersonhistorikk);
-
-        when(oppslagTjeneste.hentPersonIdent(tpsFakta.getBarna().get(0).getPersoninfo().getAktørId().getId())).thenReturn(tpsFakta.getBarna().get(0).getPersoninfo().getPersonIdent());
-        when(oppslagTjeneste.hentAktørId(eq(tpsFakta.getBarna().get(0).getPersoninfo().getPersonIdent().getIdent()))).thenReturn(barn);
-        when(oppslagTjeneste.hentPersoninfoFor(eq(barn))).thenReturn(barnPersoninfo);
-        when(oppslagTjeneste.hentHistorikkFor(eq(barn))).thenReturn(barnPersonhistorikk);
     }
 
     @Test
     public void skal_lagre_ned_respons() {
+        AktørId barn = tpsFakta.getBarn().getPersoninfo().getAktørId();
+        Personinfo barnPersoninfo = tpsFakta.getBarn().getPersoninfo();
+        PersonhistorikkInfo barnPersonhistorikk = tpsFakta.getBarn().getPersonhistorikkInfo();
+
+        when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barn);
+        when(oppslagTjeneste.hentPersoninfoFor(eq(barn))).thenReturn(barnPersoninfo);
+        when(oppslagTjeneste.hentHistorikkFor(eq(barn))).thenReturn(barnPersonhistorikk);
+
         final var fagsak = Fagsak.opprettNy(søker, "123412341234");
         fagsakRepository.save(fagsak);
 
@@ -103,5 +105,35 @@ public class RegisterInnhentingServiceTest {
         assertThat(informasjon.getPersonopplysninger()).hasSize(3);
         assertThat(informasjon.getRelasjoner()).hasSize(6);
         assertThat(informasjon.getStatsborgerskap()).hasSize(3);
+    }
+
+    @Test
+    public void skal_lagre_ned_respons_uten_annen_part() {
+        final Faktagrunnlag faktagrunnlagUtenAnnenPart = FaktagrunnlagBuilder.aleneForelderNorskStatsborgerskapUtenBarnehage();
+        final TpsFakta tpsFaktaUtenAnnenPart = faktagrunnlagUtenAnnenPart.getTpsFakta();
+
+        AktørId barn = tpsFaktaUtenAnnenPart.getBarn().getPersoninfo().getAktørId();
+        Personinfo barnPersoninfo = tpsFaktaUtenAnnenPart.getBarn().getPersoninfo();
+        PersonhistorikkInfo barnPersonhistorikk = tpsFaktaUtenAnnenPart.getBarn().getPersonhistorikkInfo();
+
+        when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barn);
+        when(oppslagTjeneste.hentPersoninfoFor(eq(barn))).thenReturn(barnPersoninfo);
+        when(oppslagTjeneste.hentHistorikkFor(eq(barn))).thenReturn(barnPersonhistorikk);
+
+        final var fagsak = Fagsak.opprettNy(søker, "123412341234");
+        fagsakRepository.save(fagsak);
+
+        final var behandling = Behandling.forFørstegangssøknad(fagsak).build();
+        behandlingRepository.save(behandling);
+
+        tjeneste.innhentPersonopplysninger(behandling, FaktagrunnlagBuilder.hentSøknadUtenAnnenPart());
+
+        final var personopplysningGrunnlag = personopplysningService.hentHvisEksisterer(behandling);
+
+        assert personopplysningGrunnlag.isPresent();
+        final var registerVersjonOpt = personopplysningGrunnlag.get().getRegisterVersjon();
+        assertThat(registerVersjonOpt).isPresent();
+
+        assert personopplysningGrunnlag.get().getOppgittAnnenPart().isEmpty();
     }
 }

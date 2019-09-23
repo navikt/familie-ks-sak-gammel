@@ -34,7 +34,7 @@ public final class SøknadTilGrunnlagMapper {
 
 
         final var familieforhold = søknad.getFamilieforhold();
-        if (familieforhold.getAnnenForelderFødselsnummer() != null && !familieforhold.getAnnenForelderFødselsnummer().isEmpty()) {
+        if (familieforhold.getAnnenForelderFødselsnummer() != null && !familieforhold.getAnnenForelderFødselsnummer().isEmpty() && annenPartAktørId != null) {
             tilknytningUtlandSet.add(new AktørTilknytningUtland(annenPartAktørId, tilknytningTilUtland.annenForelderBoddEllerJobbetINorgeMinstFemAar, tilknytningTilUtland.annenForelderBoddEllerJobbetINorgeMinstFemAarForklaring));
             arbeidYtelseUtlandSet.add(new AktørArbeidYtelseUtland.Builder()
                 .setAktørId(annenPartAktørId)
