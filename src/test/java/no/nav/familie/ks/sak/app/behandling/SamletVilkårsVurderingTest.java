@@ -39,8 +39,8 @@ public class SamletVilkårsVurderingTest {
 
         final var alleUtfall = vurder.getResultater().stream().map(Regelresultat::getUtfallType).collect(Collectors.toList());
         assertThat(alleUtfall).hasSize(inngangsvilkår.size());
-        assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.IKKE_OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT,  UtfallType.OPPFYLT);
-        assertThat(vurder.getSamletUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.MANUELL_BEHANDLING, UtfallType.OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT,  UtfallType.OPPFYLT);
+        assertThat(vurder.getSamletUtfallType()).isEqualTo(UtfallType.MANUELL_BEHANDLING);
 
     }
 

@@ -2,6 +2,7 @@ package no.nav.familie.ks.sak;
 
 import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService;
 import no.nav.familie.ks.sak.app.behandling.ResultatService;
+import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.VurderSamletTjeneste;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
@@ -46,7 +47,7 @@ public class SaksbehandlingTest {
         when(behandlingslagerMock.nyBehandling(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
 
         Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"));
-        assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.MANUELL_BEHANDLING);
     }
 
     private String getFile(String filnavn) {

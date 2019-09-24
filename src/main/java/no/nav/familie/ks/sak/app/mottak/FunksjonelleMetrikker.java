@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak;
+package no.nav.familie.ks.sak.app.mottak;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
@@ -76,7 +76,7 @@ public class FunksjonelleMetrikker {
         }
 
         vilkårvurdering.getResultater().forEach(r -> {
-            if (r.getUtfallType().equals(UtfallType.IKKE_OPPFYLT)) {
+            if (r.getUtfallType().equals(UtfallType.MANUELL_BEHANDLING)) {
                 final Counter counter = vilkårIkkeOppfylt.get(r.getUtfallÅrsak().getKode());
                 if (counter != null) {
                     counter.increment();

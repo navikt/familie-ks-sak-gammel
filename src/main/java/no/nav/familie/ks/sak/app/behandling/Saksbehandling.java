@@ -1,7 +1,6 @@
-package no.nav.familie.ks.sak;
+package no.nav.familie.ks.sak.app.behandling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.nav.familie.ks.sak.app.behandling.*;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
@@ -10,7 +9,10 @@ import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -46,6 +48,10 @@ public class Saksbehandling {
         return behandle(tilSøknad(søknadJson));
     }
 
+    @Retryable(
+        value = { Exception.class },
+        maxAttempts = 2,
+        backoff = @Backoff(delay = 5000))
     public Vedtak behandle(Søknad søknad) {
         final Behandling behandling = behandlingslagerService.nyBehandling(søknad);
         TpsFakta tpsFakta = registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
@@ -73,7 +79,7 @@ public class Saksbehandling {
     private Vedtak fattVedtak(SamletVilkårsVurdering vilkårvurdering, Faktagrunnlag faktagrunnlag) {
         UtfallType utfallType = vilkårvurdering.getSamletUtfallType();
         switch (utfallType) {
-            case IKKE_OPPFYLT:
+            case MANUELL_BEHANDLING:
                 return new Vedtak(vilkårvurdering);
             case OPPFYLT:
                 GradertPeriode stønadperiode = fastsettPeriode(faktagrunnlag);
