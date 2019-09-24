@@ -1,10 +1,10 @@
-package no.nav.familie.ks.sak.app.rest.Behandling;
+package no.nav.familie.ks.sak.app.rest.Behandling.grunnlag.søknad;
 
 public class RestOppgittErklæring {
-    private boolean barnetHjemmeværendeOgIkkeAdoptert;
-    private boolean borSammenMedBarnet;
-    private boolean ikkeAvtaltDeltBosted;
-    private boolean barnINorgeNeste12Måneder;
+    public boolean barnetHjemmeværendeOgIkkeAdoptert;
+    public boolean borSammenMedBarnet;
+    public boolean ikkeAvtaltDeltBosted;
+    public boolean barnINorgeNeste12Måneder;
 
     public RestOppgittErklæring(boolean barnetHjemmeværendeOgIkkeAdoptert, boolean borSammenMedBarnet, boolean ikkeAvtaltDeltBosted, boolean barnINorgeNeste12Måneder) {
         this.barnetHjemmeværendeOgIkkeAdoptert = barnetHjemmeværendeOgIkkeAdoptert;

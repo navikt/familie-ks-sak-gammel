@@ -1,12 +1,12 @@
-package no.nav.familie.ks.sak.app.rest.Behandling;
+package no.nav.familie.ks.sak.app.rest.Behandling.grunnlag.søknad;
 
 import java.time.LocalDateTime;
 
 public class RestSøknad {
-    private LocalDateTime innsendtTidspunkt;
-    private RestOppgittFamilieforhold familieforhold;
-    private RestOppgittUtlandsTilknytning utlandsTilknytning;
-    private RestOppgittErklæring erklæring;
+    public LocalDateTime innsendtTidspunkt;
+    public RestOppgittFamilieforhold familieforhold;
+    public RestOppgittUtlandsTilknytning utlandsTilknytning;
+    public RestOppgittErklæring erklæring;
 
     public RestSøknad(LocalDateTime innsendtTidspunkt,
                       RestOppgittFamilieforhold familieforhold,

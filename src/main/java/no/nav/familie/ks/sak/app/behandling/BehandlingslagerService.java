@@ -11,6 +11,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barneh
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.OppgittFamilieforhold;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningerInformasjon;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittErklæring;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
@@ -19,7 +20,13 @@ import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingResultat;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.rest.Behandling.*;
+import no.nav.familie.ks.sak.app.rest.Behandling.grunnlag.personinformasjon.RestPersonopplysning;
+import no.nav.familie.ks.sak.app.rest.Behandling.grunnlag.personinformasjon.RestPersonopplysninger;
+import no.nav.familie.ks.sak.app.rest.Behandling.grunnlag.søknad.*;
+import no.nav.familie.ks.sak.app.rest.Behandling.resultat.RestBehandlingsresultat;
+import no.nav.familie.ks.sak.app.rest.Behandling.resultat.RestVilkårsResultat;
 import no.nav.familie.ks.sak.util.Ressurs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,6 +165,21 @@ public class BehandlingslagerService {
             RestSøknad søknad = new RestSøknad(søknadGrunnlag.getSøknad().getInnsendtTidspunkt(), familieforhold, oppgittUtlandsTilknytning, oppgittErklæring);
 
 
+            // Grunnlag fra TPS
+            PersonopplysningGrunnlag personopplysningGrunnlag = personopplysningRepository.finnGrunnlag(behandling.getId());
+
+            RestPersonopplysning annenPart = null;
+            Optional<AktørId> annenPartAktørId = personopplysningGrunnlag.getOppgittAnnenPart();
+            if (annenPartAktørId.isPresent()) {
+                PersonIdent annenPartPersonIdent = oppslagTjeneste.hentPersonIdent(annenPartAktørId.get().getId());
+
+                Optional<PersonopplysningerInformasjon> personopplysningerInformasjon = personopplysningGrunnlag.getRegistrertePersonopplysninger();
+            }
+
+
+            RestPersonopplysninger personopplysninger = null;
+
+
             // Grunnlag fra regelkjøring
             BehandlingResultat behandlingResultat = behandlingresultatRepository.finnBehandlingsresultat(behandling.getId());
             Set<RestVilkårsResultat> restVilkårsResultat = new HashSet<>();
@@ -169,7 +191,7 @@ public class BehandlingslagerService {
 
             RestBehandlingsresultat restBehandlingsresultat = new RestBehandlingsresultat(restVilkårsResultat, behandlingResultat.isAktiv());
 
-            restBehandlinger.add(new RestBehandling(behandling.getId(), søknad, restBehandlingsresultat));
+            restBehandlinger.add(new RestBehandling(behandling.getId(), søknad, restBehandlingsresultat, personopplysninger));
         });
 
         return fagsak.map(fagsak1 -> new RestFagsak(fagsak1, restBehandlinger)).orElse(null);
