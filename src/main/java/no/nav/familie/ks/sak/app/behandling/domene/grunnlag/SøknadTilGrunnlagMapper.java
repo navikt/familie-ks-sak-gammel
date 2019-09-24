@@ -10,6 +10,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.util.DateParser;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public final class SøknadTilGrunnlagMapper {
     public static OppgittUtlandsTilknytning mapUtenlandsTilknytning(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad, AktørId søkerAktørId, AktørId annenPartAktørId) {
@@ -48,7 +49,8 @@ public final class SøknadTilGrunnlagMapper {
         return new OppgittUtlandsTilknytning(arbeidYtelseUtlandSet, tilknytningUtlandSet);
     }
 
-    public static Barn.Builder mapSøknadBarn(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
+    public static Set<Barn> mapSøknadBarn(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
+        // TODO hent ut alle barna når barn kommer som liste fra søknadsdialogen
         final var builder = new Barn.Builder();
         final var mineBarn = søknad.getMineBarn();
         final var barnehageplass = søknad.barnehageplass;
@@ -77,6 +79,6 @@ public final class SøknadTilGrunnlagMapper {
                 break;
         }
 
-        return builder;
+        return Set.of(builder.build());
     }
 }

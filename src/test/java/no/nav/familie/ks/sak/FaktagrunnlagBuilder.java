@@ -202,6 +202,11 @@ public final class FaktagrunnlagBuilder {
         .medAnnenForelder(forelderNorsk)
         .medBarn(List.of(barnNorsk))
         .build();
+    private static TpsFakta beggeForeldreOgBarnaNorskStatsborger = new TpsFakta.Builder()
+        .medForelder(forelderNorsk)
+        .medAnnenForelder(forelderNorsk)
+        .medBarn(List.of(barnNorsk, barnNorsk))
+        .build();
     private static TpsFakta aleneForelderOgBarnNorskStatsborgerskap = new TpsFakta.Builder()
         .medForelder(forelderNorsk)
         .medBarn(List.of(barnNorsk))
@@ -263,7 +268,7 @@ public final class FaktagrunnlagBuilder {
 
     private static BarnehageBarnGrunnlag genererBarnehageBarnGrunnlag(Søknad innsendtSøknad) {
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
-        familieforholdBuilder.setBarna(Set.of(SøknadTilGrunnlagMapper.mapSøknadBarn(innsendtSøknad).build()));
+        familieforholdBuilder.setBarna(SøknadTilGrunnlagMapper.mapSøknadBarn(innsendtSøknad));
         familieforholdBuilder.setBorBeggeForeldreSammen(konverterTilBoolean(innsendtSøknad.getFamilieforhold().getBorForeldreneSammenMedBarnet()));
         return new BarnehageBarnGrunnlag(behandlingId, familieforholdBuilder.build());
     }
@@ -325,6 +330,14 @@ public final class FaktagrunnlagBuilder {
             .medTpsFakta(norskOgUtenlandskForelder)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(utenBarnehageplass(utlandForelderIdent.getIdent())))
             .medSøknadGrunnlag(genererSøknadGrunnlag(utenBarnehageplass(utlandForelderIdent.getIdent()), utlandForelder, utlandForelder))
+            .build();
+    }
+
+    public static Faktagrunnlag familieNorskStatsborgerskapMedFlereBarnUtenBarnehage() {
+        return new Faktagrunnlag.Builder()
+            .medTpsFakta(beggeForeldreOgBarnaNorskStatsborger)
+            .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(utenBarnehageplass(farPersonident.getIdent())))
+            .medSøknadGrunnlag(genererSøknadGrunnlag(utenBarnehageplass(farPersonident.getIdent()), morAktørId, farAktørId))
             .build();
     }
 
@@ -457,6 +470,16 @@ public final class FaktagrunnlagBuilder {
     public static Søknad utenBarnehageplass(String annenPartFnr) {
         try {
             Søknad søknad = mapper.readValue(new File(getFile("soknadUtenBarnehageplass.json")), Søknad.class);
+            søknad.getFamilieforhold().setAnnenForelderFødselsnummer(annenPartFnr);
+            return søknad;
+        } catch (IOException e) {
+            throw new IOError(e);
+        }
+    }
+
+    public static Søknad utenBarnehageplassFlereBarn(String annenPartFnr) {
+        try {
+            Søknad søknad = mapper.readValue(new File(getFile("soknadUtenBarnehageplassFlereBarn.json")), Søknad.class);
             søknad.getFamilieforhold().setAnnenForelderFødselsnummer(annenPartFnr);
             return søknad;
         } catch (IOException e) {

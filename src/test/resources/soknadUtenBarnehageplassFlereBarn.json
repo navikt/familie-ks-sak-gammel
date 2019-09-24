@@ -1,0 +1,68 @@
+{
+  "person": {
+    "fnr": "00000000000"
+  },
+  "veiledning": {
+    "bekreftelse": "JA"
+  },
+  "barnehageplass": {
+    "barnBarnehageplassStatus": "garIkkeIBarnehage",
+    "harBarnehageplass": "NEI",
+    "harBarnehageplassAntallTimer": "",
+    "harBarnehageplassDato": "",
+    "harBarnehageplassKommune": "",
+    "harSluttetIBarnehageAntallTimer": "",
+    "harSluttetIBarnehageDato": "",
+    "harSluttetIBarnehageKommune": "",
+    "skalBegynneIBarnehageAntallTimer": "",
+    "skalBegynneIBarnehageDato": "",
+    "skalBegynneIBarnehageKommune": "",
+    "skalSlutteIBarnehageAntallTimer": "",
+    "skalSlutteIBarnehageDato": "",
+    "skalSlutteIBarnehageKommune": ""
+  },
+  "familieforhold": {
+    "annenForelderFødselsnummer": "00000000001",
+    "annenForelderNavn": "Annen forelder",
+    "borForeldreneSammenMedBarnet": "JA"
+  },
+  "kravTilSoker": {
+    "barnIkkeHjemme": "JA",
+    "borSammenMedBarnet": "JA",
+    "ikkeAvtaltDeltBosted": "JA",
+    "skalBoMedBarnetINorgeNesteTolvMaaneder": "JA"
+  },
+  "mineBarn": {
+    "fødselsdato": "12.12.2018",
+    "fødselsnummer": "11111111111",
+    "navn": "Jakob",
+    "erFlerling": "NEI"
+  },
+  "oppsummering": {
+    "bekreftelse": "JA"
+  },
+  "tilknytningTilUtland": {
+    "annenForelderBoddEllerJobbetINorgeMinstFemAar": "jaINorge",
+    "annenForelderBoddEllerJobbetINorgeMinstFemAarForklaring": "",
+    "boddEllerJobbetINorgeMinstFemAar": "jaINorge",
+    "boddEllerJobbetINorgeMinstFemAarForklaring": ""
+  },
+  "arbeidIUtlandet": {
+    "arbeiderIUtlandetEllerKontinentalsokkel": "NEI",
+    "arbeiderIUtlandetEllerKontinentalsokkelForklaring":"",
+    "arbeiderAnnenForelderIUtlandet": "NEI",
+    "arbeiderAnnenForelderIUtlandetForklaring": ""
+  },
+  "utenlandskKontantstotte": {
+    "mottarKontantstotteFraUtlandet": "NEI",
+    "mottarKontantstotteFraUtlandetTilleggsinfo": ""
+  },
+  "utenlandskeYtelser": {
+    "mottarAnnenForelderYtelserFraUtland": "NEI",
+    "mottarAnnenForelderYtelserFraUtlandForklaring": "",
+    "mottarYtelserFraUtland": "NEI",
+    "mottarYtelserFraUtlandForklaring": ""
+  },
+  "sprak": "nb",
+  "innsendingsTidspunkt": "2018-10-10T11:23:03.181Z"
+}
