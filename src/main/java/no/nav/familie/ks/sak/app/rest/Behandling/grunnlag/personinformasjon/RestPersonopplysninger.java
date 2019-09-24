@@ -5,11 +5,11 @@ import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import java.util.List;
 
 public class RestPersonopplysninger {
-    public PersonMedHistorikk søker;
-    public List<PersonMedHistorikk> barna;
-    public PersonMedHistorikk annenPart;
+    public RestPersonopplysning søker;
+    public List<RestPersonopplysning> barna;
+    public RestPersonopplysning annenPart;
 
-    public RestPersonopplysninger(PersonMedHistorikk søker, List<PersonMedHistorikk> barna, PersonMedHistorikk annenPart) {
+    public RestPersonopplysninger(RestPersonopplysning søker, List<RestPersonopplysning> barna, RestPersonopplysning annenPart) {
         this.søker = søker;
         this.barna = barna;
         this.annenPart = annenPart;
