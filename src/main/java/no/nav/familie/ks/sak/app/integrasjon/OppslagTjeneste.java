@@ -1,7 +1,5 @@
 package no.nav.familie.ks.sak.app.integrasjon;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import no.nav.familie.http.client.HttpClientUtil;
 import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -27,14 +24,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -43,20 +35,15 @@ public class OppslagTjeneste {
     private static final Logger logger = LoggerFactory.getLogger(OppslagTjeneste.class);
     private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
     private URI oppslagServiceUri;
-    private HttpClient client;
     private StsRestClient stsRestClient;
     private RestTemplate restTemplate;
-    private ObjectMapper mapper;
 
     @Autowired
     public OppslagTjeneste(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
-                           StsRestClient stsRestClient,
-                           ObjectMapper objectMapper) {
+                           StsRestClient stsRestClient) {
         this.oppslagServiceUri = oppslagServiceUri;
         this.stsRestClient = stsRestClient;
         this.restTemplate = new RestTemplate();
-        this.mapper = objectMapper;
-        this.client = HttpClientUtil.create();
     }
 
     private <T> ResponseEntity<T> request(URI uri, Class<T> clazz) {
@@ -69,33 +56,26 @@ public class OppslagTjeneste {
         return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
-    private HttpRequest request(URI uri) {
-        return HttpRequest.newBuilder()
-            .uri(uri)
-            .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
-            .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
-            .GET()
-            .build();
+    private <T> ResponseEntity<T> requestMedPersonIdent(URI uri, String personident, Class<T> clazz) {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken());
+        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+        headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
+
+        HttpEntity httpEntity = new HttpEntity(headers);
+
+        return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
-    private HttpRequest requestMedPersonident(URI uri, String personident) {
-        return HttpRequest.newBuilder()
-            .uri(uri)
-            .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
-            .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
-            .header(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident)
-            .GET()
-            .build();
-    }
+    private <T> ResponseEntity<T> requestMedAktørId(URI uri, String aktørId, Class<T> clazz) {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken());
+        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+        headers.add("Nav-Aktorid", aktørId);
 
-    private HttpRequest requestMedAktørId(URI uri, String aktørId) {
-        return HttpRequest.newBuilder()
-            .uri(uri)
-            .header("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken())
-            .header(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID))
-            .header("Nav-Aktorid", aktørId)
-            .GET()
-            .build();
+        HttpEntity httpEntity = new HttpEntity(headers);
+
+        return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
     @Retryable(
@@ -109,22 +89,22 @@ public class OppslagTjeneste {
         URI uri = URI.create(oppslagServiceUri + "/aktoer");
         logger.info("Henter aktørId fra " + oppslagServiceUri);
         try {
-            HttpResponse<String> response = client.send(requestMedPersonident(uri, personident), HttpResponse.BodyHandlers.ofString());
-            secureLogger.info("Vekslet inn fnr: {} til aktørId: {}", personident, response.body());
+            ResponseEntity<String> response = requestMedPersonIdent(uri, personident, String.class);
+            secureLogger.info("Vekslet inn fnr: {} til aktørId: {}", personident, response.getBody());
 
-            if (response.statusCode() != HttpStatus.OK.value()) {
-                String feilmelding = response.headers().firstValue("message").orElse("Ingen feilmelding.");
-                logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + feilmelding);
-                throw new OppslagException(feilmelding);
-            } else {
-                String aktørId = mapper.readValue(response.body(), String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                String aktørId = response.getBody();
                 if (aktørId == null || aktørId.isEmpty()) {
                     throw new OppslagException("AktørId fra oppslagstjenesten er tom");
                 } else {
                     return new AktørId(aktørId);
                 }
+            } else {
+                String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
+                logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + feilmelding);
+                throw new OppslagException(feilmelding);
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
         }
     }
@@ -140,22 +120,22 @@ public class OppslagTjeneste {
         URI uri = URI.create(oppslagServiceUri + "/aktoer/fraaktorid");
         logger.info("Henter fnr fra " + oppslagServiceUri);
         try {
-            HttpResponse<String> response = client.send(requestMedAktørId(uri, aktørId), HttpResponse.BodyHandlers.ofString());
-            secureLogger.info("Vekslet inn aktørId: {} til fnr: {}", aktørId, response.body());
+            ResponseEntity<String> response = requestMedAktørId(uri, aktørId, String.class);
+            secureLogger.info("Vekslet inn aktørId: {} til fnr: {}", aktørId, response.getBody());
 
-            if (response.statusCode() != HttpStatus.OK.value()) {
-                logger.warn("Kall mot oppslag feilet ved uthenting av fnr.");
-                secureLogger.info("Kall mot oppslag feilet ved uthenting av fnr: " + response.body());
-                throw new OppslagException(response.body());
-            } else {
-                String personIdent = response.body();
+            if (response.getStatusCode().is2xxSuccessful()) {
+                String personIdent = response.getBody();
                 if (personIdent == null || personIdent.isEmpty()) {
-                    throw new OppslagException("personIdent fra oppslagstjenesten er tom");
+                    throw new OppslagException("Personident fra oppslagstjenesten er tom");
                 } else {
                     return new PersonIdent(personIdent);
                 }
+            } else {
+                String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
+                logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + feilmelding);
+                throw new OppslagException(feilmelding);
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
         }
     }
