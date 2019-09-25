@@ -2,7 +2,6 @@ package no.nav.familie.ks.sak.app.behandling;
 
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
-import no.nav.familie.ks.sak.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
@@ -20,7 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

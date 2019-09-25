@@ -10,10 +10,12 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.retry.annotation.EnableRetry;
 
 @SpringBootConfiguration
 @EnableJpaAuditing
 @ComponentScan({"no.nav.familie.ks.sak"})
+@EnableRetry
 public class ApplicationConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);

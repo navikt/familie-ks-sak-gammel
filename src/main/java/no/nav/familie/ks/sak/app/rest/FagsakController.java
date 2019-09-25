@@ -1,7 +1,7 @@
 package no.nav.familie.ks.sak.app.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.nav.familie.ks.sak.Saksbehandling;
+import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
 import no.nav.familie.ks.sak.util.Ressurs;

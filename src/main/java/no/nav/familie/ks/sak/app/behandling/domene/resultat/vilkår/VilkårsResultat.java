@@ -26,7 +26,7 @@ public class VilkårsResultat extends BaseEntitet {
         this.vilkårsResultat = vilkårsResultat.stream().peek(it -> it.setVilkårsResultat(this)).collect(Collectors.toSet());
     }
 
-    public UtfallType getSamletUtfall() {
+    UtfallType getSamletUtfall() {
         if (vilkårsResultat == null || vilkårsResultat.isEmpty()) {
             return UtfallType.IKKE_VURDERT;
         }
@@ -34,14 +34,14 @@ public class VilkårsResultat extends BaseEntitet {
         if (utfall.size() == 1) {
             return utfall.iterator().next();
         }
-        if (utfall.contains(UtfallType.IKKE_OPPFYLT)) {
-            return UtfallType.IKKE_OPPFYLT;
+        if (utfall.contains(UtfallType.IKKE_VURDERT)) {
+            return UtfallType.UAVKLART;
         }
         if (utfall.contains(UtfallType.MANUELL_BEHANDLING)) {
             return UtfallType.MANUELL_BEHANDLING;
         }
-        if (utfall.contains(UtfallType.IKKE_VURDERT)) {
-            return UtfallType.UAVKLART;
+        if (utfall.contains(UtfallType.IKKE_OPPFYLT)) {
+            return UtfallType.IKKE_OPPFYLT;
         }
         throw new IllegalStateException("Ukjent utfall :" + utfall);
     }
