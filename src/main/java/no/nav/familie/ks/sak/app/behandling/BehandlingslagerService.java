@@ -64,7 +64,7 @@ public class BehandlingslagerService {
         behandlingRepository.save(behandling);
 
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
-        for (String fnr : søknad.getMineBarn().getFødselsnummer().split("[\\?og?]+")) { //TODO splitt opp barn i søknaden helt fra frontend.
+        for (String fnr : søknad.getMineBarn().getFødselsnummer().split("(\\w*og)")) { //TODO splitt opp barn i søknaden helt fra frontend.
             barna.add(mapOgHentAktøridForBarnISøknad(søknad, fnr.trim()).build());
         }
 
