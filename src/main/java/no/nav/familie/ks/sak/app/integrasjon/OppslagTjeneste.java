@@ -40,10 +40,11 @@ public class OppslagTjeneste {
 
     @Autowired
     public OppslagTjeneste(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
+                           RestTemplate restTemplate,
                            StsRestClient stsRestClient) {
         this.oppslagServiceUri = oppslagServiceUri;
         this.stsRestClient = stsRestClient;
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = restTemplate;
     }
 
     private <T> ResponseEntity<T> request(URI uri, Class<T> clazz) {
@@ -81,7 +82,7 @@ public class OppslagTjeneste {
     @Retryable(
         value = { OppslagException.class },
         maxAttempts = 3,
-        backoff = @Backoff(delay = 1000))
+        backoff = @Backoff(delay = 5000))
     public AktørId hentAktørId(String personident) {
         if (personident == null || personident.isEmpty()) {
             throw new OppslagException("Ved henting av aktør id er personident null eller tom");
@@ -112,7 +113,7 @@ public class OppslagTjeneste {
     @Retryable(
         value = { OppslagException.class },
         maxAttempts = 3,
-        backoff = @Backoff(delay = 1000))
+        backoff = @Backoff(delay = 5000))
     PersonIdent hentPersonIdent(String aktørId) {
         if (aktørId == null || aktørId.isEmpty()) {
             throw new OppslagException("Ved henting av personident er aktørId null eller tom");
@@ -143,7 +144,7 @@ public class OppslagTjeneste {
     @Retryable(
         value = { OppslagException.class },
         maxAttempts = 3,
-        backoff = @Backoff(delay = 1000))
+        backoff = @Backoff(delay = 5000))
     public PersonhistorikkInfo hentHistorikkFor(AktørId aktørId) {
         final var iDag = LocalDate.now();
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?id=" + aktørId.getId() + "&fomDato=" + formaterDato(iDag.minusYears(6)) + "&tomDato=" + formaterDato(iDag));
@@ -167,7 +168,7 @@ public class OppslagTjeneste {
     @Retryable(
         value = { OppslagException.class },
         maxAttempts = 3,
-        backoff = @Backoff(delay = 1000))
+        backoff = @Backoff(delay = 5000))
     public Personinfo hentPersoninfoFor(AktørId aktørId) {
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/info?id=" + aktørId.getId());
         logger.info("Henter personinfo fra " + oppslagServiceUri);
