@@ -24,10 +24,14 @@ internal constructor(
 
         val ressurs: Ressurs = when (fagsakId) {
             null -> Ressurs.failure("Oppgitt fagsak id var null")
-            else -> when ( val fagsak = restFagsakService.hentRessursFagsak(fagsakId)) {
-                null -> Ressurs.failure("Fant ikke fagsak med id fagsakId")
-                else -> Ressurs.success( data = objectMapper.valueToTree(fagsak) )
-            }
+            else -> Result.runCatching { restFagsakService.hentRessursFagsak(fagsakId) }
+                .fold(
+                    onSuccess = { when(it) {
+                        null -> Ressurs.failure("Fant ikke fagsak med id fagsakId")
+                        else -> Ressurs.success( data = objectMapper.valueToTree(it) )
+                    } },
+                    onFailure = { e -> Ressurs.failure( String.format("Henting av fagsak med id {} feilet: {}", fagsakId, e.message), e) }
+                )
         }
 
         return ResponseEntity.ok(ressurs)
@@ -41,7 +45,7 @@ internal constructor(
         val ressurs: Ressurs = Result.runCatching { restFagsakService.hentFagsaker() }
             .fold(
                 onSuccess = { Ressurs.success( data = objectMapper.valueToTree(it)) },
-                onFailure = { Ressurs.failure("Henting av fagsaker feilet.") }
+                onFailure = { e -> Ressurs.failure("Henting av fagsaker feilet.", e) }
             )
 
         return ResponseEntity.ok(ressurs)

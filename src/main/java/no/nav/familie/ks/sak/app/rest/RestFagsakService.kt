@@ -4,13 +4,10 @@ import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
 import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling
 import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak
-import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.personinformasjon.RestPersonopplysning
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.personinformasjon.RestPersonopplysninger
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestAktørArbeidYtelseUtland
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestAktørTilknytningUtland
@@ -35,9 +32,7 @@ internal constructor(
         private val barnehageBarnGrunnlagRepository: BarnehageBarnGrunnlagRepository,
         private val søknadGrunnlagRepository: SøknadGrunnlagRepository,
         private val behandlingRepository: BehandlingRepository,
-        private val fagsakRepository: FagsakRepository,
-        private val personopplysningRepository: PersonopplysningRepository,
-        private val oppslagTjeneste: OppslagTjeneste) {
+        private val fagsakRepository: FagsakRepository) {
 
     fun hentRestFagsak(fagsakId: Long): RestFagsak? {
         val fagsak = fagsakRepository.findById(fagsakId)
