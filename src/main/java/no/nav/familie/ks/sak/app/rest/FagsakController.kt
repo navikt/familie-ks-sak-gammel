@@ -18,8 +18,9 @@ internal constructor(
     private val objectMapper: ObjectMapper) {
 
     @GetMapping(path = ["/fagsak/{fagsakId}"])
-    fun fagsak(@PathVariable fagsakId: Long?, principal: Principal): ResponseEntity<Ressurs> {
-        logger.info("{} henter fagsak med id {}", principal.name, fagsakId)
+    @Unprotected
+    fun fagsak(@PathVariable fagsakId: Long?, principal: Principal?): ResponseEntity<Ressurs> {
+        logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", fagsakId)
 
         val ressurs: Ressurs = when (fagsakId) {
             null -> Ressurs.failure("Oppgitt fagsak id var null")
@@ -34,8 +35,8 @@ internal constructor(
 
     @GetMapping(path = ["/fagsak"])
     @Unprotected
-    fun fagsak(principal: Principal): ResponseEntity<Ressurs> {
-        logger.info("{} henter fagsaker", principal.name)
+    fun fagsak(principal: Principal?): ResponseEntity<Ressurs> {
+        logger.info("{} henter fagsaker", principal?.name ?: "Ukjent")
 
         val ressurs: Ressurs = Result.runCatching { restFagsakService.hentFagsaker() }
             .fold(
