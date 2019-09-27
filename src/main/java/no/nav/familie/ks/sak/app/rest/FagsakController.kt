@@ -39,7 +39,7 @@ class FagsakController (
                         null -> Ressurs.failure("Fant ikke fagsak med id fagsakId")
                         else -> Ressurs.success( data = objectMapper.valueToTree(it) )
                     } },
-                    onFailure = { e -> Ressurs.failure( String.format("Henting av fagsak med id {} feilet: {}", fagsakId, e.message), e) }
+                    onFailure = { e -> Ressurs.failure( String.format("Henting av fagsak med id %s feilet: %s", fagsakId, e.message), e) }
                 )
         }
 
