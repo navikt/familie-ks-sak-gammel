@@ -1,7 +1,5 @@
 package no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonValue;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
@@ -30,13 +28,9 @@ public class VilkårResultat extends BaseEntitet {
     @Column(name = "utfall")
     private UtfallType utfall = UtfallType.IKKE_VURDERT;
 
-    @JsonIgnore
-    @Lob
     @Column(name = "regel_input", updatable = false, columnDefinition = "text")
     private String regelInput;
 
-    @JsonIgnore
-    @Lob
     @Column(name = "regel_output", updatable = false, columnDefinition = "text")
     private String regelOutput;
 

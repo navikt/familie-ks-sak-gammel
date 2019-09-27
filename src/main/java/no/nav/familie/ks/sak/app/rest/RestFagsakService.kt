@@ -25,9 +25,7 @@ import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.toRestBarn
 import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestBehandlingsresultat
 import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestVilkårsResultat
 import no.nav.familie.ks.sak.app.rest.behandling.toRestFagsak
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
@@ -39,7 +37,6 @@ class RestFagsakService (
         private val oppslagTjeneste: OppslagTjeneste,
         private val fagsakRepository: FagsakRepository) {
 
-    @Transactional
     fun hentRestFagsak(fagsakId: Long): RestFagsak? {
         val fagsak = fagsakRepository.findById(fagsakId)
         val behandlinger = behandlingRepository.finnBehandlinger(fagsakId)
@@ -93,7 +90,6 @@ class RestFagsakService (
         return fagsak.map { it.toRestFagsak(restBehandlinger, oppslagTjeneste) }.orElse(null)
     }
 
-    @Transactional
     fun hentRessursFagsak(fagsakId: Long): RestFagsak? {
         return hentRestFagsak(fagsakId)
     }
