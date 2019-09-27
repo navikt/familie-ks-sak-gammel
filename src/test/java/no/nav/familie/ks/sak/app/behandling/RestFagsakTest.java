@@ -13,6 +13,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.rest.RestFagsakService;
 import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling;
 import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak;
@@ -66,6 +67,8 @@ public class RestFagsakTest {
 
     @Before
     public void setUp() {
+        when(oppslagTjeneste.hentPersonIdent(ArgumentMatchers.any())).thenAnswer(i -> new PersonIdent(String.valueOf(i.getArguments()[0])));
+
         when(personopplysningRepository.findByBehandlingAndAktiv(any()))
             .thenReturn(
                 FaktagrunnlagBuilder.genererPersonopplysningGrunnlag(new AktørId(FaktagrunnlagBuilder.norskPersonAktør.getId()))
