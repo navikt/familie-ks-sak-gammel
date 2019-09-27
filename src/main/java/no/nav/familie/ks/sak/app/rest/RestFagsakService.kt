@@ -3,9 +3,12 @@ package no.nav.familie.ks.sak.app.rest
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlag
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository
+import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
 import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling
 import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.personinformasjon.RestPersonopplysninger
@@ -21,17 +24,18 @@ import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.toRestAktørTi
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.toRestBarn
 import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestBehandlingsresultat
 import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestVilkårsResultat
+import no.nav.familie.ks.sak.app.rest.behandling.toRestFagsak
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class RestFagsakService @Autowired
-internal constructor(
+class RestFagsakService (
         private val behandlingresultatRepository: BehandlingresultatRepository,
         private val barnehageBarnGrunnlagRepository: BarnehageBarnGrunnlagRepository,
         private val søknadGrunnlagRepository: SøknadGrunnlagRepository,
         private val behandlingRepository: BehandlingRepository,
+        private val oppslagTjeneste: OppslagTjeneste,
         private val fagsakRepository: FagsakRepository) {
 
     fun hentRestFagsak(fagsakId: Long): RestFagsak? {
@@ -41,22 +45,22 @@ internal constructor(
         // Grunnlag fra søknag
         val restBehandlinger = ArrayList<RestBehandling>()
         behandlinger.forEach { behandling ->
-            val søknadGrunnlag = søknadGrunnlagRepository.finnGrunnlag(behandling.id)
-            val barnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.id)
+            val søknadGrunnlag: SøknadGrunnlag = søknadGrunnlagRepository.finnGrunnlag(behandling.id)
+            val barnehageBarnGrunnlag: BarnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.id)
 
             val barna = HashSet<RestBarn>()
             barnehageBarnGrunnlag.familieforhold.barna.forEach { barn ->
-                barna.add( barn.toRestBarn() )
+                barna.add( barn.toRestBarn(oppslagTjeneste) )
             }
             val familieforhold = RestOppgittFamilieforhold(barna, barnehageBarnGrunnlag.familieforhold.isBorBeggeForeldreSammen)
 
             val aktørerArbeidYtelseUtland = HashSet<RestAktørArbeidYtelseUtland>()
             val aktørerTilknytningUtland = HashSet<RestAktørTilknytningUtland>()
             søknadGrunnlag.søknad.utlandsTilknytning.aktørerArbeidYtelseIUtlandet.forEach { aktørArbeidYtelseUtland ->
-                aktørerArbeidYtelseUtland.add(aktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland())
+                aktørerArbeidYtelseUtland.add(aktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland(oppslagTjeneste))
             }
             søknadGrunnlag.søknad.utlandsTilknytning.aktørerTilknytningTilUtlandet.forEach { aktørTilknytningUtland ->
-                aktørerTilknytningUtland.add( aktørTilknytningUtland.toRestAktørTilknytningUtland())
+                aktørerTilknytningUtland.add( aktørTilknytningUtland.toRestAktørTilknytningUtland(oppslagTjeneste))
             }
 
             val oppgittUtlandsTilknytning = RestOppgittUtlandsTilknytning(aktørerArbeidYtelseUtland, aktørerTilknytningUtland)
@@ -84,7 +88,7 @@ internal constructor(
             restBehandlinger.add(RestBehandling(behandling.id, søknad, restBehandlingsresultat, personopplysninger))
         }
 
-        return fagsak.map { RestFagsak(it, restBehandlinger) }.orElse(null)
+        return fagsak.map { it.toRestFagsak(restBehandlinger, oppslagTjeneste) }.orElse(null)
     }
 
     fun hentRessursFagsak(fagsakId: Long): RestFagsak? {

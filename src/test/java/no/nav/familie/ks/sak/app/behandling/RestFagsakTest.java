@@ -99,7 +99,7 @@ public class RestFagsakTest {
         assert behandling.isPresent();
         final RestFagsak restFagsak = restFagsakService.hentRestFagsak(behandling.get().getFagsak().getId());
         assertThat(restFagsak).isNotNull();
-        assertThat(restFagsak.getFagsak().getId()).isEqualTo(behandling.get().getFagsak().getId());
+        assertThat(restFagsak.getId()).isEqualTo(behandling.get().getFagsak().getId());
 
         final List<RestBehandling> restBehandlinger = restFagsak.getBehandlinger();
         assertThat(restBehandlinger).hasSize(1);

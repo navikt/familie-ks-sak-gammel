@@ -1,7 +1,15 @@
 package no.nav.familie.ks.sak.app.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.familie.ks.sak.Saksbehandling
 import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService
+import no.nav.familie.ks.sak.app.behandling.domene.Behandling
+import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository
+import no.nav.familie.ks.sak.app.behandling.domene.Fagsak
+import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository
+import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak
+import no.nav.familie.ks.sak.app.grunnlag.Søknad
+import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak
 import no.nav.security.oidc.api.Unprotected
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -12,8 +20,9 @@ import java.security.Principal
 
 @RestController
 @RequestMapping("/api")
-class FagsakController @Autowired
-internal constructor(
+class FagsakController (
+    private val saksbehandling: Saksbehandling,
+    private val behandlingRepository: BehandlingRepository,
     private val restFagsakService: RestFagsakService,
     private val objectMapper: ObjectMapper) {
 
@@ -47,6 +56,29 @@ internal constructor(
                 onSuccess = { Ressurs.success( data = objectMapper.valueToTree(it)) },
                 onFailure = { e -> Ressurs.failure("Henting av fagsaker feilet.", e) }
             )
+
+        return ResponseEntity.ok(ressurs)
+    }
+    
+    @PostMapping(path = ["/behandle"])
+    @Unprotected
+    fun behandle(@RequestBody søknad: Søknad): ResponseEntity<Ressurs> {
+        val behandling: Behandling? = Result.runCatching {
+            val vedtak: Vedtak = saksbehandling.behandle(søknad)
+            behandlingRepository.getOne(vedtak.behandlingsId)
+        }.fold(
+            onSuccess = { it },
+            onFailure = { null }
+        )
+
+        val ressurs: Ressurs = when(behandling) {
+            null -> Ressurs.failure("Behandling feilet")
+            else -> Result.runCatching { restFagsakService.hentRessursFagsak(behandling.fagsak.id) }
+                    .fold(
+                            onSuccess = { Ressurs.success( data = objectMapper.valueToTree(it)) },
+                            onFailure = { e -> Ressurs.failure("Henting av fagsak feilet.", e) }
+                    )
+        }
 
         return ResponseEntity.ok(ressurs)
     }

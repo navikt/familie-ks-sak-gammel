@@ -2,10 +2,11 @@ package no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad
 
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørArbeidYtelseUtland
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt
-import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId
+import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent
 
 data class RestAktørArbeidYtelseUtland(
-    val aktørId: AktørId,
+    val personIdent: PersonIdent,
     val arbeidIUtlandet: Standpunkt,
     val arbeidIUtlandetForklaring: String,
     val ytelseIUtlandet: Standpunkt,
@@ -13,8 +14,8 @@ data class RestAktørArbeidYtelseUtland(
     val kontantstøtteIUtlandet: Standpunkt = Standpunkt.UBESVART,
     val kontantstøtteIUtlandetForklaring: String? = null)
 
-fun AktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland() = RestAktørArbeidYtelseUtland(
-    aktørId = this.aktørId,
+fun AktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland(oppslagTjeneste: OppslagTjeneste) = RestAktørArbeidYtelseUtland(
+    personIdent = oppslagTjeneste.hentPersonIdent(this.aktørId.id),
     arbeidIUtlandet = this.arbeidIUtlandet,
     arbeidIUtlandetForklaring = this.arbeidIUtlandetForklaring,
     ytelseIUtlandet = this.ytelseIUtlandet,
