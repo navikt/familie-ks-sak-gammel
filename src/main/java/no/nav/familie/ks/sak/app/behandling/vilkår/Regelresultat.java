@@ -8,8 +8,9 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårUtfallÅrsak;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
+import no.nav.fpsak.nare.evaluation.AggregatedEvaluation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
-import no.nav.fpsak.nare.evaluation.Resultat;
+import no.nav.fpsak.nare.evaluation.node.SingleEvaluation;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSerializer;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSummary;
 
@@ -31,26 +32,16 @@ public class Regelresultat {
     }
 
     public UtfallType getUtfallType() {
-        Collection<Evaluation> leafEvaluations = evaluationSummary.leafEvaluations();
-        for (Evaluation ev : leafEvaluations) {
-            if (ev.getOutcome() != null) {
-                Resultat res = ev.result();
-                switch (res) {
-                    case JA:
-                        return UtfallType.OPPFYLT;
-                    case NEI:
-                        return UtfallType.MANUELL_BEHANDLING;
-                    case IKKE_VURDERT:
-                        return UtfallType.IKKE_VURDERT;
-                    default:
-                        throw new IllegalArgumentException("Ukjent Resultat:" + res + " ved evaluering av:" + ev);
-                }
-            } else {
+        switch (evaluation.result()) {
+            case JA:
                 return UtfallType.OPPFYLT;
-            }
+            case NEI:
+                return UtfallType.MANUELL_BEHANDLING;
+            case IKKE_VURDERT:
+                return UtfallType.IKKE_VURDERT;
+            default:
+                throw new IllegalArgumentException("Ukjent Resultat:" + evaluation.result() + " ved evaluering av:" + evaluation);
         }
-
-        throw new IllegalArgumentException("leafEvaluations.isEmpty():" + leafEvaluations);
     }
 
     public String getInputJson() {
@@ -66,11 +57,15 @@ public class Regelresultat {
     }
 
     public VilkårUtfallÅrsak getUtfallÅrsak() {
-        Collection<Evaluation> leafEvaluations = evaluationSummary.leafEvaluations();
-        for (Evaluation ev : leafEvaluations) {
-            if (ev.getOutcome() != null) {
-                return (VilkårUtfallÅrsak) ev.getOutcome();
+        if (evaluation instanceof AggregatedEvaluation) {
+            Collection<Evaluation> leafEvaluations = evaluationSummary.leafEvaluations();
+            for (Evaluation ev : leafEvaluations) {
+                if (ev.getOutcome() != null) {
+                    return (VilkårUtfallÅrsak) ev.getOutcome();
+                }
             }
+        } else if (evaluation instanceof SingleEvaluation) {
+            return (VilkårUtfallÅrsak) evaluation.getOutcome();
         }
 
         throw new IllegalStateException("Utfall mangler årsak. LeafSpesification er ikke riktig definert.");
