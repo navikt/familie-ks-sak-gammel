@@ -12,9 +12,6 @@ import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
 import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling
 import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.personinformasjon.RestPersonopplysninger
-import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestAktørArbeidYtelseUtland
-import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestAktørTilknytningUtland
-import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestBarn
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestOppgittErklæring
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestOppgittFamilieforhold
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestOppgittUtlandsTilknytning
@@ -26,7 +23,6 @@ import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestBehandlingsresulta
 import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestVilkårsResultat
 import no.nav.familie.ks.sak.app.rest.behandling.toRestFagsak
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class RestFagsakService (
@@ -42,24 +38,20 @@ class RestFagsakService (
         val behandlinger = behandlingRepository.finnBehandlinger(fagsakId)
 
         // Grunnlag fra søknag
-        val restBehandlinger = ArrayList<RestBehandling>()
-        behandlinger.forEach { behandling ->
+        val restBehandlinger: List<RestBehandling> = behandlinger.map { behandling ->
             val søknadGrunnlag: SøknadGrunnlag = søknadGrunnlagRepository.finnGrunnlag(behandling.id)
             val barnehageBarnGrunnlag: BarnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.id)
 
-            val barna = HashSet<RestBarn>()
-            barnehageBarnGrunnlag.familieforhold.barna.forEach { barn ->
-                barna.add( barn.toRestBarn(oppslagTjeneste) )
+            val barna = barnehageBarnGrunnlag.familieforhold.barna.map { barn ->
+                barn.toRestBarn(oppslagTjeneste)
             }
             val familieforhold = RestOppgittFamilieforhold(barna, barnehageBarnGrunnlag.familieforhold.isBorBeggeForeldreSammen)
 
-            val aktørerArbeidYtelseUtland = HashSet<RestAktørArbeidYtelseUtland>()
-            val aktørerTilknytningUtland = HashSet<RestAktørTilknytningUtland>()
-            søknadGrunnlag.søknad.utlandsTilknytning.aktørerArbeidYtelseIUtlandet.forEach { aktørArbeidYtelseUtland ->
-                aktørerArbeidYtelseUtland.add(aktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland(oppslagTjeneste))
+            val aktørerArbeidYtelseUtland = søknadGrunnlag.søknad.utlandsTilknytning.aktørerArbeidYtelseIUtlandet.map { aktørArbeidYtelseUtland ->
+                aktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland(oppslagTjeneste)
             }
-            søknadGrunnlag.søknad.utlandsTilknytning.aktørerTilknytningTilUtlandet.forEach { aktørTilknytningUtland ->
-                aktørerTilknytningUtland.add( aktørTilknytningUtland.toRestAktørTilknytningUtland(oppslagTjeneste))
+            val aktørerTilknytningUtland = søknadGrunnlag.søknad.utlandsTilknytning.aktørerTilknytningTilUtlandet.map { aktørTilknytningUtland ->
+                aktørTilknytningUtland.toRestAktørTilknytningUtland(oppslagTjeneste)
             }
 
             val oppgittUtlandsTilknytning = RestOppgittUtlandsTilknytning(aktørerArbeidYtelseUtland, aktørerTilknytningUtland)
@@ -74,17 +66,13 @@ class RestFagsakService (
 
             // Grunnlag fra regelkjøring
             val behandlingResultat = behandlingresultatRepository.finnBehandlingsresultat(behandling.id)
-            val restVilkårsResultat = HashSet<RestVilkårsResultat>()
-            behandlingResultat.vilkårsResultat.vilkårsResultat.forEach { vilkårResultat ->
-                restVilkårsResultat.add(
-                        RestVilkårsResultat(
-                                vilkårResultat.vilkårType,
-                                vilkårResultat.utfall))
+            val restVilkårsResultat = behandlingResultat.vilkårsResultat.vilkårsResultat.map { vilkårResultat ->
+                RestVilkårsResultat(vilkårResultat.vilkårType, vilkårResultat.utfall)
             }
 
             val restBehandlingsresultat = RestBehandlingsresultat(restVilkårsResultat, behandlingResultat.isAktiv)
 
-            restBehandlinger.add(RestBehandling(behandling.id, søknad, restBehandlingsresultat, personopplysninger))
+            RestBehandling(behandling.id, søknad, restBehandlingsresultat, personopplysninger)
         }
 
         return fagsak.map { it.toRestFagsak(restBehandlinger, oppslagTjeneste) }.orElse(null)
