@@ -2,8 +2,7 @@ package no.nav.familie.ks.sak.app.mottak;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
-import no.nav.familie.ks.sak.FunksjonelleMetrikker;
-import no.nav.familie.ks.sak.Saksbehandling;
+import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.Søknad;
@@ -50,11 +49,13 @@ public class MottaSøknadController {
             } else {
                 log.info("Søknad kan ikke behandles automatisk. Årsak={}", vilkårvurdering.getResultater());
             }
+
+            return new ResponseEntity(HttpStatus.OK);
         } catch (Exception e) {
             log.error("behandling feilet", e);
             feiledeBehandlinger.increment();
-        }
 
-        return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

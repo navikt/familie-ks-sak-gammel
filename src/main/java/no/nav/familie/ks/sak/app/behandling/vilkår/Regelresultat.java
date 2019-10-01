@@ -39,7 +39,7 @@ public class Regelresultat {
                     case JA:
                         return UtfallType.OPPFYLT;
                     case NEI:
-                        return UtfallType.IKKE_OPPFYLT;
+                        return UtfallType.MANUELL_BEHANDLING;
                     case IKKE_VURDERT:
                         return UtfallType.IKKE_VURDERT;
                     default:

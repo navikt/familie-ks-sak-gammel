@@ -1,21 +1,22 @@
 package no.nav.familie.ks.sak.app.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.familie.ks.sak.Saksbehandling
 import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService
+import no.nav.familie.ks.sak.app.behandling.Saksbehandling
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository
-import no.nav.familie.ks.sak.app.behandling.domene.Fagsak
-import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak
 import no.nav.familie.ks.sak.app.grunnlag.Søknad
-import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak
 import no.nav.security.oidc.api.Unprotected
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
 
 @RestController

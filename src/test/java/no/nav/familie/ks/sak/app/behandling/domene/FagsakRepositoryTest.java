@@ -3,7 +3,7 @@ package no.nav.familie.ks.sak.app.behandling.domene;
 import no.nav.familie.ks.sak.ApplicationTestPropertyValues;
 import no.nav.familie.ks.sak.DevLauncher;
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
-import no.nav.familie.ks.sak.Saksbehandling;
+import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;

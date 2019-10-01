@@ -54,7 +54,7 @@ public class SamletVilkårsVurdering {
         if (utfall.size() == 1) {
             return utfall.get(0);
         } else {
-            return UtfallType.IKKE_OPPFYLT;
+            return UtfallType.MANUELL_BEHANDLING;
         }
     }
 }
