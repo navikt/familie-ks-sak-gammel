@@ -10,7 +10,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barneh
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.OppgittFamilieforhold;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlag;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittErklæring;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
@@ -41,7 +41,7 @@ public class BehandlingslagerService {
     private BehandlingresultatRepository behandlingresultatRepository;
     private SøknadGrunnlagRepository søknadGrunnlagRepository;
     private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
-    private PersonopplysningRepository personopplysningRepository;
+    private PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository;
     private OppslagTjeneste oppslagTjeneste;
     private ObjectMapper objectMapper;
 
@@ -51,7 +51,7 @@ public class BehandlingslagerService {
                                    BehandlingresultatRepository behandlingresultatRepository,
                                    SøknadGrunnlagRepository søknadGrunnlagRepository,
                                    BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository,
-                                   PersonopplysningRepository personopplysningRepository,
+                                   PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository,
                                    OppslagTjeneste oppslag,
                                    ObjectMapper objectMapper) {
         this.fagsakRepository = fagsakRepository;
@@ -59,7 +59,7 @@ public class BehandlingslagerService {
         this.behandlingresultatRepository = behandlingresultatRepository;
         this.søknadGrunnlagRepository = søknadGrunnlagRepository;
         this.barnehageBarnGrunnlagRepository = barnehageBarnGrunnlagRepository;
-        this.personopplysningRepository = personopplysningRepository;
+        this.personopplysningGrunnlagRepository = personopplysningGrunnlagRepository;
         this.oppslagTjeneste = oppslag;
         this.objectMapper = objectMapper;
     }
@@ -91,7 +91,7 @@ public class BehandlingslagerService {
         AktørId oppgittAnnenPartAktørId = null;
 
         if (familieforhold.getAnnenForelderFødselsnummer() != null && !familieforhold.getAnnenForelderFødselsnummer().isEmpty()) {
-            Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningRepository.findByBehandlingAndAktiv(behandling.getId());
+            Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningGrunnlagRepository.findByBehandlingAndAktiv(behandling.getId());
             if (personopplysningGrunnlag.isPresent()) {
                 Optional<AktørId> oppgittAnnenPart = personopplysningGrunnlag.get().getOppgittAnnenPart();
                 if (oppgittAnnenPart.isPresent()) {

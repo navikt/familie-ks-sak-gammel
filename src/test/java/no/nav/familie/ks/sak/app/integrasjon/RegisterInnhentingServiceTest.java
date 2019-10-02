@@ -7,6 +7,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.Person;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningService;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
@@ -96,15 +97,17 @@ public class RegisterInnhentingServiceTest {
         final var personopplysningGrunnlag = personopplysningService.hentHvisEksisterer(behandling);
 
         assert personopplysningGrunnlag.isPresent();
-        final var registerVersjonOpt = personopplysningGrunnlag.get().getRegisterVersjon();
+        final var registerVersjonOpt = personopplysningGrunnlag.get().getRegistrertePersoner();
         assertThat(registerVersjonOpt).isPresent();
 
         final var informasjon = registerVersjonOpt.get();
+        for (Person person : registerVersjonOpt.get()) {
+            assertThat(person.getAdresser()).hasSize(1);
+            assertThat(person.getRelasjoner()).hasSize(2);
+            assertThat(person.getStatsborgerskapHistorikk()).hasSize(1);
+        }
 
-        assertThat(informasjon.getAdresser()).hasSize(3);
-        assertThat(informasjon.getPersonopplysninger()).hasSize(3);
-        assertThat(informasjon.getRelasjoner()).hasSize(6);
-        assertThat(informasjon.getStatsborgerskap()).hasSize(3);
+
     }
 
     @Test
@@ -131,7 +134,7 @@ public class RegisterInnhentingServiceTest {
         final var personopplysningGrunnlag = personopplysningService.hentHvisEksisterer(behandling);
 
         assert personopplysningGrunnlag.isPresent();
-        final var registerVersjonOpt = personopplysningGrunnlag.get().getRegisterVersjon();
+        final var registerVersjonOpt = personopplysningGrunnlag.get().getRegistrertePersoner();
         assertThat(registerVersjonOpt).isPresent();
 
         assert personopplysningGrunnlag.get().getOppgittAnnenPart().isEmpty();

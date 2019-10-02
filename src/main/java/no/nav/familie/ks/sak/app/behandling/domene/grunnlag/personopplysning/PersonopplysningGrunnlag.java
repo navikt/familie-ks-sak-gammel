@@ -4,6 +4,8 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -25,17 +27,18 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
     @Column(name = "aktiv", nullable = false)
     private Boolean aktiv = true;
 
-    @ManyToOne
-    @JoinColumn(name = "registerinformasjon_id", updatable = false)
-    private PersonopplysningerInformasjon registrertePersonopplysninger;
+    @OneToMany(mappedBy = "personopplysningGrunnlag", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    private List<Person> personer = new ArrayList<>();
 
     public PersonopplysningGrunnlag() {
     }
-
-    public PersonopplysningGrunnlag(Long behandlingId, AktørId oppgittAnnenPart, PersonopplysningerInformasjon registrertePersonopplysninger) {
+    public PersonopplysningGrunnlag(Long behandlingId) {
         this.behandlingId = behandlingId;
-        this.oppgittAnnenPart = oppgittAnnenPart;
-        this.registrertePersonopplysninger = registrertePersonopplysninger;
+    }
+
+    public PersonopplysningGrunnlag(Long behandlingId, List<Person> personer) {
+        this.behandlingId = behandlingId;
+        this.personer = personer;
     }
 
     /**
@@ -56,14 +59,28 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
     }
 
 
-    public Optional<PersonopplysningerInformasjon> getRegisterVersjon() {
-        return Optional.ofNullable(registrertePersonopplysninger);
+    public Optional<List<Person>> getRegistrertePersoner() {
+        return Optional.ofNullable(personer);
     }
 
     public Optional<AktørId> getOppgittAnnenPart() {
         return Optional.ofNullable(oppgittAnnenPart);
     }
 
+
+    public void leggTilPerson(Person person) {
+        person.setPersonopplysningGrunnlag(this);
+        personer.add(person);
+    }
+
+    public Person getPerson(PersonType personType) {
+        for (Person p : personer) {
+            if (p.getType().equals(personType)){
+                return p;
+            }
+        }
+        return null;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,12 +88,12 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
         PersonopplysningGrunnlag that = (PersonopplysningGrunnlag) o;
         return Objects.equals(behandlingId, that.behandlingId) &&
             Objects.equals(oppgittAnnenPart, that.oppgittAnnenPart) &&
-            Objects.equals(registrertePersonopplysninger, that.registrertePersonopplysninger);
+            Objects.equals(personer, that.personer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(behandlingId, oppgittAnnenPart, registrertePersonopplysninger);
+        return Objects.hash(behandlingId, oppgittAnnenPart, personer);
     }
 
     @Override
@@ -85,7 +102,6 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
         sb.append("id=").append(id);
         sb.append(", søknadAnnenPart=").append(oppgittAnnenPart);
         sb.append(", aktiv=").append(aktiv);
-        sb.append(", registrertePersonopplysninger=").append(registrertePersonopplysninger);
         sb.append('}');
         return sb.toString();
     }

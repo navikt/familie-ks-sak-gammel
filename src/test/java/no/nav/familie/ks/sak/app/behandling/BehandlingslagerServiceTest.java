@@ -6,7 +6,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
@@ -63,7 +63,7 @@ public class BehandlingslagerServiceTest {
     private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
 
     @MockBean
-    private PersonopplysningRepository personopplysningRepository;
+    private PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository;
 
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
 
@@ -72,7 +72,7 @@ public class BehandlingslagerServiceTest {
 
     @Before
     public void setUp() {
-        when(personopplysningRepository.findByBehandlingAndAktiv(any()))
+        when(personopplysningGrunnlagRepository.findByBehandlingAndAktiv(any()))
             .thenReturn(
                 FaktagrunnlagBuilder.genererPersonopplysningGrunnlag(new AktørId(FaktagrunnlagBuilder.norskPersonAktør.getId()))
             );
@@ -111,8 +111,8 @@ public class BehandlingslagerServiceTest {
         final var erklæring = søknad1.getErklæring();
         assertThat(erklæring).isNotNull();
         assertThat(søknad1.getUtlandsTilknytning()).isNotNull();
-        assertThat(søknad1.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet()).hasSize(2);
-        assertThat(søknad1.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet()).hasSize(2);
+        assertThat(søknad1.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet()).hasSize(1);
+        assertThat(søknad1.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet()).hasSize(1);
         final var barnehageBarnGrunnlagList = barnehageBarnGrunnlagRepository.findAll();
         assertThat(barnehageBarnGrunnlagList).hasSize(1);
         assertThat(barnehageBarnGrunnlagList.get(0).getFamilieforhold()).isNotNull();

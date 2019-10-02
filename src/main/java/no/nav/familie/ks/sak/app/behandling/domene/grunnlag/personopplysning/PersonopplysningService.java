@@ -5,19 +5,20 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PersonopplysningService {
 
-    private PersonopplysningRepository personopplysningRepository;
-    private PersonopplysningInformasjonRepository informasjonRepository;
+    private PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository;
+    private PersonRepository personRepository;
 
     @Autowired
-    public PersonopplysningService(PersonopplysningRepository personopplysningRepository,
-                                   PersonopplysningInformasjonRepository informasjonRepository) {
-        this.personopplysningRepository = personopplysningRepository;
-        this.informasjonRepository = informasjonRepository;
+    public PersonopplysningService(PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository,
+                                   PersonRepository informasjonRepository) {
+        this.personopplysningGrunnlagRepository = personopplysningGrunnlagRepository;
+        this.personRepository = informasjonRepository;
     }
 
     /**
@@ -27,33 +28,28 @@ public class PersonopplysningService {
      * @return grunnlaget
      */
     public Optional<PersonopplysningGrunnlag> hentHvisEksisterer(Behandling behandling) {
-        return personopplysningRepository.findByBehandlingAndAktiv(behandling.getId());
+        return personopplysningGrunnlagRepository.findByBehandlingAndAktiv(behandling.getId());
     }
 
-    public void lagre(Behandling behandling, PersonopplysningerInformasjon informasjon, AktørId oppgitAnnenPartAktørId) {
+    public void lagre(Behandling behandling, PersonopplysningGrunnlag personopplysningGrunnlag) {
         final var aktivtGrunnlag = hentHvisEksisterer(behandling);
         aktivtGrunnlag.ifPresent(gr -> {
             gr.setAktiv(false);
-            personopplysningRepository.saveAndFlush(gr);
+            personopplysningGrunnlagRepository.saveAndFlush(gr);
         });
-        final var oppgittAnnenPart = aktivtGrunnlag.flatMap(PersonopplysningGrunnlag::getOppgittAnnenPart).orElse(oppgitAnnenPartAktørId);
-        final var nyttGrunnlag = new PersonopplysningGrunnlag(behandling.getId(), oppgittAnnenPart, informasjon);
-        informasjonRepository.save(informasjon);
-        personopplysningRepository.save(nyttGrunnlag);
+
+        personopplysningGrunnlagRepository.save(personopplysningGrunnlag);
     }
 
 
-    public void lagre(Behandling behandling, AktørId annenPart) {
+    public void lagre(Behandling behandling) {
         final var aktivtGrunnlag = hentHvisEksisterer(behandling);
         aktivtGrunnlag.ifPresent(gr -> {
             gr.setAktiv(false);
-            personopplysningRepository.saveAndFlush(gr);
+            personopplysningGrunnlagRepository.saveAndFlush(gr);
         });
-        final var informasjon = aktivtGrunnlag.flatMap(PersonopplysningGrunnlag::getRegisterVersjon).orElse(null);
-        final var nyttGrunnlag = new PersonopplysningGrunnlag(behandling.getId(), annenPart, informasjon);
-        if (informasjon != null) {
-            informasjonRepository.save(informasjon);
-        }
-        personopplysningRepository.save(nyttGrunnlag);
+        final var registrertePersoner = aktivtGrunnlag.flatMap(PersonopplysningGrunnlag::getRegistrertePersoner).orElse(null);
+        final var nyttGrunnlag = new PersonopplysningGrunnlag(behandling.getId(), registrertePersoner);
+        personopplysningGrunnlagRepository.save(nyttGrunnlag);
     }
 }
