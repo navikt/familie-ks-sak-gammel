@@ -28,8 +28,8 @@ public class Statsborgerskap extends BaseEntitet {
     private Landkode statsborgerskap = Landkode.UDEFINERT;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "po_informasjon_id", nullable = false, updatable = false)
-    private PersonopplysningerInformasjon personopplysningInformasjon;
+    @JoinColumn(name = "fk_po_person_id", nullable = false, updatable = false)
+    private Person person;
 
     Statsborgerskap() {
     }
@@ -49,8 +49,8 @@ public class Statsborgerskap extends BaseEntitet {
         this.statsborgerskap = statsborgerskap;
     }
 
-    void setPersonopplysningInformasjon(PersonopplysningerInformasjon personopplysningInformasjon) {
-        this.personopplysningInformasjon = personopplysningInformasjon;
+    void setPerson(Person person) {
+        this.person = person;
     }
 
     public AktørId getAktørId() {

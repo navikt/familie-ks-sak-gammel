@@ -31,8 +31,8 @@ public class PersonRelasjon extends BaseEntitet {
     private Boolean harSammeBosted;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "po_informasjon_id", nullable = false, updatable = false)
-    private PersonopplysningerInformasjon personopplysningInformasjon;
+    @JoinColumn(name = "fk_po_person_id", nullable = false, updatable = false)
+    private Person person;
 
     PersonRelasjon() {
     }
@@ -51,8 +51,8 @@ public class PersonRelasjon extends BaseEntitet {
         this.harSammeBosted = harSammeBosted;
     }
 
-    void setPersonopplysningInformasjon(PersonopplysningerInformasjon personopplysningInformasjon) {
-        this.personopplysningInformasjon = personopplysningInformasjon;
+    void setPerson(Person person) {
+        this.person = person;
     }
 
     public AktørId getFraAktørId() {

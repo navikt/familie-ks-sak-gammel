@@ -10,7 +10,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barneh
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.OppgittFamilieforhold;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlag;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittErklæring;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class BehandlingslagerService {
@@ -31,7 +32,7 @@ public class BehandlingslagerService {
     private BehandlingRepository behandlingRepository;
     private SøknadGrunnlagRepository søknadGrunnlagRepository;
     private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
-    private PersonopplysningRepository personopplysningRepository;
+    private PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository;
     private OppslagTjeneste oppslagTjeneste;
 
     @Autowired
@@ -39,13 +40,13 @@ public class BehandlingslagerService {
                                    BehandlingRepository behandlingRepository,
                                    SøknadGrunnlagRepository søknadGrunnlagRepository,
                                    BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository,
-                                   PersonopplysningRepository personopplysningRepository,
+                                   PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository,
                                    OppslagTjeneste oppslag) {
         this.fagsakRepository = fagsakRepository;
         this.behandlingRepository = behandlingRepository;
         this.søknadGrunnlagRepository = søknadGrunnlagRepository;
         this.barnehageBarnGrunnlagRepository = barnehageBarnGrunnlagRepository;
-        this.personopplysningRepository = personopplysningRepository;
+        this.personopplysningGrunnlagRepository = personopplysningGrunnlagRepository;
         this.oppslagTjeneste = oppslag;
     }
 
@@ -76,7 +77,7 @@ public class BehandlingslagerService {
         AktørId oppgittAnnenPartAktørId = null;
 
         if (oppgittAnnenPartFødselsnummer != null && !oppgittAnnenPartFødselsnummer.isEmpty()) {
-            Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningRepository.findByBehandlingAndAktiv(behandling.getId());
+            Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningGrunnlagRepository.findByBehandlingAndAktiv(behandling.getId());
             if (personopplysningGrunnlag.isPresent()) {
                 Optional<AktørId> oppgittAnnenPart = personopplysningGrunnlag.get().getOppgittAnnenPart();
                 if (oppgittAnnenPart.isPresent()) {

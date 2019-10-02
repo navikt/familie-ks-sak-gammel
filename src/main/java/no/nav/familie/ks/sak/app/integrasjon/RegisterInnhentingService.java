@@ -46,13 +46,14 @@ public class RegisterInnhentingService {
         final var oppgittAnnenPartPersonIdent = søknad.getOppgittAnnenPartFødselsnummer();
         // TODO skriv om når vi støtter flerlinger
         final var barnAktørId = oppslagTjeneste.hentAktørId(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer());
-        final var personopplysningerInformasjon = new PersonopplysningerInformasjon();
+        final var personopplysningGrunnlag = new PersonopplysningGrunnlag(behandling.getId());
 
         final PersonMedHistorikk søkerPersonMedHistorikk = hentPersonMedHistorikk(søkerAktørId);
         final PersonMedHistorikk barnPersonMedHistorikk = hentPersonMedHistorikk(barnAktørId);
 
-        mapPersonopplysninger(søkerAktørId, søkerPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
-        mapPersonopplysninger(barnAktørId, barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
+        mapPersonopplysninger(søkerAktørId, søkerPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag, PersonType.SØKER);
+        //TODO legg til støtte for flere barn!
+        mapPersonopplysninger(barnAktørId, barnPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag, PersonType.BARN);
 
         PersonMedHistorikk annenPartPersonMedHistorikk = null;
         final Optional<Familierelasjon> annenPartFamilierelasjon = barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
@@ -67,9 +68,10 @@ public class RegisterInnhentingService {
             annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartAktørId);
             String annenPartPersonIdent = oppslagTjeneste.hentPersonIdent(annenPartAktørId.getId()).getIdent();
 
-            personopplysningService.lagre(behandling, annenPartAktørId);
-            mapPersonopplysninger(annenPartAktørId, annenPartPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
-            mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
+            mapPersonopplysninger(annenPartAktørId, annenPartPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag, PersonType.MEDSØKER);
+
+            //TODO legg til støtte for flere barn
+            mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag);
 
             if (oppgittAnnenPartPersonIdent != null && !oppgittAnnenPartPersonIdent.isEmpty()) {
                 if (annenPartPersonIdent.regionMatches(0, oppgittAnnenPartPersonIdent, 0, 6)) {
@@ -87,14 +89,14 @@ public class RegisterInnhentingService {
         } else {
             secureLogger.info("Fant ikke annen part i listen over relasjoner til barnet: {}", barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner());
             oppgittAnnenPartIkkeFunnetITps.increment();
-            mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), null, barnPersonMedHistorikk.getPersoninfo(), personopplysningerInformasjon);
+            mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), null, barnPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag);
         }
 
         if (oppgittAnnenPartPersonIdent == null || oppgittAnnenPartPersonIdent.isEmpty()) {
             oppgittAnnenPartIkkeOppgitt.increment();
         }
 
-        personopplysningService.lagre(behandling, personopplysningerInformasjon, annenPartAktørId);
+        personopplysningService.lagre(behandling, personopplysningGrunnlag);
         return new TpsFakta.Builder()
             .medForelder(søkerPersonMedHistorikk)
             .medBarn(List.of(barnPersonMedHistorikk))
@@ -111,42 +113,43 @@ public class RegisterInnhentingService {
             .build();
     }
 
-    private void mapRelasjoner(Personinfo søker, Personinfo annenPart, Personinfo barn, PersonopplysningerInformasjon informasjon) {
+    private void mapRelasjoner(Personinfo søker, Personinfo annenPart, Personinfo barn, PersonopplysningGrunnlag personopplysningGrunnlag) {
         barn.getFamilierelasjoner()
             .stream()
             .filter(it -> it.getAktørId().equals(søker.getAktørId()) || (annenPart != null && it.getAktørId().equals(annenPart.getAktørId())))
-            .forEach(relasjon -> informasjon.leggTilPersonrelasjon(new PersonRelasjon(barn.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+            .forEach(relasjon -> personopplysningGrunnlag.getPerson(PersonType.BARN).leggTilPersonrelasjon(new PersonRelasjon(barn.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
 
         søker.getFamilierelasjoner()
             .stream()
             .filter(it -> it.getAktørId().equals(barn.getAktørId()) || (annenPart != null && it.getAktørId().equals(annenPart.getAktørId())))
-            .forEach(relasjon -> informasjon.leggTilPersonrelasjon(new PersonRelasjon(søker.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+            .forEach(relasjon ->  personopplysningGrunnlag.getPerson(PersonType.SØKER).leggTilPersonrelasjon(new PersonRelasjon(søker.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
 
         if (annenPart != null) {
             annenPart.getFamilierelasjoner()
                 .stream()
                 .filter(it -> it.getAktørId().equals(barn.getAktørId()) || it.getAktørId().equals(søker.getAktørId()))
-                .forEach(relasjon -> informasjon.leggTilPersonrelasjon(new PersonRelasjon(annenPart.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+                .forEach(relasjon -> personopplysningGrunnlag.getPerson(PersonType.ANNENPART).leggTilPersonrelasjon(new PersonRelasjon(annenPart.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
         }
     }
 
-    private void mapPersonopplysninger(AktørId aktørId, Personinfo personinfo, PersonopplysningerInformasjon informasjon) {
+    private void mapPersonopplysninger(AktørId aktørId, Personinfo personinfo, PersonopplysningGrunnlag personopplysningGrunnlag, PersonType personType) {
         final var personhistorikk = oppslagTjeneste.hentHistorikkFor(aktørId);
 
-        informasjon.leggTilPersonopplysning(new Personopplysning(aktørId)
+        Person person = new Person(aktørId, personType)
             .medFødselsdato(personinfo.getFødselsdato())
             .medDødsdato(personinfo.getDødsdato())
             .medNavn(personinfo.getNavn())
-            .medStatsborgerskap(new Landkode(personinfo.getStatsborgerskap().getKode())));
+            .medStatsborgerskap(new Landkode(personinfo.getStatsborgerskap().getKode()));
+        personopplysningGrunnlag.leggTilPerson(person);
 
         if (personhistorikk != null) {
             personhistorikk.getStatsborgerskaphistorikk()
-                .forEach(statsborgerskap -> informasjon.leggTilStatsborgerskap(new Statsborgerskap(aktørId,
+                .forEach(statsborgerskap -> person.leggTilStatsborgerskap(new Statsborgerskap(aktørId,
                     DatoIntervallEntitet.fraOgMedTilOgMed(statsborgerskap.getPeriode().getFom(), statsborgerskap.getPeriode().getTom()),
                     new Landkode(statsborgerskap.getTilhørendeLand().getKode()))));
 
             personhistorikk.getAdressehistorikk()
-                .forEach(adresse -> informasjon.leggTilAdresse(new PersonAdresse(aktørId,
+                .forEach(adresse -> person.leggTilAdresse(new PersonAdresse(aktørId,
                     DatoIntervallEntitet.fraOgMedTilOgMed(adresse.getPeriode().getFom(), adresse.getPeriode().getTom()))
                     .medAdresseType(adresse.getAdresse().getAdresseType())
                     .medAdresselinje1(adresse.getAdresse().getAdresselinje1())
