@@ -17,7 +17,7 @@ public class Person extends BaseEntitet {
     private static final String REF_NAME = "person";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PO_PERSONOPPLYSNING_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PO_PERSON_SEQ")
     private Long id;
 
     @Embedded
