@@ -49,7 +49,7 @@ public class PersonopplysningService {
             gr.setAktiv(false);
             personopplysningRepository.saveAndFlush(gr);
         });
-        final var informasjon = aktivtGrunnlag.flatMap(PersonopplysningGrunnlag::getRegisterVersjon).orElse(null);
+        final var informasjon = aktivtGrunnlag.flatMap(PersonopplysningGrunnlag::getRegistrertePersonopplysninger).orElse(null);
         final var nyttGrunnlag = new PersonopplysningGrunnlag(behandling.getId(), annenPart, informasjon);
         if (informasjon != null) {
             informasjonRepository.save(informasjon);

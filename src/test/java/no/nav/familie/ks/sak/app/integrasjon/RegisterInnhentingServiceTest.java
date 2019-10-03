@@ -2,7 +2,6 @@ package no.nav.familie.ks.sak.app.integrasjon;
 
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
-import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
@@ -96,7 +95,7 @@ public class RegisterInnhentingServiceTest {
         final var personopplysningGrunnlag = personopplysningService.hentHvisEksisterer(behandling);
 
         assert personopplysningGrunnlag.isPresent();
-        final var registerVersjonOpt = personopplysningGrunnlag.get().getRegisterVersjon();
+        final var registerVersjonOpt = personopplysningGrunnlag.get().getRegistrertePersonopplysninger();
         assertThat(registerVersjonOpt).isPresent();
 
         final var informasjon = registerVersjonOpt.get();
@@ -131,7 +130,7 @@ public class RegisterInnhentingServiceTest {
         final var personopplysningGrunnlag = personopplysningService.hentHvisEksisterer(behandling);
 
         assert personopplysningGrunnlag.isPresent();
-        final var registerVersjonOpt = personopplysningGrunnlag.get().getRegisterVersjon();
+        final var registerVersjonOpt = personopplysningGrunnlag.get().getRegistrertePersonopplysninger();
         assertThat(registerVersjonOpt).isPresent();
 
         assert personopplysningGrunnlag.get().getOppgittAnnenPart().isEmpty();
