@@ -5,6 +5,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -14,13 +15,15 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootConfiguration
 public class TestHttpClient {
-    @Bean
+    @Qualifier("testRestTemplate")
+    @Bean()
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.requestFactory(this::requestFactory)
             .build();
     }
 
-    @Bean
+    @Qualifier("testfactory")
+    @Bean()
     public HttpComponentsClientHttpRequestFactory requestFactory() {
 
         RequestConfig defaultRequestConfig = RequestConfig.custom()
