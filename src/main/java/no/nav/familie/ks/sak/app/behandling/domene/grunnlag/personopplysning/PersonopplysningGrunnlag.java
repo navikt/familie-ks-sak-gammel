@@ -4,10 +4,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Entity
 @Table(name = "GR_PERSONOPPLYSNINGER")
@@ -73,14 +70,42 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
         personer.add(person);
     }
 
-    public Person getPerson(PersonType personType) {
+    public Person getSøker() {
         for (Person p : personer) {
-            if (p.getType().equals(personType)){
+            if (p.getType().equals(PersonType.SØKER)){
                 return p;
             }
         }
         return null;
     }
+
+    public Person getAnnenPart() {
+        for (Person p : personer) {
+            if (p.getType().equals(PersonType.ANNENPART)){
+                return p;
+            }
+        }
+        return null;
+    }
+    public Person getBarn(AktørId aktørId) {
+        for (Person p : personer) {
+            if (p.getType().equals(PersonType.BARN) && p.getAktørId().getId() == aktørId.getId()){
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public List<Person> getBarna() {
+        List<Person> barna = new LinkedList<>();
+        for (Person p : personer) {
+            if (p.getType().equals(PersonType.BARN)){
+                barna.add(p);
+            }
+        }
+        return barna;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

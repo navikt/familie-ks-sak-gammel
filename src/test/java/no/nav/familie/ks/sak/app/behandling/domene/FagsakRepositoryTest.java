@@ -106,15 +106,15 @@ public class FagsakRepositoryTest {
 
         Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningGrunnlagRepository.findByBehandlingAndAktiv(behandling.get().getId());
 
-        assertThat(personopplysningGrunnlag.get().getPerson(PersonType.SØKER)).isNotNull();
-        assertThat(personopplysningGrunnlag.get().getPerson(PersonType.BARN)).isNotNull();
-        assertThat(personopplysningGrunnlag.get().getPerson(PersonType.MEDSØKER)).isNull();
+        assertThat(personopplysningGrunnlag.get().getSøker()).isNotNull();
+        assertThat(personopplysningGrunnlag.get().getBarna()).isNotEmpty();
+        assertThat(personopplysningGrunnlag.get().getAnnenPart()).isNull();
 
-        assertThat(personopplysningGrunnlag.get().getPerson(PersonType.SØKER).getAdresser()).isNotEmpty();
-        assertThat(personopplysningGrunnlag.get().getPerson(PersonType.BARN).getAdresser()).isNotEmpty();
+        assertThat(personopplysningGrunnlag.get().getSøker().getAdresseHistorikk()).isNotEmpty();
+        assertThat(personopplysningGrunnlag.get().getBarna().get(0).getAdresseHistorikk()).isNotEmpty();
 
-        assertThat(personopplysningGrunnlag.get().getPerson(PersonType.SØKER).getStatsborgerskapHistorikk()).isNotEmpty();
-        assertThat(personopplysningGrunnlag.get().getPerson(PersonType.BARN).getStatsborgerskapHistorikk()).isNotEmpty();
+        assertThat(personopplysningGrunnlag.get().getSøker().getStatsborgerskapHistorikk()).isNotEmpty();
+        assertThat(personopplysningGrunnlag.get().getBarna().get(0).getStatsborgerskapHistorikk()).isNotEmpty();
 
     }
 

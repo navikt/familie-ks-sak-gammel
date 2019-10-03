@@ -102,7 +102,7 @@ public class RegisterInnhentingServiceTest {
 
         final var informasjon = registerVersjonOpt.get();
         for (Person person : registerVersjonOpt.get()) {
-            assertThat(person.getAdresser()).hasSize(1);
+            assertThat(person.getAdresseHistorikk()).hasSize(1);
             assertThat(person.getRelasjoner()).hasSize(2);
             assertThat(person.getStatsborgerskapHistorikk()).hasSize(1);
         }
