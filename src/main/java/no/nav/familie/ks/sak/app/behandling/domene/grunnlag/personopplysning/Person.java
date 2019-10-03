@@ -29,7 +29,7 @@ public class Person extends BaseEntitet {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    private PersonType type; //SØKER, BARN, MEDSØKER
+    private PersonType type; //SØKER, BARN, ANNENPART
 
     @Column(name = "foedselsdato", nullable = false)
     private LocalDate fødselsdato;
@@ -42,7 +42,7 @@ public class Person extends BaseEntitet {
     private Landkode statsborgerskap = Landkode.UDEFINERT;
 
     @OneToMany(mappedBy = REF_NAME, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    private List<PersonAdresse> adresser = new ArrayList<>();
+    private List<PersonAdresse> adresseHistorikk = new ArrayList<>();
 
 
     @OneToMany(mappedBy = REF_NAME, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
@@ -75,12 +75,12 @@ public class Person extends BaseEntitet {
         this.type = personType;
     }
 
-    public List<PersonAdresse> getAdresser() {
-        return adresser;
+    public List<PersonAdresse> getAdresseHistorikk() {
+        return adresseHistorikk;
     }
 
-    public void setAdresser(List<PersonAdresse> adresser) {
-        this.adresser = adresser;
+    public void setAdresser(List<PersonAdresse> adresseHistorikk) {
+        this.adresseHistorikk = adresseHistorikk;
     }
 
     public List<PersonRelasjon> getRelasjoner() {
@@ -183,7 +183,7 @@ public class Person extends BaseEntitet {
     }
     public Person leggTilAdresse(PersonAdresse adresse) {
         adresse.setPerson(this);
-        adresser.add(adresse);
+        adresseHistorikk.add(adresse);
         return this;
     }
     public Person leggTilPersonrelasjon(PersonRelasjon relasjon) {
