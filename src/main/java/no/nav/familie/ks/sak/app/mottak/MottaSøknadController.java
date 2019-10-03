@@ -52,7 +52,7 @@ public class MottaSøknadController {
 
             return new ResponseEntity(HttpStatus.OK);
         } catch (Exception e) {
-            log.error("Behandling feilet", e);
+            log.error("behandling feilet", e);
             feiledeBehandlinger.increment();
 
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);

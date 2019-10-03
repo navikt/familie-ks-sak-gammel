@@ -9,4 +9,7 @@ public interface PersonopplysningRepository extends JpaRepository<Personopplysni
 
     @Query("SELECT gr FROM PersonopplysningGrunnlag gr WHERE behandlingId = ?1 AND aktiv = true")
     Optional<PersonopplysningGrunnlag> findByBehandlingAndAktiv(Long behandlingId);
+
+    @Query(value="SELECT gr FROM PersonopplysningGrunnlag gr WHERE behandlingId = ?1")
+    PersonopplysningGrunnlag finnGrunnlag(Long behandlingsId);
 }

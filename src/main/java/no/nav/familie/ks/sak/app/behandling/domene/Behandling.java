@@ -23,7 +23,7 @@ public class Behandling extends BaseEntitet {
     }
 
     private Behandling(Fagsak fagsak) {
-        Objects.requireNonNull(fagsak, "Behandling må tilknyttes parent Fagsak");
+        Objects.requireNonNull(fagsak, "behandling må tilknyttes parent Fagsak");
         this.fagsak = fagsak;
     }
 
@@ -33,7 +33,7 @@ public class Behandling extends BaseEntitet {
 
     @Override
     public String toString() {
-        return "Behandling{" +
+        return "behandling{" +
                 "id=" + id +
                 "fagsak=" + fagsak +
                 '}';

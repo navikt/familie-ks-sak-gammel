@@ -56,7 +56,7 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
     }
 
 
-    public Optional<PersonopplysningerInformasjon> getRegisterVersjon() {
+    public Optional<PersonopplysningerInformasjon> getRegistrertePersonopplysninger() {
         return Optional.ofNullable(registrertePersonopplysninger);
     }
 
