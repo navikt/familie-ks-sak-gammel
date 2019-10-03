@@ -26,13 +26,10 @@ class FagsakController (
     private val restFagsakService: RestFagsakService) {
 
     @GetMapping(path = ["/fagsak/{fagsakId}"])
-    @Unprotected
-    fun fagsak(@PathVariable fagsakId: Long?, principal: Principal?): ResponseEntity<Ressurs> {
+    fun fagsak(@PathVariable fagsakId: Long, principal: Principal?): ResponseEntity<Ressurs> {
         logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", fagsakId)
 
-        val ressurs: Ressurs = when (fagsakId) {
-            null -> Ressurs.failure("Oppgitt fagsak id var null")
-            else -> Result.runCatching { restFagsakService.hentRessursFagsak(fagsakId) }
+        val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(fagsakId) }
                 .fold(
                     onSuccess = { when(it) {
                         null -> Ressurs.failure("Fant ikke fagsak med id fagsakId")
@@ -40,13 +37,11 @@ class FagsakController (
                     } },
                     onFailure = { e -> Ressurs.failure( String.format("Henting av fagsak med id %s feilet: %s", fagsakId, e.message), e) }
                 )
-        }
 
         return ResponseEntity.ok(ressurs)
     }
 
     @GetMapping(path = ["/fagsak"])
-    @Unprotected
     fun fagsak(principal: Principal?): ResponseEntity<Ressurs> {
         logger.info("{} henter fagsaker", principal?.name ?: "Ukjent")
 
@@ -60,7 +55,6 @@ class FagsakController (
     }
     
     @PostMapping(path = ["/behandle"])
-    @Unprotected
     fun behandle(@RequestBody søknad: Søknad): ResponseEntity<Ressurs> {
         val behandling: Behandling? = Result.runCatching {
             val vedtak: Vedtak = saksbehandling.behandle(søknad)
