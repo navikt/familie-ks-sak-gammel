@@ -13,6 +13,8 @@ logging:
   config: "classpath:logback-test.xml"
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   jpa:
     show-sql: false
     properties:
