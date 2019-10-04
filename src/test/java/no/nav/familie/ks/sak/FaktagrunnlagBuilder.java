@@ -309,6 +309,11 @@ public final class FaktagrunnlagBuilder {
         .medAnnenForelder(personMedHistorikkFarNorsk)
         .medBarn(List.of(personMedHistorikkBarnNorsk))
         .build();
+    private static TpsFakta beggeForeldreOgFlerlingerNorskStatsborger = new TpsFakta.Builder()
+        .medForelder(personMedHistorikkMorNorsk)
+        .medAnnenForelder(personMedHistorikkFarNorsk)
+        .medBarn(List.of(personMedHistorikkBarnNorsk, personMedHistorikkBarnNorsk))
+        .build();
     private static TpsFakta aleneForelderOgBarnNorskStatsborgerskap = new TpsFakta.Builder()
         .medForelder(personMedHistorikkMorNorsk)
         .medBarn(List.of(personMedHistorikkBarnNorskEnForelder))
@@ -386,6 +391,14 @@ public final class FaktagrunnlagBuilder {
             .medTpsFakta(beggeForeldreOgBarnNorskStatsborger)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass(), farAktørId, morAktørId))
+            .build();
+    }
+
+    public static Faktagrunnlag familieNorskStatsborgerskapUtenBarnehageFlerlinger() {
+        return new Faktagrunnlag.Builder()
+            .medTpsFakta(beggeForeldreOgFlerlingerNorskStatsborger)
+            .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplassFlerlinger()))
+            .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplassFlerlinger(), morAktørId, farAktørId))
             .build();
     }
 
