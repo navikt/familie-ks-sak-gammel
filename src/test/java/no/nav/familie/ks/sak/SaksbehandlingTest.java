@@ -1,5 +1,7 @@
 package no.nav.familie.ks.sak;
 
+import no.nav.familie.ks.kontrakter.søknad.Søknad;
+import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService;
 import no.nav.familie.ks.sak.app.behandling.ResultatService;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
@@ -12,7 +14,6 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class SaksbehandlingTest {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
         when(behandlingslagerMock.nyBehandling(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
 
-        Søknad innsendtSøknad = FaktagrunnlagBuilder.utenBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent());
+        Søknad innsendtSøknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
         Vedtak vedtak = saksbehandling.behandle(innsendtSøknad);
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.OPPFYLT);
     }
@@ -46,11 +47,8 @@ public class SaksbehandlingTest {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieUtenlandskStatsborgerskapMedBarnehage());
         when(behandlingslagerMock.nyBehandling(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
 
-        Vedtak vedtak = saksbehandling.behandle(getFile("soknadGradertBarnehageplass.json"));
+        Søknad innsendtSøknad = SøknadTestdata.norskFamilieGradertBarnehageplass();
+        Vedtak vedtak = saksbehandling.behandle(innsendtSøknad);
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.MANUELL_BEHANDLING);
-    }
-
-    private String getFile(String filnavn) {
-        return getClass().getClassLoader().getResource(filnavn).getFile();
     }
 }

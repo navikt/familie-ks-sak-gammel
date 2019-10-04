@@ -1,7 +1,7 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
+import no.nav.familie.ks.kontrakter.søknad.Standpunkt;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 
@@ -26,18 +26,21 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
     @JoinColumn(name = "UTLAND_ID")
     private OppgittUtlandsTilknytning utlandsTilknytning;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "ARBEID_UTLAND", nullable = false, updatable = false)
     private Standpunkt arbeidIUtlandet = Standpunkt.UBESVART;
 
     @Column(name = "ARBEID_UTLAND_FORKLARING")
     private String arbeidIUtlandetForklaring;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "YTELSE_UTLAND", nullable = false, updatable = false)
     private Standpunkt ytelseIUtlandet = Standpunkt.UBESVART;
 
     @Column(name = "YTELSE_UTLAND_FORKLARING")
     private String ytelseIUtlandetForklaring;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "KONTANTSTOTTE_UTLAND", nullable = false, updatable = false)
     private Standpunkt kontantstøtteIUtlandet = Standpunkt.UBESVART;
 

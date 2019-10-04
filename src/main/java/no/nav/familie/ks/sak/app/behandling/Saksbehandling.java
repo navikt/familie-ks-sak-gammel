@@ -1,15 +1,14 @@
 package no.nav.familie.ks.sak.app.behandling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -43,10 +42,6 @@ public class Saksbehandling {
         this.fastsettingService = fastsettingService;
         this.resultatService = resultatService;
         this.mapper = objectMapper;
-    }
-
-    public Vedtak behandle(String søknadJson) {
-        return behandle(tilSøknad(søknadJson));
     }
 
     @Transactional

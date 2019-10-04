@@ -1,7 +1,7 @@
 package no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad
 
+import no.nav.familie.ks.kontrakter.søknad.Standpunkt
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørArbeidYtelseUtland
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent
 

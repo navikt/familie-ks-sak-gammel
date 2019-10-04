@@ -1,6 +1,7 @@
 package no.nav.familie.ks.sak.app.behandling;
 
 import no.nav.familie.http.sts.StsRestClient;
+import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
@@ -67,7 +68,7 @@ public class RestFagsakTest {
 
         when(personopplysningRepository.findByBehandlingAndAktiv(any()))
             .thenReturn(
-                FaktagrunnlagBuilder.genererPersonopplysningGrunnlag(new AktørId(FaktagrunnlagBuilder.norskPersonAktør.getId()))
+                FaktagrunnlagBuilder.genererPersonopplysningGrunnlag(new AktørId(FaktagrunnlagBuilder.morAktørId.getId()))
             );
         when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
 
@@ -89,7 +90,7 @@ public class RestFagsakTest {
     public void hentRestFagsak() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
 
-        final var søknad = FaktagrunnlagBuilder.utenBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent());
+        final var søknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
         Vedtak vedtak = saksbehandling.behandle(søknad);
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
 
@@ -107,7 +108,7 @@ public class RestFagsakTest {
     @Test
     public void hentFagsakMedBarnehageplass() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapMedBarnehage());
-        saksbehandling.behandle(FaktagrunnlagBuilder.medBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent()));
+        saksbehandling.behandle(SøknadTestdata.norskFamilieMedBarnehageplass());
 
         assertThat(restFagsakService.hentFagsaker()).hasSize(1);
     }
@@ -115,7 +116,7 @@ public class RestFagsakTest {
     @Test
     public void hentFagsakUtenBarnehageplass() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        saksbehandling.behandle(FaktagrunnlagBuilder.utenBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent()));
+        saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass());
 
         assertThat(restFagsakService.hentFagsaker()).hasSize(1);
     }

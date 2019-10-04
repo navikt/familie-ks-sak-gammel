@@ -1,20 +1,16 @@
 package no.nav.familie.ks.sak.app.behandling.regel.mvp.utland.regel;
 
-import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService;
+import no.nav.familie.ks.kontrakter.søknad.Standpunkt;
+import no.nav.familie.ks.kontrakter.søknad.TilknytningTilUtlandVerdier;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørArbeidYtelseUtland;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørTilknytningUtland;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
-import no.nav.familie.ks.sak.app.grunnlag.Søknad;
-import no.nav.familie.ks.sak.app.grunnlag.søknad.TilknytningTilUtland;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.Set;
@@ -22,7 +18,6 @@ import java.util.Set;
 @RuleDocumentation(IkkeOppgittTilknytningUtland.ID)
 public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnlag> {
 
-    private static final Logger logger = LoggerFactory.getLogger(IkkeOppgittTilknytningUtland.class);
     public static final String ID = "KS-UTL-1";
 
     public IkkeOppgittTilknytningUtland() {
@@ -63,7 +58,7 @@ public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnla
             return false;
         }
 
-        boolean boddEllerJobbetINorgeMinstFemAar = aktørTilknytningTilUtlandet.get().getTilknytningTilUtland().equals(TilknytningTilUtland.TilknytningTilUtlandVerdier.jaINorge);
+        boolean boddEllerJobbetINorgeMinstFemAar = aktørTilknytningTilUtlandet.get().getTilknytningTilUtland().equals(TilknytningTilUtlandVerdier.jaINorge);
         boolean arbeidIUtlandet = aktørArbeidYtelseUtland.get().getArbeidIUtlandet().equals(Standpunkt.NEI);
         boolean utenlandskeYtelser = aktørArbeidYtelseUtland.get().getYtelseIUtlandet().equals(Standpunkt.NEI);
 

@@ -2,15 +2,12 @@ package no.nav.familie.ks.sak.app.mottak;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
+import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.grunnlag.Søknad;
-import no.nav.familie.ks.sak.app.grunnlag.søknad.Barnehageplass;
-import no.nav.familie.ks.sak.app.grunnlag.søknad.TilknytningTilUtland;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -30,7 +27,6 @@ public class FunksjonelleMetrikker {
 
     private final HashMap<String, Counter> barnehagestatus = new HashMap<>();
     private final HashMap<String, Counter> boddEllerJobbetINorgeEllerEøsIFemÅr = new HashMap<>();
-    private final Counter mottarKontantstotteFraUtlandet = Metrics.counter("soknad.kontantstotte.funksjonell.mottarKontantstotteFraUtlandet", "status", "JA");
 
     public FunksjonelleMetrikker() {
         Arrays.stream(UtfallType.values()).forEach(utfallType -> søkerUtfall.put(
@@ -43,12 +39,12 @@ public class FunksjonelleMetrikker {
                 Metrics.counter("soknad.kontantstotte.behandling.funksjonell.avslag", "status", Integer.toString(vilkårIkkeOppfyltÅrsak.getÅrsakKode()), "beskrivelse", vilkårIkkeOppfyltÅrsak.getBeskrivelse())
         ));
 
-        Arrays.stream(Barnehageplass.BarnehageplassVerdier.values()).forEach(barnehageplassVerdi -> barnehagestatus.put(
+        Arrays.stream(no.nav.familie.ks.kontrakter.søknad.BarnehageplassStatus.values()).forEach(barnehageplassVerdi -> barnehagestatus.put(
                 barnehageplassVerdi.name(),
                 Metrics.counter("soknad.kontantstotte.funksjonell.barnehage", "status", barnehageplassVerdi.name(), "beskrivelse", barnehageplassVerdi.getBeskrivelse())
         ));
 
-        Arrays.stream(TilknytningTilUtland.TilknytningTilUtlandVerdier.values()).forEach(tilknytningTilUtlandVerdi -> boddEllerJobbetINorgeEllerEøsIFemÅr.put(
+        Arrays.stream(no.nav.familie.ks.kontrakter.søknad.TilknytningTilUtlandVerdier.values()).forEach(tilknytningTilUtlandVerdi -> boddEllerJobbetINorgeEllerEøsIFemÅr.put(
                 tilknytningTilUtlandVerdi.name(),
                 Metrics.counter("soknad.kontantstotte.funksjonell.boddEllerJobbetINorgeEllerEøsIFemÅr", "status", tilknytningTilUtlandVerdi.name(), "beskrivelse", tilknytningTilUtlandVerdi.getBeskrivelse())
         ));
@@ -64,8 +60,9 @@ public class FunksjonelleMetrikker {
                 });
     }
 
-    public void tellFunksjonelleMetrikker(Søknad søknad, Vedtak vedtak) {
+    void tellFunksjonelleMetrikker(Søknad søknad, Vedtak vedtak) {
         antallSøknaderMottatt.increment();
+        final var søkerFødselsnummer = søknad.getSøkerFødselsnummer();
 
         final var vilkårvurdering = vedtak.getVilkårvurdering();
         final Counter samletUtfall = søkerUtfall.get(vilkårvurdering.getSamletUtfallType().name());
@@ -86,11 +83,9 @@ public class FunksjonelleMetrikker {
             }
         });
 
-        barnehagestatus.get(søknad.barnehageplass.barnBarnehageplassStatus.name()).increment();
-        boddEllerJobbetINorgeEllerEøsIFemÅr.get(søknad.tilknytningTilUtland.boddEllerJobbetINorgeMinstFemAar.name()).increment();
+        barnehagestatus.get(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getBarnehageStatus().name()).increment();
 
-        if (søknad.utenlandskKontantstotte.mottarKontantstotteFraUtlandet.equals(Standpunkt.JA.getKode())) {
-            mottarKontantstotteFraUtlandet.increment();
-        }
+        final var søkerTilknytningTilUtlandet = søknad.getOppgittUtlandsTilknytning().getAktørerTilknytningTilUtlandet().stream().filter(aktørTilknytningUtland -> aktørTilknytningUtland.getFødselsnummer().equals(søkerFødselsnummer)).findFirst();
+        søkerTilknytningTilUtlandet.ifPresent(aktørTilknytningUtland -> boddEllerJobbetINorgeEllerEøsIFemÅr.get(aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAar().name()).increment());
     }
 }
