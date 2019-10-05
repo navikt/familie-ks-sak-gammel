@@ -21,7 +21,8 @@ public enum VilkårIkkeOppfyltÅrsak implements VilkårUtfallÅrsak {
     IKKE_BOSATT_SAMMEN(8306, "Barn er ikke bosatt sammen med begge foreldre", VilkårType.BOSTED),
 
     // MVP
-    OPPGITT_TILKNYTNING_UTLAND(8309, "Søker har svart ja på spørsmål som indikerer tilknytning til utland", VilkårType.UTLAND);
+    OPPGITT_TILKNYTNING_UTLAND(8309, "Søker har svart ja på spørsmål som indikerer tilknytning til utland", VilkårType.UTLAND),
+    BARN_IKKE_MELLOM_10_OG_14_MÅNEDER(8310, "Barnet det søkes for er ikke mellom 10 og 14 måneder", VilkårType.BARN_MELLOM_10_OG_14_MÅNEDER);
 
     private final int årsakKode;
     private final String beskrivelse;

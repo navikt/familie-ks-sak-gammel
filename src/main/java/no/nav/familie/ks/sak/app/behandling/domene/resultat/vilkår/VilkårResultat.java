@@ -28,11 +28,9 @@ public class VilkårResultat extends BaseEntitet {
     @Column(name = "utfall")
     private UtfallType utfall = UtfallType.IKKE_VURDERT;
 
-    @Lob
     @Column(name = "regel_input", updatable = false, columnDefinition = "text")
     private String regelInput;
 
-    @Lob
     @Column(name = "regel_output", updatable = false, columnDefinition = "text")
     private String regelOutput;
 

@@ -1,6 +1,5 @@
 package no.nav.familie.ks.sak.app.behandling;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
@@ -15,8 +14,6 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittErkl�
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
-import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingResultat;
-import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.rest.Behandling.*;
@@ -29,7 +26,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
 
 import static no.nav.familie.ks.sak.util.Konvertering.konverterTilBoolean;
 
@@ -39,17 +37,14 @@ public class BehandlingslagerService {
     private static final Logger logger = LoggerFactory.getLogger(BehandlingslagerService.class);
     private FagsakRepository fagsakRepository;
     private BehandlingRepository behandlingRepository;
-    private BehandlingresultatRepository behandlingresultatRepository;
     private SøknadGrunnlagRepository søknadGrunnlagRepository;
     private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
     private PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository;
     private OppslagTjeneste oppslagTjeneste;
-    private ObjectMapper objectMapper;
 
     @Autowired
     public BehandlingslagerService(FagsakRepository fagsakRepository,
                                    BehandlingRepository behandlingRepository,
-                                   BehandlingresultatRepository behandlingresultatRepository,
                                    SøknadGrunnlagRepository søknadGrunnlagRepository,
                                    BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository,
                                    PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository,
@@ -57,12 +52,10 @@ public class BehandlingslagerService {
                                    ObjectMapper objectMapper) {
         this.fagsakRepository = fagsakRepository;
         this.behandlingRepository = behandlingRepository;
-        this.behandlingresultatRepository = behandlingresultatRepository;
         this.søknadGrunnlagRepository = søknadGrunnlagRepository;
         this.barnehageBarnGrunnlagRepository = barnehageBarnGrunnlagRepository;
         this.personopplysningGrunnlagRepository = personopplysningGrunnlagRepository;
         this.oppslagTjeneste = oppslag;
-        this.objectMapper = objectMapper;
     }
 
     public Behandling nyBehandling(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
@@ -145,85 +138,4 @@ public class BehandlingslagerService {
         final var innsendtTidspunkt = LocalDateTime.ofInstant(søknad.innsendingsTidspunkt, ZoneId.systemDefault());
         søknadGrunnlagRepository.save(new SøknadGrunnlag(behandling, new Søknad(innsendtTidspunkt, oppgittUtlandsTilknytning, erklæring)));
     }
-
-    RestFagsak hentRestFagsak(Long fagsakId) {
-        Optional<Fagsak> fagsak = fagsakRepository.findById(fagsakId);
-        List<Behandling> behandlinger = behandlingRepository.finnBehandlinger(fagsakId);
-
-        // Grunnlag fra søknag
-        List<RestBehandling> restBehandlinger = new ArrayList<>();
-        behandlinger.forEach(behandling -> {
-            SøknadGrunnlag søknadGrunnlag = søknadGrunnlagRepository.finnGrunnlag(behandling.getId());
-            BarnehageBarnGrunnlag barnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.getId());
-
-            Set<RestBarn> barna = new HashSet<>();
-            barnehageBarnGrunnlag.getFamilieforhold().getBarna().forEach(barn ->
-                    barna.add(
-                            new RestBarn(
-                            barn.getAktørId(),
-                            barn.getBarnehageStatus(),
-                            barn.getBarnehageAntallTimer(),
-                            barn.getBarnehageDato(),
-                            barn.getBarnehageKommune())));
-            RestOppgittFamilieforhold familieforhold = new RestOppgittFamilieforhold(barna, barnehageBarnGrunnlag.getFamilieforhold().isBorBeggeForeldreSammen());
-
-            Set<RestAktørArbeidYtelseUtland> aktørerArbeidYtelseUtland = new HashSet<>();
-            Set<RestAktørTilknytningUtland> aktørerTilknytningUtland = new HashSet<>();
-            søknadGrunnlag.getSøknad().getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet().forEach(aktørArbeidYtelseUtland ->
-                    aktørerArbeidYtelseUtland.add(
-                            new RestAktørArbeidYtelseUtland(
-                                    aktørArbeidYtelseUtland.getAktørId(),
-                                    aktørArbeidYtelseUtland.getArbeidIUtlandet(),
-                                    aktørArbeidYtelseUtland.getArbeidIUtlandetForklaring(),
-                                    aktørArbeidYtelseUtland.getYtelseIUtlandet(),
-                                    aktørArbeidYtelseUtland.getYtelseIUtlandetForklaring(),
-                                    aktørArbeidYtelseUtland.getKontantstøtteIUtlandet(),
-                                    aktørArbeidYtelseUtland.getKontantstøtteIUtlandetForklaring())));
-            søknadGrunnlag.getSøknad().getUtlandsTilknytning().getAktørerTilknytningTilUtlandet().forEach(aktørTilknytningUtland ->
-                    aktørerTilknytningUtland.add(
-                            new RestAktørTilknytningUtland(
-                                    aktørTilknytningUtland.getAktør(),
-                                    aktørTilknytningUtland.getTilknytningTilUtland(),
-                                    aktørTilknytningUtland.getTilknytningTilUtlandForklaring())));
-
-            RestOppgittUtlandsTilknytning oppgittUtlandsTilknytning = new RestOppgittUtlandsTilknytning(aktørerArbeidYtelseUtland, aktørerTilknytningUtland);
-
-            OppgittErklæring erklæring = søknadGrunnlag.getSøknad().getErklæring();
-            RestOppgittErklæring oppgittErklæring = new RestOppgittErklæring(erklæring.isBarnetHjemmeværendeOgIkkeAdoptert(), erklæring.isBorSammenMedBarnet(), erklæring.isIkkeAvtaltDeltBosted(), erklæring. isBarnINorgeNeste12Måneder());
-
-            RestSøknad søknad = new RestSøknad(søknadGrunnlag.getSøknad().getInnsendtTidspunkt(), familieforhold, oppgittUtlandsTilknytning, oppgittErklæring);
-
-
-            // Grunnlag fra regelkjøring
-            BehandlingResultat behandlingResultat = behandlingresultatRepository.finnBehandlingsresultat(behandling.getId());
-            Set<RestVilkårsResultat> restVilkårsResultat = new HashSet<>();
-            behandlingResultat.getVilkårsResultat().getVilkårsResultat().forEach(vilkårResultat ->
-                    restVilkårsResultat.add(
-                            new RestVilkårsResultat(
-                                    vilkårResultat.getVilkårType(),
-                                    vilkårResultat.getUtfall())));
-
-            RestBehandlingsresultat restBehandlingsresultat = new RestBehandlingsresultat(restVilkårsResultat, behandlingResultat.isAktiv());
-
-            restBehandlinger.add(new RestBehandling(behandling.getId(), søknad, restBehandlingsresultat));
-        });
-
-        return fagsak.map(fagsak1 -> new RestFagsak(fagsak1, restBehandlinger)).orElse(null);
-    }
-
-    public Ressurs hentRessursFagsak(Long fagsakId) {
-        RestFagsak restFagsak = hentRestFagsak(fagsakId);
-
-        if (restFagsak != null) {
-            return new Ressurs.Builder().byggVellyketRessurs(objectMapper.valueToTree(restFagsak));
-        } else {
-            return new Ressurs.Builder()
-                    .byggFeiletRessurs("Fant ikke fagsak med id " + fagsakId);
-        }
-    }
-
-    public List<Fagsak> hentFagsaker() {
-        return fagsakRepository.findAll();
-    }
-
 }

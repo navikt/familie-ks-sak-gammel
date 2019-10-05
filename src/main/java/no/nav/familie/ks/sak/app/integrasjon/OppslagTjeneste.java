@@ -114,7 +114,7 @@ public class OppslagTjeneste {
         value = { OppslagException.class },
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    PersonIdent hentPersonIdent(String aktørId) {
+    public PersonIdent hentPersonIdent(String aktørId) {
         if (aktørId == null || aktørId.isEmpty()) {
             throw new OppslagException("Ved henting av personident er aktørId null eller tom");
         }

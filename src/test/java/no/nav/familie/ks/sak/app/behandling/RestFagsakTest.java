@@ -4,13 +4,15 @@ import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
-import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barn;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
+import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
+import no.nav.familie.ks.sak.app.rest.RestFagsakService;
+import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling;
+import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak;
 import no.nav.familie.ks.sak.config.ApplicationConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,11 +26,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -36,7 +39,7 @@ import static org.mockito.Mockito.when;
     classes = {ApplicationConfig.class},
     loader = AnnotationConfigContextLoader.class)
 @DataJpaTest(excludeAutoConfiguration = FlywayAutoConfiguration.class)
-public class BehandlingslagerServiceTest {
+public class RestFagsakTest {
 
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
@@ -45,23 +48,24 @@ public class BehandlingslagerServiceTest {
     private StsRestClient stsRestClient;
 
     @Autowired
-    private BehandlingslagerService tjeneste;
+    private RestFagsakService restFagsakService;
 
-    @Autowired
-    private FagsakRepository fagsakRepository;
     @Autowired
     private BehandlingRepository behandlingRepository;
-    @Autowired
-    private SøknadGrunnlagRepository søknadGrunnlagRepository;
-    @Autowired
-    private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
 
     @MockBean
-    private PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository;
+    private PersonopplysningRepository personopplysningRepository;
+
+    private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
+
+    @Autowired
+    private Saksbehandling saksbehandling;
 
     @Before
     public void setUp() {
-        when(personopplysningGrunnlagRepository.findByBehandlingAndAktiv(any()))
+        when(oppslagTjeneste.hentPersonIdent(ArgumentMatchers.any())).thenAnswer(i -> new PersonIdent(String.valueOf(i.getArguments()[0])));
+
+        when(personopplysningRepository.findByBehandlingAndAktiv(any()))
             .thenReturn(
                 FaktagrunnlagBuilder.genererPersonopplysningGrunnlag(new AktørId(FaktagrunnlagBuilder.norskPersonAktør.getId()))
             );
@@ -82,46 +86,6 @@ public class BehandlingslagerServiceTest {
     }
 
     @Test
-    public void skal_lagre_søknad_og_hente_opp_igjen() {
-        final var søknad = FaktagrunnlagBuilder.medBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent());
-        Behandling nyBehandling = tjeneste.nyBehandling(søknad);
-        tjeneste.trekkUtOgPersister(nyBehandling, søknad);
-
-        final var fagsaker = fagsakRepository.findAll();
-        assertThat(fagsaker).hasSize(1);
-        assertThat(fagsaker.get(0).getAktørId()).isEqualTo(new AktørId(søknad.getPerson().getFnr()));
-        final var behandlinger = behandlingRepository.findAll();
-        assertThat(behandlinger).hasSize(1);
-        final var behandling = behandlinger.get(0);
-        assertThat(behandling.getFagsak().getAktørId()).isEqualTo(new AktørId(søknad.getPerson().getFnr()));
-        final var søknader = søknadGrunnlagRepository.findAll();
-        final var søknad1 = søknader.get(0).getSøknad();
-        assertThat(søknad1.getInnsendtTidspunkt()).isEqualTo(LocalDateTime.ofInstant(søknad.innsendingsTidspunkt, ZoneId.systemDefault()));
-        final var erklæring = søknad1.getErklæring();
-        assertThat(erklæring).isNotNull();
-        assertThat(søknad1.getUtlandsTilknytning()).isNotNull();
-        assertThat(søknad1.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet()).hasSize(1);
-        assertThat(søknad1.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet()).hasSize(1);
-        final var barnehageBarnGrunnlagList = barnehageBarnGrunnlagRepository.findAll();
-        assertThat(barnehageBarnGrunnlagList).hasSize(1);
-        assertThat(barnehageBarnGrunnlagList.get(0).getFamilieforhold()).isNotNull();
-    }
-
-    @Test
-    public void skal_lagre_søknad_og_hente_opp_igjen_med_tvillinger() {
-        final var søknad = FaktagrunnlagBuilder.medBarnehageplassOgTvillinger();
-        tjeneste.trekkUtOgPersister(søknad);
-
-        final var barnehageBarnGrunnlagList = barnehageBarnGrunnlagRepository.findAll();
-        assertThat(barnehageBarnGrunnlagList).hasSize(1);
-        assertThat(barnehageBarnGrunnlagList.get(0).getFamilieforhold().getBarna()).hasSize(2);
-        for (Barn barn : barnehageBarnGrunnlagList.get(0).getFamilieforhold().getBarna()) {
-            assertThat(barn.getAktørId().getId()).isNotEmpty();
-        }
-
-    }
-
-    @Test
     public void hentRestFagsak() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
 
@@ -132,9 +96,9 @@ public class BehandlingslagerServiceTest {
         assertThat(behandling).isPresent();
 
         assert behandling.isPresent();
-        final RestFagsak restFagsak = tjeneste.hentRestFagsak(behandling.get().getFagsak().getId());
+        final RestFagsak restFagsak = restFagsakService.hentRestFagsak(behandling.get().getFagsak().getId());
         assertThat(restFagsak).isNotNull();
-        assertThat(restFagsak.getFagsak().getId()).isEqualTo(behandling.get().getFagsak().getId());
+        assertThat(restFagsak.getId()).isEqualTo(behandling.get().getFagsak().getId());
 
         final List<RestBehandling> restBehandlinger = restFagsak.getBehandlinger();
         assertThat(restBehandlinger).hasSize(1);
@@ -145,7 +109,7 @@ public class BehandlingslagerServiceTest {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapMedBarnehage());
         saksbehandling.behandle(FaktagrunnlagBuilder.medBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent()));
 
-        assertThat(tjeneste.hentFagsaker()).hasSize(1);
+        assertThat(restFagsakService.hentFagsaker()).hasSize(1);
     }
 
     @Test
@@ -153,6 +117,6 @@ public class BehandlingslagerServiceTest {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
         saksbehandling.behandle(FaktagrunnlagBuilder.utenBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent()));
 
-        assertThat(tjeneste.hentFagsaker()).hasSize(1);
+        assertThat(restFagsakService.hentFagsaker()).hasSize(1);
     }
 }
