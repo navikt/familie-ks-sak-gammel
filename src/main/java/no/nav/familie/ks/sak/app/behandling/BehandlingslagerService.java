@@ -20,6 +20,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRe
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.rest.Behandling.*;
+import no.nav.familie.ks.sak.util.DateParser;
 import no.nav.familie.ks.sak.util.Ressurs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +68,7 @@ public class BehandlingslagerService {
     public Behandling nyBehandling(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
         final var søkerAktørId = oppslagTjeneste.hentAktørId(søknad.getPerson().getFnr());
         final var fagsak = Fagsak.opprettNy(søkerAktørId, Long.toString(System.currentTimeMillis())); // TODO: Erstatt med gsaksnummer
+        final Set<Barn> barna = new LinkedHashSet<>();
         fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak).build();
@@ -77,7 +79,11 @@ public class BehandlingslagerService {
 
     public void trekkUtOgPersister(Behandling behandling, no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
-        familieforholdBuilder.setBarna(Set.of(SøknadTilGrunnlagMapper.mapSøknadBarn(søknad).build()));
+        for (String fnr : søknad.getMineBarn().getFødselsnummer().split("(\\w*og)")) { //TODO splitt opp barn i søknaden helt fra frontend.
+            barna.add(mapOgHentAktøridForBarnISøknad(søknad, fnr.trim()).build());
+        }
+
+        familieforholdBuilder.setBarna(barna);
         familieforholdBuilder.setBorBeggeForeldreSammen(konverterTilBoolean(søknad.getFamilieforhold().getBorForeldreneSammenMedBarnet()));
         barnehageBarnGrunnlagRepository.save(new BarnehageBarnGrunnlag(behandling, familieforholdBuilder.build()));
 
@@ -104,7 +110,37 @@ public class BehandlingslagerService {
             }
         }
 
-        final var oppgittUtlandsTilknytning = SøknadTilGrunnlagMapper.mapUtenlandsTilknytning(søknad, behandling.getFagsak().getAktørId(), oppgittAnnenPartAktørId);
+    private Barn.Builder mapOgHentAktøridForBarnISøknad(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad, String fnrBarn) {
+        final var builder = new Barn.Builder();
+
+        final var barnehageplass = søknad.barnehageplass;
+
+        final var aktørId = oppslagTjeneste.hentAktørId(fnrBarn);
+
+        builder.setAktørId(aktørId.getId())
+            .setBarnehageStatus(BarnehageplassStatus.map(barnehageplass.barnBarnehageplassStatus.name()));
+        switch (barnehageplass.barnBarnehageplassStatus) {
+            case harBarnehageplass:
+                builder.setBarnehageAntallTimer(Double.parseDouble(barnehageplass.harBarnehageplassAntallTimer))
+                        .setBarnehageDato(DateParser.parseInputDatoFraSøknad(barnehageplass.harBarnehageplassDato))
+                        .setBarnehageKommune(barnehageplass.harBarnehageplassKommune);
+                break;
+            case harSluttetIBarnehage:
+                builder.setBarnehageAntallTimer(Double.parseDouble(barnehageplass.harSluttetIBarnehageAntallTimer))
+                        .setBarnehageDato(DateParser.parseInputDatoFraSøknad(barnehageplass.harSluttetIBarnehageDato))
+                        .setBarnehageKommune(barnehageplass.harSluttetIBarnehageKommune);
+                break;
+            case skalSlutteIBarnehage:
+                builder.setBarnehageAntallTimer(Double.parseDouble(barnehageplass.skalSlutteIBarnehageAntallTimer))
+                        .setBarnehageDato(DateParser.parseInputDatoFraSøknad(barnehageplass.skalSlutteIBarnehageDato))
+                        .setBarnehageKommune(barnehageplass.skalSlutteIBarnehageKommune);
+                break;
+            case skalBegynneIBarnehage:
+                builder.setBarnehageAntallTimer(Double.parseDouble(barnehageplass.skalBegynneIBarnehageAntallTimer))
+                        .setBarnehageDato(DateParser.parseInputDatoFraSøknad(barnehageplass.skalBegynneIBarnehageDato))
+                        .setBarnehageKommune(barnehageplass.skalBegynneIBarnehageKommune);
+                break;
+        }
 
         final var innsendtTidspunkt = LocalDateTime.ofInstant(søknad.innsendingsTidspunkt, ZoneId.systemDefault());
         søknadGrunnlagRepository.save(new SøknadGrunnlag(behandling, new Søknad(innsendtTidspunkt, oppgittUtlandsTilknytning, erklæring)));

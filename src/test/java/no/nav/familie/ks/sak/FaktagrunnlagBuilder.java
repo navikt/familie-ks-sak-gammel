@@ -491,6 +491,14 @@ public final class FaktagrunnlagBuilder {
         }
     }
 
+    public static Søknad medBarnehageplassOgTvillinger() {
+        try {
+            return mapper.readValue(new File(getFile("soknadFullBarnehageplassTvillinger.json")), Søknad.class);
+        } catch (IOException e) {
+            throw new IOError(e);
+        }
+    }
+
     private static String getFile(String filnavn) {
         return FaktagrunnlagBuilder.class.getClassLoader().getResource(filnavn).getFile();
     }
