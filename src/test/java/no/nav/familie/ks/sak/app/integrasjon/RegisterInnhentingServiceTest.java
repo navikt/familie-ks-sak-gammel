@@ -96,7 +96,7 @@ public class RegisterInnhentingServiceTest {
         final var personopplysningGrunnlag = personopplysningService.hentHvisEksisterer(behandling);
 
         assert personopplysningGrunnlag.isPresent();
-        final var registerVersjonOpt = personopplysningGrunnlag.get().getRegisterVersjon();
+        final var registerVersjonOpt = personopplysningGrunnlag.get().getRegistrertePersoner();
         assertThat(registerVersjonOpt).isPresent();
 
         final var informasjon = registerVersjonOpt.get();

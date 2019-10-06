@@ -4,15 +4,13 @@ import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.rest.RestFagsakService;
-import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling;
-import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak;
 import no.nav.familie.ks.sak.config.ApplicationConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +24,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,7 +51,7 @@ public class RestFagsakTest {
     private BehandlingRepository behandlingRepository;
 
     @MockBean
-    private PersonopplysningRepository personopplysningRepository;
+    private PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository;
 
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
 
@@ -65,7 +62,7 @@ public class RestFagsakTest {
     public void setUp() {
         when(oppslagTjeneste.hentPersonIdent(ArgumentMatchers.any())).thenAnswer(i -> new PersonIdent(String.valueOf(i.getArguments()[0])));
 
-        when(personopplysningRepository.findByBehandlingAndAktiv(any()))
+        when(personopplysningGrunnlagRepository.findByBehandlingAndAktiv(any()))
             .thenReturn(
                 FaktagrunnlagBuilder.genererPersonopplysningGrunnlag(new AktørId(FaktagrunnlagBuilder.norskPersonAktør.getId()))
             );
@@ -96,11 +93,11 @@ public class RestFagsakTest {
         assertThat(behandling).isPresent();
 
         assert behandling.isPresent();
-        final RestFagsak restFagsak = restFagsakService.hentRestFagsak(behandling.get().getFagsak().getId());
+        final var restFagsak = restFagsakService.hentRestFagsak(behandling.get().getFagsak().getId());
         assertThat(restFagsak).isNotNull();
         assertThat(restFagsak.getId()).isEqualTo(behandling.get().getFagsak().getId());
 
-        final List<RestBehandling> restBehandlinger = restFagsak.getBehandlinger();
+        final var restBehandlinger = restFagsak.getBehandlinger();
         assertThat(restBehandlinger).hasSize(1);
     }
 
