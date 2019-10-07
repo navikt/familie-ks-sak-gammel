@@ -22,7 +22,8 @@ public enum VilkårIkkeOppfyltÅrsak implements VilkårUtfallÅrsak {
 
     // MVP
     OPPGITT_TILKNYTNING_UTLAND(8309, "Søker har svart ja på spørsmål som indikerer tilknytning til utland", VilkårType.UTLAND),
-    BARN_IKKE_MELLOM_10_OG_14_MÅNEDER(8310, "Barnet det søkes for er ikke mellom 10 og 14 måneder", VilkårType.BARN_MELLOM_10_OG_14_MÅNEDER);
+    BARN_IKKE_MELLOM_10_OG_14_MÅNEDER(8310, "Barnet det søkes for er ikke mellom 10 og 14 måneder", VilkårType.BARN_MELLOM_10_OG_14_MÅNEDER),
+    OPPGITT_FLERE_BARN(8311, "Søker har oppgitt flere barn i søknaden", VilkårType.KUN_ET_BARN);
 
     private final int årsakKode;
     private final String beskrivelse;
