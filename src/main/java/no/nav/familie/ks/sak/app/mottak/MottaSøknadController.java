@@ -2,10 +2,11 @@ package no.nav.familie.ks.sak.app.mottak;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
+import no.nav.familie.ks.kontrakter.søknad.Søknad;
+import no.nav.familie.ks.kontrakter.søknad.SøknadKt;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.security.oidc.api.ProtectedWithClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,8 @@ public class MottaSøknadController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
-    public ResponseEntity mottaDokument(@RequestBody Søknad søknad) {
+    public ResponseEntity mottaDokument(@RequestBody String søknadJson) {
+        Søknad søknad = SøknadKt.toSøknad(søknadJson);
         try {
             Vedtak vedtak = saksbehandling.behandle(søknad);
             final var vilkårvurdering = vedtak.getVilkårvurdering();

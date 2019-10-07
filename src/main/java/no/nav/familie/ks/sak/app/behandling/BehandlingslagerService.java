@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling;
 
+import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
@@ -11,7 +12,6 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Oppgit
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittErklæring;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
@@ -21,12 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
-import java.util.Set;
-
-import static no.nav.familie.ks.sak.util.Konvertering.konverterTilBoolean;
 
 @Service
 public class BehandlingslagerService {
@@ -54,8 +49,8 @@ public class BehandlingslagerService {
         this.oppslagTjeneste = oppslag;
     }
 
-    public Behandling nyBehandling(no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
-        final var søkerAktørId = oppslagTjeneste.hentAktørId(søknad.getPerson().getFnr());
+    public Behandling nyBehandling(Søknad søknad) {
+        final var søkerAktørId = oppslagTjeneste.hentAktørId(søknad.getSøkerFødselsnummer());
         final var fagsak = Fagsak.opprettNy(søkerAktørId, Long.toString(System.currentTimeMillis())); // TODO: Erstatt med gsaksnummer
         fagsakRepository.save(fagsak);
 
@@ -65,22 +60,22 @@ public class BehandlingslagerService {
         return behandling;
     }
 
-    public void trekkUtOgPersister(Behandling behandling, no.nav.familie.ks.sak.app.grunnlag.Søknad søknad) {
+    void trekkUtOgPersister(Behandling behandling, Søknad søknad) {
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
-        familieforholdBuilder.setBarna(Set.of(SøknadTilGrunnlagMapper.mapSøknadBarn(søknad).build()));
-        familieforholdBuilder.setBorBeggeForeldreSammen(konverterTilBoolean(søknad.getFamilieforhold().getBorForeldreneSammenMedBarnet()));
+        familieforholdBuilder.setBarna(SøknadTilGrunnlagMapper.mapSøknadBarn(søknad));
+        familieforholdBuilder.setBorBeggeForeldreSammen(søknad.getOppgittFamilieforhold().getBorBeggeForeldreSammen());
         barnehageBarnGrunnlagRepository.save(new BarnehageBarnGrunnlag(behandling, familieforholdBuilder.build()));
 
-        final var kravTilSoker = søknad.kravTilSoker;
-        final var erklæring = new OppgittErklæring(konverterTilBoolean(kravTilSoker.barnIkkeHjemme),
-            konverterTilBoolean(kravTilSoker.borSammenMedBarnet),
-            konverterTilBoolean(kravTilSoker.ikkeAvtaltDeltBosted),
-            konverterTilBoolean(kravTilSoker.skalBoMedBarnetINorgeNesteTolvMaaneder));
+        final var kravTilSoker = søknad.getOppgittErklæring();
+        final var erklæring = new OppgittErklæring(kravTilSoker.isBarnetHjemmeværendeOgIkkeAdoptert(),
+            kravTilSoker.isBorSammenMedBarnet(),
+            kravTilSoker.isIkkeAvtaltDeltBosted(),
+            kravTilSoker.isBarnINorgeNeste12Måneder());
 
-        final var familieforhold = søknad.getFamilieforhold();
+        final var oppgittAnnenPartFødselsnummer = søknad.getOppgittAnnenPartFødselsnummer();
         AktørId oppgittAnnenPartAktørId = null;
 
-        if (familieforhold.getAnnenForelderFødselsnummer() != null && !familieforhold.getAnnenForelderFødselsnummer().isEmpty()) {
+        if (oppgittAnnenPartFødselsnummer != null && !oppgittAnnenPartFødselsnummer.isEmpty()) {
             Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningRepository.findByBehandlingAndAktiv(behandling.getId());
             if (personopplysningGrunnlag.isPresent()) {
                 Optional<AktørId> oppgittAnnenPart = personopplysningGrunnlag.get().getOppgittAnnenPart();
@@ -96,7 +91,6 @@ public class BehandlingslagerService {
 
         final var oppgittUtlandsTilknytning = SøknadTilGrunnlagMapper.mapUtenlandsTilknytning(søknad, behandling.getFagsak().getAktørId(), oppgittAnnenPartAktørId);
 
-        final var innsendtTidspunkt = LocalDateTime.ofInstant(søknad.innsendingsTidspunkt, ZoneId.systemDefault());
-        søknadGrunnlagRepository.save(new SøknadGrunnlag(behandling, new Søknad(innsendtTidspunkt, oppgittUtlandsTilknytning, erklæring)));
+        søknadGrunnlagRepository.save(new SøknadGrunnlag(behandling, new no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad(søknad.getInnsendtTidspunkt(), oppgittUtlandsTilknytning, erklæring)));
     }
 }

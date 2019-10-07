@@ -41,7 +41,6 @@ public class SamletVilkårsVurderingTest {
         assertThat(alleUtfall).hasSize(inngangsvilkår.size());
         assertThat(alleUtfall).containsExactlyInAnyOrder(UtfallType.MANUELL_BEHANDLING, UtfallType.OPPFYLT, UtfallType.OPPFYLT, UtfallType.OPPFYLT,  UtfallType.OPPFYLT);
         assertThat(vurder.getSamletUtfallType()).isEqualTo(UtfallType.MANUELL_BEHANDLING);
-
     }
 
     @Test
@@ -54,6 +53,5 @@ public class SamletVilkårsVurderingTest {
         for (Regelresultat resultat : resultater) {
             assertThat(resultat.getUtfallÅrsak()).isNotNull();
         }
-
     }
 }
