@@ -8,13 +8,13 @@ import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
 
 import java.time.LocalDate
 
-data class RestPerson internal constructor(
+data class RestPerson (
     val fødselsnummer: String,
     val navn: String,
     val fødselsdato: LocalDate,
     val dødsdato: LocalDate,
     val statsborgerskap: Landkode,
-    val relasjoner: List<PersonRelasjon>,
+    val relasjoner: List<RestPersonrelasjon>,
     val personhistorikk: RestPersonhistorikk)
 
 
@@ -24,6 +24,6 @@ fun Person.toRestPerson(oppslagTjeneste: OppslagTjeneste) = RestPerson(
         fødselsdato = this.fødselsdato,
         dødsdato = this.dødsdato,
         statsborgerskap = this.statsborgerskap,
-        relasjoner = this.relasjoner,
+        relasjoner = this.relasjoner.map { it.toRestPersonrelasjon(oppslagTjeneste) },
         personhistorikk = this.toRestPersonhistorikk()
 )
