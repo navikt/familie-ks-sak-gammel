@@ -120,4 +120,23 @@ public class RestFagsakTest {
 
         assertThat(restFagsakService.hentFagsaker()).hasSize(1);
     }
+
+    @Test
+    public void rest_fagsak_har_tps_informasjon() {
+        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass());
+        Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
+
+        assert behandling.isPresent();
+        behandling.ifPresent(behandling1 -> {
+            final RestFagsak restFagsak = restFagsakService.hentRestFagsak(behandling.get().getFagsak().getId());
+            assertThat(restFagsak).isNotNull();
+
+            final var restPersoner = restFagsak.getBehandlinger().iterator().next().getPersonopplysninger();
+
+            assertThat(restPersoner).isNotNull();
+            assertThat(restPersoner.getSøker().getFødselsnummer()).isEqualTo(SøknadTestdata.norskFamilieUtenBarnehageplass().getSøkerFødselsnummer());
+            assertThat(restPersoner.getAnnenPart().getFødselsnummer()).isEqualTo(SøknadTestdata.norskFamilieUtenBarnehageplass().getOppgittAnnenPartFødselsnummer());
+        });
+    }
 }

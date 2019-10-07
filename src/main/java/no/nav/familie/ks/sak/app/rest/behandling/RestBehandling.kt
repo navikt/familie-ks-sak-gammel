@@ -8,4 +8,4 @@ data class RestBehandling(
     val behandlingId: Long,
     val søknadGrunnlag: RestSøknad,
     val behandlingsresultat: RestBehandlingsresultat,
-    val personopplysninger: RestPersoner?)
+    val personopplysninger: RestPersoner)
