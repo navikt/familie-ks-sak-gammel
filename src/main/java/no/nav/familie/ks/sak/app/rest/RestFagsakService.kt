@@ -11,7 +11,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRe
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
 import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling
 import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak
-import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.personinformasjon.RestPersonopplysninger
+import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.personinformasjon.RestPersoner
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestOppgittErklæring
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestOppgittFamilieforhold
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestOppgittUtlandsTilknytning
@@ -62,7 +62,7 @@ class RestFagsakService (
             val søknad = RestSøknad(søknadGrunnlag.søknad.innsendtTidspunkt, familieforhold, oppgittUtlandsTilknytning, oppgittErklæring)
 
             // Grunnlag fra TPS
-            val personopplysninger: RestPersonopplysninger? = null
+            val personopplysninger: RestPersoner? = null
 
             // Grunnlag fra regelkjøring
             val behandlingResultat = behandlingresultatRepository.finnBehandlingsresultat(behandling.id)

@@ -96,7 +96,7 @@ public class FagsakRepositoryTest {
     public void skal_lagre_personer_med_historikk() {
 
         //given
-        final var søknad = FaktagrunnlagBuilder.utenBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent());
+        final var søknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
 
 
         // when
