@@ -1,9 +1,9 @@
 package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import no.nav.familie.ks.kontrakter.søknad.TilknytningTilUtlandVerdier;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
-import no.nav.familie.ks.sak.app.grunnlag.søknad.TilknytningTilUtland;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -26,8 +26,9 @@ public class AktørTilknytningUtland extends BaseEntitet {
     @JoinColumn(name = "UTLAND_ID")
     private OppgittUtlandsTilknytning utlandsTilknytning;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "BODD_ELLER_JOBBET")
-    private TilknytningTilUtland.TilknytningTilUtlandVerdier tilknytningTilUtland;
+    private TilknytningTilUtlandVerdier tilknytningTilUtland;
 
     @Column(name = "BODD_ELLER_JOBBET_FORKLARING")
     private String tilknytningTilUtlandForklaring;
@@ -35,7 +36,7 @@ public class AktørTilknytningUtland extends BaseEntitet {
     AktørTilknytningUtland() {
     }
 
-    public AktørTilknytningUtland(AktørId aktør, TilknytningTilUtland.TilknytningTilUtlandVerdier tilknytningTilUtland, String tilknytningTilUtlandForklaring) {
+    public AktørTilknytningUtland(AktørId aktør, TilknytningTilUtlandVerdier tilknytningTilUtland, String tilknytningTilUtlandForklaring) {
         this.aktørId = aktør;
         this.tilknytningTilUtland = tilknytningTilUtland;
         this.tilknytningTilUtlandForklaring = tilknytningTilUtlandForklaring;
@@ -63,7 +64,7 @@ public class AktørTilknytningUtland extends BaseEntitet {
         return aktørId;
     }
 
-    public TilknytningTilUtland.TilknytningTilUtlandVerdier getTilknytningTilUtland() {
+    public TilknytningTilUtlandVerdier getTilknytningTilUtland() {
         return tilknytningTilUtland;
     }
 

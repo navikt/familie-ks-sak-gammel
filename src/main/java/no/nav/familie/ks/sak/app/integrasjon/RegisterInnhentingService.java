@@ -2,17 +2,15 @@ package no.nav.familie.ks.sak.app.integrasjon;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
+import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.*;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Landkode;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.DatoIntervallEntitet;
-import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
-import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class RegisterInnhentingService {
@@ -46,8 +43,9 @@ public class RegisterInnhentingService {
 
     public TpsFakta innhentPersonopplysninger(Behandling behandling, Søknad søknad) {
         final var søkerAktørId = behandling.getFagsak().getAktørId();
-        final var oppgittAnnenPartPersonIdent = søknad.getFamilieforhold().getAnnenForelderFødselsnummer();
-        final var barnAktørId = oppslagTjeneste.hentAktørId(søknad.getMineBarn().getFødselsnummer());
+        final var oppgittAnnenPartPersonIdent = søknad.getOppgittAnnenPartFødselsnummer();
+        // TODO skriv om når vi støtter flerlinger
+        final var barnAktørId = oppslagTjeneste.hentAktørId(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer());
         final var personopplysningerInformasjon = new PersonopplysningerInformasjon();
 
         final PersonMedHistorikk søkerPersonMedHistorikk = hentPersonMedHistorikk(søkerAktørId);

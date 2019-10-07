@@ -1,9 +1,11 @@
 package no.nav.familie.ks.sak.util;
 
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Standpunkt;
+import no.nav.familie.ks.kontrakter.søknad.Standpunkt;
+
+import java.util.Optional;
 
 public final class Konvertering {
     public static boolean konverterTilBoolean(String kode) {
-        return Standpunkt.map(kode, Standpunkt.UBESVART).equals(Standpunkt.JA);
+        return Optional.of(Standpunkt.valueOf(kode)).orElse(Standpunkt.UBESVART) == Standpunkt.JA;
     }
 }

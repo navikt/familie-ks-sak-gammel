@@ -27,6 +27,7 @@ public class Barn extends BaseEntitet {
     @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", updatable = false)))
     private AktørId aktørId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "barnehage_status", nullable = false, updatable = false)
     private BarnehageplassStatus barnehageStatus;
 

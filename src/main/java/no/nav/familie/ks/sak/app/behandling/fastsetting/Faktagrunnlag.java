@@ -2,14 +2,12 @@ package no.nav.familie.ks.sak.app.behandling.fastsetting;
 
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
-import no.nav.familie.ks.sak.app.grunnlag.Søknad;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class Faktagrunnlag {
-
     private final LocalDate behandlingstidspunkt;
     private BarnehageBarnGrunnlag barnehageBarnGrunnlag;
     private SøknadGrunnlag søknadGrunnlag;

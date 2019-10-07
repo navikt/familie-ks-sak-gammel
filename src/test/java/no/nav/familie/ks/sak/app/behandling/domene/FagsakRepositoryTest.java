@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene;
 
+import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.ApplicationTestPropertyValues;
 import no.nav.familie.ks.sak.DevLauncher;
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
@@ -73,7 +74,7 @@ public class FagsakRepositoryTest {
     public void skal_kjøre_flyway_migreringer_og_lagre_data_i_postgresql() {
 
         //given
-        final var søknad = FaktagrunnlagBuilder.utenBarnehageplass(FaktagrunnlagBuilder.norskPersonIdent.getIdent());
+        final var søknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
         Vedtak vedtak = saksbehandling.behandle(søknad);
 
         // when

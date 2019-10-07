@@ -1,6 +1,7 @@
 package no.nav.familie.ks.sak.app.integrasjon;
 
 import no.nav.familie.http.sts.StsRestClient;
+import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
@@ -90,7 +91,7 @@ public class RegisterInnhentingServiceTest {
         final var behandling = Behandling.forFørstegangssøknad(fagsak).build();
         behandlingRepository.save(behandling);
 
-        tjeneste.innhentPersonopplysninger(behandling, FaktagrunnlagBuilder.hentSøknad());
+        tjeneste.innhentPersonopplysninger(behandling, SøknadTestdata.norskFamilieUtenBarnehageplass());
 
         final var personopplysningGrunnlag = personopplysningService.hentHvisEksisterer(behandling);
 
@@ -125,7 +126,7 @@ public class RegisterInnhentingServiceTest {
         final var behandling = Behandling.forFørstegangssøknad(fagsak).build();
         behandlingRepository.save(behandling);
 
-        tjeneste.innhentPersonopplysninger(behandling, FaktagrunnlagBuilder.hentSøknadUtenAnnenPart());
+        tjeneste.innhentPersonopplysninger(behandling, SøknadTestdata.norskFamilieUtenAnnenPartOgUtenBarnehageplass());
 
         final var personopplysningGrunnlag = personopplysningService.hentHvisEksisterer(behandling);
 
