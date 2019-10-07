@@ -97,8 +97,8 @@ public class BehandlingslagerServiceTest {
         final var erklæring = søknad1.getErklæring();
         assertThat(erklæring).isNotNull();
         assertThat(søknad1.getUtlandsTilknytning()).isNotNull();
-        assertThat(søknad1.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet()).hasSize(1);
-        assertThat(søknad1.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet()).hasSize(1);
+        assertThat(søknad1.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet()).hasSize(2);
+        assertThat(søknad1.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet()).hasSize(2);
         final var barnehageBarnGrunnlagList = barnehageBarnGrunnlagRepository.findAll();
         assertThat(barnehageBarnGrunnlagList).hasSize(1);
         assertThat(barnehageBarnGrunnlagList.get(0).getFamilieforhold()).isNotNull();
