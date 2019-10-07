@@ -8,7 +8,6 @@ public enum VilkårType {
     BARN(Constants.BARN_KODE, "Barn er norsk statsborger", "§2"),
 
     KUN_ET_BARN(Constants.BARN_KODE, "Kun et barn er oppgitt i søknaden (MVP)", "MVP"),
-    UTLAND(Constants.UTLAND_KODE, "Søker har ikke oppgitt noen tilknytning til utland (MVP)", "lovreferanse");
     UTLAND(Constants.UTLAND_KODE, "Søker har ikke oppgitt noen tilknytning til utland (MVP)", "lovreferanse"),
     BARN_MELLOM_10_OG_14_MÅNEDER(Constants.BARN_MELLOM_10_OG_14_MÅNEDER_KODE, "Barn er mellom 10 og 14 måneder", "MVP: Se regel 1.7 i Confluence");
 
