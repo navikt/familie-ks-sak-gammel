@@ -36,7 +36,9 @@ public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnla
         boolean søkerOppfyllerKrav = ikkeTilknytningTilUtland(søker, søkerMedHistorikk, søknad);
 
         boolean annenPartOppfyllerKrav = true;
-        if (annenPartMedHistorikk != null) {
+        if (annenPartMedHistorikk != null &&
+            søknad.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet().size() > 1 &&
+            søknad.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet().size() > 1) {
             annenPartOppfyllerKrav = ikkeTilknytningTilUtland(søker, annenPartMedHistorikk, søknad);
         }
 

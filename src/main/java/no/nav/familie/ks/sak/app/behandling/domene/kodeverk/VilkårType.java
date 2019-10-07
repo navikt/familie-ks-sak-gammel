@@ -6,8 +6,11 @@ public enum VilkårType {
     BARNEHAGE(Constants.BARNEHAGE_KODE, "Retten til basert på plass i barnehage", "§1"),
     BOSTED(Constants.BOSTED_KODE, "Kontantstøtte ytes til den som barnet bor fast hos.", "§3"),
     BARN(Constants.BARN_KODE, "Barn er norsk statsborger", "§2"),
+
     KUN_ET_BARN(Constants.BARN_KODE, "Kun et barn er oppgitt i søknaden (MVP)", "MVP"),
     UTLAND(Constants.UTLAND_KODE, "Søker har ikke oppgitt noen tilknytning til utland (MVP)", "lovreferanse");
+    UTLAND(Constants.UTLAND_KODE, "Søker har ikke oppgitt noen tilknytning til utland (MVP)", "lovreferanse"),
+    BARN_MELLOM_10_OG_14_MÅNEDER(Constants.BARN_MELLOM_10_OG_14_MÅNEDER_KODE, "Barn er mellom 10 og 14 måneder", "MVP: Se regel 1.7 i Confluence");
 
     private final String kode;
     private final String beskrivelse;
@@ -51,5 +54,6 @@ public enum VilkårType {
         public static final String BOSTED_KODE = "BOST";
         public static final String BARN_KODE = "BARN";
         public static final String UTLAND_KODE = "UTL";
+        public static final String BARN_MELLOM_10_OG_14_MÅNEDER_KODE = "BARN_MELLOM_10_OG_14_MÅNEDER";
     }
 }
