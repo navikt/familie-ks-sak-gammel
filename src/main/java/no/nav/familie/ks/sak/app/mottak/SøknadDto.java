@@ -1,12 +1,16 @@
 package no.nav.familie.ks.sak.app.mottak;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class SøknadDto {
 
     private String søknadJson;
 
     private String saksnummer;
 
-    public SøknadDto(String søknadJson, String saksnummer) {
+    @JsonCreator
+    public SøknadDto(@JsonProperty("søknadJson") String søknadJson, @JsonProperty("saksnummer") String saksnummer) {
         this.søknadJson = søknadJson;
         this.saksnummer = saksnummer;
     }

@@ -56,7 +56,7 @@ class FagsakController (
     @PostMapping(path = ["/behandle"])
     fun behandle(@RequestBody søknad: Søknad): ResponseEntity<Ressurs> {
         val behandling: Behandling? = Result.runCatching {
-            val vedtak: Vedtak = saksbehandling.behandle(søknad, null)
+            val vedtak: Vedtak = saksbehandling.behandle(søknad, "GSAK")
             behandlingRepository.getOne(vedtak.behandlingsId)
         }.fold(
             onSuccess = { it },
