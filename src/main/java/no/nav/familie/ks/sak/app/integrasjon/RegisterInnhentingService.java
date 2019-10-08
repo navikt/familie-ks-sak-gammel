@@ -114,10 +114,16 @@ public class RegisterInnhentingService {
     }
 
     private void mapRelasjoner(Personinfo søker, Personinfo annenPart, Personinfo barn, PersonopplysningGrunnlag personopplysningGrunnlag) {
+        //Midlertidig logg til testing fjern før prodsetting
+
         barn.getFamilierelasjoner()
             .stream()
             .filter(it -> it.getAktørId().equals(søker.getAktørId()) || (annenPart != null && it.getAktørId().equals(annenPart.getAktørId())))
-            .forEach(relasjon -> personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+            .forEach(relasjon -> {
+                logger.info(personopplysningGrunnlag.toString());
+                logger.info(barn.toString());
+                logger.info(relasjon.toString());
+                personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted()));});
 
         søker.getFamilierelasjoner()
             .stream()
