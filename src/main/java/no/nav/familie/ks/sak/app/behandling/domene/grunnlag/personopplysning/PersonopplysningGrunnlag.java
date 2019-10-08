@@ -125,7 +125,8 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
     public String toString() {
         final StringBuilder sb = new StringBuilder("PersonopplysningGrunnlagEntitet{");
         sb.append("id=").append(id);
-        sb.append(", barna=").append(getBarna().toString());
+        sb.append(", personer=").append(this.getRegistrertePersoner().toString());
+        sb.append(", barna=").append(this.getBarna().toString());
         sb.append(", søknadAnnenPart=").append(oppgittAnnenPart);
         sb.append(", aktiv=").append(aktiv);
         sb.append('}');
