@@ -37,10 +37,11 @@ public class MottaSøknadController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
-    public ResponseEntity mottaDokument(@RequestBody String søknadJson) {
-        Søknad søknad = SøknadKt.toSøknad(søknadJson);
+    public ResponseEntity mottaDokument(@RequestBody SøknadDto søknadDto) {
+        Søknad søknad = SøknadKt.toSøknad(søknadDto.getSøknadJson());
+        String saksnummer = søknadDto.getSaksnummer();
         try {
-            Vedtak vedtak = saksbehandling.behandle(søknad);
+            Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer);
             final var vilkårvurdering = vedtak.getVilkårvurdering();
             final var samletUtfallType = vilkårvurdering.getSamletUtfallType();
 

@@ -49,9 +49,9 @@ public class BehandlingslagerService {
         this.oppslagTjeneste = oppslag;
     }
 
-    public Behandling nyBehandling(Søknad søknad) {
+    public Behandling nyBehandling(Søknad søknad, String saksnummer) {
         final var søkerAktørId = oppslagTjeneste.hentAktørId(søknad.getSøkerFødselsnummer());
-        final var fagsak = Fagsak.opprettNy(søkerAktørId, Long.toString(System.currentTimeMillis())); // TODO: Erstatt med gsaksnummer
+        final var fagsak = Fagsak.opprettNy(søkerAktørId, saksnummer);
         fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak).build();
