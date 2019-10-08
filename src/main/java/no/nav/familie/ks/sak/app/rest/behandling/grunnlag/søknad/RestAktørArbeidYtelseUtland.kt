@@ -15,7 +15,7 @@ data class RestAktørArbeidYtelseUtland(
     val kontantstøtteIUtlandetForklaring: String? = null)
 
 fun AktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland(oppslagTjeneste: OppslagTjeneste) = RestAktørArbeidYtelseUtland(
-        personIdent = PersonIdent.fra(this.fnr),
+        personIdent = PersonIdent.fra(this.fødselsnummer),
         arbeidIUtlandet = this.arbeidIUtlandet,
         arbeidIUtlandetForklaring = this.arbeidIUtlandetForklaring,
         ytelseIUtlandet = this.ytelseIUtlandet,
