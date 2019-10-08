@@ -22,7 +22,7 @@ public class AktørTilknytningUtland extends BaseEntitet {
     private AktørId aktørId;
 
     @Column(name = "FNR")
-    private String fnr;
+    private String fødselsnummer;
 
     @JsonIgnore
     @ManyToOne
@@ -39,9 +39,9 @@ public class AktørTilknytningUtland extends BaseEntitet {
     AktørTilknytningUtland() {
     }
 
-    public AktørTilknytningUtland(AktørId aktør, String fnr, TilknytningTilUtlandVerdier tilknytningTilUtland, String tilknytningTilUtlandForklaring) {
+    public AktørTilknytningUtland(AktørId aktør, String fødselsnummer, TilknytningTilUtlandVerdier tilknytningTilUtland, String tilknytningTilUtlandForklaring) {
         this.aktørId = aktør;
-        this.fnr = fnr;
+        this.fødselsnummer = fødselsnummer;
         this.tilknytningTilUtland = tilknytningTilUtland;
         this.tilknytningTilUtlandForklaring = tilknytningTilUtlandForklaring;
     }
@@ -65,11 +65,11 @@ public class AktørTilknytningUtland extends BaseEntitet {
     }
 
     public String getFnr() {
-        return fnr;
+        return fødselsnummer;
     }
 
     public void setFnr(String fnr) {
-        this.fnr = fnr;
+        this.fødselsnummer = fnr;
     }
 
     public AktørId getAktør() {

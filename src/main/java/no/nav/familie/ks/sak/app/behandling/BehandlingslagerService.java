@@ -6,6 +6,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.SøknadTilGrunnlagMapper;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barn;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.OppgittFamilieforhold;
@@ -63,7 +64,7 @@ public class BehandlingslagerService {
 
     void trekkUtOgPersister(Behandling behandling, Søknad søknad) {
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
-        familieforholdBuilder.setBarna(SøknadTilGrunnlagMapper.mapSøknadBarn(søknad));
+        familieforholdBuilder.setBarna(mapOgHentAktøridForBarna(søknad));
         familieforholdBuilder.setBorBeggeForeldreSammen(søknad.getOppgittFamilieforhold().getBorBeggeForeldreSammen());
         barnehageBarnGrunnlagRepository.save(new BarnehageBarnGrunnlag(behandling, familieforholdBuilder.build()));
 
@@ -93,5 +94,13 @@ public class BehandlingslagerService {
         final var oppgittUtlandsTilknytning = SøknadTilGrunnlagMapper.mapUtenlandsTilknytning(søknad, behandling.getFagsak().getAktørId(), oppgittAnnenPartAktørId);
 
         søknadGrunnlagRepository.save(new SøknadGrunnlag(behandling, new no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad(søknad.getInnsendtTidspunkt(), oppgittUtlandsTilknytning, erklæring)));
+    }
+
+    Set<Barn> mapOgHentAktøridForBarna(Søknad søknad) {
+        Set<Barn> barna = SøknadTilGrunnlagMapper.mapSøknadBarn(søknad);
+        for (Barn barn : barna) {
+            barn.setAktørId(oppslagTjeneste.hentAktørId(barn.getFødselsnummer()));
+        }
+        return barna;
     }
 }

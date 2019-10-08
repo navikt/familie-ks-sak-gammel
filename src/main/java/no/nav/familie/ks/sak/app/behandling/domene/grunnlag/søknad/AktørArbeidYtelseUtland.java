@@ -126,7 +126,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
 
     public static class Builder {
         private AktørId aktørId;
-        private String fnr;
+        private String fødselsnummer;
         private Standpunkt arbeidIUtlandet;
         private String arbeidIUtlandetForklaring;
         private Standpunkt ytelseIUtlandet;
@@ -154,8 +154,8 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
             return this;
         }
 
-        public Builder setFnr(String fnr) {
-            this.fnr = fnr;
+        public Builder setFødselsnummer(String fødselsnummer) {
+            this.fødselsnummer = fødselsnummer;
             return this;
         }
 
@@ -175,7 +175,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
         }
 
         public AktørArbeidYtelseUtland build() {
-            return new AktørArbeidYtelseUtland(aktørId, fnr, arbeidIUtlandet, arbeidIUtlandetForklaring, ytelseIUtlandet, ytelseIUtlandetForklaring, kontantstøtteIUtlandet, kontantstøtteIUtlandetForklaring);
+            return new AktørArbeidYtelseUtland(aktørId, fødselsnummer, arbeidIUtlandet, arbeidIUtlandetForklaring, ytelseIUtlandet, ytelseIUtlandetForklaring, kontantstøtteIUtlandet, kontantstøtteIUtlandetForklaring);
         }
     }
 }
