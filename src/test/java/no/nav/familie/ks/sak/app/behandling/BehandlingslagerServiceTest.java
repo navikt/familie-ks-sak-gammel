@@ -84,10 +84,10 @@ public class BehandlingslagerServiceTest {
         final var saksnummer = "TEST123";
         Behandling nyBehandling = tjeneste.nyBehandling(søknad, saksnummer);
         tjeneste.trekkUtOgPersister(nyBehandling, søknad);
-
         final var fagsaker = fagsakRepository.findAll();
         assertThat(fagsaker).hasSize(1);
         assertThat(fagsaker.get(0).getAktørId()).isEqualTo(new AktørId(søknad.getSøkerFødselsnummer()));
+        assertThat(fagsaker.get(0).getSaksnummer()).isEqualTo(saksnummer);
         final var behandlinger = behandlingRepository.findAll();
         assertThat(behandlinger).hasSize(1);
         final var behandling = behandlinger.get(0);
