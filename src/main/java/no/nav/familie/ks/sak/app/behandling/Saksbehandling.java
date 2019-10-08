@@ -45,11 +45,6 @@ public class Saksbehandling {
     }
 
     @Transactional
-    //Kan ikke ha retryable her, da vil vi lage flere behandlinger på en fagsak hvis noe feiler.
-    //@Retryable(
-    //    value = { Exception.class },
-    //    maxAttempts = 2,
-    //    backoff = @Backoff(delay = 5000))
     public Vedtak behandle(Søknad søknad) {
         final Behandling behandling = behandlingslagerService.nyBehandling(søknad);
         TpsFakta tpsFakta = registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
