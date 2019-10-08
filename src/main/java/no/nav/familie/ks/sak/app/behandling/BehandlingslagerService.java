@@ -74,32 +74,16 @@ public class BehandlingslagerService {
             kravTilSoker.isIkkeAvtaltDeltBosted(),
             kravTilSoker.isBarnINorgeNeste12Måneder());
 
-        final var oppgittAnnenPartFødselsnummer = søknad.getOppgittAnnenPartFødselsnummer();
-        AktørId oppgittAnnenPartAktørId = null;
+        final var oppgittUtlandsTilknytning = SøknadTilGrunnlagMapper.mapUtenlandsTilknytning(søknad);
 
-        if (oppgittAnnenPartFødselsnummer != null && !oppgittAnnenPartFødselsnummer.isEmpty()) {
-            Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningGrunnlagRepository.findByBehandlingAndAktiv(behandling.getId());
-            if (personopplysningGrunnlag.isPresent()) {
-                Optional<AktørId> oppgittAnnenPart = personopplysningGrunnlag.get().getOppgittAnnenPart();
-                if (oppgittAnnenPart.isPresent()) {
-                    oppgittAnnenPartAktørId = oppgittAnnenPart.get();
-                } else {
-                    logger.warn("Annen part mangler i personopplysning grunnlaget, men søker har oppgitt annen part");
-                }
-            } else {
-                logger.warn("Personopplysning grunnlaget mangler.");
-            }
-        }
-
-        final var oppgittUtlandsTilknytning = SøknadTilGrunnlagMapper.mapUtenlandsTilknytning(søknad, behandling.getFagsak().getAktørId(), oppgittAnnenPartAktørId);
-
-        søknadGrunnlagRepository.save(new SøknadGrunnlag(behandling, new no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad(søknad.getInnsendtTidspunkt(), oppgittUtlandsTilknytning, erklæring)));
+        søknadGrunnlagRepository.save(new SøknadGrunnlag(behandling,
+            new no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad(søknad.getInnsendtTidspunkt(), søknad.getSøkerFødselsnummer(), søknad.getOppgittAnnenPartFødselsnummer(), oppgittUtlandsTilknytning, erklæring)));
     }
 
     Set<Barn> mapOgHentAktøridForBarna(Søknad søknad) {
         Set<Barn> barna = SøknadTilGrunnlagMapper.mapSøknadBarn(søknad);
         for (Barn barn : barna) {
-            barn.setAktørId(oppslagTjeneste.hentAktørId(barn.getFødselsnummer()));
+            barn.setFødselsnummer(barn.getFødselsnummer());
         }
         return barna;
     }

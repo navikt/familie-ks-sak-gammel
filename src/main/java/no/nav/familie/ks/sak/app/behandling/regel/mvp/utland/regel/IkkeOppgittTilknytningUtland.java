@@ -27,52 +27,26 @@ public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnla
 
     @Override
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
-        PersonMedHistorikk søkerMedHistorikk = grunnlag.getTpsFakta().getForelder();
-        PersonMedHistorikk annenPartMedHistorikk = grunnlag.getTpsFakta().getAnnenForelder();
-        AktørId søker = søkerMedHistorikk.getPersoninfo().getAktørId();
-
         SøknadGrunnlag søknadGrunnlag = grunnlag.getSøknadGrunnlag();
         no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad søknad = søknadGrunnlag.getSøknad();
 
-        boolean søkerOppfyllerKrav = ikkeTilknytningTilUtland(søker, søkerMedHistorikk, søknad);
-
-        boolean annenPartOppfyllerKrav = true;
-        if (annenPartMedHistorikk != null &&
-            søknad.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet().size() > 1 &&
-            søknad.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet().size() > 1) {
-            annenPartOppfyllerKrav = ikkeTilknytningTilUtland(søker, annenPartMedHistorikk, søknad);
-        }
-
-        return søkerOppfyllerKrav && annenPartOppfyllerKrav ? ja() : nei();
+        return ikkeTilknytningTilUtland(søknad) ? ja() : nei();
     }
 
-    private boolean ikkeTilknytningTilUtland(AktørId søker, PersonMedHistorikk personMedHistorikk, no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad søknad) {
-        AktørId aktør = personMedHistorikk.getPersoninfo().getAktørId();
+    private boolean ikkeTilknytningTilUtland(no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad søknad) {
+        long tilknytningTilUtlandetCount = søknad.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet().stream().map(aktørTilknytningUtland -> {
+            boolean boddEllerJobbetINorgeMinstFemAar = aktørTilknytningUtland.getTilknytningTilUtland().equals(TilknytningTilUtlandVerdier.jaINorge);
+            return boddEllerJobbetINorgeMinstFemAar;
+        }).filter(result -> !result).count();
 
-        final Set<AktørArbeidYtelseUtland> aktørerArbeidYtelseIUtlandet = søknad.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet();
-        final Optional<AktørArbeidYtelseUtland> aktørArbeidYtelseUtland = aktørerArbeidYtelseIUtlandet.stream()
-                                                                                                      .filter(aktørArbeidYtelseUtland1 -> Objects.nonNull(aktørArbeidYtelseUtland1.getAktørId()))
-                                                                                                      .filter(aktørArbeidYtelseIUtlandet -> aktørArbeidYtelseIUtlandet.getAktørId().equals(aktør)).findFirst();
+        long arbeidYtelseIUtlandetCount = søknad.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet().stream().map(aktørArbeidYtelseUtland -> {
+            boolean arbeidIUtlandet = aktørArbeidYtelseUtland.getArbeidIUtlandet().equals(Standpunkt.NEI);
+            boolean utenlandskeYtelser = aktørArbeidYtelseUtland.getYtelseIUtlandet().equals(Standpunkt.NEI);
+            boolean utenlandskKontantstotte = !aktørArbeidYtelseUtland.getKontantstøtteIUtlandet().equals(Standpunkt.JA);
 
-        final Set<AktørTilknytningUtland> aktørerTilknytningTilUtlandet = søknad.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet();
-        final Optional<AktørTilknytningUtland> aktørTilknytningTilUtlandet = aktørerTilknytningTilUtlandet.stream()
-                                                                                                          .filter(aktørTilknytningUtland -> Objects.nonNull(aktørTilknytningUtland.getAktør()))
-                                                                                                          .filter(aktørTilknytningUtland ->
-            aktørTilknytningUtland.getAktør().equals(aktør)).findFirst();
+            return arbeidIUtlandet && utenlandskeYtelser && utenlandskKontantstotte;
+        }).filter(result -> !result).count();
 
-        if (!aktørArbeidYtelseUtland.isPresent() || !aktørTilknytningTilUtlandet.isPresent()) {
-            return false;
-        }
-
-        boolean boddEllerJobbetINorgeMinstFemAar = aktørTilknytningTilUtlandet.get().getTilknytningTilUtland().equals(TilknytningTilUtlandVerdier.jaINorge);
-        boolean arbeidIUtlandet = aktørArbeidYtelseUtland.get().getArbeidIUtlandet().equals(Standpunkt.NEI);
-        boolean utenlandskeYtelser = aktørArbeidYtelseUtland.get().getYtelseIUtlandet().equals(Standpunkt.NEI);
-
-        boolean utenlandskKontantstotte = true;
-        if (aktør.equals(søker)) {
-            utenlandskKontantstotte = aktørArbeidYtelseUtland.get().getKontantstøtteIUtlandet().equals(Standpunkt.NEI);
-        }
-
-        return boddEllerJobbetINorgeMinstFemAar && arbeidIUtlandet && utenlandskeYtelser && utenlandskKontantstotte;
+        return tilknytningTilUtlandetCount == 0 && arbeidYtelseIUtlandetCount == 0;
     }
 }

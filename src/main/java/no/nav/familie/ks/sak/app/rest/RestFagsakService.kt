@@ -43,15 +43,15 @@ class RestFagsakService (
             val barnehageBarnGrunnlag: BarnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.id)
 
             val barna = barnehageBarnGrunnlag.familieforhold.barna.map { barn ->
-                barn.toRestBarn(oppslagTjeneste)
+                barn.toRestBarn()
             }
             val familieforhold = RestOppgittFamilieforhold(barna, barnehageBarnGrunnlag.familieforhold.isBorBeggeForeldreSammen)
 
             val aktørerArbeidYtelseUtland = søknadGrunnlag.søknad.utlandsTilknytning.aktørerArbeidYtelseIUtlandet.map { aktørArbeidYtelseUtland ->
-                aktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland(oppslagTjeneste)
+                aktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland()
             }
             val aktørerTilknytningUtland = søknadGrunnlag.søknad.utlandsTilknytning.aktørerTilknytningTilUtlandet.map { aktørTilknytningUtland ->
-                aktørTilknytningUtland.toRestAktørTilknytningUtland(oppslagTjeneste)
+                aktørTilknytningUtland.toRestAktørTilknytningUtland()
             }
 
             val oppgittUtlandsTilknytning = RestOppgittUtlandsTilknytning(aktørerArbeidYtelseUtland, aktørerTilknytningUtland)

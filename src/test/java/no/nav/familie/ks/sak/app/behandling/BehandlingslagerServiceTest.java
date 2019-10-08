@@ -59,9 +59,7 @@ public class BehandlingslagerServiceTest {
     @Before
     public void setUp() {
         when(personopplysningGrunnlagRepository.findByBehandlingAndAktiv(any()))
-            .thenReturn(
-                FaktagrunnlagBuilder.genererPersonopplysningGrunnlag(new AktørId(FaktagrunnlagBuilder.morAktørId.getId()))
-            );
+            .thenReturn(FaktagrunnlagBuilder.genererPersonopplysningGrunnlag());
         when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
 
         when(oppslagTjeneste.hentPersoninfoFor(any()))

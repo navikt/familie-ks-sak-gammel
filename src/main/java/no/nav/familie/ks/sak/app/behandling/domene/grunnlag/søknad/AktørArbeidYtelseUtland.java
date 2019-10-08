@@ -17,12 +17,8 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
     @SequenceGenerator(name = "so_aktoer_arbeid_ytelse_utland_seq")
     private Long id;
 
-    @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer", updatable = false, nullable = true)))
-    private AktørId aktørId;
-
     @Column(name = "FNR")
-    private String fnr;
+    private String fødselsnummer;
 
     @JsonIgnore
     @ManyToOne
@@ -53,26 +49,20 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
     AktørArbeidYtelseUtland() {
     }
 
-    private AktørArbeidYtelseUtland(AktørId aktørId,
-                                    String fnr,
+    private AktørArbeidYtelseUtland(String fødselsnummer,
                                     Standpunkt arbeidIUtlandet,
                                     String arbeidIUtlandetForklaring,
                                     Standpunkt ytelseIUtlandet,
                                     String ytelseIUtlandetForklaring,
                                     Standpunkt kontantstøtteIUtlandet,
                                     String kontantstøtteIUtlandetForklaring) {
-        this.aktørId = aktørId;
-        this.fnr = fnr;
+        this.fødselsnummer = fødselsnummer;
         this.arbeidIUtlandet = arbeidIUtlandet;
         this.arbeidIUtlandetForklaring = arbeidIUtlandetForklaring;
         this.ytelseIUtlandet = ytelseIUtlandet;
         this.ytelseIUtlandetForklaring = ytelseIUtlandetForklaring;
         this.kontantstøtteIUtlandet = kontantstøtteIUtlandet;
         this.kontantstøtteIUtlandetForklaring = kontantstøtteIUtlandetForklaring;
-    }
-
-    public AktørId getAktørId() {
-        return aktørId;
     }
 
     public Standpunkt getArbeidIUtlandet() {
@@ -103,12 +93,12 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
         this.utlandsTilknytning = utlandsTilknytning;
     }
 
-    public String getFnr() {
-        return fnr;
+    public String getFødselsnummer() {
+        return fødselsnummer;
     }
 
-    public void setFnr(String fnr) {
-        this.fnr = fnr;
+    public void setFødselsnummer(String fødselsnummer) {
+        this.fødselsnummer = fødselsnummer;
     }
 
     @Override
@@ -116,16 +106,15 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AktørArbeidYtelseUtland that = (AktørArbeidYtelseUtland) o;
-        return aktørId.equals(that.aktørId);
+        return fødselsnummer.equals(that.fødselsnummer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(aktørId);
+        return Objects.hash(fødselsnummer);
     }
 
     public static class Builder {
-        private AktørId aktørId;
         private String fødselsnummer;
         private Standpunkt arbeidIUtlandet;
         private String arbeidIUtlandetForklaring;
@@ -133,11 +122,6 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
         private String ytelseIUtlandetForklaring;
         private Standpunkt kontantstøtteIUtlandet = Standpunkt.UBESVART;
         private String kontantstøtteIUtlandetForklaring;
-
-        public Builder setAktørId(AktørId aktørId) {
-            this.aktørId = aktørId;
-            return this;
-        }
 
         public Builder setArbeidIUtlandet(Standpunkt arbeidIUtlandet) {
             this.arbeidIUtlandet = arbeidIUtlandet;
@@ -175,7 +159,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
         }
 
         public AktørArbeidYtelseUtland build() {
-            return new AktørArbeidYtelseUtland(aktørId, fødselsnummer, arbeidIUtlandet, arbeidIUtlandetForklaring, ytelseIUtlandet, ytelseIUtlandetForklaring, kontantstøtteIUtlandet, kontantstøtteIUtlandetForklaring);
+            return new AktørArbeidYtelseUtland(fødselsnummer, arbeidIUtlandet, arbeidIUtlandetForklaring, ytelseIUtlandet, ytelseIUtlandetForklaring, kontantstøtteIUtlandet, kontantstøtteIUtlandetForklaring);
         }
     }
 }
