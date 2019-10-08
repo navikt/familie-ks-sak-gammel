@@ -107,7 +107,7 @@ public class Personinfo {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<aktørId=" + aktørId + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+        return getClass().getSimpleName() + "<aktørId=" + aktørId + ">" + "familieRelasjoner=" + familierelasjoner.toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public static class Builder {
