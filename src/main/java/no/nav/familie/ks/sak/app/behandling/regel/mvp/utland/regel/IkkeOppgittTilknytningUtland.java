@@ -34,15 +34,16 @@ public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnla
     }
 
     private boolean ikkeTilknytningTilUtland(no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad søknad) {
-        long tilknytningTilUtlandetCount = søknad.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet().stream().map(aktørTilknytningUtland -> {
-            boolean boddEllerJobbetINorgeMinstFemAar = aktørTilknytningUtland.getTilknytningTilUtland().equals(TilknytningTilUtlandVerdier.jaINorge);
-            return boddEllerJobbetINorgeMinstFemAar;
-        }).filter(result -> !result).count();
+        long tilknytningTilUtlandetCount = søknad.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet().stream().map(aktørTilknytningUtland ->
+            aktørTilknytningUtland.getTilknytningTilUtland().equals(TilknytningTilUtlandVerdier.jaINorge)).filter(result -> !result).count();
 
         long arbeidYtelseIUtlandetCount = søknad.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet().stream().map(aktørArbeidYtelseUtland -> {
             boolean arbeidIUtlandet = aktørArbeidYtelseUtland.getArbeidIUtlandet().equals(Standpunkt.NEI);
             boolean utenlandskeYtelser = aktørArbeidYtelseUtland.getYtelseIUtlandet().equals(Standpunkt.NEI);
-            boolean utenlandskKontantstotte = !aktørArbeidYtelseUtland.getKontantstøtteIUtlandet().equals(Standpunkt.JA);
+            boolean utenlandskKontantstotte = true;
+            if (søknad.getSøkerFødselsnummer().equals(aktørArbeidYtelseUtland.getFødselsnummer())) {
+                utenlandskKontantstotte = aktørArbeidYtelseUtland.getKontantstøtteIUtlandet().equals(Standpunkt.NEI);
+            }
 
             return arbeidIUtlandet && utenlandskeYtelser && utenlandskKontantstotte;
         }).filter(result -> !result).count();
