@@ -22,7 +22,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
     private AktørId aktørId;
 
     @Column(name = "FNR")
-    private String fnr;
+    private String fødselsnummer;
 
     @JsonIgnore
     @ManyToOne
@@ -54,7 +54,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
     }
 
     private AktørArbeidYtelseUtland(AktørId aktørId,
-                                    String fnr,
+                                    String fødselsnummer,
                                     Standpunkt arbeidIUtlandet,
                                     String arbeidIUtlandetForklaring,
                                     Standpunkt ytelseIUtlandet,
@@ -62,7 +62,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
                                     Standpunkt kontantstøtteIUtlandet,
                                     String kontantstøtteIUtlandetForklaring) {
         this.aktørId = aktørId;
-        this.fnr = fnr;
+        this.fødselsnummer = fødselsnummer;
         this.arbeidIUtlandet = arbeidIUtlandet;
         this.arbeidIUtlandetForklaring = arbeidIUtlandetForklaring;
         this.ytelseIUtlandet = ytelseIUtlandet;
@@ -103,26 +103,14 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
         this.utlandsTilknytning = utlandsTilknytning;
     }
 
-    public String getFnr() {
-        return fnr;
+    public String getFødselsnummer() {
+        return fødselsnummer;
     }
 
-    public void setFnr(String fnr) {
-        this.fnr = fnr;
+    public void setFødselsnummer(String fødselsnummer) {
+        this.fødselsnummer = fødselsnummer;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AktørArbeidYtelseUtland that = (AktørArbeidYtelseUtland) o;
-        return aktørId.equals(that.aktørId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(aktørId);
-    }
 
     public static class Builder {
         private AktørId aktørId;
