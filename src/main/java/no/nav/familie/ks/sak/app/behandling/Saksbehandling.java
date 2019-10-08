@@ -45,10 +45,6 @@ public class Saksbehandling {
     }
 
     @Transactional
-    @Retryable(
-        value = { Exception.class },
-        maxAttempts = 2,
-        backoff = @Backoff(delay = 5000))
     public Vedtak behandle(Søknad søknad, String saksnummer) {
         final Behandling behandling = behandlingslagerService.nyBehandling(søknad, saksnummer);
         TpsFakta tpsFakta = registerInnhentingService.innhentPersonopplysninger(behandling, søknad);

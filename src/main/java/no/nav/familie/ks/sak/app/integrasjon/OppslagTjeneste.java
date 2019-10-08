@@ -174,7 +174,7 @@ public class OppslagTjeneste {
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {
             ResponseEntity<Personinfo> response = request(uri, Personinfo.class);
-            secureLogger.info("Personinfo for {}: {}", aktørId, response.getBody());
+            secureLogger.info("Personinfo for {}: {}", aktørId, response.getBody().getFamilierelasjoner());
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 return response.getBody();

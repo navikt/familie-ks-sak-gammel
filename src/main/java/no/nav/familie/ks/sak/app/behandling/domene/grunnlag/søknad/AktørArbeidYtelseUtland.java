@@ -18,8 +18,11 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
     private Long id;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer", updatable = false, nullable = false)))
+    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer", updatable = false, nullable = true)))
     private AktørId aktørId;
+
+    @Column(name = "FNR")
+    private String fødselsnummer;
 
     @JsonIgnore
     @ManyToOne
@@ -51,6 +54,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
     }
 
     private AktørArbeidYtelseUtland(AktørId aktørId,
+                                    String fødselsnummer,
                                     Standpunkt arbeidIUtlandet,
                                     String arbeidIUtlandetForklaring,
                                     Standpunkt ytelseIUtlandet,
@@ -58,6 +62,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
                                     Standpunkt kontantstøtteIUtlandet,
                                     String kontantstøtteIUtlandetForklaring) {
         this.aktørId = aktørId;
+        this.fødselsnummer = fødselsnummer;
         this.arbeidIUtlandet = arbeidIUtlandet;
         this.arbeidIUtlandetForklaring = arbeidIUtlandetForklaring;
         this.ytelseIUtlandet = ytelseIUtlandet;
@@ -98,21 +103,18 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
         this.utlandsTilknytning = utlandsTilknytning;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AktørArbeidYtelseUtland that = (AktørArbeidYtelseUtland) o;
-        return aktørId.equals(that.aktørId);
+    public String getFødselsnummer() {
+        return fødselsnummer;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(aktørId);
+    public void setFødselsnummer(String fødselsnummer) {
+        this.fødselsnummer = fødselsnummer;
     }
+
 
     public static class Builder {
         private AktørId aktørId;
+        private String fødselsnummer;
         private Standpunkt arbeidIUtlandet;
         private String arbeidIUtlandetForklaring;
         private Standpunkt ytelseIUtlandet;
@@ -140,6 +142,11 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
             return this;
         }
 
+        public Builder setFødselsnummer(String fødselsnummer) {
+            this.fødselsnummer = fødselsnummer;
+            return this;
+        }
+
         public Builder setYtelseIUtlandetForklaring(String ytelseIUtlandetForklaring) {
             this.ytelseIUtlandetForklaring = ytelseIUtlandetForklaring;
             return this;
@@ -156,7 +163,7 @@ public class AktørArbeidYtelseUtland extends BaseEntitet {
         }
 
         public AktørArbeidYtelseUtland build() {
-            return new AktørArbeidYtelseUtland(aktørId, arbeidIUtlandet, arbeidIUtlandetForklaring, ytelseIUtlandet, ytelseIUtlandetForklaring, kontantstøtteIUtlandet, kontantstøtteIUtlandetForklaring);
+            return new AktørArbeidYtelseUtland(aktørId, fødselsnummer, arbeidIUtlandet, arbeidIUtlandetForklaring, ytelseIUtlandet, ytelseIUtlandetForklaring, kontantstøtteIUtlandet, kontantstøtteIUtlandetForklaring);
         }
     }
 }

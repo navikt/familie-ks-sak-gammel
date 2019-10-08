@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface PersonopplysningRepository extends JpaRepository<PersonopplysningGrunnlag, Long> {
+public interface PersonopplysningGrunnlagRepository extends JpaRepository<PersonopplysningGrunnlag, Long> {
 
     @Query("SELECT gr FROM PersonopplysningGrunnlag gr WHERE behandlingId = ?1 AND aktiv = true")
     Optional<PersonopplysningGrunnlag> findByBehandlingAndAktiv(Long behandlingId);

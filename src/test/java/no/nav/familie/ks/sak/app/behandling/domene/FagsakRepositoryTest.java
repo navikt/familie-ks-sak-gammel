@@ -5,6 +5,9 @@ import no.nav.familie.ks.sak.ApplicationTestPropertyValues;
 import no.nav.familie.ks.sak.DevLauncher;
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonType;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlag;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
@@ -48,6 +51,8 @@ public class FagsakRepositoryTest {
     private FagsakRepository fagsakRepository;
     @Autowired
     private BehandlingRepository behandlingRepository;
+    @Autowired
+    private PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository;
 
     @Autowired
     private Saksbehandling saksbehandling;
@@ -88,6 +93,32 @@ public class FagsakRepositoryTest {
 
     }
 
+    @Test
+    public void skal_lagre_personer_med_historikk() {
+
+        //given
+        final var søknad = SøknadTestdata.norskFamilieMedBarnehageplass();
+
+
+        // when
+        Vedtak vedtak = saksbehandling.behandle(søknad);
+
+        // then
+        Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
+
+        Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningGrunnlagRepository.findByBehandlingAndAktiv(behandling.get().getId());
+
+        assertThat(personopplysningGrunnlag.get().getSøker()).isNotNull();
+        assertThat(personopplysningGrunnlag.get().getBarna()).isNotEmpty();
+        assertThat(personopplysningGrunnlag.get().getAnnenPart()).isNull();
+
+        assertThat(personopplysningGrunnlag.get().getSøker().getAdresseHistorikk()).isNotEmpty();
+        assertThat(personopplysningGrunnlag.get().getBarna().get(0).getAdresseHistorikk()).isNotEmpty();
+
+        assertThat(personopplysningGrunnlag.get().getSøker().getStatsborgerskapHistorikk()).isNotEmpty();
+        assertThat(personopplysningGrunnlag.get().getBarna().get(0).getStatsborgerskapHistorikk()).isNotEmpty();
+
+    }
 
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 

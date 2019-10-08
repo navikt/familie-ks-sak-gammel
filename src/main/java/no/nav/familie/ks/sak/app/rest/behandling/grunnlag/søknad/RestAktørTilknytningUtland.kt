@@ -11,7 +11,7 @@ data class RestAktørTilknytningUtland(
     val tilknytningTilUtlandForklaring: String)
 
 fun AktørTilknytningUtland.toRestAktørTilknytningUtland(oppslagTjeneste: OppslagTjeneste) = RestAktørTilknytningUtland(
-    personIdent = oppslagTjeneste.hentPersonIdent(this.aktør.id),
-    tilknytningTilUtland = this.tilknytningTilUtland,
-    tilknytningTilUtlandForklaring = this.tilknytningTilUtlandForklaring
+        personIdent = PersonIdent.fra(this.fnr),
+        tilknytningTilUtland = this.tilknytningTilUtland,
+        tilknytningTilUtlandForklaring = this.tilknytningTilUtlandForklaring
 )
