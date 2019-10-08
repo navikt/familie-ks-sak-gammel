@@ -18,8 +18,11 @@ public class AktørTilknytningUtland extends BaseEntitet {
     private Long id;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer", updatable = false, nullable = false)))
+    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer", updatable = false, nullable = true)))
     private AktørId aktørId;
+
+    @Column(name = "FNR")
+    private String fødselsnummer;
 
     @JsonIgnore
     @ManyToOne
@@ -36,8 +39,9 @@ public class AktørTilknytningUtland extends BaseEntitet {
     AktørTilknytningUtland() {
     }
 
-    public AktørTilknytningUtland(AktørId aktør, TilknytningTilUtlandVerdier tilknytningTilUtland, String tilknytningTilUtlandForklaring) {
+    public AktørTilknytningUtland(AktørId aktør, String fødselsnummer, TilknytningTilUtlandVerdier tilknytningTilUtland, String tilknytningTilUtlandForklaring) {
         this.aktørId = aktør;
+        this.fødselsnummer = fødselsnummer;
         this.tilknytningTilUtland = tilknytningTilUtland;
         this.tilknytningTilUtlandForklaring = tilknytningTilUtlandForklaring;
     }
@@ -58,6 +62,14 @@ public class AktørTilknytningUtland extends BaseEntitet {
     AktørTilknytningUtland setUtlandsTilknytning(OppgittUtlandsTilknytning utlandsTilknytning) {
         this.utlandsTilknytning = utlandsTilknytning;
         return this;
+    }
+
+    public String getFnr() {
+        return fødselsnummer;
+    }
+
+    public void setFnr(String fnr) {
+        this.fødselsnummer = fnr;
     }
 
     public AktørId getAktør() {

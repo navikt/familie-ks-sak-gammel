@@ -13,8 +13,10 @@ logging:
   config: "classpath:logback-test.xml"
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   jpa:
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
         format_sql=false
@@ -24,5 +26,4 @@ spring:
     enabled: true
 server:
   port: 8083
-
 FAMILIE_KS_OPPSLAG_API_URL: http://localhost:8085/api

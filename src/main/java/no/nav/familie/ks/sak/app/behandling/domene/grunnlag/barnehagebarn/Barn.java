@@ -24,8 +24,11 @@ public class Barn extends BaseEntitet {
     private OppgittFamilieforhold familieforhold;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", updatable = false)))
+    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", updatable = true)))
     private AktørId aktørId;
+
+    @Column(name = "fnr", nullable = true, updatable = true)
+    private String fødselsnummer;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "barnehage_status", nullable = false, updatable = false)
@@ -44,8 +47,9 @@ public class Barn extends BaseEntitet {
         // hibernate
     }
 
-    Barn(AktørId aktørId, BarnehageplassStatus barnehageStatus, Double barnehageAntallTimer, LocalDate barnehageDato, String barnehageKommune) {
+    Barn(AktørId aktørId, String fødselsnummer, BarnehageplassStatus barnehageStatus, Double barnehageAntallTimer, LocalDate barnehageDato, String barnehageKommune) {
         this.aktørId = aktørId;
+        this.fødselsnummer = fødselsnummer;
         this.barnehageStatus = barnehageStatus;
         this.barnehageAntallTimer = barnehageAntallTimer;
         this.barnehageDato = barnehageDato;
@@ -72,18 +76,6 @@ public class Barn extends BaseEntitet {
         return barnehageKommune;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Barn that = (Barn) o;
-        return Objects.equals(aktørId, that.aktørId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(aktørId);
-    }
 
     @Override
     public String toString() {
@@ -103,8 +95,21 @@ public class Barn extends BaseEntitet {
         return this;
     }
 
+    public void setAktørId(AktørId aktørId) {
+        this.aktørId = aktørId;
+    }
+
+    public String getFødselsnummer() {
+        return fødselsnummer;
+    }
+
+    public void setFødselsnummer(String fødselsnummer) {
+        this.fødselsnummer = fødselsnummer;
+    }
+
     public static class Builder {
         private AktørId aktørId;
+        private String fødselsnummer;
         private BarnehageplassStatus barnehageStatus;
         private Double barnehageAntallTimer;
         private LocalDate barnehageDato;
@@ -112,6 +117,11 @@ public class Barn extends BaseEntitet {
 
         public Builder setAktørId(String aktørId) {
             this.aktørId = new AktørId(aktørId);
+            return this;
+        }
+
+        public Builder setFødselsnummer(String fødselsnummer) {
+            this.fødselsnummer = fødselsnummer;
             return this;
         }
 
@@ -136,7 +146,7 @@ public class Barn extends BaseEntitet {
         }
 
         public Barn build() {
-            return new Barn(aktørId, barnehageStatus, barnehageAntallTimer, barnehageDato, barnehageKommune);
+            return new Barn(aktørId, fødselsnummer, barnehageStatus, barnehageAntallTimer, barnehageDato, barnehageKommune);
         }
     }
 }

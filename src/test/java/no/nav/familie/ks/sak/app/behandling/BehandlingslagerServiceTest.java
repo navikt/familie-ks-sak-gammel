@@ -7,7 +7,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
@@ -54,11 +54,11 @@ public class BehandlingslagerServiceTest {
     private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
 
     @MockBean
-    private PersonopplysningRepository personopplysningRepository;
+    private PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository;
 
     @Before
     public void setUp() {
-        when(personopplysningRepository.findByBehandlingAndAktiv(any()))
+        when(personopplysningGrunnlagRepository.findByBehandlingAndAktiv(any()))
             .thenReturn(
                 FaktagrunnlagBuilder.genererPersonopplysningGrunnlag(new AktørId(FaktagrunnlagBuilder.morAktørId.getId()))
             );

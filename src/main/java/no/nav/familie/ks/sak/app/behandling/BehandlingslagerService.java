@@ -6,11 +6,12 @@ import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.SøknadTilGrunnlagMapper;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barn;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.OppgittFamilieforhold;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlag;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittErklæring;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class BehandlingslagerService {
@@ -31,7 +33,7 @@ public class BehandlingslagerService {
     private BehandlingRepository behandlingRepository;
     private SøknadGrunnlagRepository søknadGrunnlagRepository;
     private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
-    private PersonopplysningRepository personopplysningRepository;
+    private PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository;
     private OppslagTjeneste oppslagTjeneste;
 
     @Autowired
@@ -39,13 +41,13 @@ public class BehandlingslagerService {
                                    BehandlingRepository behandlingRepository,
                                    SøknadGrunnlagRepository søknadGrunnlagRepository,
                                    BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository,
-                                   PersonopplysningRepository personopplysningRepository,
+                                   PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository,
                                    OppslagTjeneste oppslag) {
         this.fagsakRepository = fagsakRepository;
         this.behandlingRepository = behandlingRepository;
         this.søknadGrunnlagRepository = søknadGrunnlagRepository;
         this.barnehageBarnGrunnlagRepository = barnehageBarnGrunnlagRepository;
-        this.personopplysningRepository = personopplysningRepository;
+        this.personopplysningGrunnlagRepository = personopplysningGrunnlagRepository;
         this.oppslagTjeneste = oppslag;
     }
 
@@ -62,7 +64,7 @@ public class BehandlingslagerService {
 
     void trekkUtOgPersister(Behandling behandling, Søknad søknad) {
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
-        familieforholdBuilder.setBarna(SøknadTilGrunnlagMapper.mapSøknadBarn(søknad));
+        familieforholdBuilder.setBarna(mapOgHentAktøridForBarna(søknad));
         familieforholdBuilder.setBorBeggeForeldreSammen(søknad.getOppgittFamilieforhold().getBorBeggeForeldreSammen());
         barnehageBarnGrunnlagRepository.save(new BarnehageBarnGrunnlag(behandling, familieforholdBuilder.build()));
 
@@ -76,7 +78,7 @@ public class BehandlingslagerService {
         AktørId oppgittAnnenPartAktørId = null;
 
         if (oppgittAnnenPartFødselsnummer != null && !oppgittAnnenPartFødselsnummer.isEmpty()) {
-            Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningRepository.findByBehandlingAndAktiv(behandling.getId());
+            Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningGrunnlagRepository.findByBehandlingAndAktiv(behandling.getId());
             if (personopplysningGrunnlag.isPresent()) {
                 Optional<AktørId> oppgittAnnenPart = personopplysningGrunnlag.get().getOppgittAnnenPart();
                 if (oppgittAnnenPart.isPresent()) {
@@ -92,5 +94,13 @@ public class BehandlingslagerService {
         final var oppgittUtlandsTilknytning = SøknadTilGrunnlagMapper.mapUtenlandsTilknytning(søknad, behandling.getFagsak().getAktørId(), oppgittAnnenPartAktørId);
 
         søknadGrunnlagRepository.save(new SøknadGrunnlag(behandling, new no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad(søknad.getInnsendtTidspunkt(), oppgittUtlandsTilknytning, erklæring)));
+    }
+
+    Set<Barn> mapOgHentAktøridForBarna(Søknad søknad) {
+        Set<Barn> barna = SøknadTilGrunnlagMapper.mapSøknadBarn(søknad);
+        for (Barn barn : barna) {
+            barn.setAktørId(oppslagTjeneste.hentAktørId(barn.getFødselsnummer()));
+        }
+        return barna;
     }
 }

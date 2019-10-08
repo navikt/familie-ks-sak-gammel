@@ -15,11 +15,11 @@ data class RestAktørArbeidYtelseUtland(
     val kontantstøtteIUtlandetForklaring: String? = null)
 
 fun AktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland(oppslagTjeneste: OppslagTjeneste) = RestAktørArbeidYtelseUtland(
-    personIdent = oppslagTjeneste.hentPersonIdent(this.aktørId.id),
-    arbeidIUtlandet = this.arbeidIUtlandet,
-    arbeidIUtlandetForklaring = this.arbeidIUtlandetForklaring,
-    ytelseIUtlandet = this.ytelseIUtlandet,
-    ytelseIUtlandetForklaring = this.ytelseIUtlandetForklaring,
-    kontantstøtteIUtlandet = this.kontantstøtteIUtlandet,
-    kontantstøtteIUtlandetForklaring = this.kontantstøtteIUtlandetForklaring
+        personIdent = PersonIdent.fra(this.fnr),
+        arbeidIUtlandet = this.arbeidIUtlandet,
+        arbeidIUtlandetForklaring = this.arbeidIUtlandetForklaring,
+        ytelseIUtlandet = this.ytelseIUtlandet,
+        ytelseIUtlandetForklaring = this.ytelseIUtlandetForklaring,
+        kontantstøtteIUtlandet = this.kontantstøtteIUtlandet,
+        kontantstøtteIUtlandetForklaring = this.kontantstøtteIUtlandetForklaring
 )

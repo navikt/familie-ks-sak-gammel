@@ -51,8 +51,8 @@ public class PersonAdresse extends BaseEntitet {
     private Landkode land = Landkode.UDEFINERT;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "po_informasjon_id", nullable = false, updatable = false)
-    private PersonopplysningerInformasjon personopplysningInformasjon;
+    @JoinColumn(name = "fk_po_person_id", nullable = false, updatable = false)
+    private Person person;
 
     PersonAdresse() {
     }
@@ -76,8 +76,8 @@ public class PersonAdresse extends BaseEntitet {
         this.periode = periode;
     }
 
-    void setPersonopplysningInformasjon(PersonopplysningerInformasjon personopplysningInformasjon) {
-        this.personopplysningInformasjon = personopplysningInformasjon;
+    void setPerson(Person person) {
+        this.person = person;
     }
 
     public AdresseType getAdresseType() {

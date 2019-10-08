@@ -5,7 +5,7 @@ import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningRepository;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
@@ -55,7 +55,7 @@ public class RestFagsakTest {
     private BehandlingRepository behandlingRepository;
 
     @MockBean
-    private PersonopplysningRepository personopplysningRepository;
+    private PersonopplysningGrunnlagRepository personopplysningRepository;
 
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
 
@@ -96,7 +96,6 @@ public class RestFagsakTest {
 
         assertThat(behandling).isPresent();
 
-        assert behandling.isPresent();
         final RestFagsak restFagsak = restFagsakService.hentRestFagsak(behandling.get().getFagsak().getId());
         assertThat(restFagsak).isNotNull();
         assertThat(restFagsak.getId()).isEqualTo(behandling.get().getFagsak().getId());

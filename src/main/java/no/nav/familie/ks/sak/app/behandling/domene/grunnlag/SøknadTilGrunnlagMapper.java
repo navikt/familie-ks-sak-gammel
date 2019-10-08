@@ -20,7 +20,7 @@ public final class SøknadTilGrunnlagMapper {
 
         søknad.getOppgittUtlandsTilknytning().getAktørerTilknytningTilUtlandet().forEach(aktørTilknytningUtland -> {
             final var aktørId = aktørTilknytningUtland.getFødselsnummer().equals(søkerFødselsnummer) ? søkerAktørId : annenPartAktørId;
-            tilknytningUtlandSet.add(new AktørTilknytningUtland(aktørId, aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAar(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAarForklaring()));
+            tilknytningUtlandSet.add(new AktørTilknytningUtland(aktørId, aktørTilknytningUtland.getFødselsnummer(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAar(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAarForklaring()));
         });
 
 
@@ -28,6 +28,7 @@ public final class SøknadTilGrunnlagMapper {
             final var aktørId = aktørArbeidYtelseUtland.getFødselsnummer().equals(søkerFødselsnummer) ? søkerAktørId : annenPartAktørId;
             arbeidYtelseUtlandSet.add(new AktørArbeidYtelseUtland.Builder()
                 .setAktørId(aktørId)
+                .setFødselsnummer(aktørArbeidYtelseUtland.getFødselsnummer())
                 .setArbeidIUtlandet(aktørArbeidYtelseUtland.getArbeidIUtlandet())
                 .setArbeidIUtlandetForklaring(aktørArbeidYtelseUtland.getArbeidIUtlandetForklaring())
                 .setYtelseIUtlandet(aktørArbeidYtelseUtland.getYtelseIUtlandet())
@@ -48,7 +49,7 @@ public final class SøknadTilGrunnlagMapper {
             final var builder = new Barn.Builder();
 
             if (barn != null && barn.getBarnehageAntallTimer() != null) {
-                builder.setAktørId(barn.getFødselsnummer())
+                builder.setFødselsnummer(barn.getFødselsnummer())
                     .setBarnehageStatus(BarnehageplassStatus.map(barn.getBarnehageStatus().name()))
                     .setBarnehageAntallTimer(barn.getBarnehageAntallTimer())
                     .setBarnehageDato(barn.getBarnehageDato())
