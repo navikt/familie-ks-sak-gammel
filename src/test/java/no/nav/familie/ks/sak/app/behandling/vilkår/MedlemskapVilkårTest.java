@@ -35,7 +35,6 @@ public class MedlemskapVilkårTest {
         assertThat(evaluering.result()).isEqualByComparingTo(Resultat.NEI);
     }
 
-
     @Test
     public void norsk_statsborgerskap_og_bosted_fem_år_gir_oppfylt() {
         final var vilkår = new MedlemskapsVilkår();

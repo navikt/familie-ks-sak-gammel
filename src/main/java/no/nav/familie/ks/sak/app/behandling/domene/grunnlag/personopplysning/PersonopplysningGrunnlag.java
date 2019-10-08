@@ -55,7 +55,6 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
         this.aktiv = aktiv;
     }
 
-
     public Optional<List<Person>> getRegistrertePersoner() {
         return Optional.ofNullable(personer);
     }
@@ -64,6 +63,9 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
         return Optional.ofNullable(oppgittAnnenPart);
     }
 
+    public void setOppgittAnnenPart(AktørId oppgittAnnenPart) {
+        this.oppgittAnnenPart = oppgittAnnenPart;
+    }
 
     public void leggTilPerson(Person person) {
         person.setPersonopplysningGrunnlag(this);

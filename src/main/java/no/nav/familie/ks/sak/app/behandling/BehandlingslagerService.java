@@ -21,8 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class BehandlingslagerService {
@@ -63,7 +64,14 @@ public class BehandlingslagerService {
 
     void trekkUtOgPersister(Behandling behandling, Søknad søknad) {
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
-        familieforholdBuilder.setBarna(SøknadTilGrunnlagMapper.mapSøknadBarn(søknad));
+
+        Map<String, AktørId> barnasAktørIder = new HashMap<>();
+        søknad.getOppgittFamilieforhold().getBarna().forEach(barn -> {
+            AktørId aktørId = oppslagTjeneste.hentAktørId(barn.getFødselsnummer());
+            barnasAktørIder.put(barn.getFødselsnummer(), aktørId);
+        });
+
+        familieforholdBuilder.setBarna(SøknadTilGrunnlagMapper.mapSøknadBarn(søknad, barnasAktørIder));
         familieforholdBuilder.setBorBeggeForeldreSammen(søknad.getOppgittFamilieforhold().getBorBeggeForeldreSammen());
         barnehageBarnGrunnlagRepository.save(new BarnehageBarnGrunnlag(behandling, familieforholdBuilder.build()));
 

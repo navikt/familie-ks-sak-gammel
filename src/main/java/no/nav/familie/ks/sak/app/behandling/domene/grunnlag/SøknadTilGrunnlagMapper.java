@@ -7,8 +7,11 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørTilkny
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittUtlandsTilknytning;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public final class SøknadTilGrunnlagMapper {
@@ -41,7 +44,7 @@ public final class SøknadTilGrunnlagMapper {
         return new OppgittUtlandsTilknytning(arbeidYtelseUtlandSet, tilknytningUtlandSet);
     }
 
-    public static Set<Barn> mapSøknadBarn(Søknad søknad) {
+    public static Set<Barn> mapSøknadBarn(Søknad søknad, Map<String, AktørId> barnasAktørIder) {
         Set<Barn> barna = new HashSet<>();
 
         final var barnaFraSøknaden = søknad.getOppgittFamilieforhold().getBarna();
@@ -49,14 +52,15 @@ public final class SøknadTilGrunnlagMapper {
             final var builder = new Barn.Builder();
 
             if (barn != null && barn.getBarnehageAntallTimer() != null) {
-                builder.setAktørId(barn.getFødselsnummer())
+                builder
+                    .setAktørId(barnasAktørIder.get(barn.getFødselsnummer()).getId())
                     .setBarnehageStatus(BarnehageplassStatus.map(barn.getBarnehageStatus().name()))
                     .setBarnehageAntallTimer(barn.getBarnehageAntallTimer())
                     .setBarnehageDato(barn.getBarnehageDato())
                     .setBarnehageKommune(barn.getBarnehageKommune());
-            }
 
-            barna.add(builder.build());
+                barna.add(builder.build());
+            }
         });
 
         return barna;

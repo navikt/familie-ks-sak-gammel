@@ -5,6 +5,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.Fagsak
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningService
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
@@ -42,7 +43,7 @@ class RestFagsakService (
         val restBehandlinger: List<RestBehandling> = behandlinger.map {
             val søknad: RestSøknad = søknadGrunnlagRepository.finnGrunnlag(it.id).map { søknadGrunnlag ->
                 val aktørerArbeidYtelseUtland = søknadGrunnlag.søknad.utlandsTilknytning.aktørerArbeidYtelseIUtlandet.map { aktørArbeidYtelseUtland ->
-                    aktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland(oppslagTjeneste)
+                    aktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland()
                 }
                 val aktørerTilknytningUtland = søknadGrunnlag.søknad.utlandsTilknytning.aktørerTilknytningTilUtlandet.map { aktørTilknytningUtland ->
                     aktørTilknytningUtland.toRestAktørTilknytningUtland(oppslagTjeneste)

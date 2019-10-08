@@ -69,6 +69,7 @@ public class RegisterInnhentingService {
             String annenPartPersonIdent = oppslagTjeneste.hentPersonIdent(annenPartAktørId.getId()).getIdent();
 
             mapPersonopplysninger(annenPartAktørId, annenPartPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag, PersonType.ANNENPART);
+            personopplysningGrunnlag.setOppgittAnnenPart(annenPartAktørId);
 
             //TODO legg til støtte for flere barn
             mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag);

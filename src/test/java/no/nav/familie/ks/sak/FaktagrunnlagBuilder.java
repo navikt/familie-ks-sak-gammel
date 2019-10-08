@@ -38,6 +38,8 @@ public final class FaktagrunnlagBuilder {
 
     public final static AktørId barnAktørId = new AktørId(SøknadTestdata.barnAktørId);
     public final static PersonIdent barnPersonident = new PersonIdent(SøknadTestdata.barnPersonident);
+    public final static AktørId barn2AktørId = new AktørId("1300000000007");
+    public final static PersonIdent barn2Personident = new PersonIdent("00000000007");
 
     public final static AktørId utenlandskBarnAktørId = new AktørId(SøknadTestdata.utenlandskBarnAktørId);
     public final static PersonIdent utenlandskBarnPersonident = new PersonIdent(SøknadTestdata.utenlandskBarnPersonident);
@@ -110,6 +112,9 @@ public final class FaktagrunnlagBuilder {
     // Adresseperioder
     private static AdressePeriode norskAdresseSeksÅr = new AdressePeriode.Builder()
         .medLand(STATSBORGERSKAP_GYLDIG)
+        .medAdresselinje1("adresselinje1")
+        .medPostnummer("1234")
+        .medPoststed("Oslo")
         .medAdresseType(AdresseType.BOSTEDSADRESSE)
         .medGyldighetsperiode(
             new Periode(LocalDate.now().minusYears(6), Tid.TIDENES_ENDE)
@@ -117,6 +122,9 @@ public final class FaktagrunnlagBuilder {
         .build();
     private static AdressePeriode svenskdresseSeksÅr = new AdressePeriode.Builder()
         .medLand(Landkode.SVERIGE.getKode())
+        .medAdresselinje1("adresselinje1")
+        .medPostnummer("1234")
+        .medPoststed("Strømstad")
         .medAdresseType(AdresseType.BOSTEDSADRESSE)
         .medGyldighetsperiode(
             new Periode(LocalDate.now().minusYears(6), Tid.TIDENES_ENDE)
@@ -124,6 +132,10 @@ public final class FaktagrunnlagBuilder {
         .build();
     private static AdressePeriode norskAdresseEtÅr = new AdressePeriode.Builder()
         .medLand(STATSBORGERSKAP_GYLDIG)
+        .medAdresselinje1("adresselinje1")
+        .medPostnummer("1234")
+        .medPoststed("Oslo")
+        .medLand(Landkode.NORGE.getKode())
         .medAdresseType(AdresseType.BOSTEDSADRESSE)
         .medGyldighetsperiode(
             new Periode(LocalDate.now().minusYears(1), Tid.TIDENES_ENDE)
@@ -341,7 +353,7 @@ public final class FaktagrunnlagBuilder {
         .medBarn(List.of(personMedHistorikkBarnNorsk))
         .build();
 
-    public static Optional<PersonopplysningGrunnlag> genererPersonopplysningGrunnlag(AktørId annenPartAktørId) {
+    public static Optional<PersonopplysningGrunnlag> genererPersonopplysningGrunnlag() {
         PersonopplysningGrunnlag personopplysningGrunnlag = new PersonopplysningGrunnlag(behandlingId);
         return Optional.of(personopplysningGrunnlag);
     }
@@ -360,7 +372,13 @@ public final class FaktagrunnlagBuilder {
 
     private static BarnehageBarnGrunnlag genererBarnehageBarnGrunnlag(Søknad innsendtSøknad) {
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
-        familieforholdBuilder.setBarna(SøknadTilGrunnlagMapper.mapSøknadBarn(innsendtSøknad));
+        Map<String, AktørId> barnasAktørIder = Map.of(
+            barnPersonident.getIdent(), barnAktørId,
+            barn2Personident.getIdent(), barn2AktørId,
+            utenlandskBarnPersonident.getIdent(), utenlandskBarnAktørId
+        );
+
+        familieforholdBuilder.setBarna(SøknadTilGrunnlagMapper.mapSøknadBarn(innsendtSøknad, barnasAktørIder));
         familieforholdBuilder.setBorBeggeForeldreSammen(innsendtSøknad.getOppgittFamilieforhold().getBorBeggeForeldreSammen());
         return new BarnehageBarnGrunnlag(behandlingId, familieforholdBuilder.build());
     }
@@ -389,7 +407,7 @@ public final class FaktagrunnlagBuilder {
         return new Faktagrunnlag.Builder()
             .medTpsFakta(beggeForeldreOgBarnNorskStatsborger)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
-            .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass(), farAktørId, morAktørId))
+            .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass(), morAktørId, farAktørId))
             .build();
     }
 

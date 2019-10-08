@@ -35,6 +35,7 @@ public class PersonopplysningService {
         });
 
         personopplysningGrunnlagRepository.save(personopplysningGrunnlag);
+        Optional<PersonopplysningGrunnlag> byBehandlingAndAktiv = personopplysningGrunnlagRepository.findByBehandlingAndAktiv(behandling.getId());
     }
 
 
