@@ -10,19 +10,16 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barn;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.OppgittFamilieforhold;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittErklæring;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
-import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -64,7 +61,7 @@ public class BehandlingslagerService {
 
     void trekkUtOgPersister(Behandling behandling, Søknad søknad) {
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
-        familieforholdBuilder.setBarna(mapOgHentAktøridForBarna(søknad));
+        familieforholdBuilder.setBarna(mapOgHentBarna(søknad));
         familieforholdBuilder.setBorBeggeForeldreSammen(søknad.getOppgittFamilieforhold().getBorBeggeForeldreSammen());
         barnehageBarnGrunnlagRepository.save(new BarnehageBarnGrunnlag(behandling, familieforholdBuilder.build()));
 
@@ -80,7 +77,7 @@ public class BehandlingslagerService {
             new no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad(søknad.getInnsendtTidspunkt(), søknad.getSøkerFødselsnummer(), søknad.getOppgittAnnenPartFødselsnummer(), oppgittUtlandsTilknytning, erklæring)));
     }
 
-    Set<Barn> mapOgHentAktøridForBarna(Søknad søknad) {
+    Set<Barn> mapOgHentBarna(Søknad søknad) {
         Set<Barn> barna = SøknadTilGrunnlagMapper.mapSøknadBarn(søknad);
         for (Barn barn : barna) {
             barn.setFødselsnummer(barn.getFødselsnummer());
