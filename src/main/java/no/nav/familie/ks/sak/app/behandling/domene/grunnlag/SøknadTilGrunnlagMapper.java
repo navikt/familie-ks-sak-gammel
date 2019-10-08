@@ -12,22 +12,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class SøknadTilGrunnlagMapper {
-    public static OppgittUtlandsTilknytning mapUtenlandsTilknytning(Søknad søknad, AktørId søkerAktørId, AktørId annenPartAktørId) {
-        final var søkerFødselsnummer = søknad.getSøkerFødselsnummer();
-
+    public static OppgittUtlandsTilknytning mapUtenlandsTilknytning(Søknad søknad) {
         final var tilknytningUtlandSet = new HashSet<AktørTilknytningUtland>();
         final var arbeidYtelseUtlandSet = new HashSet<AktørArbeidYtelseUtland>();
 
         søknad.getOppgittUtlandsTilknytning().getAktørerTilknytningTilUtlandet().forEach(aktørTilknytningUtland -> {
-            final var aktørId = aktørTilknytningUtland.getFødselsnummer().equals(søkerFødselsnummer) ? søkerAktørId : annenPartAktørId;
-            tilknytningUtlandSet.add(new AktørTilknytningUtland(aktørId, aktørTilknytningUtland.getFødselsnummer(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAar(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAarForklaring()));
+            tilknytningUtlandSet.add(new AktørTilknytningUtland(aktørTilknytningUtland.getFødselsnummer(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAar(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAarForklaring()));
         });
 
 
         søknad.getOppgittUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet().forEach(aktørArbeidYtelseUtland -> {
-            final var aktørId = aktørArbeidYtelseUtland.getFødselsnummer().equals(søkerFødselsnummer) ? søkerAktørId : annenPartAktørId;
             arbeidYtelseUtlandSet.add(new AktørArbeidYtelseUtland.Builder()
-                .setAktørId(aktørId)
                 .setFødselsnummer(aktørArbeidYtelseUtland.getFødselsnummer())
                 .setArbeidIUtlandet(aktørArbeidYtelseUtland.getArbeidIUtlandet())
                 .setArbeidIUtlandetForklaring(aktørArbeidYtelseUtland.getArbeidIUtlandetForklaring())

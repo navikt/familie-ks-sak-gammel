@@ -67,9 +67,7 @@ public class RestFagsakTest {
         when(oppslagTjeneste.hentPersonIdent(ArgumentMatchers.any())).thenAnswer(i -> new PersonIdent(String.valueOf(i.getArguments()[0])));
 
         when(personopplysningRepository.findByBehandlingAndAktiv(any()))
-            .thenReturn(
-                FaktagrunnlagBuilder.genererPersonopplysningGrunnlag(new AktørId(FaktagrunnlagBuilder.morAktørId.getId()))
-            );
+            .thenReturn(FaktagrunnlagBuilder.genererPersonopplysningGrunnlag());
         when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
 
         when(oppslagTjeneste.hentPersoninfoFor(any()))

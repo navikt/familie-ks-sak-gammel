@@ -14,6 +14,12 @@ public class Søknad extends BaseEntitet {
     @SequenceGenerator(name = "so_soknad_seq")
     private Long id;
 
+    @Column(name = "SOKER_FNR", nullable = false, updatable = false)
+    private String søkerFødselsnummer;
+
+    @Column(name = "OPPGITT_ANNENPART_FNR", nullable = false, updatable = false)
+    private String oppgittAnnenPartFødselsnummer;
+
     @Column(name = "innsendt_tidspunkt", nullable = false, updatable = false)
     private LocalDateTime innsendtTidspunkt;
 
@@ -29,10 +35,20 @@ public class Søknad extends BaseEntitet {
         // hibernate
     }
 
-    public Søknad(LocalDateTime innsendtTidspunkt, OppgittUtlandsTilknytning utlandsTilknytning, OppgittErklæring erklæring) {
+    public Søknad(LocalDateTime innsendtTidspunkt, String søkerFødselsnummer, String oppgittAnnenPartFødselsnummer, OppgittUtlandsTilknytning utlandsTilknytning, OppgittErklæring erklæring) {
+        this.søkerFødselsnummer = søkerFødselsnummer;
+        this.oppgittAnnenPartFødselsnummer = oppgittAnnenPartFødselsnummer;
         this.innsendtTidspunkt = innsendtTidspunkt;
         this.utlandsTilknytning = utlandsTilknytning;
         this.erklæring = erklæring;
+    }
+
+    public String getSøkerFødselsnummer() {
+        return søkerFødselsnummer;
+    }
+
+    public String getOppgittAnnenPartFødselsnummer() {
+        return oppgittAnnenPartFødselsnummer;
     }
 
     public OppgittErklæring getErklæring() {

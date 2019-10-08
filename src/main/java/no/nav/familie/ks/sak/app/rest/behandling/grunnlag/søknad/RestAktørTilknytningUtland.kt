@@ -6,12 +6,12 @@ import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent
 
 data class RestAktørTilknytningUtland(
-    val personIdent: PersonIdent,
+    val fødselsnummer: String,
     val tilknytningTilUtland: TilknytningTilUtlandVerdier,
     val tilknytningTilUtlandForklaring: String)
 
-fun AktørTilknytningUtland.toRestAktørTilknytningUtland(oppslagTjeneste: OppslagTjeneste) = RestAktørTilknytningUtland(
-        personIdent = PersonIdent.fra(this.fnr),
+fun AktørTilknytningUtland.toRestAktørTilknytningUtland() = RestAktørTilknytningUtland(
+        fødselsnummer = this.fødselsnummer,
         tilknytningTilUtland = this.tilknytningTilUtland,
         tilknytningTilUtlandForklaring = this.tilknytningTilUtlandForklaring
 )
