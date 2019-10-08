@@ -2,7 +2,6 @@ package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import no.nav.familie.ks.kontrakter.søknad.Standpunkt;
-import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 
 import javax.persistence.*;
