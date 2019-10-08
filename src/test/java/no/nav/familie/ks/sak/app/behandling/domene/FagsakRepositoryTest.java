@@ -98,10 +98,10 @@ public class FagsakRepositoryTest {
 
         //given
         final var søknad = SøknadTestdata.norskFamilieMedBarnehageplass();
-
+        final var saksnummer = "TEST123";
 
         // when
-        Vedtak vedtak = saksbehandling.behandle(søknad);
+        Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer);
 
         // then
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
