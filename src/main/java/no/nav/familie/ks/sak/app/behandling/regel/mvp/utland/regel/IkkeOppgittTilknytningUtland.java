@@ -12,6 +12,7 @@ import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -49,11 +50,14 @@ public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnla
         AktørId aktør = personMedHistorikk.getPersoninfo().getAktørId();
 
         final Set<AktørArbeidYtelseUtland> aktørerArbeidYtelseIUtlandet = søknad.getUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet();
-        final Optional<AktørArbeidYtelseUtland> aktørArbeidYtelseUtland = aktørerArbeidYtelseIUtlandet.stream().filter(aktørArbeidYtelseIUtlandet ->
-            aktørArbeidYtelseIUtlandet.getAktørId().equals(aktør)).findFirst();
+        final Optional<AktørArbeidYtelseUtland> aktørArbeidYtelseUtland = aktørerArbeidYtelseIUtlandet.stream()
+                                                                                                      .filter(aktørArbeidYtelseUtland1 -> Objects.nonNull(aktørArbeidYtelseUtland1.getAktørId()))
+                                                                                                      .filter(aktørArbeidYtelseIUtlandet -> aktørArbeidYtelseIUtlandet.getAktørId().equals(aktør)).findFirst();
 
         final Set<AktørTilknytningUtland> aktørerTilknytningTilUtlandet = søknad.getUtlandsTilknytning().getAktørerTilknytningTilUtlandet();
-        final Optional<AktørTilknytningUtland> aktørTilknytningTilUtlandet = aktørerTilknytningTilUtlandet.stream().filter(aktørTilknytningUtland ->
+        final Optional<AktørTilknytningUtland> aktørTilknytningTilUtlandet = aktørerTilknytningTilUtlandet.stream()
+                                                                                                          .filter(aktørTilknytningUtland -> Objects.nonNull(aktørTilknytningUtland.getAktør()))
+                                                                                                          .filter(aktørTilknytningUtland ->
             aktørTilknytningUtland.getAktør().equals(aktør)).findFirst();
 
         if (!aktørArbeidYtelseUtland.isPresent() || !aktørTilknytningTilUtlandet.isPresent()) {
