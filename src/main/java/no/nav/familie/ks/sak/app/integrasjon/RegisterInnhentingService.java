@@ -119,12 +119,7 @@ public class RegisterInnhentingService {
         barn.getFamilierelasjoner()
             .stream()
             .filter(it -> it.getAktørId().equals(søker.getAktørId()) || (annenPart != null && it.getAktørId().equals(annenPart.getAktørId())))
-            .forEach(relasjon -> {
-                logger.info(personopplysningGrunnlag.toString());
-                logger.info(barn.toString());
-                logger.info(relasjon.toString());
-                logger.info(personopplysningGrunnlag.getBarn(barn.getAktørId()).toString());
-                personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted()));});
+            .forEach(relasjon -> personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
 
         søker.getFamilierelasjoner()
             .stream()
