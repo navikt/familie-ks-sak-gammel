@@ -123,6 +123,7 @@ public class RegisterInnhentingService {
                 logger.info(personopplysningGrunnlag.toString());
                 logger.info(barn.toString());
                 logger.info(relasjon.toString());
+                logger.info(personopplysningGrunnlag.getBarn(barn.getAktørId()).toString());
                 personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted()));});
 
         søker.getFamilierelasjoner()

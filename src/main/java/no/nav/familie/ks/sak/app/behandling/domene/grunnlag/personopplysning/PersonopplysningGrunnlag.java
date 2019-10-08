@@ -2,6 +2,8 @@ package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning;
 
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.util.*;
@@ -9,6 +11,8 @@ import java.util.*;
 @Entity
 @Table(name = "GR_PERSONOPPLYSNINGER")
 public class PersonopplysningGrunnlag extends BaseEntitet {
+
+    private static final Logger logger = LoggerFactory.getLogger(PersonopplysningGrunnlag.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GR_PERSONOPPLYSNINGER_SEQ")
@@ -89,10 +93,12 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
     }
     public Person getBarn(AktørId aktørId) {
         for (Person p : personer) {
-            if (p.getType().equals(PersonType.BARN) && p.getAktørId().getId() == aktørId.getId()){
+            if (p.getType().equals(PersonType.BARN) && p.getAktørId().getId().equals(aktørId.getId())){
+                logger.info("fant barn " + p.toString());
                 return p;
             }
         }
+        logger.info("fant ikke barn : " + aktørId.toString() + " i listen over personer: " + personer.toString());
         return null;
     }
 
