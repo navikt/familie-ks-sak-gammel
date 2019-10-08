@@ -81,7 +81,8 @@ public class BehandlingslagerServiceTest {
     @Test
     public void skal_lagre_søknad_og_hente_opp_igjen() {
         final var søknad = SøknadTestdata.norskFamilieMedBarnehageplass();
-        Behandling nyBehandling = tjeneste.nyBehandling(søknad);
+        final var saksnummer = "TEST123";
+        Behandling nyBehandling = tjeneste.nyBehandling(søknad, saksnummer);
         tjeneste.trekkUtOgPersister(nyBehandling, søknad);
 
         final var fagsaker = fagsakRepository.findAll();

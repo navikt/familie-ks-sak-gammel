@@ -42,6 +42,8 @@ import static org.mockito.Mockito.when;
 @DataJpaTest(excludeAutoConfiguration = FlywayAutoConfiguration.class)
 public class RestFagsakTest {
 
+    private static final String SAKSNUMMER = "TEST123";
+
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
 
@@ -91,7 +93,7 @@ public class RestFagsakTest {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
 
         final var søknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
-        Vedtak vedtak = saksbehandling.behandle(søknad);
+        Vedtak vedtak = saksbehandling.behandle(søknad, SAKSNUMMER);
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
 
         assertThat(behandling).isPresent();
@@ -108,7 +110,7 @@ public class RestFagsakTest {
     @Test
     public void hentFagsakMedBarnehageplass() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapMedBarnehage());
-        saksbehandling.behandle(SøknadTestdata.norskFamilieMedBarnehageplass());
+        saksbehandling.behandle(SøknadTestdata.norskFamilieMedBarnehageplass(), SAKSNUMMER);
 
         assertThat(restFagsakService.hentFagsaker()).hasSize(1);
     }
@@ -116,7 +118,7 @@ public class RestFagsakTest {
     @Test
     public void hentFagsakUtenBarnehageplass() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass());
+        saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
 
         assertThat(restFagsakService.hentFagsaker()).hasSize(1);
     }
