@@ -6,6 +6,6 @@ import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestBehandlingsresulta
 
 data class RestBehandling(
     val behandlingId: Long,
-    val søknadGrunnlag: RestSøknad,
+    val søknad: RestSøknad,
     val behandlingsresultat: RestBehandlingsresultat,
     val personopplysninger: RestPersoner)

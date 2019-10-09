@@ -11,8 +11,8 @@ data class RestAdresseinfo(
     val adresselinje2: String?,
     val adresselinje3: String?,
     val adresselinje4: String?,
-    val postnummer: String,
-    val poststed: String,
+    val postnummer: String?,
+    val poststed: String?,
     val land: Landkode,
     val periode: DatoIntervallEntitet)
 
