@@ -3,15 +3,15 @@ package no.nav.familie.ks.sak.app.rest
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlag
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
 import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling
 import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.personinformasjon.RestPersoner
+import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.personinformasjon.toRestPerson
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestOppgittErklæring
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestOppgittFamilieforhold
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestOppgittUtlandsTilknytning
@@ -30,52 +30,65 @@ class RestFagsakService (
         private val barnehageBarnGrunnlagRepository: BarnehageBarnGrunnlagRepository,
         private val søknadGrunnlagRepository: SøknadGrunnlagRepository,
         private val behandlingRepository: BehandlingRepository,
+        private val personopplysningGrunnlagRepository: PersonopplysningGrunnlagRepository,
         private val oppslagTjeneste: OppslagTjeneste,
         private val fagsakRepository: FagsakRepository) {
 
     fun hentRestFagsak(fagsakId: Long): RestFagsak? {
         val fagsak = fagsakRepository.findById(fagsakId)
         val behandlinger = behandlingRepository.finnBehandlinger(fagsakId)
+        var søkerFødselsnummer = ""
 
         // Grunnlag fra søknag
-        val restBehandlinger: List<RestBehandling> = behandlinger.map { behandling ->
-            val søknadGrunnlag: SøknadGrunnlag = søknadGrunnlagRepository.finnGrunnlag(behandling.id)
-            val barnehageBarnGrunnlag: BarnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.id)
+        val restBehandlinger: List<RestBehandling> = behandlinger.map {
+            val søknad: RestSøknad = søknadGrunnlagRepository.finnGrunnlag(it.id).map { søknadGrunnlag ->
+                val aktørerArbeidYtelseUtland = søknadGrunnlag.søknad.utlandsTilknytning.aktørerArbeidYtelseIUtlandet.map { aktørArbeidYtelseUtland ->
+                    aktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland()
+                }
+                val aktørerTilknytningUtland = søknadGrunnlag.søknad.utlandsTilknytning.aktørerTilknytningTilUtlandet.map { aktørTilknytningUtland ->
+                    aktørTilknytningUtland.toRestAktørTilknytningUtland()
+                }
 
-            val barna = barnehageBarnGrunnlag.familieforhold.barna.map { barn ->
-                barn.toRestBarn()
-            }
-            val familieforhold = RestOppgittFamilieforhold(barna, barnehageBarnGrunnlag.familieforhold.isBorBeggeForeldreSammen)
+                val oppgittUtlandsTilknytning = RestOppgittUtlandsTilknytning(aktørerArbeidYtelseUtland, aktørerTilknytningUtland)
 
-            val aktørerArbeidYtelseUtland = søknadGrunnlag.søknad.utlandsTilknytning.aktørerArbeidYtelseIUtlandet.map { aktørArbeidYtelseUtland ->
-                aktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland()
-            }
-            val aktørerTilknytningUtland = søknadGrunnlag.søknad.utlandsTilknytning.aktørerTilknytningTilUtlandet.map { aktørTilknytningUtland ->
-                aktørTilknytningUtland.toRestAktørTilknytningUtland()
-            }
+                val erklæring = søknadGrunnlag.søknad.erklæring
+                val oppgittErklæring = RestOppgittErklæring(erklæring.isBarnetHjemmeværendeOgIkkeAdoptert, erklæring.isBorSammenMedBarnet, erklæring.isIkkeAvtaltDeltBosted, erklæring.isBarnINorgeNeste12Måneder)
 
-            val oppgittUtlandsTilknytning = RestOppgittUtlandsTilknytning(aktørerArbeidYtelseUtland, aktørerTilknytningUtland)
+                val familieforhold = barnehageBarnGrunnlagRepository.finnGrunnlag(it.id).map { barnehageBarnGrunnlag ->
+                    val barna = barnehageBarnGrunnlag.familieforhold.barna.map { barn ->
+                        barn.toRestBarn()
+                    }
 
-            val erklæring = søknadGrunnlag.søknad.erklæring
-            val oppgittErklæring = RestOppgittErklæring(erklæring.isBarnetHjemmeværendeOgIkkeAdoptert, erklæring.isBorSammenMedBarnet, erklæring.isIkkeAvtaltDeltBosted, erklæring.isBarnINorgeNeste12Måneder)
+                    RestOppgittFamilieforhold(barna, barnehageBarnGrunnlag.familieforhold.isBorBeggeForeldreSammen)
+                }.orElseThrow()
 
-            val søknad = RestSøknad(søknadGrunnlag.søknad.innsendtTidspunkt, familieforhold, oppgittUtlandsTilknytning, oppgittErklæring)
+                søkerFødselsnummer = søknadGrunnlag.søknad.søkerFødselsnummer;
+
+                RestSøknad(søknadGrunnlag.søknad.innsendtTidspunkt, familieforhold, oppgittUtlandsTilknytning, oppgittErklæring)
+            }.orElseThrow()
 
             // Grunnlag fra TPS
-            val personopplysninger: RestPersoner? = null
+            val personopplysninger: RestPersoner = personopplysningGrunnlagRepository.findByBehandlingAndAktiv(it.id).map { personopplysningGrunnlag ->
+                RestPersoner(
+                    søker = personopplysningGrunnlag.søker.toRestPerson(oppslagTjeneste),
+                    annenPart = personopplysningGrunnlag.annenPart?.toRestPerson(oppslagTjeneste),
+                    barna = personopplysningGrunnlag.barna.map { barn -> barn.toRestPerson(oppslagTjeneste) }
+                )
+            }.orElseThrow()
 
             // Grunnlag fra regelkjøring
-            val behandlingResultat = behandlingresultatRepository.finnBehandlingsresultat(behandling.id)
-            val restVilkårsResultat = behandlingResultat.vilkårsResultat.vilkårsResultat.map { vilkårResultat ->
-                RestVilkårsResultat(vilkårResultat.vilkårType, vilkårResultat.utfall)
-            }
+            val restBehandlingsresultat = behandlingresultatRepository.finnBehandlingsresultat(it.id).map { behandlingsresultat ->
+                val restVilkårsResultat = behandlingsresultat.vilkårsResultat.vilkårsResultat.map { vilkårResultat ->
+                    RestVilkårsResultat(vilkårResultat.vilkårType, vilkårResultat.utfall)
+                }
 
-            val restBehandlingsresultat = RestBehandlingsresultat(restVilkårsResultat, behandlingResultat.isAktiv)
+                RestBehandlingsresultat(restVilkårsResultat, behandlingsresultat.isAktiv)
+            }.orElseThrow()
 
-            RestBehandling(behandling.id, søknad, restBehandlingsresultat, personopplysninger)
+            RestBehandling(it.id, søknad, restBehandlingsresultat, personopplysninger)
         }
 
-        return fagsak.map { it.toRestFagsak(restBehandlinger, oppslagTjeneste) }.orElse(null)
+        return fagsak.map { it.toRestFagsak(restBehandlinger, søkerFødselsnummer ) }.orElse(null)
     }
 
     fun hentRessursFagsak(fagsakId: Long): RestFagsak? {

@@ -12,18 +12,12 @@ import java.util.*;
 @Table(name = "GR_PERSONOPPLYSNINGER")
 public class PersonopplysningGrunnlag extends BaseEntitet {
 
-    private static final Logger logger = LoggerFactory.getLogger(PersonopplysningGrunnlag.class);
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GR_PERSONOPPLYSNINGER_SEQ")
     private Long id;
 
     @Column(name = "behandling_id", updatable = false, nullable = false)
     private Long behandlingId;
-
-    @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "oppgitt_annen_part", updatable = false)))
-    private AktørId oppgittAnnenPart;
 
     @Column(name = "aktiv", nullable = false)
     private Boolean aktiv = true;
@@ -59,15 +53,9 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
         this.aktiv = aktiv;
     }
 
-
     public Optional<List<Person>> getRegistrertePersoner() {
         return Optional.ofNullable(personer);
     }
-
-    public Optional<AktørId> getOppgittAnnenPart() {
-        return Optional.ofNullable(oppgittAnnenPart);
-    }
-
 
     public void leggTilPerson(Person person) {
         person.setPersonopplysningGrunnlag(this);
@@ -97,7 +85,6 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
                 return p;
             }
         }
-        logger.info("fant ikke barn : " + aktørId.toString() + " i listen over personer: " + personer.toString());
         return null;
     }
 
@@ -117,13 +104,12 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
         if (o == null || getClass() != o.getClass()) return false;
         PersonopplysningGrunnlag that = (PersonopplysningGrunnlag) o;
         return Objects.equals(behandlingId, that.behandlingId) &&
-            Objects.equals(oppgittAnnenPart, that.oppgittAnnenPart) &&
             Objects.equals(personer, that.personer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(behandlingId, oppgittAnnenPart, personer);
+        return Objects.hash(behandlingId, personer);
     }
 
     @Override
@@ -132,7 +118,6 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
         sb.append("id=").append(id);
         sb.append(", personer=").append(this.getRegistrertePersoner().toString());
         sb.append(", barna=").append(this.getBarna().toString());
-        sb.append(", søknadAnnenPart=").append(oppgittAnnenPart);
         sb.append(", aktiv=").append(aktiv);
         sb.append('}');
         return sb.toString();

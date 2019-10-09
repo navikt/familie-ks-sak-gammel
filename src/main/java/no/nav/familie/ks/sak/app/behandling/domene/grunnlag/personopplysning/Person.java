@@ -213,11 +213,11 @@ public class Person extends BaseEntitet {
     @Override
     public String toString() {
         return "PersonopplysningEntitet{" + "id=" + id +
-               ", AktørId=" + aktørId.toString() +
-               ", type=" + type +
-             ", navn='" + navn + '\'' +
-             ", fødselsdato=" + fødselsdato +
-             ", dødsdato=" + dødsdato +
-            '}';
+            ", AktørId=" + aktørId.toString() +
+            ", type=" + type +
+            ", navn='" + navn + '\'' +
+            ", fødselsdato=" + fødselsdato +
+            ", dødsdato=" + dødsdato +
+            "}";
     }
 }

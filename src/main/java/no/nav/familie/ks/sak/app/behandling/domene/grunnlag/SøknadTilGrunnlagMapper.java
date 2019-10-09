@@ -7,8 +7,11 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørTilkny
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittUtlandsTilknytning;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public final class SøknadTilGrunnlagMapper {
@@ -49,9 +52,9 @@ public final class SøknadTilGrunnlagMapper {
                     .setBarnehageAntallTimer(barn.getBarnehageAntallTimer())
                     .setBarnehageDato(barn.getBarnehageDato())
                     .setBarnehageKommune(barn.getBarnehageKommune());
-            }
 
-            barna.add(builder.build());
+                barna.add(builder.build());
+            }
         });
 
         return barna;
