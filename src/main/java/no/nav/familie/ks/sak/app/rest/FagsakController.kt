@@ -7,6 +7,7 @@ import no.nav.familie.ks.sak.app.behandling.Saksbehandling
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak
+import no.nav.familie.ks.sak.util.SporingsLoggActionType
 import no.nav.familie.ks.sak.util.SporingsLoggHelper
 import no.nav.security.oidc.api.Unprotected
 import org.slf4j.Logger
@@ -31,7 +32,7 @@ class FagsakController (
     @GetMapping(path = ["/fagsak/{fagsakId}"])
     fun fagsak(@PathVariable fagsakId: Long, principal: Principal?): ResponseEntity<Ressurs> {
         logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", fagsakId)
-        SporingsLoggHelper.logSporing(FagsakController::class.java, fagsakId.toString(), principal?.name ?: "Ukjent", "read","fagsak")
+        SporingsLoggHelper.logSporing(FagsakController::class.java, fagsakId.toString(), principal?.name ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
         val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(fagsakId) }
                 .fold(
                     onSuccess = { when(it) {
