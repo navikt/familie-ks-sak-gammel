@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling;
 
-import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
+import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Regelresultat;
@@ -23,7 +23,7 @@ public class SamletVilkårsVurderingTest {
 
     @Test
     public void gir_oppfylt_når_alle_er_oppfylt() {
-        final var faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage();
+        final var faktagrunnlag = FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage();
         final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);
         final var alleUtfall = vurder.getResultater().stream().map(Regelresultat::getUtfallType).collect(Collectors.toList());
         assertThat(alleUtfall).hasSize(inngangsvilkår.size());
@@ -33,7 +33,7 @@ public class SamletVilkårsVurderingTest {
 
     @Test
     public void gir_ikke_oppfylt_når_ikke_alle_er_oppfylt() {
-        final var faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapMedBarnehage();
+        final var faktagrunnlag = FaktagrunnlagTestBuilder.familieNorskStatsborgerskapMedBarnehage();
 
         final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);
 
@@ -45,7 +45,7 @@ public class SamletVilkårsVurderingTest {
 
     @Test
     public void har_utfall_årsak_på_alle_regel_resultater() {
-        final var faktagrunnlag = FaktagrunnlagBuilder.familieNorskStatsborgerskapMedBarnehage();
+        final var faktagrunnlag = FaktagrunnlagTestBuilder.familieNorskStatsborgerskapMedBarnehage();
 
         final var vurder = vurderSamletTjeneste.vurder(faktagrunnlag);
         final var resultater = vurder.getResultater();

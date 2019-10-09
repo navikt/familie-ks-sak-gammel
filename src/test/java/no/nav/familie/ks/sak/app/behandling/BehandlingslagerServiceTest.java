@@ -2,7 +2,7 @@ package no.nav.familie.ks.sak.app.behandling;
 
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
-import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
+import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
@@ -59,22 +59,20 @@ public class BehandlingslagerServiceTest {
     @Before
     public void setUp() {
         when(personopplysningGrunnlagRepository.findByBehandlingAndAktiv(any()))
-            .thenReturn(
-                FaktagrunnlagBuilder.genererPersonopplysningGrunnlag(new AktørId(FaktagrunnlagBuilder.morAktørId.getId()))
-            );
+            .thenReturn(FaktagrunnlagTestBuilder.genererPersonopplysningGrunnlag());
         when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
 
         when(oppslagTjeneste.hentPersoninfoFor(any()))
             .thenReturn(
-                FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersoninfo(),
-                FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersoninfo(),
-                FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo()
+                FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersoninfo(),
+                FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersoninfo(),
+                FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo()
             );
         when(oppslagTjeneste.hentHistorikkFor(any()))
             .thenReturn(
-                FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
-                FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersonhistorikkInfo(),
-                FaktagrunnlagBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersonhistorikkInfo()
+                FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
+                FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersonhistorikkInfo(),
+                FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersonhistorikkInfo()
             );
     }
 

@@ -7,27 +7,25 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørTilkny
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittUtlandsTilknytning;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public final class SøknadTilGrunnlagMapper {
-    public static OppgittUtlandsTilknytning mapUtenlandsTilknytning(Søknad søknad, AktørId søkerAktørId, AktørId annenPartAktørId) {
-        final var søkerFødselsnummer = søknad.getSøkerFødselsnummer();
-
+    public static OppgittUtlandsTilknytning mapUtenlandsTilknytning(Søknad søknad) {
         final var tilknytningUtlandSet = new HashSet<AktørTilknytningUtland>();
         final var arbeidYtelseUtlandSet = new HashSet<AktørArbeidYtelseUtland>();
 
         søknad.getOppgittUtlandsTilknytning().getAktørerTilknytningTilUtlandet().forEach(aktørTilknytningUtland -> {
-            final var aktørId = aktørTilknytningUtland.getFødselsnummer().equals(søkerFødselsnummer) ? søkerAktørId : annenPartAktørId;
-            tilknytningUtlandSet.add(new AktørTilknytningUtland(aktørId, aktørTilknytningUtland.getFødselsnummer(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAar(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAarForklaring()));
+            tilknytningUtlandSet.add(new AktørTilknytningUtland(aktørTilknytningUtland.getFødselsnummer(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAar(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAarForklaring()));
         });
 
 
         søknad.getOppgittUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet().forEach(aktørArbeidYtelseUtland -> {
-            final var aktørId = aktørArbeidYtelseUtland.getFødselsnummer().equals(søkerFødselsnummer) ? søkerAktørId : annenPartAktørId;
             arbeidYtelseUtlandSet.add(new AktørArbeidYtelseUtland.Builder()
-                .setAktørId(aktørId)
                 .setFødselsnummer(aktørArbeidYtelseUtland.getFødselsnummer())
                 .setArbeidIUtlandet(aktørArbeidYtelseUtland.getArbeidIUtlandet())
                 .setArbeidIUtlandetForklaring(aktørArbeidYtelseUtland.getArbeidIUtlandetForklaring())
@@ -54,9 +52,9 @@ public final class SøknadTilGrunnlagMapper {
                     .setBarnehageAntallTimer(barn.getBarnehageAntallTimer())
                     .setBarnehageDato(barn.getBarnehageDato())
                     .setBarnehageKommune(barn.getBarnehageKommune());
-            }
 
-            barna.add(builder.build());
+                barna.add(builder.build());
+            }
         });
 
         return barna;

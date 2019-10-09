@@ -2,7 +2,7 @@ package no.nav.familie.ks.sak.app.integrasjon;
 
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
-import no.nav.familie.ks.sak.FaktagrunnlagBuilder;
+import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
@@ -51,7 +51,7 @@ public class RegisterInnhentingServiceTest {
     @Autowired
     private BehandlingRepository behandlingRepository;
 
-    private final Faktagrunnlag faktagrunnlag = FaktagrunnlagBuilder.beggeForeldreBorINorgeOgErNorskeStatsborgere();
+    private final Faktagrunnlag faktagrunnlag = FaktagrunnlagTestBuilder.beggeForeldreBorINorgeOgErNorskeStatsborgere();
     private final TpsFakta tpsFakta = faktagrunnlag.getTpsFakta();
 
     private AktørId søker = tpsFakta.getForelder().getPersoninfo().getAktørId();
@@ -111,7 +111,7 @@ public class RegisterInnhentingServiceTest {
 
     @Test
     public void skal_lagre_ned_respons_uten_annen_part() {
-        final Faktagrunnlag faktagrunnlagUtenAnnenPart = FaktagrunnlagBuilder.aleneForelderNorskStatsborgerskapUtenBarnehage();
+        final Faktagrunnlag faktagrunnlagUtenAnnenPart = FaktagrunnlagTestBuilder.aleneForelderNorskStatsborgerskapUtenBarnehage();
         final TpsFakta tpsFaktaUtenAnnenPart = faktagrunnlagUtenAnnenPart.getTpsFakta();
 
         AktørId barn = tpsFaktaUtenAnnenPart.getBarn().getPersoninfo().getAktørId();
@@ -136,6 +136,6 @@ public class RegisterInnhentingServiceTest {
         final var registerVersjonOpt = personopplysningGrunnlag.get().getRegistrertePersoner();
         assertThat(registerVersjonOpt).isPresent();
 
-        assert personopplysningGrunnlag.get().getOppgittAnnenPart().isEmpty();
+        assertThat(personopplysningGrunnlag.get().getAnnenPart()).isNull();
     }
 }

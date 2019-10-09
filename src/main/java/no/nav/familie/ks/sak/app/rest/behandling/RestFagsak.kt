@@ -6,13 +6,13 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent
 
 data class RestFagsak(
     val id: Long,
-    val søkerPersonIdent: PersonIdent,
+    val søkerFødselsnummer: String,
     val saksnummer: String,
     val behandlinger: List<RestBehandling>)
 
-fun Fagsak.toRestFagsak(restBehandlinger: List<RestBehandling>, oppslagTjeneste: OppslagTjeneste) = RestFagsak(
+fun Fagsak.toRestFagsak(restBehandlinger: List<RestBehandling>, søkerFødselsnummer: String) = RestFagsak(
     id = this.id,
-    søkerPersonIdent = oppslagTjeneste.hentPersonIdent(this.aktørId.id),
+    søkerFødselsnummer = søkerFødselsnummer,
     saksnummer = this.saksnummer,
     behandlinger = restBehandlinger
 )

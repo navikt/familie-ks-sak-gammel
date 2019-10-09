@@ -1,6 +1,5 @@
 package no.nav.familie.ks.sak.app.behandling;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
@@ -10,14 +9,8 @@ import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.File;
-import java.io.IOError;
-import java.io.IOException;
 
 @Service
 public class Saksbehandling {
@@ -27,21 +20,18 @@ public class Saksbehandling {
     private RegisterInnhentingService registerInnhentingService;
     private FastsettingService fastsettingService;
     private ResultatService resultatService;
-    private ObjectMapper mapper;
 
     @Autowired
     public Saksbehandling(VurderSamletTjeneste vurderSamletTjeneste,
                           BehandlingslagerService behandlingslagerService,
                           RegisterInnhentingService registerInnhentingService,
                           FastsettingService fastsettingService,
-                          ResultatService resultatService,
-                          ObjectMapper objectMapper) {
+                          ResultatService resultatService) {
         this.vurderSamletTjeneste = vurderSamletTjeneste;
         this.behandlingslagerService = behandlingslagerService;
         this.registerInnhentingService = registerInnhentingService;
         this.fastsettingService = fastsettingService;
         this.resultatService = resultatService;
-        this.mapper = objectMapper;
     }
 
     @Transactional
@@ -79,14 +69,6 @@ public class Saksbehandling {
                 return new Vedtak(vilkårvurdering, stønadperiode);
             default:
                 throw new UnsupportedOperationException(String.format("Ukjent utfalltype: %s", utfallType.name()));
-        }
-    }
-
-    private Søknad tilSøknad(String json) {
-        try {
-            return mapper.readValue(new File(json), Søknad.class);
-        } catch (IOException e) {
-            throw new IOError(e);
         }
     }
 }
