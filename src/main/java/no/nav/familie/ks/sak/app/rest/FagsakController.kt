@@ -32,6 +32,7 @@ class FagsakController (
     @GetMapping(path = ["/fagsak/{saksnummer}"])
     fun fagsak(@PathVariable saksnummer: String, principal: Principal?): ResponseEntity<Ressurs> {
         logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", saksnummer)
+        SporingsLoggHelper.logSporing(FagsakController::class.java, saksnummer, principal?.name ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
 
         val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(saksnummer) }
                 .fold(
