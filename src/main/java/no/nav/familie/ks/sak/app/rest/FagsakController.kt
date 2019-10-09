@@ -28,7 +28,6 @@ class FagsakController (
     private val restFagsakService: RestFagsakService) {
 
     @GetMapping(path = ["/fagsak/{saksnummer}"])
-    @Unprotected
     fun fagsak(@PathVariable saksnummer: String, principal: Principal?): ResponseEntity<Ressurs> {
         logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", saksnummer)
 
@@ -45,7 +44,6 @@ class FagsakController (
     }
 
     @GetMapping(path = ["/fagsak"])
-    @Unprotected
     fun fagsak(principal: Principal?): ResponseEntity<Ressurs> {
         logger.info("{} henter fagsaker", principal?.name ?: "Ukjent")
 
