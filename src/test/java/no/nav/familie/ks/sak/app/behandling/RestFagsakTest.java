@@ -92,7 +92,7 @@ public class RestFagsakTest {
 
         assertThat(behandling).isPresent();
 
-        final RestFagsak restFagsak = restFagsakService.hentRestFagsak(behandling.get().getFagsak().getId());
+        final RestFagsak restFagsak = restFagsakService.hentRestFagsak(behandling.get().getFagsak().getSaksnummer());
         assertThat(restFagsak).isNotNull();
         assertThat(restFagsak.getId()).isEqualTo(behandling.get().getFagsak().getId());
 
@@ -116,7 +116,7 @@ public class RestFagsakTest {
 
         assert behandling.isPresent();
         behandling.ifPresent(behandling1 -> {
-            final RestFagsak restFagsak = restFagsakService.hentRestFagsak(behandling.get().getFagsak().getId());
+            final RestFagsak restFagsak = restFagsakService.hentRestFagsak(behandling.get().getFagsak().getSaksnummer());
             assertThat(restFagsak).isNotNull();
 
             final var restPersoner = restFagsak.getBehandlinger().iterator().next().getPersonopplysninger();

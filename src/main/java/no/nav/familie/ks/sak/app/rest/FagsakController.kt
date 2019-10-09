@@ -27,18 +27,18 @@ class FagsakController (
     private val behandlingRepository: BehandlingRepository,
     private val restFagsakService: RestFagsakService) {
 
-    @GetMapping(path = ["/fagsak/{fagsakId}"])
+    @GetMapping(path = ["/fagsak/{saksnummer}"])
     @Unprotected
-    fun fagsak(@PathVariable fagsakId: Long, principal: Principal?): ResponseEntity<Ressurs> {
-        logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", fagsakId)
+    fun fagsak(@PathVariable saksnummer: String, principal: Principal?): ResponseEntity<Ressurs> {
+        logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", saksnummer)
 
-        val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(fagsakId) }
+        val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(saksnummer) }
                 .fold(
                     onSuccess = { when(it) {
-                        null -> Ressurs.failure("Fant ikke fagsak med id fagsakId")
+                        null -> Ressurs.failure("Fant ikke fagsak med saksnummer: $saksnummer")
                         else -> Ressurs.success( data = it )
                     } },
-                    onFailure = { e -> Ressurs.failure( String.format("Henting av fagsak med id %s feilet: %s", fagsakId, e.message), e) }
+                    onFailure = { e -> Ressurs.failure( "Henting av fagsak med saksnummer $saksnummer feilet: ${e.message}", e) }
                 )
 
         return ResponseEntity.ok(ressurs)
@@ -73,7 +73,7 @@ class FagsakController (
 
         val ressurs: Ressurs = when(behandling) {
             null -> Ressurs.failure("Behandling feilet")
-            else -> Result.runCatching { restFagsakService.hentRessursFagsak(behandling.fagsak.id) }
+            else -> Result.runCatching { restFagsakService.hentRessursFagsak(behandling.fagsak.saksnummer) }
                 .fold(
                     onSuccess = { Ressurs.success( data = it) },
                     onFailure = { e -> Ressurs.failure("Henting av fagsak feilet.", e) }
