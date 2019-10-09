@@ -15,7 +15,6 @@ import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.MedlemskapsVilkår;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
-import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import org.junit.Test;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public class SaksbehandlingTest {
 
     @Test
     public void positivt_vedtak_ved_oppfylte_vilkår() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         when(behandlingslagerMock.nyBehandling(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
 
         Søknad innsendtSøknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
@@ -44,7 +43,7 @@ public class SaksbehandlingTest {
 
     @Test
     public void negativt_vedtak_ved_ikke_oppfylte_vilkår() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagBuilder.familieUtenlandskStatsborgerskapMedBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieUtenlandskStatsborgerskapMedBarnehage());
         when(behandlingslagerMock.nyBehandling(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
 
         Søknad innsendtSøknad = SøknadTestdata.norskFamilieGradertBarnehageplass();

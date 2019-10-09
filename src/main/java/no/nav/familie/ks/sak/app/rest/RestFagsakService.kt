@@ -37,6 +37,7 @@ class RestFagsakService (
     fun hentRestFagsak(fagsakId: Long): RestFagsak? {
         val fagsak = fagsakRepository.findById(fagsakId)
         val behandlinger = behandlingRepository.finnBehandlinger(fagsakId)
+        var søkerFødselsnummer = ""
 
         // Grunnlag fra søknag
         val restBehandlinger: List<RestBehandling> = behandlinger.map {
@@ -53,7 +54,6 @@ class RestFagsakService (
                 val erklæring = søknadGrunnlag.søknad.erklæring
                 val oppgittErklæring = RestOppgittErklæring(erklæring.isBarnetHjemmeværendeOgIkkeAdoptert, erklæring.isBorSammenMedBarnet, erklæring.isIkkeAvtaltDeltBosted, erklæring.isBarnINorgeNeste12Måneder)
 
-
                 val familieforhold = barnehageBarnGrunnlagRepository.finnGrunnlag(it.id).map { barnehageBarnGrunnlag ->
                     val barna = barnehageBarnGrunnlag.familieforhold.barna.map { barn ->
                         barn.toRestBarn()
@@ -61,6 +61,8 @@ class RestFagsakService (
 
                     RestOppgittFamilieforhold(barna, barnehageBarnGrunnlag.familieforhold.isBorBeggeForeldreSammen)
                 }.orElseThrow()
+
+                søkerFødselsnummer = søknadGrunnlag.søknad.søkerFødselsnummer;
 
                 RestSøknad(søknadGrunnlag.søknad.innsendtTidspunkt, familieforhold, oppgittUtlandsTilknytning, oppgittErklæring)
             }.orElseThrow()
@@ -86,7 +88,7 @@ class RestFagsakService (
             RestBehandling(it.id, søknad, restBehandlingsresultat, personopplysninger)
         }
 
-        return fagsak.map { it.toRestFagsak(restBehandlinger, oppslagTjeneste) }.orElse(null)
+        return fagsak.map { it.toRestFagsak(restBehandlinger, søkerFødselsnummer ) }.orElse(null)
     }
 
     fun hentRessursFagsak(fagsakId: Long): RestFagsak? {

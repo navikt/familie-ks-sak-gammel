@@ -27,7 +27,7 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighe
 import java.time.LocalDate;
 import java.util.*;
 
-public final class FaktagrunnlagBuilder {
+public final class FaktagrunnlagTestBuilder {
     private final static Long behandlingId = Long.valueOf("111111111");
 
     public final static AktørId morAktørId = new AktørId(SøknadTestdata.morAktørId);
