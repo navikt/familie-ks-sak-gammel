@@ -27,7 +27,7 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighe
 import java.time.LocalDate;
 import java.util.*;
 
-public final class FaktagrunnlagBuilder {
+public final class FaktagrunnlagTestBuilder {
     private final static Long behandlingId = Long.valueOf("111111111");
 
     public final static AktørId morAktørId = new AktørId(SøknadTestdata.morAktørId);
@@ -110,6 +110,9 @@ public final class FaktagrunnlagBuilder {
     // Adresseperioder
     private static AdressePeriode norskAdresseSeksÅr = new AdressePeriode.Builder()
         .medLand(STATSBORGERSKAP_GYLDIG)
+        .medAdresselinje1("adresselinje1")
+        .medPostnummer("1234")
+        .medPoststed("Oslo")
         .medAdresseType(AdresseType.BOSTEDSADRESSE)
         .medGyldighetsperiode(
             new Periode(LocalDate.now().minusYears(6), Tid.TIDENES_ENDE)
@@ -117,6 +120,9 @@ public final class FaktagrunnlagBuilder {
         .build();
     private static AdressePeriode svenskdresseSeksÅr = new AdressePeriode.Builder()
         .medLand(Landkode.SVERIGE.getKode())
+        .medAdresselinje1("adresselinje1")
+        .medPostnummer("1234")
+        .medPoststed("Strømstad")
         .medAdresseType(AdresseType.BOSTEDSADRESSE)
         .medGyldighetsperiode(
             new Periode(LocalDate.now().minusYears(6), Tid.TIDENES_ENDE)
@@ -124,6 +130,10 @@ public final class FaktagrunnlagBuilder {
         .build();
     private static AdressePeriode norskAdresseEtÅr = new AdressePeriode.Builder()
         .medLand(STATSBORGERSKAP_GYLDIG)
+        .medAdresselinje1("adresselinje1")
+        .medPostnummer("1234")
+        .medPoststed("Oslo")
+        .medLand(Landkode.NORGE.getKode())
         .medAdresseType(AdresseType.BOSTEDSADRESSE)
         .medGyldighetsperiode(
             new Periode(LocalDate.now().minusYears(1), Tid.TIDENES_ENDE)
@@ -375,6 +385,7 @@ public final class FaktagrunnlagBuilder {
 
     private static BarnehageBarnGrunnlag genererBarnehageBarnGrunnlag(Søknad innsendtSøknad) {
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
+
         familieforholdBuilder.setBarna(SøknadTilGrunnlagMapper.mapSøknadBarn(innsendtSøknad));
         familieforholdBuilder.setBorBeggeForeldreSammen(innsendtSøknad.getOppgittFamilieforhold().getBorBeggeForeldreSammen());
         return new BarnehageBarnGrunnlag(behandlingId, familieforholdBuilder.build());

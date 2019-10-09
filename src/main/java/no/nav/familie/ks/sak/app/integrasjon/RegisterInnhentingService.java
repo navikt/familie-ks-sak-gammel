@@ -62,7 +62,7 @@ public class RegisterInnhentingService {
                     && !familierelasjon.getAktørId().equals(søkerAktørId))
             .findFirst();
 
-        AktørId annenPartAktørId = null;
+        AktørId annenPartAktørId;
         if (annenPartFamilierelasjon.isPresent()) {
             annenPartAktørId = annenPartFamilierelasjon.get().getAktørId();
             annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartAktørId);
@@ -114,8 +114,6 @@ public class RegisterInnhentingService {
     }
 
     private void mapRelasjoner(Personinfo søker, Personinfo annenPart, Personinfo barn, PersonopplysningGrunnlag personopplysningGrunnlag) {
-        //Midlertidig logg til testing fjern før prodsetting
-
         barn.getFamilierelasjoner()
             .stream()
             .filter(it -> it.getAktørId().equals(søker.getAktørId()) || (annenPart != null && it.getAktørId().equals(annenPart.getAktørId())))

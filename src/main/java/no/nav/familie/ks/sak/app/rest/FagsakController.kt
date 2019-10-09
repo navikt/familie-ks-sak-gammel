@@ -1,13 +1,16 @@
 package no.nav.familie.ks.sak.app.rest
 
 import no.nav.familie.ks.kontrakter.søknad.Søknad
+import no.nav.familie.ks.kontrakter.søknad.toSøknad
 import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak
+import no.nav.security.oidc.api.Unprotected
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -52,9 +55,12 @@ class FagsakController (
 
         return ResponseEntity.ok(ressurs)
     }
-    
+
+    @Profile("dev")
     @PostMapping(path = ["/behandle"])
-    fun behandle(@RequestBody søknad: Søknad): ResponseEntity<Ressurs> {
+    @Unprotected
+    fun behandle(@RequestBody søknadJson: String): ResponseEntity<Ressurs> {
+        val søknad: Søknad = søknadJson.toSøknad()
         val behandling: Behandling? = Result.runCatching {
             val vedtak: Vedtak = saksbehandling.behandle(søknad)
             behandlingRepository.getOne(vedtak.behandlingsId)

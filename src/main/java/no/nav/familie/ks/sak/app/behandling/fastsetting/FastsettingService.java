@@ -21,8 +21,8 @@ public class FastsettingService {
     }
 
     public Faktagrunnlag fastsettFakta(Behandling behandling, TpsFakta tpsFakta) {
-        SøknadGrunnlag søknadGrunnlag = søknadGrunnlagRepository.finnGrunnlag(behandling.getId());
-        BarnehageBarnGrunnlag barnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.getId());
+        SøknadGrunnlag søknadGrunnlag = søknadGrunnlagRepository.finnGrunnlag(behandling.getId()).orElseThrow();
+        BarnehageBarnGrunnlag barnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.getId()).orElseThrow();
 
         return new Faktagrunnlag.Builder()
             .medBarnehageBarnGrunnlag(barnehageBarnGrunnlag)

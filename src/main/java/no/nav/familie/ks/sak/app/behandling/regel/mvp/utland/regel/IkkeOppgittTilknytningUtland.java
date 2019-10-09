@@ -2,19 +2,11 @@ package no.nav.familie.ks.sak.app.behandling.regel.mvp.utland.regel;
 
 import no.nav.familie.ks.kontrakter.søknad.Standpunkt;
 import no.nav.familie.ks.kontrakter.søknad.TilknytningTilUtlandVerdier;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørArbeidYtelseUtland;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørTilknytningUtland;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
-import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
-
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 
 @RuleDocumentation(IkkeOppgittTilknytningUtland.ID)
 public class IkkeOppgittTilknytningUtland extends LeafSpecification<Faktagrunnlag> {

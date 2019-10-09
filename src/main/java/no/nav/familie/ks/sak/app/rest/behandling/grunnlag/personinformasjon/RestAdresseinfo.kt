@@ -8,9 +8,9 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.DatoIntervallEntitet
 data class RestAdresseinfo(
     val adresseType: AdresseType,
     val adresselinje1: String,
-    val adresselinje2: String,
-    val adresselinje3: String,
-    val adresselinje4: String,
+    val adresselinje2: String?,
+    val adresselinje3: String?,
+    val adresselinje4: String?,
     val postnummer: String,
     val poststed: String,
     val land: Landkode,
