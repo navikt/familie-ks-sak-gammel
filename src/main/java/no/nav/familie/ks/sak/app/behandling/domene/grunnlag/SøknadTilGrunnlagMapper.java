@@ -15,23 +15,18 @@ import java.util.Map;
 import java.util.Set;
 
 public final class SøknadTilGrunnlagMapper {
-    public static OppgittUtlandsTilknytning mapUtenlandsTilknytning(Søknad søknad, AktørId søkerAktørId, AktørId annenPartAktørId) {
-        final var søkerFødselsnummer = søknad.getSøkerFødselsnummer();
-
+    public static OppgittUtlandsTilknytning mapUtenlandsTilknytning(Søknad søknad) {
         final var tilknytningUtlandSet = new HashSet<AktørTilknytningUtland>();
         final var arbeidYtelseUtlandSet = new HashSet<AktørArbeidYtelseUtland>();
 
         søknad.getOppgittUtlandsTilknytning().getAktørerTilknytningTilUtlandet().forEach(aktørTilknytningUtland -> {
-            final var aktørId = aktørTilknytningUtland.getFødselsnummer().equals(søkerFødselsnummer) ? søkerAktørId : annenPartAktørId;
-            tilknytningUtlandSet.add(new AktørTilknytningUtland(aktørId, aktørTilknytningUtland.getFødselsnummer(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAar(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAarForklaring()));
+            tilknytningUtlandSet.add(new AktørTilknytningUtland(aktørTilknytningUtland.getFødselsnummer(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAar(), aktørTilknytningUtland.getBoddEllerJobbetINorgeMinstFemAarForklaring()));
         });
 
 
         søknad.getOppgittUtlandsTilknytning().getAktørerArbeidYtelseIUtlandet().forEach(aktørArbeidYtelseUtland -> {
-            final var aktørId = aktørArbeidYtelseUtland.getFødselsnummer().equals(søkerFødselsnummer) ? søkerAktørId : annenPartAktørId;
             arbeidYtelseUtlandSet.add(new AktørArbeidYtelseUtland.Builder()
-                .setAktørId(aktørId)
-                .setFnr(aktørArbeidYtelseUtland.getFødselsnummer())
+                .setFødselsnummer(aktørArbeidYtelseUtland.getFødselsnummer())
                 .setArbeidIUtlandet(aktørArbeidYtelseUtland.getArbeidIUtlandet())
                 .setArbeidIUtlandetForklaring(aktørArbeidYtelseUtland.getArbeidIUtlandetForklaring())
                 .setYtelseIUtlandet(aktørArbeidYtelseUtland.getYtelseIUtlandet())
@@ -44,7 +39,7 @@ public final class SøknadTilGrunnlagMapper {
         return new OppgittUtlandsTilknytning(arbeidYtelseUtlandSet, tilknytningUtlandSet);
     }
 
-    public static Set<Barn> mapSøknadBarn(Søknad søknad, Map<String, AktørId> barnasAktørIder) {
+    public static Set<Barn> mapSøknadBarn(Søknad søknad) {
         Set<Barn> barna = new HashSet<>();
 
         final var barnaFraSøknaden = søknad.getOppgittFamilieforhold().getBarna();
@@ -52,8 +47,7 @@ public final class SøknadTilGrunnlagMapper {
             final var builder = new Barn.Builder();
 
             if (barn != null && barn.getBarnehageAntallTimer() != null) {
-                builder
-                    .setAktørId(barnasAktørIder.get(barn.getFødselsnummer()).getId())
+                builder.setFødselsnummer(barn.getFødselsnummer())
                     .setBarnehageStatus(BarnehageplassStatus.map(barn.getBarnehageStatus().name()))
                     .setBarnehageAntallTimer(barn.getBarnehageAntallTimer())
                     .setBarnehageDato(barn.getBarnehageDato())

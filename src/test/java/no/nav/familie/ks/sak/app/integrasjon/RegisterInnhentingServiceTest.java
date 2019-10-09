@@ -136,6 +136,6 @@ public class RegisterInnhentingServiceTest {
         final var registerVersjonOpt = personopplysningGrunnlag.get().getRegistrertePersoner();
         assertThat(registerVersjonOpt).isPresent();
 
-        assert personopplysningGrunnlag.get().getOppgittAnnenPart().isEmpty();
+        assertThat(personopplysningGrunnlag.get().getAnnenPart()).isNull();
     }
 }

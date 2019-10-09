@@ -30,7 +30,7 @@ public class SaksbehandlingTest {
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår()));
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
     private final RegisterInnhentingService registerInnhentingServiceMock = mock(RegisterInnhentingService.class);
-    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(ResultatService.class), new JacksonJsonConfig().objectMapper());
+    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(ResultatService.class));
 
     @Test
     public void positivt_vedtak_ved_oppfylte_vilkår() {

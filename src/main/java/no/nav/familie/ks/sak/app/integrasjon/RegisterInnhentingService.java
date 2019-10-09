@@ -62,14 +62,13 @@ public class RegisterInnhentingService {
                     && !familierelasjon.getAktørId().equals(søkerAktørId))
             .findFirst();
 
-        AktørId annenPartAktørId = null;
+        AktørId annenPartAktørId;
         if (annenPartFamilierelasjon.isPresent()) {
             annenPartAktørId = annenPartFamilierelasjon.get().getAktørId();
             annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartAktørId);
             String annenPartPersonIdent = oppslagTjeneste.hentPersonIdent(annenPartAktørId.getId()).getIdent();
 
             mapPersonopplysninger(annenPartAktørId, annenPartPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag, PersonType.ANNENPART);
-            personopplysningGrunnlag.setOppgittAnnenPart(annenPartAktørId);
 
             //TODO legg til støtte for flere barn
             mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag);

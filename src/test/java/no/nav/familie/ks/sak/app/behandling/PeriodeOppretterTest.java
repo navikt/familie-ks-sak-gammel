@@ -34,7 +34,7 @@ public class PeriodeOppretterTest {
     private final RegisterInnhentingService registerInnhentingServiceMock = mock(RegisterInnhentingService.class);
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår(), new BarnehageVilkår(), new BostedVilkår()));
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
-    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(ResultatService.class), new JacksonJsonConfig().objectMapper());
+    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(ResultatService.class));
 
     @Test
     public void søknad_med_barnehage_gir_feil() {

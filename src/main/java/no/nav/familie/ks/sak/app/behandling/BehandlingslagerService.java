@@ -6,34 +6,26 @@ import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.Fagsak;
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.SøknadTilGrunnlagMapper;
+import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barn;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.OppgittFamilieforhold;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlag;
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittErklæring;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
-import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class BehandlingslagerService {
 
-    private static final Logger logger = LoggerFactory.getLogger(BehandlingslagerService.class);
     private FagsakRepository fagsakRepository;
     private BehandlingRepository behandlingRepository;
     private SøknadGrunnlagRepository søknadGrunnlagRepository;
     private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
-    private PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository;
     private OppslagTjeneste oppslagTjeneste;
 
     @Autowired
@@ -41,13 +33,11 @@ public class BehandlingslagerService {
                                    BehandlingRepository behandlingRepository,
                                    SøknadGrunnlagRepository søknadGrunnlagRepository,
                                    BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository,
-                                   PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository,
                                    OppslagTjeneste oppslag) {
         this.fagsakRepository = fagsakRepository;
         this.behandlingRepository = behandlingRepository;
         this.søknadGrunnlagRepository = søknadGrunnlagRepository;
         this.barnehageBarnGrunnlagRepository = barnehageBarnGrunnlagRepository;
-        this.personopplysningGrunnlagRepository = personopplysningGrunnlagRepository;
         this.oppslagTjeneste = oppslag;
     }
 
@@ -64,14 +54,7 @@ public class BehandlingslagerService {
 
     void trekkUtOgPersister(Behandling behandling, Søknad søknad) {
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
-
-        Map<String, AktørId> barnasAktørIder = new HashMap<>();
-        søknad.getOppgittFamilieforhold().getBarna().forEach(barn -> {
-            AktørId aktørId = oppslagTjeneste.hentAktørId(barn.getFødselsnummer());
-            barnasAktørIder.put(barn.getFødselsnummer(), aktørId);
-        });
-
-        familieforholdBuilder.setBarna(SøknadTilGrunnlagMapper.mapSøknadBarn(søknad, barnasAktørIder));
+        familieforholdBuilder.setBarna(mapOgHentBarna(søknad));
         familieforholdBuilder.setBorBeggeForeldreSammen(søknad.getOppgittFamilieforhold().getBorBeggeForeldreSammen());
         barnehageBarnGrunnlagRepository.save(new BarnehageBarnGrunnlag(behandling, familieforholdBuilder.build()));
 
@@ -81,25 +64,17 @@ public class BehandlingslagerService {
             kravTilSoker.isIkkeAvtaltDeltBosted(),
             kravTilSoker.isBarnINorgeNeste12Måneder());
 
-        final var oppgittAnnenPartFødselsnummer = søknad.getOppgittAnnenPartFødselsnummer();
-        AktørId oppgittAnnenPartAktørId = null;
+        final var oppgittUtlandsTilknytning = SøknadTilGrunnlagMapper.mapUtenlandsTilknytning(søknad);
 
-        if (oppgittAnnenPartFødselsnummer != null && !oppgittAnnenPartFødselsnummer.isEmpty()) {
-            Optional<PersonopplysningGrunnlag> personopplysningGrunnlag = personopplysningGrunnlagRepository.findByBehandlingAndAktiv(behandling.getId());
-            if (personopplysningGrunnlag.isPresent()) {
-                Optional<AktørId> oppgittAnnenPart = personopplysningGrunnlag.get().getOppgittAnnenPart();
-                if (oppgittAnnenPart.isPresent()) {
-                    oppgittAnnenPartAktørId = oppgittAnnenPart.get();
-                } else {
-                    logger.warn("Annen part mangler i personopplysning grunnlaget, men søker har oppgitt annen part");
-                }
-            } else {
-                logger.warn("Personopplysning grunnlaget mangler.");
-            }
+        søknadGrunnlagRepository.save(new SøknadGrunnlag(behandling,
+            new no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad(søknad.getInnsendtTidspunkt(), søknad.getSøkerFødselsnummer(), søknad.getOppgittAnnenPartFødselsnummer(), oppgittUtlandsTilknytning, erklæring)));
+    }
+
+    private Set<Barn> mapOgHentBarna(Søknad søknad) {
+        Set<Barn> barna = SøknadTilGrunnlagMapper.mapSøknadBarn(søknad);
+        for (Barn barn : barna) {
+            barn.setFødselsnummer(barn.getFødselsnummer());
         }
-
-        final var oppgittUtlandsTilknytning = SøknadTilGrunnlagMapper.mapUtenlandsTilknytning(søknad, behandling.getFagsak().getAktørId(), oppgittAnnenPartAktørId);
-
-        søknadGrunnlagRepository.save(new SøknadGrunnlag(behandling, new no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.Søknad(søknad.getInnsendtTidspunkt(), oppgittUtlandsTilknytning, erklæring)));
+        return barna;
     }
 }

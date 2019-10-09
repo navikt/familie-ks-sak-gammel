@@ -2,6 +2,8 @@ package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning;
 
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.util.*;
@@ -16,10 +18,6 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
 
     @Column(name = "behandling_id", updatable = false, nullable = false)
     private Long behandlingId;
-
-    @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "oppgitt_annen_part", updatable = false)))
-    private AktørId oppgittAnnenPart;
 
     @Column(name = "aktiv", nullable = false)
     private Boolean aktiv = true;
@@ -59,14 +57,6 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
         return Optional.ofNullable(personer);
     }
 
-    public Optional<AktørId> getOppgittAnnenPart() {
-        return Optional.ofNullable(oppgittAnnenPart);
-    }
-
-    public void setOppgittAnnenPart(AktørId oppgittAnnenPart) {
-        this.oppgittAnnenPart = oppgittAnnenPart;
-    }
-
     public void leggTilPerson(Person person) {
         person.setPersonopplysningGrunnlag(this);
         personer.add(person);
@@ -91,7 +81,7 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
     }
     public Person getBarn(AktørId aktørId) {
         for (Person p : personer) {
-            if (p.getType().equals(PersonType.BARN) && p.getAktørId().getId() == aktørId.getId()){
+            if (p.getType().equals(PersonType.BARN) && p.getAktørId().getId().equals(aktørId.getId())){
                 return p;
             }
         }
@@ -114,20 +104,20 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
         if (o == null || getClass() != o.getClass()) return false;
         PersonopplysningGrunnlag that = (PersonopplysningGrunnlag) o;
         return Objects.equals(behandlingId, that.behandlingId) &&
-            Objects.equals(oppgittAnnenPart, that.oppgittAnnenPart) &&
             Objects.equals(personer, that.personer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(behandlingId, oppgittAnnenPart, personer);
+        return Objects.hash(behandlingId, personer);
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PersonopplysningGrunnlagEntitet{");
         sb.append("id=").append(id);
-        sb.append(", søknadAnnenPart=").append(oppgittAnnenPart);
+        sb.append(", personer=").append(this.getRegistrertePersoner().toString());
+        sb.append(", barna=").append(this.getBarna().toString());
         sb.append(", aktiv=").append(aktiv);
         sb.append('}');
         return sb.toString();

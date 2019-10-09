@@ -2,12 +2,10 @@ package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus;
-import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 @Table(name = "SO_BARN")
@@ -23,9 +21,8 @@ public class Barn extends BaseEntitet {
     @JoinColumn(name = "familieforhold_id")
     private OppgittFamilieforhold familieforhold;
 
-    @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", updatable = false)))
-    private AktørId aktørId;
+    @Column(name = "fnr", nullable = true, updatable = true)
+    private String fødselsnummer;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "barnehage_status", nullable = false, updatable = false)
@@ -44,16 +41,12 @@ public class Barn extends BaseEntitet {
         // hibernate
     }
 
-    Barn(AktørId aktørId, BarnehageplassStatus barnehageStatus, Double barnehageAntallTimer, LocalDate barnehageDato, String barnehageKommune) {
-        this.aktørId = aktørId;
+    Barn(String fødselsnummer, BarnehageplassStatus barnehageStatus, Double barnehageAntallTimer, LocalDate barnehageDato, String barnehageKommune) {
+        this.fødselsnummer = fødselsnummer;
         this.barnehageStatus = barnehageStatus;
         this.barnehageAntallTimer = barnehageAntallTimer;
         this.barnehageDato = barnehageDato;
         this.barnehageKommune = barnehageKommune;
-    }
-
-    public AktørId getAktørId() {
-        return aktørId;
     }
 
     public BarnehageplassStatus getBarnehageStatus() {
@@ -72,25 +65,12 @@ public class Barn extends BaseEntitet {
         return barnehageKommune;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Barn that = (Barn) o;
-        return Objects.equals(aktørId, that.aktørId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(aktørId);
-    }
 
     @Override
     public String toString() {
         return "SøknadBarn{" +
             "id=" + id +
             ", familieforhold=" + familieforhold +
-            ", aktørId='" + aktørId + '\'' +
             ", barnehageStatus=" + barnehageStatus +
             ", barnehageAntallTimer=" + barnehageAntallTimer +
             ", barnehageDato=" + barnehageDato +
@@ -103,15 +83,23 @@ public class Barn extends BaseEntitet {
         return this;
     }
 
+    public String getFødselsnummer() {
+        return fødselsnummer;
+    }
+
+    public void setFødselsnummer(String fødselsnummer) {
+        this.fødselsnummer = fødselsnummer;
+    }
+
     public static class Builder {
-        private AktørId aktørId;
+        private String fødselsnummer;
         private BarnehageplassStatus barnehageStatus;
         private Double barnehageAntallTimer;
         private LocalDate barnehageDato;
         private String barnehageKommune;
 
-        public Builder setAktørId(String aktørId) {
-            this.aktørId = new AktørId(aktørId);
+        public Builder setFødselsnummer(String fødselsnummer) {
+            this.fødselsnummer = fødselsnummer;
             return this;
         }
 
@@ -136,7 +124,7 @@ public class Barn extends BaseEntitet {
         }
 
         public Barn build() {
-            return new Barn(aktørId, barnehageStatus, barnehageAntallTimer, barnehageDato, barnehageKommune);
+            return new Barn(fødselsnummer, barnehageStatus, barnehageAntallTimer, barnehageDato, barnehageKommune);
         }
     }
 }

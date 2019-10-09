@@ -5,7 +5,6 @@ import no.nav.familie.ks.sak.app.behandling.domene.Fagsak
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository
-import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningService
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
@@ -46,7 +45,7 @@ class RestFagsakService (
                     aktørArbeidYtelseUtland.toRestAktørArbeidYtelseUtland()
                 }
                 val aktørerTilknytningUtland = søknadGrunnlag.søknad.utlandsTilknytning.aktørerTilknytningTilUtlandet.map { aktørTilknytningUtland ->
-                    aktørTilknytningUtland.toRestAktørTilknytningUtland(oppslagTjeneste)
+                    aktørTilknytningUtland.toRestAktørTilknytningUtland()
                 }
 
                 val oppgittUtlandsTilknytning = RestOppgittUtlandsTilknytning(aktørerArbeidYtelseUtland, aktørerTilknytningUtland)
@@ -57,7 +56,7 @@ class RestFagsakService (
 
                 val familieforhold = barnehageBarnGrunnlagRepository.finnGrunnlag(it.id).map { barnehageBarnGrunnlag ->
                     val barna = barnehageBarnGrunnlag.familieforhold.barna.map { barn ->
-                        barn.toRestBarn(oppslagTjeneste)
+                        barn.toRestBarn()
                     }
 
                     RestOppgittFamilieforhold(barna, barnehageBarnGrunnlag.familieforhold.isBorBeggeForeldreSammen)

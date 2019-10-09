@@ -10,7 +10,6 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.rest.RestFagsakService;
 import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling;
 import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak;
