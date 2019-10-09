@@ -67,6 +67,13 @@
                 <artifactId>http-client</artifactId>
                 <version>${felles.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/com.papertrailapp/logback-syslog4j -->
+            <dependency>
+                <groupId>com.papertrailapp</groupId>
+                <artifactId>logback-syslog4j</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -101,6 +108,13 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.papertrailapp/logback-syslog4j -->
+        <dependency>
+            <groupId>com.papertrailapp</groupId>
+            <artifactId>logback-syslog4j</artifactId>
+        </dependency>
+
 
         <!-- NAV-interne avhengigheter -->
         <dependency>
