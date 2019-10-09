@@ -36,6 +36,15 @@ public class MedlemskapVilkårTest {
     }
 
     @Test
+    public void norsk_bosted_mindre_enn_fem_år_gir_ikke_oppfylt() {
+        final var vilkår = new MedlemskapsVilkår();
+        Faktagrunnlag faktagrunnlag = FaktagrunnlagTestBuilder.beggeForeldreNorskStatsborgerskapMenBoddINorgeMindreEnnFemÅr();
+        final var evaluering = vilkår.evaluer(faktagrunnlag);
+        assertThat(evaluering.result()).isEqualByComparingTo(Resultat.NEI);
+    }
+
+
+    @Test
     public void norsk_statsborgerskap_og_bosted_fem_år_gir_oppfylt() {
         final var vilkår = new MedlemskapsVilkår();
         Faktagrunnlag faktagrunnlag = FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage();

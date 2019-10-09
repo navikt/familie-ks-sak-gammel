@@ -202,6 +202,11 @@ public final class FaktagrunnlagTestBuilder {
         .leggTil(norskAdresseEtÅr)
         .leggTil(norskStatsborgerskapEtÅr)
         .build();
+    private static PersonhistorikkInfo personhistorikkNorskMorNorgeEtÅr = new PersonhistorikkInfo.Builder()
+        .medAktørId(morAktørId.getId())
+        .leggTil(norskAdresseEtÅr)
+        .leggTil(norskStatsborgerskapSeksÅr)
+        .build();
 
     // Personer med historikk
     private static PersonMedHistorikk personMedHistorikkMorNorsk = new PersonMedHistorikk.Builder()
@@ -211,6 +216,10 @@ public final class FaktagrunnlagTestBuilder {
     private static PersonMedHistorikk personMedHistorikkFarNorsk = new PersonMedHistorikk.Builder()
         .medInfo(personinfoFarNorsk)
         .medPersonhistorikk(personhistorikkFarNorgeSeksÅr)
+        .build();
+    private static PersonMedHistorikk personMedHistorikkMorNorskMenIkkeBoddFemÅrINorge = new PersonMedHistorikk.Builder()
+        .medInfo(personinfoMorNorsk)
+        .medPersonhistorikk(personhistorikkNorskMorNorgeEtÅr)
         .build();
 
     private final static LocalDate barnNorskFødselsdato = LocalDate.now().minusMonths(13);
@@ -344,6 +353,12 @@ public final class FaktagrunnlagTestBuilder {
         .medAnnenForelder(personMedHistorikkFarNorskMenBoddIUtland)
         .medBarn(List.of(personMedHistorikkBarnNorsk))
         .build();
+
+    private static TpsFakta beggeForeldreNorskMenIkkeBoddFemÅrINorge = new TpsFakta.Builder()
+        .medForelder(personMedHistorikkMorNorskMenIkkeBoddFemÅrINorge)
+        .medAnnenForelder(personMedHistorikkFarNorsk)
+        .medBarn(List.of(personMedHistorikkBarnNorsk))
+        .build();
     
     private static TpsFakta beggeForeldreIkkeNorskMenBoddFemINorge = new TpsFakta.Builder()
         .medForelder(personMedHistorikkMorIkkeNorskMenBoddNorge)
@@ -455,6 +470,14 @@ public final class FaktagrunnlagTestBuilder {
     public static Faktagrunnlag beggeForeldreNorskStatsborgerskapMenBoddIUtland() {
         return new Faktagrunnlag.Builder()
             .medTpsFakta(beggeForeldreNorskMenBoddIUtland)
+            .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .build();
+    }
+
+    public static Faktagrunnlag beggeForeldreNorskStatsborgerskapMenBoddINorgeMindreEnnFemÅr() {
+        return new Faktagrunnlag.Builder()
+            .medTpsFakta(beggeForeldreNorskMenIkkeBoddFemÅrINorge)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .build();
