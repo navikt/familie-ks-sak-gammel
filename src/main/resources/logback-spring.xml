@@ -16,6 +16,23 @@
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
+    <appender name="SPORING_LOG" class="com.papertrailapp.logback.Syslog4jAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%m%n%xEx</pattern>
+        </layout>
+
+        <syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
+            <!-- remote system to log to -->
+            <host>audit.nais</host>
+            <!-- remote port to log to -->
+            <port>6514</port>
+            <ident>FAMILIE-KS-SAK</ident>
+            <!-- max log message length in bytes -->
+            <maxMessageLength>128000</maxMessageLength>
+        </syslogConfig>
+    </appender>
+
+
     <logger name="secureLogger" level="INFO" additivity="false">
         <appender-ref ref="secureLog"/>
     </logger>
@@ -36,6 +53,10 @@
         <appender-ref ref="stdout_json"/>
         <appender-ref ref="Sentry" />
     </root>
+
+    <logger name="sporing" level="INFO" additivity="false">
+        <appender-ref ref="SPORING_LOG" />
+    </logger>
 
     <logger name="no.nav" level="WARN"/>
     <logger name="no.nav.familie" level="INFO"/>
