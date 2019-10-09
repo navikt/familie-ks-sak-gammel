@@ -33,7 +33,7 @@ public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag>
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
         PersonMedHistorikk forelder = grunnlag.getTpsFakta().getForelder();
         PersonMedHistorikk annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
-        if (bosattFemÅrINorge(forelder) || bosattFemÅrINorge(annenForelder)) {
+        if (bosattFemÅrINorge(forelder) && bosattFemÅrINorge(annenForelder)) {
             return ja();
         }
         return nei(VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_I_NORGE_FEM_ÅR);
