@@ -69,7 +69,7 @@ class RestFagsakService (
             val personopplysninger: RestPersoner = personopplysningGrunnlagRepository.findByBehandlingAndAktiv(it.id).map { personopplysningGrunnlag ->
                 RestPersoner(
                     søker = personopplysningGrunnlag.søker.toRestPerson(oppslagTjeneste),
-                    annenPart = personopplysningGrunnlag.annenPart.toRestPerson(oppslagTjeneste),
+                    annenPart = personopplysningGrunnlag.annenPart?.toRestPerson(oppslagTjeneste),
                     barna = personopplysningGrunnlag.barna.map { barn -> barn.toRestPerson(oppslagTjeneste) }
                 )
             }.orElseThrow()
