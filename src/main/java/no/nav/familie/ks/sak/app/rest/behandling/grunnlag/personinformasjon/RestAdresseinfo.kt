@@ -13,7 +13,7 @@ data class RestAdresseinfo(
     val adresselinje4: String?,
     val postnummer: String?,
     val poststed: String?,
-    val land: Landkode,
+    val land: String,
     val periode: DatoIntervallEntitet)
 
 fun PersonAdresse.toRestAdresseInfo() = RestAdresseinfo(
@@ -24,6 +24,6 @@ fun PersonAdresse.toRestAdresseInfo() = RestAdresseinfo(
     adresselinje4 = this.adresselinje4,
     postnummer = this.postnummer,
     poststed = this.poststed,
-    land = this.land,
+    land = this.land.kode,
     periode = this.periode
 )
