@@ -5,7 +5,8 @@ no.nav.security.jwt:
     cookie_name: ID_token
   issuer.azuread:
     discoveryurl: https://login.microsoftonline.com/navno.onmicrosoft.com/v2.0/.well-known/openid-configuration
-    accepted_audience: ${KS_SAK_CLIENT_ID}
+    accepted_audience: ${KS_SAK_FRONTEND_CLIENT_ID}
+    cookie_name: azure_token
 
 spring:
   datasource:

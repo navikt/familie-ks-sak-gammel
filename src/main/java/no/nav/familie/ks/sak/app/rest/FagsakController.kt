@@ -63,7 +63,6 @@ class FagsakController (
 
     @Profile("dev")
     @PostMapping(path = ["/behandle"])
-    @Unprotected
     fun behandle(@RequestBody søknadJson: String): ResponseEntity<Ressurs> {
         val søknad: Søknad = søknadJson.toSøknad()
         val behandling: Behandling? = Result.runCatching {

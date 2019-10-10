@@ -6,6 +6,7 @@ no.nav.security.jwt:
   issuer.azuread:
     discoveryurl: http://metadata
     accepted_audience: aud-localhost
+    cookie_name: localhost-idtoken
 
 credential:
   username: "srv-ks-sak"
