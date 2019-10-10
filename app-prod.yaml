@@ -22,7 +22,6 @@ spec:
     path: /internal/prometheus
   vault:
     enabled: true
-  webproxy: true
   replicas:
     min: 2
     max: 2
