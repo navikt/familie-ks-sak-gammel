@@ -11,6 +11,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.DatoIntervallEntitet;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.InfotrygdFakta;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
@@ -102,6 +103,10 @@ public class RegisterInnhentingService {
             .medBarn(List.of(barnPersonMedHistorikk))
             .medAnnenForelder(annenPartPersonMedHistorikk)
             .build();
+    }
+
+    public InfotrygdFakta hentInfotrygdFakta(Søknad søknad) {
+        return new InfotrygdFakta(oppslagTjeneste.hentInfoOmLøpendeKontantstøtteForBarn(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer()));
     }
 
     private PersonMedHistorikk hentPersonMedHistorikk(AktørId aktørId) {

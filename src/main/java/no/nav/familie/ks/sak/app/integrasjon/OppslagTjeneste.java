@@ -3,6 +3,7 @@ package no.nav.familie.ks.sak.app.integrasjon;
 import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.AktivKontantstøtteInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
@@ -136,6 +137,35 @@ public class OppslagTjeneste {
                 String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
                 logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + feilmelding);
                 throw new OppslagException(feilmelding);
+            }
+        } catch (RestClientException e) {
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+        }
+    }
+
+    @Retryable(
+        value = { OppslagException.class },
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 5000))
+    public AktivKontantstøtteInfo hentInfoOmLøpendeKontantstøtteForBarn(String personident) {
+        if (personident == null || personident.isEmpty()) {
+            throw new OppslagException("Ved henting av info om løpende kontantstøtte er personident null eller tom");
+        }
+        URI uri = URI.create(oppslagServiceUri + "/api/infotrygd/harBarnAktivKontantstotte");
+        logger.info("Henter info om løpende kontantstøtte fra " + oppslagServiceUri);
+        try {
+            var response = requestMedAktørId(uri, personident, AktivKontantstøtteInfo.class);
+            secureLogger.info("Løpende kontantstøtte for {}: {}", personident, response.getBody());
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                var aktivKontantstøtteInfo = response.getBody();
+                if (aktivKontantstøtteInfo == null || aktivKontantstøtteInfo.getHarAktivKontantstotte() == null) {
+                    throw new OppslagException("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
+                } else {
+                    return aktivKontantstøtteInfo;
+                }
+            } else {
+                throw new OppslagException("Kall mot oppslag feilet ved uthenting av info om løpende kontantstøtte");
             }
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);

@@ -6,6 +6,8 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barneh
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.InfotrygdFakta;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +22,7 @@ public class FastsettingService {
         this.barnehageBarnGrunnlagRepository = barnehageBarnGrunnlagRepository;
     }
 
-    public Faktagrunnlag fastsettFakta(Behandling behandling, TpsFakta tpsFakta) {
+    public Faktagrunnlag fastsettFakta(Behandling behandling, TpsFakta tpsFakta, InfotrygdFakta infotrygdFakta) {
         SøknadGrunnlag søknadGrunnlag = søknadGrunnlagRepository.finnGrunnlag(behandling.getId()).orElseThrow();
         BarnehageBarnGrunnlag barnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.getId()).orElseThrow();
 
@@ -28,6 +30,7 @@ public class FastsettingService {
             .medBarnehageBarnGrunnlag(barnehageBarnGrunnlag)
             .medSøknadGrunnlag(søknadGrunnlag)
             .medTpsFakta(tpsFakta)
+            .medInfotrygdFakta(infotrygdFakta)
             .build();
     }
 }

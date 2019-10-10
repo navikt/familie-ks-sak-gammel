@@ -8,6 +8,8 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
+import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.InfotrygdFakta;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +41,8 @@ public class Saksbehandling {
         final Behandling behandling = behandlingslagerService.nyBehandling(søknad);
         TpsFakta tpsFakta = registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
         behandlingslagerService.trekkUtOgPersister(behandling, søknad);
-        Faktagrunnlag faktagrunnlag = fastsettingService.fastsettFakta(behandling, tpsFakta);
+        InfotrygdFakta infotrygdFakta = registerInnhentingService.hentInfotrygdFakta(søknad);
+        Faktagrunnlag faktagrunnlag = fastsettingService.fastsettFakta(behandling, tpsFakta, infotrygdFakta);
 
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
 
