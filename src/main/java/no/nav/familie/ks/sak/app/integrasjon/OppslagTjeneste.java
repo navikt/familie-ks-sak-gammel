@@ -27,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -174,7 +175,7 @@ public class OppslagTjeneste {
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {
             ResponseEntity<Personinfo> response = request(uri, Personinfo.class);
-            secureLogger.info("Personinfo for {}: {}", aktørId, response.getBody().getFamilierelasjoner());
+            secureLogger.info("Personinfo for {}: {}", aktørId, Objects.requireNonNull(response.getBody()).getFamilierelasjoner());
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 return response.getBody();

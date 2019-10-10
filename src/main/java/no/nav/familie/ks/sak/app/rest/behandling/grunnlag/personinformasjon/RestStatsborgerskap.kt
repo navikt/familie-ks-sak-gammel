@@ -7,10 +7,10 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.DatoIntervallEntitet
 
 data class RestStatsborgerskap (
     val periode: DatoIntervallEntitet,
-    val statsborgerskap: Landkode
+    val statsborgerskap: String
 )
 
 fun Statsborgerskap.toRestStatsborgerskap() = RestStatsborgerskap(
     periode = this.periode,
-    statsborgerskap = this.statsborgerskap
+    statsborgerskap = this.statsborgerskap.kode
 )
