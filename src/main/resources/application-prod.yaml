@@ -1,9 +1,11 @@
-no.nav.security.oidc:
-  issuers: intern
+no.nav.security.jwt:
   issuer.intern:
     discoveryurl: https://security-token-service.nais.adeo.no/rest/v1/sts/.well-known/openid-configuration
     accepted_audience: ${GYLDIGE_SRVBRUKERE}
     cookie_name: ID_token
+  issuer.azuread:
+    discoveryurl: https://login.microsoftonline.com/navno.onmicrosoft.com/v2.0/.well-known/openid-configuration
+    accepted_audience: ${KS_SAK_CLIENT_ID}
 
 spring:
   datasource:

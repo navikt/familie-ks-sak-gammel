@@ -9,7 +9,8 @@ import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak
 import no.nav.familie.ks.sak.util.SporingsLoggActionType
 import no.nav.familie.ks.sak.util.SporingsLoggHelper
-import no.nav.security.oidc.api.Unprotected
+import no.nav.security.token.support.core.api.ProtectedWithClaims
+import no.nav.security.token.support.core.api.Unprotected
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
@@ -24,6 +25,7 @@ import java.security.Principal
 
 @RestController
 @RequestMapping("/api")
+@ProtectedWithClaims( issuer = "azuread" )
 class FagsakController (
     private val saksbehandling: Saksbehandling,
     private val behandlingRepository: BehandlingRepository,

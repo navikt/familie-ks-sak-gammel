@@ -7,7 +7,7 @@ import no.nav.familie.ks.kontrakter.søknad.SøknadKt;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.security.oidc.api.ProtectedWithClaims;
+import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/mottak")
-@ProtectedWithClaims(issuer = "intern")
+@ProtectedWithClaims( issuer = "intern" )
 public class MottaSøknadController {
 
     private static final Logger log = LoggerFactory.getLogger(MottaSøknadController.class);

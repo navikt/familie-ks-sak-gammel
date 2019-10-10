@@ -1,9 +1,11 @@
-no.nav.security.oidc:
-  issuers: intern
+no.nav.security.jwt:
   issuer.intern:
     discoveryurl: http://metadata
     accepted_audience: aud-localhost
     cookie_name: localhost-idtoken
+  issuer.azuread:
+    discoveryurl: http://metadata
+    accepted_audience: aud-localhost
 
 credential:
   username: "srv-ks-sak"
