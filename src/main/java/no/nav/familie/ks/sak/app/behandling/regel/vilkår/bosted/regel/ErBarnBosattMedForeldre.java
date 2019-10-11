@@ -1,9 +1,10 @@
 package no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted.regel;
 
-import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.IdentType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
@@ -23,23 +24,23 @@ public class ErBarnBosattMedForeldre extends LeafSpecification<Faktagrunnlag> {
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
         TpsFakta tpsFakta = grunnlag.getTpsFakta();
         if (tpsFakta.getAnnenForelder() != null &&
-                borSammen(tpsFakta.getBarn().getPersoninfo(), aktørIdFor(tpsFakta.getForelder())) &&
-                borSammen(tpsFakta.getBarn().getPersoninfo(), aktørIdFor(tpsFakta.getAnnenForelder()))) {
+                borSammen(tpsFakta.getBarn().getPersoninfo(), personIdentFor(tpsFakta.getForelder())) &&
+                borSammen(tpsFakta.getBarn().getPersoninfo(), personIdentFor(tpsFakta.getAnnenForelder()))) {
             return ja();
         } else {
             return nei();
         }
     }
 
-    private static AktørId aktørIdFor(PersonMedHistorikk forelder) {
-        return forelder.getPersoninfo().getAktørId();
+    private static PersonIdent personIdentFor(PersonMedHistorikk forelder) {
+        return forelder.getPersoninfo().getPersonIdent();
     }
 
-    private static boolean borSammen(Personinfo person, AktørId aktørId) {
+    private static boolean borSammen(Personinfo person, PersonIdent personIdent) {
         return person
                 .getFamilierelasjoner()
                 .stream()
-                .filter( relasjon -> relasjon.getAktørId().equals(aktørId))
+                .filter( relasjon -> relasjon.getIdent().get(IdentType.PERSONIDENT).equals(personIdent))
                 .map(Familierelasjon::getHarSammeBosted)
                 .findFirst()
                 .orElse(false);

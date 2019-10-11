@@ -3,6 +3,7 @@ package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Landkode;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -23,6 +24,10 @@ public class Person extends BaseEntitet {
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", updatable = false)))
     private AktørId aktørId;
+
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "personIdent", column = @Column(name = "person_ident", updatable = false)))
+    private PersonIdent personIdent;
 
     @Column(name = "navn")
     private String navn;
@@ -67,12 +72,18 @@ public class Person extends BaseEntitet {
         this.statsborgerskap = person.getStatsborgerskap();
     }
 
-    public Person(AktørId aktørId) {
-        this.aktørId = aktørId;
+    public Person(PersonIdent personIdent) {
+        this.personIdent = personIdent;
     }
-    public Person(AktørId aktørId, PersonType personType) {
+
+    public Person(AktørId aktørId, PersonIdent personIdent) {
+        this.aktørId = aktørId;
+        this.personIdent = personIdent;
+    }
+    public Person(AktørId aktørId, PersonIdent personIdent, PersonType personType) {
         this.aktørId = aktørId;
         this.type = personType;
+        this.personIdent = personIdent;
     }
 
     public List<PersonAdresse> getAdresseHistorikk() {
@@ -114,6 +125,10 @@ public class Person extends BaseEntitet {
 
     void setPersonopplysningGrunnlag(PersonopplysningGrunnlag personopplysningGrunnlag) {
         this.personopplysningGrunnlag = personopplysningGrunnlag;
+    }
+
+    public PersonIdent getPersonIdent() {
+        return personIdent;
     }
 
     public AktørId getAktørId() {

@@ -3,6 +3,7 @@ package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -16,12 +17,20 @@ public class PersonRelasjon extends BaseEntitet {
     private Long id;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "fra_aktoer_id", updatable = false, nullable = false)))
+    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "fra_aktoer_id", updatable = false, nullable = true)))
     private AktørId fraAktørId;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "til_aktoer_id", updatable = false, nullable = false)))
+    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "til_aktoer_id", updatable = false, nullable = true)))
     private AktørId tilAktørId;
+
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "personIdent", column = @Column(name = "fra_person_ident", updatable = false, nullable = false)))
+    private PersonIdent fraPersonIdent;
+
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "personIdent", column = @Column(name = "til_person_ident", updatable = false, nullable = false)))
+    private PersonIdent tilPersonIdent;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "relasjonsrolle")
@@ -51,6 +60,13 @@ public class PersonRelasjon extends BaseEntitet {
         this.harSammeBosted = harSammeBosted;
     }
 
+    public PersonRelasjon(PersonIdent fraPersonIdent, PersonIdent tilPersonIdent, RelasjonsRolleType relasjonsrolle, Boolean harSammeBosted) {
+        this.fraPersonIdent = fraPersonIdent;
+        this.tilPersonIdent = tilPersonIdent;
+        this.relasjonsrolle = relasjonsrolle;
+        this.harSammeBosted = harSammeBosted;
+    }
+
     void setPerson(Person person) {
         this.person = person;
     }
@@ -69,6 +85,22 @@ public class PersonRelasjon extends BaseEntitet {
 
     void setTilAktørId(AktørId tilAktørId) {
         this.tilAktørId = tilAktørId;
+    }
+
+    public PersonIdent getFraPersonIdent() {
+        return fraPersonIdent;
+    }
+
+    public PersonIdent getTilPersonIdent() {
+        return tilPersonIdent;
+    }
+
+    public void setFraPersonIdent(PersonIdent personIdent) {
+        this.fraPersonIdent = personIdent;
+    }
+
+    public void setTilPersonIdent(PersonIdent personIdent) {
+        this.tilPersonIdent = personIdent;
     }
 
     public RelasjonsRolleType getRelasjonsrolle() {
@@ -112,5 +144,4 @@ public class PersonRelasjon extends BaseEntitet {
     public int hashCode() {
         return Objects.hash(fraAktørId, tilAktørId, harSammeBosted, relasjonsrolle);
     }
-
 }

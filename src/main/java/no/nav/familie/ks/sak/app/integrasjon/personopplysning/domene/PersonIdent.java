@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
+import no.nav.familie.ks.sak.app.behandling.domene.typer.Ident;
 
 /**
  * Denne mapper p.t Norsk person ident (fødselsnummer, inkl F-nr, D-nr eller FDAT)
@@ -16,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * <li>FDAT: Personer uten FNR. Disse har fødselsdato + 00000 (normalt) eller fødselsdato + 00001 (dødfødt).
  * </ul>
  */
-public class PersonIdent implements Comparable<PersonIdent> {
+public class PersonIdent implements Comparable<PersonIdent>, Ident {
 
     private static final int[] CHECKSUM_EN_VECTOR = new int[]{3, 7, 6, 1, 8, 9, 4, 5, 2};
     private static final int[] CHECKSUM_TO_VECTOR = new int[]{5, 4, 3, 2, 7, 6, 5, 4, 3, 2};
@@ -50,7 +51,7 @@ public class PersonIdent implements Comparable<PersonIdent> {
     private static String getPersonnummer(String str) {
         return (str == null || str.length() < PERSONNR_LENGDE)
                 ? null
-                : str.substring(str.length() - PERSONNR_LENGDE, str.length());
+                : str.substring(str.length() - PERSONNR_LENGDE);
     }
 
     private static boolean isFdatNummer(String personnummer) {
@@ -101,7 +102,7 @@ public class PersonIdent implements Comparable<PersonIdent> {
         return Objects.equals(ident, other.ident);
     }
 
-    public String getIdent() {
+    public String getId() {
         return ident;
     }
 
