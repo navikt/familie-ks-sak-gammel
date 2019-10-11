@@ -2,8 +2,6 @@ package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning;
 
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.util.*;
@@ -81,7 +79,7 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
     }
     public Person getBarn(AktørId aktørId) {
         for (Person p : personer) {
-            if (p.getType().equals(PersonType.BARN) && p.getAktørId().getId().equals(aktørId.getId())){
+            if (p.getType().equals(PersonType.BARN) && p.getAktørId().getIdent().equals(aktørId.getIdent())){
                 return p;
             }
         }

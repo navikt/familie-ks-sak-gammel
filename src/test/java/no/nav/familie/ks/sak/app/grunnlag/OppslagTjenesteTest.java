@@ -22,7 +22,7 @@ public class OppslagTjenesteTest {
         assertThat(personhistorikkInfo.getAdressehistorikk().get(0).getAdresse().getLand()).isEqualTo(NORGE);
         assertThat(personhistorikkInfo.getStatsborgerskaphistorikk().get(0).getTilhørendeLand().getKode()).isEqualTo(NORGE);
         assertThat(personhistorikkInfo.getPersonstatushistorikk().get(0).getPersonstatus()).isEqualByComparingTo(PersonstatusType.BOSA);
-        assertThat(personhistorikkInfo.getAktørId()).isNotEmpty();
+        assertThat(personhistorikkInfo.getPersonIdent().getIdent()).isNotEmpty();
     }
 
     private String getFile(String filnavn) {

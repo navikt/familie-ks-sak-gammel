@@ -46,7 +46,8 @@ public class AktørId implements Serializable, Comparable<AktørId>, Ident {
         this.aktørId = aktørId;
     }
 
-    public String getId() {
+    @Override
+    public String getIdent() {
         return aktørId;
     }
 

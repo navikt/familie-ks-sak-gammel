@@ -59,26 +59,26 @@ public class RestFagsakTest {
     public void setUp() {
         TpsFakta tpsFakta = FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage().getTpsFakta();
 
-        when(oppslagTjeneste.hentPersonIdent(tpsFakta.getForelder().getPersoninfo().getAktørId().getId())).thenReturn(tpsFakta.getForelder().getPersoninfo().getPersonIdent());
-        when(oppslagTjeneste.hentPersonIdent(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId().getId())).thenReturn(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent());
-        when(oppslagTjeneste.hentPersonIdent(tpsFakta.getBarn().getPersoninfo().getAktørId().getId())).thenReturn(tpsFakta.getBarn().getPersoninfo().getPersonIdent());
+        when(oppslagTjeneste.hentPersonIdent(tpsFakta.getForelder().getPersoninfo().getAktørId().getIdent())).thenReturn(tpsFakta.getForelder().getPersoninfo().getPersonIdent());
+        when(oppslagTjeneste.hentPersonIdent(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId().getIdent())).thenReturn(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent());
+        when(oppslagTjeneste.hentPersonIdent(tpsFakta.getBarn().getPersoninfo().getAktørId().getIdent())).thenReturn(tpsFakta.getBarn().getPersoninfo().getPersonIdent());
 
         when(oppslagTjeneste.hentAktørId(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent())).thenReturn(tpsFakta.getForelder().getPersoninfo().getAktørId());
         when(oppslagTjeneste.hentAktørId(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent())).thenReturn(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId());
         when(oppslagTjeneste.hentAktørId(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent())).thenReturn(tpsFakta.getBarn().getPersoninfo().getAktørId());
 
-        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getForelder().getPersoninfo().getAktørId()))
+        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getForelder().getPersoninfo());
-        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId()))
+        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getAnnenForelder().getPersoninfo());
-        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getBarn().getPersoninfo().getAktørId()))
+        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getBarn().getPersoninfo());
 
-        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getForelder().getPersoninfo().getAktørId()))
+        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getForelder().getPersonhistorikkInfo());
-        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId()))
+        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getAnnenForelder().getPersonhistorikkInfo());
-        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getBarn().getPersoninfo().getAktørId()))
+        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getBarn().getPersonhistorikkInfo());
     }
 

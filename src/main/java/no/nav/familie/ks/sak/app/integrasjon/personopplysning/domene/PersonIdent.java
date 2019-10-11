@@ -102,7 +102,8 @@ public class PersonIdent implements Comparable<PersonIdent>, Ident {
         return Objects.equals(ident, other.ident);
     }
 
-    public String getId() {
+    @Override
+    public String getIdent() {
         return ident;
     }
 

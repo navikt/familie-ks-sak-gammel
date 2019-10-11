@@ -11,8 +11,8 @@ data class RestPersonrelasjon(
     var harSammeBosted: Boolean)
 
 fun PersonRelasjon.toRestPersonrelasjon(oppslagTjeneste: OppslagTjeneste) = RestPersonrelasjon(
-    fraFødselsnummer = oppslagTjeneste.hentPersonIdent(this.fraAktørId.id).ident,
-    tilFødselsnummer = oppslagTjeneste.hentPersonIdent(this.tilAktørId.id).ident,
+    fraFødselsnummer = oppslagTjeneste.hentPersonIdent(this.fraAktørId.ident).ident,
+    tilFødselsnummer = oppslagTjeneste.hentPersonIdent(this.tilAktørId.ident).ident,
     relasjonsrolle = this.relasjonsrolle,
     harSammeBosted = this.harSammeBosted
 )

@@ -63,17 +63,17 @@ public class RegisterInnhentingService {
         final Optional<Familierelasjon> annenPartFamilierelasjon = barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
             familierelasjon ->
                 (familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
-                    && !familierelasjon.getIdent().get(IdentType.PERSONIDENT).getId().equals(søknad.getSøkerFødselsnummer()))
+                    && !familierelasjon.getIdent().get(IdentType.PERSONIDENT).getIdent().equals(søknad.getSøkerFødselsnummer()))
             .findFirst();
 
         AktørId annenPartAktørId;
         PersonIdent annenPartPersonIdent;
         if (annenPartFamilierelasjon.isPresent()) {
             annenPartPersonIdent = (PersonIdent) annenPartFamilierelasjon.get().getIdent().get(IdentType.PERSONIDENT);
-            annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartPersonIdent.getId());
+            annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartPersonIdent.getIdent());
 
             // TODO Martine: Dette vil feile for FDAT-personer
-            annenPartAktørId = oppslagTjeneste.hentAktørId(annenPartPersonIdent.getId());
+            annenPartAktørId = oppslagTjeneste.hentAktørId(annenPartPersonIdent.getIdent());
 
             mapPersonopplysninger(annenPartAktørId, annenPartPersonIdent, annenPartPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag, PersonType.ANNENPART);
 
@@ -81,7 +81,7 @@ public class RegisterInnhentingService {
             mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag);
 
             if (oppgittAnnenPartPersonIdent != null && !oppgittAnnenPartPersonIdent.isEmpty()) {
-                if (annenPartPersonIdent.getId().regionMatches(0, oppgittAnnenPartPersonIdent, 0, 6)) {
+                if (annenPartPersonIdent.getIdent().regionMatches(0, oppgittAnnenPartPersonIdent, 0, 6)) {
                     if (!annenPartPersonIdent.equals(oppgittAnnenPartPersonIdent)) {
                         oppgittAnnenPartStemmerDelvis.increment();
                     } else {
@@ -140,7 +140,7 @@ public class RegisterInnhentingService {
     }
 
     private void mapPersonopplysninger(AktørId aktørId, PersonIdent personIdent, Personinfo personinfo, PersonopplysningGrunnlag personopplysningGrunnlag, PersonType personType) {
-        final var personhistorikk = oppslagTjeneste.hentHistorikkFor(personIdent.getId());
+        final var personhistorikk = oppslagTjeneste.hentHistorikkFor(personIdent.getIdent());
 
         Person person = new Person(aktørId, personIdent, personType)
             .medFødselsdato(personinfo.getFødselsdato())

@@ -32,6 +32,10 @@ public class PersonhistorikkInfo {
         return this.adressehistorikk;
     }
 
+    public PersonIdent getPersonIdent() {
+        return this.personIdent;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PersonhistorikkInfo{");
@@ -90,8 +94,7 @@ public class PersonhistorikkInfo {
         }
 
         public PersonhistorikkInfo build() {
-            requireNonNull(kladd.personIdent, "PersonhistorikkInfo må ha personIdent"); //$NON-NLS-1$
-            // TODO PK-49366 andre non-null?
+            requireNonNull(kladd.personIdent, "PersonhistorikkInfo må ha personIdent");
             return kladd;
         }
     }
