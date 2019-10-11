@@ -11,7 +11,7 @@ import java.time.LocalDate
 data class RestPerson internal constructor(
     val fødselsnummer: String,
     val navn: String,
-    val kjønn?: String,
+    val kjønn: String?,
     val fødselsdato: LocalDate,
     val statsborgerskap: String,
     val relasjoner: List<RestPersonrelasjon>,
