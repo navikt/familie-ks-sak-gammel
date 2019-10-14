@@ -143,6 +143,7 @@ public class RegisterInnhentingService {
 
         Person person = new Person(aktørId, personIdent, personType)
             .medFødselsdato(personinfo.getFødselsdato())
+            .medKjønn(personinfo.getKjønn())
             .medDødsdato(personinfo.getDødsdato())
             .medNavn(personinfo.getNavn())
             .medStatsborgerskap(new Landkode(personinfo.getStatsborgerskap().getKode()));

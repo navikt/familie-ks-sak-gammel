@@ -56,6 +56,7 @@ public final class FaktagrunnlagTestBuilder {
         .medStatsborgerskap(Landkode.NORGE)
         .medFødselsdato(LocalDate.now().minusYears(30))
         .medAktørId(morAktørId)
+        .medKjønn("KVINNE")
         .medPersonIdent(morPersonident)
         .medAdresse("testadresse")
         .medNavn("test testesen")
@@ -64,6 +65,7 @@ public final class FaktagrunnlagTestBuilder {
         .medStatsborgerskap(Landkode.NORGE)
         .medFødselsdato(LocalDate.now().minusYears(30))
         .medAktørId(farAktørId)
+        .medKjønn("MANN")
         .medPersonIdent(farPersonident)
         .medAdresse("testadresse")
         .medNavn("test testesen")
@@ -72,6 +74,7 @@ public final class FaktagrunnlagTestBuilder {
         .medStatsborgerskap(Landkode.SVERIGE)
         .medFødselsdato(LocalDate.now().minusYears(30))
         .medAktørId(utenlandskMorAktørId)
+        .medKjønn("KVINNE")
         .medPersonIdent(utenlandskMorPersonident)
         .medAdresse("testadresse")
         .medNavn("Svensk Svenskesen")
@@ -80,6 +83,7 @@ public final class FaktagrunnlagTestBuilder {
         .medStatsborgerskap(Landkode.SVERIGE)
         .medFødselsdato(LocalDate.now().minusYears(30))
         .medAktørId(utenlandskFarAktørId)
+        .medKjønn("MANN")
         .medPersonIdent(utenlandskFarPersonident)
         .medAdresse("annen adresse")
         .medNavn("test testesen")
@@ -231,6 +235,7 @@ public final class FaktagrunnlagTestBuilder {
         .medStatsborgerskap(Landkode.NORGE)
         .medAdresse("testadresse")
         .medNavn("test testesen")
+        .medKjønn("MANN")
         .medFamilierelasjon(new HashSet<>(List.of(norskForelderRelasjonMor, norskForelderRelasjonFar)))
         .build()).medPersonhistorikk(new PersonhistorikkInfo.Builder()
         .medPersonIdent(barnPersonident)
@@ -254,6 +259,7 @@ public final class FaktagrunnlagTestBuilder {
         .medStatsborgerskap(Landkode.NORGE)
         .medAdresse("testadresse")
         .medNavn("test testesen")
+        .medKjønn("MANN")
         .medFamilierelasjon(new HashSet<>(List.of(norskForelderRelasjonMor)))
         .build()).medPersonhistorikk(new PersonhistorikkInfo.Builder()
         .medPersonIdent(barnPersonident)
@@ -276,6 +282,7 @@ public final class FaktagrunnlagTestBuilder {
         .medStatsborgerskap(Landkode.SVERIGE)
         .medAdresse("svensk adresse")
         .medNavn("test testesen")
+        .medKjønn("MANN")
         .build()).build();
     private static PersonMedHistorikk personMedHistorikkBarnNorskMedUtenlandskForeldre = new PersonMedHistorikk.Builder().medInfo(new Personinfo.Builder()
         .medFødselsdato(LocalDate.now().minusMonths(13))
@@ -284,6 +291,7 @@ public final class FaktagrunnlagTestBuilder {
         .medStatsborgerskap(Landkode.NORGE)
         .medAdresse("testadresse")
         .medNavn("test testesen")
+        .medKjønn("MANN")
         .medFamilierelasjon(new HashSet<>(Arrays.asList(utenlandskMorRelasjonMedAnnetBosted, utenlandskFarRelasjonMedAnnetBosted)))
         .build()).build();
     private static PersonMedHistorikk personMedHistorikkBarnNorskMedNorskOgUtenlandskForelder = new PersonMedHistorikk.Builder().medInfo(new Personinfo.Builder()
@@ -293,6 +301,7 @@ public final class FaktagrunnlagTestBuilder {
         .medStatsborgerskap(Landkode.NORGE)
         .medAdresse("testadresse")
         .medNavn("test testesen")
+        .medKjønn("MANN")
         .medFamilierelasjon(new HashSet<>(Arrays.asList(norskForelderRelasjonFar, utenlandskMorRelasjonMedAnnetBosted)))
         .build()).build();
 
@@ -492,6 +501,7 @@ public final class FaktagrunnlagTestBuilder {
                     .medAktørId(morAktørId)
                     .medFødselsdato(morFødselsdato)
                     .medNavn("Kari Nordmann")
+                    .medKjønn("KVINNE")
                     .medPersonIdent(morPersonident)
                     .medStatsborgerskap(Landkode.NORGE)
                     .medFamilierelasjon(Set.of(
@@ -517,6 +527,7 @@ public final class FaktagrunnlagTestBuilder {
                     .medFødselsdato(farFødselsdato)
                     .medPersonIdent(farPersonident)
                     .medNavn("Ola Nordmann")
+                    .medKjønn("MANN")
                     .medStatsborgerskap(Landkode.NORGE)
                     .medFamilierelasjon(Set.of(
                         new Familierelasjon(Collections.singletonMap(IdentType.PERSONIDENT, barnPersonident), RelasjonsRolleType.BARN, barnFødselsdato, true),
@@ -541,6 +552,7 @@ public final class FaktagrunnlagTestBuilder {
                     .medFødselsdato(barnFødselsdato)
                     .medPersonIdent(barnPersonident)
                     .medNavn("Espen Askeladd")
+                    .medKjønn("MANN")
                     .medStatsborgerskap(Landkode.NORGE)
                     .medFamilierelasjon(Set.of(
                         new Familierelasjon(Collections.singletonMap(IdentType.PERSONIDENT, farPersonident), RelasjonsRolleType.FARA, farFødselsdato, true),
