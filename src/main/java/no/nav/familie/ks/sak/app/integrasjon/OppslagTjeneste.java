@@ -51,7 +51,7 @@ public class OppslagTjeneste {
 
     private <T> ResponseEntity<T> request(URI uri, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken());
+        headers.add("Authorization", "Bearer " + LocalSts.getSystemOIDCToken(restTemplate));
         headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
 
         HttpEntity httpEntity = new HttpEntity(headers);
@@ -61,7 +61,7 @@ public class OppslagTjeneste {
 
     private <T> ResponseEntity<T> requestMedPersonIdent(URI uri, String personident, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken());
+        headers.add("Authorization", "Bearer " + LocalSts.getSystemOIDCToken(restTemplate));
         headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
 
@@ -72,7 +72,7 @@ public class OppslagTjeneste {
 
     private <T> ResponseEntity<T> requestMedAktørId(URI uri, String aktørId, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken());
+        headers.add("Authorization", "Bearer " + LocalSts.getSystemOIDCToken(restTemplate));
         headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         headers.add("Nav-Aktorid", aktørId);
 

@@ -1,6 +1,5 @@
 package no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted.regel;
 
-import no.nav.familie.ks.sak.app.behandling.domene.typer.IdentType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
@@ -13,7 +12,6 @@ import no.nav.fpsak.nare.specification.LeafSpecification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.NoSuchElementException;
 
 @RuleDocumentation(ErBarnBosattMedForeldre.ID)
 public class ErBarnBosattMedForeldre extends LeafSpecification<Faktagrunnlag> {
@@ -41,20 +39,11 @@ public class ErBarnBosattMedForeldre extends LeafSpecification<Faktagrunnlag> {
         return forelder.getPersoninfo().getPersonIdent();
     }
 
-    private static PersonIdent personIdentFor(Familierelasjon familierelasjon) {
-        if (familierelasjon.getIdent().get(IdentType.PERSONIDENT) != null) {
-            return (PersonIdent) familierelasjon.getIdent().get(IdentType.PERSONIDENT);
-        } else {
-            secureLogger.warn("Fant ikke personident for familierelasjon {}", familierelasjon);
-            throw new NoSuchElementException("Fant ikke Personident for familierelasjon");
-        }
-    }
-
     private static boolean borSammen(Personinfo person, PersonIdent personIdent) {
         return person
                 .getFamilierelasjoner()
                 .stream()
-                .filter( relasjon -> personIdentFor(relasjon).equals(personIdent))
+                .filter( relasjon -> relasjon.getPersonIdent().equals(personIdent))
                 .map(Familierelasjon::getHarSammeBosted)
                 .findFirst()
                 .orElse(false);

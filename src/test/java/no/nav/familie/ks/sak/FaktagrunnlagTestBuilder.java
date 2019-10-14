@@ -11,7 +11,6 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunn
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.AdresseType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
-import no.nav.familie.ks.sak.app.behandling.domene.typer.IdentType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.Tid;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
@@ -91,22 +90,22 @@ public final class FaktagrunnlagTestBuilder {
 
     // Familierelasjoner
     private static Familierelasjon norskForelderRelasjonMor = new Familierelasjon(
-        Collections.singletonMap(IdentType.PERSONIDENT, personinfoMorNorsk.getPersonIdent()),
+        personinfoMorNorsk.getPersonIdent(),
         RelasjonsRolleType.MORA,
         null,
         true);
     private static Familierelasjon norskForelderRelasjonFar = new Familierelasjon(
-        Collections.singletonMap(IdentType.PERSONIDENT, personinfoFarNorsk.getPersonIdent()),
+        personinfoFarNorsk.getPersonIdent(),
         RelasjonsRolleType.FARA,
         null,
         true);
     private static Familierelasjon utenlandskMorRelasjonMedAnnetBosted = new Familierelasjon(
-        Collections.singletonMap(IdentType.PERSONIDENT, personinfoSvenskMor.getPersonIdent()),
+        personinfoSvenskMor.getPersonIdent(),
         RelasjonsRolleType.MORA,
         null,
         false);
     private static Familierelasjon utenlandskFarRelasjonMedAnnetBosted = new Familierelasjon(
-        Collections.singletonMap(IdentType.PERSONIDENT, personinfoSvenskFar.getPersonIdent()),
+        personinfoSvenskFar.getPersonIdent(),
         RelasjonsRolleType.FARA,
         null,
         false);
@@ -505,8 +504,8 @@ public final class FaktagrunnlagTestBuilder {
                     .medPersonIdent(morPersonident)
                     .medStatsborgerskap(Landkode.NORGE)
                     .medFamilierelasjon(Set.of(
-                        new Familierelasjon(Collections.singletonMap(IdentType.PERSONIDENT, barnPersonident), RelasjonsRolleType.BARN, barnFødselsdato, true),
-                        new Familierelasjon(Collections.singletonMap(IdentType.PERSONIDENT, farPersonident), RelasjonsRolleType.EKTE, farFødselsdato, true)))
+                        new Familierelasjon(barnPersonident, RelasjonsRolleType.BARN, barnFødselsdato, true),
+                        new Familierelasjon(farPersonident, RelasjonsRolleType.EKTE, farFødselsdato, true)))
                     .build())
                 .medPersonhistorikk(new PersonhistorikkInfo.Builder()
                     .medPersonIdent(morPersonident)
@@ -530,8 +529,8 @@ public final class FaktagrunnlagTestBuilder {
                     .medKjønn("MANN")
                     .medStatsborgerskap(Landkode.NORGE)
                     .medFamilierelasjon(Set.of(
-                        new Familierelasjon(Collections.singletonMap(IdentType.PERSONIDENT, barnPersonident), RelasjonsRolleType.BARN, barnFødselsdato, true),
-                        new Familierelasjon(Collections.singletonMap(IdentType.PERSONIDENT, morPersonident), RelasjonsRolleType.EKTE, morFødselsdato, true)))
+                        new Familierelasjon(barnPersonident, RelasjonsRolleType.BARN, barnFødselsdato, true),
+                        new Familierelasjon(morPersonident, RelasjonsRolleType.EKTE, morFødselsdato, true)))
                     .build())
                 .medPersonhistorikk(new PersonhistorikkInfo.Builder()
                     .medPersonIdent(farPersonident)
@@ -555,8 +554,8 @@ public final class FaktagrunnlagTestBuilder {
                     .medKjønn("MANN")
                     .medStatsborgerskap(Landkode.NORGE)
                     .medFamilierelasjon(Set.of(
-                        new Familierelasjon(Collections.singletonMap(IdentType.PERSONIDENT, farPersonident), RelasjonsRolleType.FARA, farFødselsdato, true),
-                        new Familierelasjon(Collections.singletonMap(IdentType.PERSONIDENT, morPersonident), RelasjonsRolleType.MORA, morFødselsdato, true)))
+                        new Familierelasjon(farPersonident, RelasjonsRolleType.FARA, farFødselsdato, true),
+                        new Familierelasjon(morPersonident, RelasjonsRolleType.MORA, morFødselsdato, true)))
                     .build())
                 .medPersonhistorikk(new PersonhistorikkInfo.Builder()
                     .medPersonIdent(barnPersonident)

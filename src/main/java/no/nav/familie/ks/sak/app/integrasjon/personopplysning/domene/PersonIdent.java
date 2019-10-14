@@ -2,9 +2,8 @@ package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene;
 
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import no.nav.familie.ks.sak.app.behandling.domene.typer.Ident;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -21,7 +20,7 @@ import javax.persistence.Embeddable;
  * </ul>
  */
 @Embeddable
-public class PersonIdent implements Comparable<PersonIdent>, Ident {
+public class PersonIdent implements Comparable<PersonIdent> {
 
     private static final int[] CHECKSUM_EN_VECTOR = new int[]{3, 7, 6, 1, 8, 9, 4, 5, 2};
     private static final int[] CHECKSUM_TO_VECTOR = new int[]{5, 4, 3, 2, 7, 6, 5, 4, 3, 2};
@@ -30,7 +29,7 @@ public class PersonIdent implements Comparable<PersonIdent>, Ident {
 
     private static final int PERSONNR_LENGDE = 5;
 
-    @JsonValue
+    @JsonProperty("id")
     @Column(name = "person_ident", updatable = false, insertable = false, length = 50)
     private String ident;
 
@@ -107,7 +106,6 @@ public class PersonIdent implements Comparable<PersonIdent>, Ident {
         return Objects.equals(ident, other.ident);
     }
 
-    @Override
     public String getIdent() {
         return ident;
     }

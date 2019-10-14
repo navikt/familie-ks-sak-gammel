@@ -9,7 +9,6 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Landkode;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.DatoIntervallEntitet;
-import no.nav.familie.ks.sak.app.behandling.domene.typer.IdentType;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -63,13 +61,13 @@ public class RegisterInnhentingService {
         final Optional<Familierelasjon> annenPartFamilierelasjon = barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
             familierelasjon ->
                 (familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
-                    && !hentPersonidentFor(familierelasjon).getIdent().equals(søknad.getSøkerFødselsnummer()))
+                    && !familierelasjon.getPersonIdent().getIdent().equals(søknad.getSøkerFødselsnummer()))
             .findFirst();
 
         AktørId annenPartAktørId;
         PersonIdent annenPartPersonIdent;
         if (annenPartFamilierelasjon.isPresent()) {
-            annenPartPersonIdent = hentPersonidentFor(annenPartFamilierelasjon.get());
+            annenPartPersonIdent = annenPartFamilierelasjon.get().getPersonIdent();
             annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartPersonIdent.getIdent());
 
             annenPartAktørId = oppslagTjeneste.hentAktørId(annenPartPersonIdent.getIdent());
@@ -122,19 +120,19 @@ public class RegisterInnhentingService {
     private void mapRelasjoner(Personinfo søker, Personinfo annenPart, Personinfo barn, PersonopplysningGrunnlag personopplysningGrunnlag) {
         barn.getFamilierelasjoner()
             .stream()
-            .filter(it -> hentPersonidentFor(it).equals(søker.getPersonIdent()) || (annenPart != null && hentPersonidentFor(it).equals(annenPart.getPersonIdent())))
-            .forEach(relasjon -> personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getPersonIdent(), hentPersonidentFor(relasjon), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+            .filter(it -> it.getPersonIdent().equals(søker.getPersonIdent()) || (annenPart != null && it.getPersonIdent().equals(annenPart.getPersonIdent())))
+            .forEach(relasjon -> personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
 
         søker.getFamilierelasjoner()
             .stream()
-            .filter(it -> hentPersonidentFor(it).equals(barn.getPersonIdent()) || (annenPart != null && hentPersonidentFor(it).equals(annenPart.getPersonIdent())))
-            .forEach(relasjon ->  personopplysningGrunnlag.getSøker().leggTilPersonrelasjon(new PersonRelasjon(søker.getPersonIdent(), hentPersonidentFor(relasjon), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+            .filter(it -> it.getPersonIdent().equals(barn.getPersonIdent()) || (annenPart != null && it.getPersonIdent().equals(annenPart.getPersonIdent())))
+            .forEach(relasjon ->  personopplysningGrunnlag.getSøker().leggTilPersonrelasjon(new PersonRelasjon(søker.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
 
         if (annenPart != null) {
             annenPart.getFamilierelasjoner()
                 .stream()
-                .filter(it -> hentPersonidentFor(it).equals(barn.getPersonIdent()) || hentPersonidentFor(it).equals(søker.getPersonIdent()))
-                .forEach(relasjon -> personopplysningGrunnlag.getAnnenPart().leggTilPersonrelasjon(new PersonRelasjon(annenPart.getPersonIdent(), hentPersonidentFor(relasjon), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+                .filter(it -> it.getPersonIdent().equals(barn.getPersonIdent()) || it.getPersonIdent().equals(søker.getPersonIdent()))
+                .forEach(relasjon -> personopplysningGrunnlag.getAnnenPart().leggTilPersonrelasjon(new PersonRelasjon(annenPart.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
         }
     }
 
@@ -166,15 +164,6 @@ public class RegisterInnhentingService {
                     .medPostnummer(adresse.getAdresse().getPostnummer())
                     .medPoststed(adresse.getAdresse().getPoststed())
                     .medLand(new Landkode(adresse.getAdresse().getLand()))));
-        }
-    }
-
-    private PersonIdent hentPersonidentFor(Familierelasjon familierelasjon) {
-        if (familierelasjon.getIdent().get(IdentType.PERSONIDENT) != null) {
-            return (PersonIdent) familierelasjon.getIdent().get(IdentType.PERSONIDENT);
-        } else {
-            secureLogger.warn("Fant ikke personident for familierelasjon {}", familierelasjon);
-            throw new NoSuchElementException("Fant ikke Personident for familierelasjon");
         }
     }
 }
