@@ -27,6 +27,9 @@ public class Person extends BaseEntitet {
     @Column(name = "navn")
     private String navn;
 
+    @Column(name = "kjoenn")
+    private String kjønn;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private PersonType type; //SØKER, BARN, ANNENPART
@@ -62,6 +65,7 @@ public class Person extends BaseEntitet {
     Person(Person person) {
         this.aktørId = person.getAktørId();
         this.navn = person.getNavn();
+        this.kjønn = person.getKjønn();
         this.fødselsdato = person.getFødselsdato();
         this.dødsdato = person.getDødsdato();
         this.statsborgerskap = person.getStatsborgerskap();
@@ -150,6 +154,19 @@ public class Person extends BaseEntitet {
         return this;
     }
 
+    public String getKjønn() {
+        return kjønn;
+    }
+
+    public void setKjønn(String kjønn) {
+        this.kjønn = kjønn;
+    }
+
+    public Person medKjønn(String kjønn) {
+        this.kjønn = kjønn;
+        return this;
+    }
+
     public LocalDate getFødselsdato() {
         return fødselsdato;
     }
@@ -216,6 +233,7 @@ public class Person extends BaseEntitet {
             ", AktørId=" + aktørId.toString() +
             ", type=" + type +
             ", navn='" + navn + '\'' +
+            ", kjønn=" + kjønn +
             ", fødselsdato=" + fødselsdato +
             ", dødsdato=" + dødsdato +
             "}";
