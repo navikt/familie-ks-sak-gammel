@@ -46,16 +46,15 @@ public class RegisterInnhentingService {
         final var søkerAktørId = behandling.getFagsak().getAktørId();
         final var oppgittAnnenPartPersonIdent = søknad.getOppgittAnnenPartFødselsnummer();
         // TODO skriv om når vi støtter flerlinger
-        final var barnAktørId = oppslagTjeneste.hentAktørId(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer());
         final var barnFødselsnummer = søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer();
         final var personopplysningGrunnlag = new PersonopplysningGrunnlag(behandling.getId());
 
         final PersonMedHistorikk søkerPersonMedHistorikk = hentPersonMedHistorikk(søknad.getSøkerFødselsnummer());
         final PersonMedHistorikk barnPersonMedHistorikk = hentPersonMedHistorikk(barnFødselsnummer);
 
-        mapPersonopplysninger(søkerAktørId, new PersonIdent(søknad.getSøkerFødselsnummer()), søkerPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag, PersonType.SØKER);
+        mapPersonopplysninger(søkerAktørId, new PersonIdent(søknad.getSøkerFødselsnummer()), søkerPersonMedHistorikk, personopplysningGrunnlag, PersonType.SØKER);
         //TODO legg til støtte for flere barn!
-        mapPersonopplysninger(barnAktørId, new PersonIdent(barnFødselsnummer), barnPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag, PersonType.BARN);
+        mapPersonopplysninger(barnPersonMedHistorikk.getPersoninfo().getAktørId(), new PersonIdent(barnFødselsnummer), barnPersonMedHistorikk, personopplysningGrunnlag, PersonType.BARN);
 
         PersonMedHistorikk annenPartPersonMedHistorikk = null;
         final Optional<Familierelasjon> annenPartFamilierelasjon = barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
@@ -64,15 +63,12 @@ public class RegisterInnhentingService {
                     && !familierelasjon.getPersonIdent().getIdent().equals(søknad.getSøkerFødselsnummer()))
             .findFirst();
 
-        AktørId annenPartAktørId;
         PersonIdent annenPartPersonIdent;
         if (annenPartFamilierelasjon.isPresent()) {
             annenPartPersonIdent = annenPartFamilierelasjon.get().getPersonIdent();
             annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartPersonIdent.getIdent());
 
-            annenPartAktørId = oppslagTjeneste.hentAktørId(annenPartPersonIdent.getIdent());
-
-            mapPersonopplysninger(annenPartAktørId, annenPartPersonIdent, annenPartPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag, PersonType.ANNENPART);
+            mapPersonopplysninger(annenPartPersonMedHistorikk.getPersoninfo().getAktørId(), annenPartPersonIdent, annenPartPersonMedHistorikk, personopplysningGrunnlag, PersonType.ANNENPART);
 
             //TODO legg til støtte for flere barn
             mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag);
@@ -109,7 +105,8 @@ public class RegisterInnhentingService {
     }
 
     private PersonMedHistorikk hentPersonMedHistorikk(String personIdent) {
-        final Personinfo personinfo = oppslagTjeneste.hentPersoninfoFor(personIdent);
+        final AktørId aktørId = oppslagTjeneste.hentAktørId(personIdent);
+        final Personinfo personinfo = oppslagTjeneste.hentPersoninfoFor(personIdent).medAktørId(aktørId);
         final PersonhistorikkInfo personhistorikkInfo = oppslagTjeneste.hentHistorikkFor(personIdent);
         return new PersonMedHistorikk.Builder()
             .medInfo(personinfo)
@@ -136,8 +133,9 @@ public class RegisterInnhentingService {
         }
     }
 
-    private void mapPersonopplysninger(AktørId aktørId, PersonIdent personIdent, Personinfo personinfo, PersonopplysningGrunnlag personopplysningGrunnlag, PersonType personType) {
-        final var personhistorikk = oppslagTjeneste.hentHistorikkFor(personIdent.getIdent());
+    private void mapPersonopplysninger(AktørId aktørId, PersonIdent personIdent, PersonMedHistorikk personMedHistorikk, PersonopplysningGrunnlag personopplysningGrunnlag, PersonType personType) {
+        var personinfo = personMedHistorikk.getPersoninfo();
+        var personhistorikk = personMedHistorikk.getPersonhistorikkInfo();
 
         Person person = new Person(aktørId, personIdent, personType)
             .medFødselsdato(personinfo.getFødselsdato())

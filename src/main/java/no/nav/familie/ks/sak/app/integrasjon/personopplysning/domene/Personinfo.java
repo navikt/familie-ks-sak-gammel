@@ -110,6 +110,11 @@ public class Personinfo {
         return landkode;
     }
 
+    public Personinfo medAktørId(AktørId aktørId) {
+        this.aktørId = aktørId;
+        return this;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + "<aktørId=" + aktørId + ">" + "familieRelasjoner=" + familierelasjoner.toString(); //$NON-NLS-1$ //$NON-NLS-2$
