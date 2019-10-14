@@ -4,7 +4,6 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.kontrakter.søknad.SøknadKt;
-import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
@@ -38,11 +37,10 @@ public class MottaSøknadController {
         this.saksbehandling = saksbehandling;
     }
 
-    @PostMapping(/*consumes = MediaType.APPLICATION_JSON_VALUE, */path = "dokument")
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
     @Unprotected
-    public ResponseEntity mottaDokument(/*@RequestBody String søknadJson*/) {
-        Søknad søknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
-        //Søknad søknad = SøknadKt.toSøknad(søknadJson);
+    public ResponseEntity mottaDokument(@RequestBody String søknadJson) {
+        Søknad søknad = SøknadKt.toSøknad(søknadJson);
         try {
             Vedtak vedtak = saksbehandling.behandle(søknad);
             final var vilkårvurdering = vedtak.getVilkårvurdering();
