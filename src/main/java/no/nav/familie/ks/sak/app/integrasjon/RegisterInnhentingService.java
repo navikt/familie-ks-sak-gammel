@@ -105,8 +105,8 @@ public class RegisterInnhentingService {
             .build();
     }
 
-    public InfotrygdFakta hentInfotrygdFakta(Søknad søknad) {
-        return new InfotrygdFakta(oppslagTjeneste.hentInfoOmLøpendeKontantstøtteForBarn(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer()));
+    public InfotrygdFakta hentInfotrygdFakta(TpsFakta tpsFakta) {
+        return new InfotrygdFakta(oppslagTjeneste.hentInfoOmLøpendeKontantstøtteForBarn(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent()));
     }
 
     private PersonMedHistorikk hentPersonMedHistorikk(AktørId aktørId) {

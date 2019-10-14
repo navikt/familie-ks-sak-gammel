@@ -41,7 +41,7 @@ public class Saksbehandling {
         final Behandling behandling = behandlingslagerService.nyBehandling(søknad);
         TpsFakta tpsFakta = registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
         behandlingslagerService.trekkUtOgPersister(behandling, søknad);
-        InfotrygdFakta infotrygdFakta = registerInnhentingService.hentInfotrygdFakta(søknad);
+        InfotrygdFakta infotrygdFakta = registerInnhentingService.hentInfotrygdFakta(tpsFakta);
         Faktagrunnlag faktagrunnlag = fastsettingService.fastsettFakta(behandling, tpsFakta, infotrygdFakta);
 
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
