@@ -118,8 +118,8 @@ public class RestFagsakTest {
             final var restPersoner = restFagsak.getBehandlinger().iterator().next().getPersonopplysninger();
 
             assertThat(restPersoner).isNotNull();
-            assertThat(restPersoner.getSøker().getFødselsnummer()).isEqualTo(SøknadTestdata.norskFamilieUtenBarnehageplass().getSøkerFødselsnummer());
-            assertThat(restPersoner.getAnnenPart().getFødselsnummer()).isEqualTo(SøknadTestdata.norskFamilieUtenBarnehageplass().getOppgittAnnenPartFødselsnummer());
+            assertThat(restPersoner.getSøker().getPersonIdent()).isEqualTo(SøknadTestdata.norskFamilieUtenBarnehageplass().getSøkerFødselsnummer());
+            assertThat(restPersoner.getAnnenPart().getPersonIdent()).isEqualTo(SøknadTestdata.norskFamilieUtenBarnehageplass().getOppgittAnnenPartFødselsnummer());
         });
     }
 }

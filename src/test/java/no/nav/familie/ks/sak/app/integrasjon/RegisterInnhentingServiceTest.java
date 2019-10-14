@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.integrasjon;
 
+import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
@@ -40,6 +41,8 @@ public class RegisterInnhentingServiceTest {
 
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
+    @MockBean
+    private StsRestClient stsRestClient;
     @Autowired
     private RegisterInnhentingService tjeneste;
     @Autowired
@@ -80,8 +83,8 @@ public class RegisterInnhentingServiceTest {
     public void skal_lagre_ned_respons() {
         PersonIdent barn = tpsFakta.getBarna().get(0).getPersoninfo().getPersonIdent();
         AktørId barnAktørId = tpsFakta.getBarna().get(0).getPersoninfo().getAktørId();
-        Personinfo barnPersoninfo = tpsFakta.getBarn().getPersoninfo();
-        PersonhistorikkInfo barnPersonhistorikk = tpsFakta.getBarn().getPersonhistorikkInfo();
+        Personinfo barnPersoninfo = tpsFakta.getBarna().get(0).getPersoninfo();
+        PersonhistorikkInfo barnPersonhistorikk = tpsFakta.getBarna().get(0).getPersonhistorikkInfo();
 
         when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barnAktørId);
         when(oppslagTjeneste.hentPersoninfoFor(eq(barn.getIdent()))).thenReturn(barnPersoninfo);
@@ -115,13 +118,14 @@ public class RegisterInnhentingServiceTest {
         final Faktagrunnlag faktagrunnlagUtenAnnenPart = FaktagrunnlagTestBuilder.aleneForelderNorskStatsborgerskapUtenBarnehage();
         final TpsFakta tpsFaktaUtenAnnenPart = faktagrunnlagUtenAnnenPart.getTpsFakta();
 
-        AktørId barn = tpsFaktaUtenAnnenPart.getBarn().getPersoninfo().getAktørId();
-        Personinfo barnPersoninfo = tpsFaktaUtenAnnenPart.getBarn().getPersoninfo();
-        PersonhistorikkInfo barnPersonhistorikk = tpsFaktaUtenAnnenPart.getBarn().getPersonhistorikkInfo();
+        AktørId barnAktørId = tpsFaktaUtenAnnenPart.getBarna().get(0).getPersoninfo().getAktørId();
+        PersonIdent barnPersonIdent = tpsFaktaUtenAnnenPart.getBarna().get(0).getPersoninfo().getPersonIdent();
+        Personinfo barnPersoninfo = tpsFaktaUtenAnnenPart.getBarna().get(0).getPersoninfo();
+        PersonhistorikkInfo barnPersonhistorikk = tpsFaktaUtenAnnenPart.getBarna().get(0).getPersonhistorikkInfo();
 
-        when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barn);
-        when(oppslagTjeneste.hentPersoninfoFor(eq(barn.getIdent()))).thenReturn(barnPersoninfo);
-        when(oppslagTjeneste.hentHistorikkFor(eq(barn.getIdent()))).thenReturn(barnPersonhistorikk);
+        when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barnAktørId);
+        when(oppslagTjeneste.hentPersoninfoFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersoninfo);
+        when(oppslagTjeneste.hentHistorikkFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersonhistorikk);
 
         final var fagsak = Fagsak.opprettNy(søkerAktørId, "123412341234");
         fagsakRepository.save(fagsak);

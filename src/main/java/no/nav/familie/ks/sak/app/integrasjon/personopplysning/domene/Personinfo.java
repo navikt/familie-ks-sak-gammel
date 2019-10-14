@@ -203,7 +203,7 @@ public class Personinfo {
 
         public Personinfo build() {
             requireNonNull(personinfoMal.aktørId, "Navbruker må ha aktørId"); //$NON-NLS-1$
-            requireNonNull(personinfoMal.personIdent, "Navbruker må ha fødselsnummer"); //$NON-NLS-1$
+            requireNonNull(personinfoMal.personIdent, "Navbruker må ha personIdent"); //$NON-NLS-1$
             requireNonNull(personinfoMal.navn, "Navbruker må ha navn"); //$NON-NLS-1$
             requireNonNull(personinfoMal.fødselsdato, "Navbruker må ha fødselsdato"); //$NON-NLS-1$
             return personinfoMal;
