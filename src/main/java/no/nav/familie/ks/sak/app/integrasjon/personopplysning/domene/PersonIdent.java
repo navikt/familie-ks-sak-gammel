@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.Ident;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
 /**
  * Denne mapper p.t Norsk person ident (fødselsnummer, inkl F-nr, D-nr eller FDAT)
  * <ul>
@@ -17,6 +20,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.Ident;
  * <li>FDAT: Personer uten FNR. Disse har fødselsdato + 00000 (normalt) eller fødselsdato + 00001 (dødfødt).
  * </ul>
  */
+@Embeddable
 public class PersonIdent implements Comparable<PersonIdent>, Ident {
 
     private static final int[] CHECKSUM_EN_VECTOR = new int[]{3, 7, 6, 1, 8, 9, 4, 5, 2};
@@ -27,6 +31,7 @@ public class PersonIdent implements Comparable<PersonIdent>, Ident {
     private static final int PERSONNR_LENGDE = 5;
 
     @JsonValue
+    @Column(name = "person_ident", updatable = false, insertable = false, length = 50)
     private String ident;
 
     public PersonIdent() {
