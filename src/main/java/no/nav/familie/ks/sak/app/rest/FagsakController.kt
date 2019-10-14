@@ -7,37 +7,36 @@ import no.nav.familie.ks.sak.app.behandling.Saksbehandling
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak
-import no.nav.security.oidc.api.Unprotected
+import no.nav.familie.ks.sak.util.SporingsLoggActionType
+import no.nav.familie.ks.sak.util.SporingsLoggHelper
+import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
 @RestController
 @RequestMapping("/api")
+@ProtectedWithClaims( issuer = "azuread" )
 class FagsakController (
     private val saksbehandling: Saksbehandling,
     private val behandlingRepository: BehandlingRepository,
     private val restFagsakService: RestFagsakService) {
 
-    @GetMapping(path = ["/fagsak/{fagsakId}"])
-    fun fagsak(@PathVariable fagsakId: Long, principal: Principal?): ResponseEntity<Ressurs> {
-        logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", fagsakId)
+    @GetMapping(path = ["/fagsak/{saksnummer}"])
+    fun fagsak(@PathVariable saksnummer: String, principal: Principal?): ResponseEntity<Ressurs> {
+        logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", saksnummer)
+        SporingsLoggHelper.logSporing(FagsakController::class.java, saksnummer, principal?.name ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
 
-        val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(fagsakId) }
+        val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(saksnummer) }
                 .fold(
                     onSuccess = { when(it) {
-                        null -> Ressurs.failure("Fant ikke fagsak med id fagsakId")
+                        null -> Ressurs.failure("Fant ikke fagsak med saksnummer: $saksnummer")
                         else -> Ressurs.success( data = it )
                     } },
-                    onFailure = { e -> Ressurs.failure( String.format("Henting av fagsak med id %s feilet: %s", fagsakId, e.message), e) }
+                    onFailure = { e -> Ressurs.failure( "Henting av fagsak med saksnummer $saksnummer feilet: ${e.message}", e) }
                 )
 
         return ResponseEntity.ok(ressurs)
@@ -58,7 +57,6 @@ class FagsakController (
 
     @Profile("dev")
     @PostMapping(path = ["/behandle"])
-    @Unprotected
     fun behandle(@RequestBody søknadJson: String): ResponseEntity<Ressurs> {
         val søknad: Søknad = søknadJson.toSøknad()
         val behandling: Behandling? = Result.runCatching {
@@ -71,7 +69,7 @@ class FagsakController (
 
         val ressurs: Ressurs = when(behandling) {
             null -> Ressurs.failure("Behandling feilet")
-            else -> Result.runCatching { restFagsakService.hentRessursFagsak(behandling.fagsak.id) }
+            else -> Result.runCatching { restFagsakService.hentRessursFagsak(behandling.fagsak.saksnummer) }
                 .fold(
                     onSuccess = { Ressurs.success( data = it) },
                     onFailure = { e -> Ressurs.failure("Henting av fagsak feilet.", e) }

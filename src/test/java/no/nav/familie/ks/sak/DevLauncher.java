@@ -1,7 +1,7 @@
 package no.nav.familie.ks.sak;
 
 import no.nav.familie.ks.sak.config.ApplicationConfig;
-import no.nav.security.oidc.test.support.spring.TokenGeneratorConfiguration;
+import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;

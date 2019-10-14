@@ -20,7 +20,7 @@
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
         <java.version>11</java.version>
-        <oidc-support.version>0.2.18</oidc-support.version>
+        <token-validation-spring.version>1.0.1</token-validation-spring.version>
         <fpsak.nare.version>2.0_20181105115918_47dcace</fpsak.nare.version>
         <cxf.version>3.3.1</cxf.version>
         <tjenestespesifikasjoner.version>1.2019.06.11-13.36-786a4cec3151</tjenestespesifikasjoner.version>
@@ -67,6 +67,13 @@
                 <artifactId>http-client</artifactId>
                 <version>${felles.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/com.papertrailapp/logback-syslog4j -->
+            <dependency>
+                <groupId>com.papertrailapp</groupId>
+                <artifactId>logback-syslog4j</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -102,16 +109,23 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.papertrailapp/logback-syslog4j -->
+        <dependency>
+            <groupId>com.papertrailapp</groupId>
+            <artifactId>logback-syslog4j</artifactId>
+        </dependency>
+
+
         <!-- NAV-interne avhengigheter -->
         <dependency>
             <groupId>no.nav.security</groupId>
-            <artifactId>oidc-spring-support</artifactId>
-            <version>${oidc-support.version}</version>
+            <artifactId>token-validation-spring</artifactId>
+            <version>${token-validation-spring.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.security</groupId>
-            <artifactId>oidc-test-support</artifactId>
-            <version>${oidc-support.version}</version>
+            <artifactId>token-validation-test-support</artifactId>
+            <version>${token-validation-spring.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -34,9 +34,14 @@ class RestFagsakService (
         private val oppslagTjeneste: OppslagTjeneste,
         private val fagsakRepository: FagsakRepository) {
 
-    fun hentRestFagsak(fagsakId: Long): RestFagsak? {
-        val fagsak = fagsakRepository.findById(fagsakId)
-        val behandlinger = behandlingRepository.finnBehandlinger(fagsakId)
+    fun hentRestFagsak(saksnummer: String): RestFagsak? {
+        val optionalFagsak = fagsakRepository.finnFagsak(saksnummer)
+        if (optionalFagsak.isEmpty) {
+            return null
+        }
+
+        val fagsak = optionalFagsak.get()
+        val behandlinger = behandlingRepository.finnBehandlinger(fagsak.id)
         var søkerFødselsnummer = ""
 
         // Grunnlag fra søknag
@@ -88,11 +93,11 @@ class RestFagsakService (
             RestBehandling(it.id, søknad, restBehandlingsresultat, personopplysninger)
         }
 
-        return fagsak.map { it.toRestFagsak(restBehandlinger, søkerFødselsnummer ) }.orElse(null)
+        return fagsak.toRestFagsak(restBehandlinger, søkerFødselsnummer )
     }
 
-    fun hentRessursFagsak(fagsakId: Long): RestFagsak? {
-        return hentRestFagsak(fagsakId)
+    fun hentRessursFagsak(saksnummer: String): RestFagsak? {
+        return hentRestFagsak(saksnummer)
     }
 
     fun hentFagsaker(): List<Fagsak> {

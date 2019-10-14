@@ -2,6 +2,8 @@ package no.nav.familie.ks.sak.app.rest
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 
 data class Ressurs(
         val data: JsonNode?,
@@ -13,13 +15,15 @@ data class Ressurs(
 
     companion object {
         val objectMapper: ObjectMapper = ObjectMapper()
+                .registerModule(JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 
         inline fun <reified T> success(data: T): Ressurs {
             return Ressurs(
-                    data = objectMapper.valueToTree(data),
-                    status = Status.SUKSESS,
-                    melding = "Innhenting av data var vellykket",
-                    errorMelding = null
+                data = objectMapper.valueToTree(data),
+                status = Status.SUKSESS,
+                melding = "Innhenting av data var vellykket",
+                errorMelding = null
             )
         }
 
