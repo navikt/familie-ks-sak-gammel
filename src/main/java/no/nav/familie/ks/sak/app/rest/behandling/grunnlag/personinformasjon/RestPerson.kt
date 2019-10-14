@@ -15,11 +15,11 @@ data class RestPerson internal constructor(
     val personhistorikk: RestPersonhistorikk)
 
 
-fun Person.toRestPerson(oppslagTjeneste: OppslagTjeneste) = RestPerson(
-        fødselsnummer = oppslagTjeneste.hentPersonIdent(this.aktørId.ident).ident,
+fun Person.toRestPerson() = RestPerson(
+        fødselsnummer = this.personIdent.ident,
         navn = this.navn,
         fødselsdato = this.fødselsdato,
         statsborgerskap = this.statsborgerskap.kode,
-        relasjoner = this.relasjoner.map { it.toRestPersonrelasjon(oppslagTjeneste) },
+        relasjoner = this.relasjoner.map { it.toRestPersonrelasjon() },
         personhistorikk = this.toRestPersonhistorikk()
 )

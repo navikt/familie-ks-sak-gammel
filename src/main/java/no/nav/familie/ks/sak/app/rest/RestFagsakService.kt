@@ -31,7 +31,6 @@ class RestFagsakService (
         private val søknadGrunnlagRepository: SøknadGrunnlagRepository,
         private val behandlingRepository: BehandlingRepository,
         private val personopplysningGrunnlagRepository: PersonopplysningGrunnlagRepository,
-        private val oppslagTjeneste: OppslagTjeneste,
         private val fagsakRepository: FagsakRepository) {
 
     fun hentRestFagsak(saksnummer: String): RestFagsak? {
@@ -75,9 +74,9 @@ class RestFagsakService (
             // Grunnlag fra TPS
             val personopplysninger: RestPersoner = personopplysningGrunnlagRepository.findByBehandlingAndAktiv(it.id).map { personopplysningGrunnlag ->
                 RestPersoner(
-                    søker = personopplysningGrunnlag.søker.toRestPerson(oppslagTjeneste),
-                    annenPart = personopplysningGrunnlag.annenPart?.toRestPerson(oppslagTjeneste),
-                    barna = personopplysningGrunnlag.barna.map { barn -> barn.toRestPerson(oppslagTjeneste) }
+                    søker = personopplysningGrunnlag.søker.toRestPerson(),
+                    annenPart = personopplysningGrunnlag.annenPart?.toRestPerson(),
+                    barna = personopplysningGrunnlag.barna.map { barn -> barn.toRestPerson() }
                 )
             }.orElseThrow()
 
