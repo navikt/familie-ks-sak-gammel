@@ -73,7 +73,7 @@ public class RegisterInnhentingServiceTest {
         when(oppslagTjeneste.hentPersoninfoFor(eq(søker.getIdent()))).thenReturn(søkerPersoninfo);
         when(oppslagTjeneste.hentHistorikkFor(eq(søker.getIdent()))).thenReturn(søkerPersonhistorikk);
 
-        when(oppslagTjeneste.hentPersonIdent(annenPartPersoninfo.getAktørId().getIdent())).thenReturn(annenPartPersoninfo.getPersonIdent());
+        when(oppslagTjeneste.hentPersonIdent(annenPartPersoninfo.getAktørId().getId())).thenReturn(annenPartPersoninfo.getPersonIdent());
         when(oppslagTjeneste.hentAktørId(eq(annenPartPersoninfo.getPersonIdent().getIdent()))).thenReturn(annenPartAktørId);
         when(oppslagTjeneste.hentPersoninfoFor(eq(annenPart.getIdent()))).thenReturn(annenPartPersoninfo);
         when(oppslagTjeneste.hentHistorikkFor(eq(annenPart.getIdent()))).thenReturn(annenPartPersonhistorikk);

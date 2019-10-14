@@ -79,7 +79,7 @@ public class PersonopplysningGrunnlag extends BaseEntitet {
     }
     public Person getBarn(AktørId aktørId) {
         for (Person p : personer) {
-            if (p.getType().equals(PersonType.BARN) && p.getAktørId().getIdent().equals(aktørId.getIdent())){
+            if (p.getType().equals(PersonType.BARN) && p.getAktørId().getId().equals(aktørId.getId())){
                 return p;
             }
         }
