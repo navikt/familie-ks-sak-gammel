@@ -9,8 +9,10 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Landkode;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.DatoIntervallEntitet;
+import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
@@ -101,6 +103,27 @@ public class RegisterInnhentingService {
             .medForelder(søkerPersonMedHistorikk)
             .medBarn(List.of(barnPersonMedHistorikk))
             .medAnnenForelder(annenPartPersonMedHistorikk)
+            .build();
+    }
+
+    public MedlFakta hentMedlemskapsopplysninger(Behandling behandling) {
+        Optional<PersonopplysningGrunnlag> pers = personopplysningService.hentHvisEksisterer(behandling);
+        if (!pers.isPresent()) {
+            return new MedlFakta.Builder()
+                .medSøker(Optional.empty())
+                .medAnnenForelder(Optional.empty())
+                .build();
+        }
+        PersonopplysningGrunnlag personopplysningGrunnlag = pers.get();
+        final var søkerAktørId = personopplysningGrunnlag.getSøker().getAktørId();
+        final var annenPartAktørId = personopplysningGrunnlag.getAnnenPart().getAktørId();
+
+        final MedlemskapsInfo søkerMedlemskapsInfo = oppslagTjeneste.hentMedlemskapsUnntakFor(søkerAktørId);
+        final MedlemskapsInfo annenPartMedlemskapsInfo = oppslagTjeneste.hentMedlemskapsUnntakFor(annenPartAktørId);
+
+        return new MedlFakta.Builder()
+            .medSøker(søkerMedlemskapsInfo.getPersonIdent() == null ? Optional.empty() : Optional.of(søkerMedlemskapsInfo))
+            .medAnnenForelder(annenPartMedlemskapsInfo.getPersonIdent() == null ? Optional.empty() : Optional.of(annenPartMedlemskapsInfo))
             .build();
     }
 

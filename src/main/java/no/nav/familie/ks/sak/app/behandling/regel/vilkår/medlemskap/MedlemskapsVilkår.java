@@ -3,9 +3,10 @@ package no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.regel.HarIngenMedlemskapsopplysninger;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Sluttpunkt;
-import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.regel.HattNorskStatsborgerskapFemÅr;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.regel.HarNorskStatsborgerskap;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.regel.HarVærtBosattFemÅrINorge;
 import no.nav.fpsak.nare.Ruleset;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
@@ -32,16 +33,28 @@ public class MedlemskapsVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
         return getSpecification().evaluate(input);
     }
 
+    private Ruleset<Faktagrunnlag> rs = new Ruleset<Faktagrunnlag>();
+
+
     @Override
     @SuppressWarnings("unchecked")
     public Specification<Faktagrunnlag> getSpecification() {
-        final var rs = new Ruleset<Faktagrunnlag>();
         return rs.hvisRegel(HarVærtBosattFemÅrINorge.ID, "Vurder om søker har vært bosatt i Norge siste fem år")
-                .hvis(new HarVærtBosattFemÅrINorge(),
-                        rs.hvisRegel(HattNorskStatsborgerskapFemÅr.ID, "Vurder om foreldre har vært norske statsborgere siste fem år")
-                                .hvis(new HattNorskStatsborgerskapFemÅr(), Sluttpunkt.oppfylt())
-                                .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.IKKE_NORSKE_STATSBORGERE_FEM_ÅR)))
+                .hvis(new HarVærtBosattFemÅrINorge(), erNorskStatsborger())
                 .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.IKKE_BOSATT_I_NORGE_FEM_ÅR));
+    }
 
+    @SuppressWarnings("unchecked")
+    private Specification<Faktagrunnlag> erNorskStatsborger() {
+        return rs.hvisRegel(HarNorskStatsborgerskap.ID, "Vurder om foreldrene er norske statsborgere")
+                .hvis(new HarNorskStatsborgerskap(), sjekkOmIngenMedlemskapsInfo())
+                .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.IKKE_NORSKE_STATSBORGERE));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Specification<Faktagrunnlag> sjekkOmIngenMedlemskapsInfo() {
+        return rs.hvisRegel(HarIngenMedlemskapsopplysninger.ID, "Har foreldrene ingen medlemskapsopplysninger?")
+            .hvis(new HarIngenMedlemskapsopplysninger(), Sluttpunkt.oppfylt())
+            .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak.HAR_MEDLEMSKAPSOPPLYSNINGER));
     }
 }

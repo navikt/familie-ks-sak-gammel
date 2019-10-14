@@ -6,6 +6,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
+import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,9 @@ public class Saksbehandling {
     public Vedtak behandle(Søknad søknad) {
         final Behandling behandling = behandlingslagerService.nyBehandling(søknad);
         TpsFakta tpsFakta = registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
+        MedlFakta medlFakta = registerInnhentingService.hentMedlemskapsopplysninger(behandling);
         behandlingslagerService.trekkUtOgPersister(behandling, søknad);
-        Faktagrunnlag faktagrunnlag = fastsettingService.fastsettFakta(behandling, tpsFakta);
+        Faktagrunnlag faktagrunnlag = fastsettingService.fastsettFakta(behandling, tpsFakta, medlFakta);
 
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);
 

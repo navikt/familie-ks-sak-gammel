@@ -13,8 +13,12 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.Tid;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
+import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
+import no.nav.familie.ks.sak.app.integrasjon.medlemskap.PeriodeInfo;
+import no.nav.familie.ks.sak.app.integrasjon.medlemskap.PeriodeStatus;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Periode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
@@ -368,7 +372,7 @@ public final class FaktagrunnlagTestBuilder {
         .medAnnenForelder(personMedHistorikkFarNorsk)
         .medBarn(List.of(personMedHistorikkBarnNorsk))
         .build();
-    
+
     private static TpsFakta beggeForeldreIkkeNorskMenBoddFemINorge = new TpsFakta.Builder()
         .medForelder(personMedHistorikkMorIkkeNorskMenBoddNorge)
         .medAnnenForelder(personMedHistorikkMorIkkeNorskMenBoddNorge)
@@ -378,6 +382,43 @@ public final class FaktagrunnlagTestBuilder {
     public static Optional<PersonopplysningGrunnlag> genererPersonopplysningGrunnlag() {
         PersonopplysningGrunnlag personopplysningGrunnlag = new PersonopplysningGrunnlag(behandlingId);
         return Optional.of(personopplysningGrunnlag);
+    }
+
+    // Medlemskapsinformasjon
+    public static PeriodeInfo gyldigPeriode = new PeriodeInfo.Builder()
+        .medPeriodeStatus(PeriodeStatus.GYLD)
+        .medFom(LocalDate.now().minusYears(4))
+        .medTom(LocalDate.now().minusYears(3))
+        .medGjelderMedlemskapIFolketrygden(false)
+        .medGrunnlag("FO_12_1")
+        .medDekning("Full")
+        .build();
+
+    public static MedlemskapsInfo søker = new MedlemskapsInfo.Builder()
+        .medPersonIdent(morPersonident.getIdent())
+        .medGyldigePerioder(Arrays.asList(gyldigPeriode))
+        .build();
+
+    public static MedlemskapsInfo annenForelder = new MedlemskapsInfo.Builder()
+        .medPersonIdent(farPersonident.getIdent())
+        .medGyldigePerioder(Arrays.asList(gyldigPeriode))
+        .build();
+
+    public static MedlFakta treffIMedlBeggeForeldrene = new MedlFakta.Builder()
+        .medSøker(Optional.of(søker))
+        .medAnnenForelder(Optional.of(annenForelder))
+        .build();
+
+    public static MedlFakta ingenMedlemsopplysninger = new MedlFakta.Builder()
+        .medSøker(Optional.empty())
+        .medAnnenForelder(Optional.empty())
+        .build();
+
+    public static MedlemskapsInfo tomMedlemskapsinfo() {
+        return new MedlemskapsInfo.Builder()
+            .medPersonIdent(null)
+            .medGyldigePerioder(null)
+            .build();
     }
 
     private static SøknadGrunnlag genererSøknadGrunnlag(Søknad innsendtSøknad) {
@@ -409,6 +450,16 @@ public final class FaktagrunnlagTestBuilder {
             .medTpsFakta(beggeForeldreOgBarnUtenlandskeStatsborgere)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.utenlandskFamilieMedBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.utenlandskFamilieMedBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
+            .build();
+    }
+
+    public static Faktagrunnlag familieNorskStatsborgerskapMedMedlemskapsinfo() {
+        return new Faktagrunnlag.Builder()
+            .medTpsFakta(beggeForeldreOgBarnNorskStatsborger)
+            .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .medMedlFakta(treffIMedlBeggeForeldrene)
             .build();
     }
 
@@ -417,6 +468,7 @@ public final class FaktagrunnlagTestBuilder {
             .medTpsFakta(beggeForeldreOgBarnUtenlandskeStatsborgere)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.tilknytningUtlandUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.tilknytningUtlandUtenBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
             .build();
     }
 
@@ -425,6 +477,7 @@ public final class FaktagrunnlagTestBuilder {
             .medTpsFakta(beggeForeldreOgBarnNorskStatsborger)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
             .build();
     }
 
@@ -433,6 +486,7 @@ public final class FaktagrunnlagTestBuilder {
             .medTpsFakta(beggeForeldreOgFlerlingerNorskStatsborger)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplassFlerlinger()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplassFlerlinger()))
+            .medMedlFakta(ingenMedlemsopplysninger)
             .build();
     }
 
@@ -441,6 +495,7 @@ public final class FaktagrunnlagTestBuilder {
             .medTpsFakta(beggeForeldreOgBarnNorskStatsborger)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieMedBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieMedBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
             .build();
     }
 
@@ -449,6 +504,7 @@ public final class FaktagrunnlagTestBuilder {
             .medTpsFakta(beggeForeldreOgBarnNorskStatsborger)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag((SøknadTestdata.norskFamilieGradertBarnehageplass())))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieGradertBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
             .build();
     }
 
@@ -457,6 +513,7 @@ public final class FaktagrunnlagTestBuilder {
             .medTpsFakta(aleneForelderOgBarnNorskStatsborgerskap)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenAnnenPartOgUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenAnnenPartOgUtenBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
             .build();
     }
 
@@ -465,6 +522,7 @@ public final class FaktagrunnlagTestBuilder {
             .medTpsFakta(norskOgUtenlandskForelder)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.enForelderIUtlandUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.enForelderIUtlandUtenBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
             .build();
     }
 
@@ -473,6 +531,7 @@ public final class FaktagrunnlagTestBuilder {
             .medTpsFakta(beggeForeldreIkkeNorskMenBoddFemINorge)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
             .build();
     }
 
@@ -481,6 +540,7 @@ public final class FaktagrunnlagTestBuilder {
             .medTpsFakta(beggeForeldreNorskMenBoddIUtland)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
             .build();
     }
 
@@ -489,6 +549,7 @@ public final class FaktagrunnlagTestBuilder {
             .medTpsFakta(beggeForeldreNorskMenIkkeBoddFemÅrINorge)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
             .build();
     }
 
@@ -579,6 +640,7 @@ public final class FaktagrunnlagTestBuilder {
             .medTpsFakta(fakta)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
             .build();
     }
 }

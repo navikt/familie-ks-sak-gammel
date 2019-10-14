@@ -7,7 +7,8 @@ public enum VilkårIkkeOppfyltÅrsak implements VilkårUtfallÅrsak {
     // Medlemskap
     IKKE_FEM_ÅR_MEDLEMSKAP(8301, "Må ha vært medlem av den norske folketrygden i minst fem år", VilkårType.MEDLEMSKAP),
     IKKE_BOSATT_I_NORGE_FEM_ÅR(8303, "Ikke vært bosatt i Norge sammenhengende siste fem år", VilkårType.MEDLEMSKAP),
-    IKKE_NORSKE_STATSBORGERE_FEM_ÅR(8304, "Foreldre har ikke hatt norsk statsborgerskap sammenhegende siste fem år", VilkårType.MEDLEMSKAP),
+    IKKE_NORSKE_STATSBORGERE(8304, "Foreldre er ikke norsk statsborger nå", VilkårType.MEDLEMSKAP),
+    HAR_MEDLEMSKAPSOPPLYSNINGER(8304, "Søker/foreldre har medlemskapsopplysninger", VilkårType.MEDLEMSKAP),
 
 
     // §1: Formålet med loven (å bidra til at familiene får mer tid til selv å ta omsorgen for egne barn)

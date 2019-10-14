@@ -51,4 +51,12 @@ public class MedlemskapVilkårTest {
         final var evaluering = vilkår.evaluer(faktagrunnlag);
         assertThat(evaluering.result()).isEqualByComparingTo(Resultat.JA);
     }
+
+    @Test
+    public void medlemskapsopplysninger_gir_ikke_oppfylt() {
+        final var vilkår = new MedlemskapsVilkår();
+        Faktagrunnlag faktagrunnlag = FaktagrunnlagTestBuilder.familieNorskStatsborgerskapMedMedlemskapsinfo();
+        final var evaluering = vilkår.evaluer(faktagrunnlag);
+        assertThat(evaluering.result()).isEqualByComparingTo(Resultat.NEI);
+    }
 }

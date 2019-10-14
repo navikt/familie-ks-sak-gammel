@@ -37,7 +37,7 @@ public class PeriodeOppretterTest {
 
     @Test
     public void søknad_med_barnehage_gir_feil() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapMedGradertBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapMedGradertBarnehage());
         when(behandlingslagerMock.nyBehandling(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
         Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieGradertBarnehageplass());
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.MANUELL_BEHANDLING);
@@ -45,7 +45,7 @@ public class PeriodeOppretterTest {
 
     @Test
     public void at_søknad_uten_barnehage_gir_stønadperiode() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         when(behandlingslagerMock.nyBehandling(any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
         Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass());
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.OPPFYLT);
