@@ -10,11 +10,16 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Fa
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.NoSuchElementException;
 
 @RuleDocumentation(ErBarnBosattMedForeldre.ID)
 public class ErBarnBosattMedForeldre extends LeafSpecification<Faktagrunnlag> {
 
     public static final String ID = "KS-BOSTED-1";
+    private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
 
     public ErBarnBosattMedForeldre() {
         super(ID);
@@ -36,11 +41,20 @@ public class ErBarnBosattMedForeldre extends LeafSpecification<Faktagrunnlag> {
         return forelder.getPersoninfo().getPersonIdent();
     }
 
+    private static PersonIdent personIdentFor(Familierelasjon familierelasjon) {
+        if (familierelasjon.getIdent().get(IdentType.PERSONIDENT) != null) {
+            return (PersonIdent) familierelasjon.getIdent().get(IdentType.PERSONIDENT);
+        } else {
+            secureLogger.warn("Fant ikke personident for familierelasjon {}", familierelasjon);
+            throw new NoSuchElementException("Fant ikke Personident for familierelasjon");
+        }
+    }
+
     private static boolean borSammen(Personinfo person, PersonIdent personIdent) {
         return person
                 .getFamilierelasjoner()
                 .stream()
-                .filter( relasjon -> relasjon.getIdent().get(IdentType.PERSONIDENT).equals(personIdent))
+                .filter( relasjon -> personIdentFor(relasjon).equals(personIdent))
                 .map(Familierelasjon::getHarSammeBosted)
                 .findFirst()
                 .orElse(false);

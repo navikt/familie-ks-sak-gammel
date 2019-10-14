@@ -44,7 +44,6 @@ public class RegisterInnhentingService {
         this.oppslagTjeneste = oppslagTjeneste;
     }
 
-    // TODO Martine: Håndter NPE på personident
     public TpsFakta innhentPersonopplysninger(Behandling behandling, Søknad søknad) {
         final var søkerAktørId = behandling.getFagsak().getAktørId();
         final var oppgittAnnenPartPersonIdent = søknad.getOppgittAnnenPartFødselsnummer();
