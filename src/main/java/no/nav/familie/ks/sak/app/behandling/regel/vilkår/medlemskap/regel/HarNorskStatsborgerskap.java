@@ -20,9 +20,17 @@ public class HarNorskStatsborgerskap extends LeafSpecification<Faktagrunnlag> {
     public Evaluation evaluate(Faktagrunnlag grunnlag) {
         PersonMedHistorikk forelder = grunnlag.getTpsFakta().getForelder();
         PersonMedHistorikk annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
-        if (forelder.getPersoninfo().getStatsborgerskap().erNorge() && annenForelder.getPersoninfo().getStatsborgerskap().erNorge()) {
+        if (norskStatsborger(forelder) && norskStatsborger(annenForelder)) {
             return ja();
         }
         return nei(VilkårIkkeOppfyltÅrsak.IKKE_NORSKE_STATSBORGERE);
+    }
+
+    private boolean norskStatsborger(PersonMedHistorikk forelder) {
+        if (forelder == null) {
+            return false;
+        }
+        return forelder.getPersoninfo().getStatsborgerskap().erNorge();
+
     }
 }

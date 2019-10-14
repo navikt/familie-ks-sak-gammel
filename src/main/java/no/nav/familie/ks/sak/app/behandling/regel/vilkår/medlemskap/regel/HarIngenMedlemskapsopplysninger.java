@@ -24,4 +24,5 @@ public class HarIngenMedlemskapsopplysninger extends LeafSpecification<Faktagrun
         }
         return nei(VilkårIkkeOppfyltÅrsak.HAR_MEDLEMSKAPSOPPLYSNINGER);
     }
+
 }

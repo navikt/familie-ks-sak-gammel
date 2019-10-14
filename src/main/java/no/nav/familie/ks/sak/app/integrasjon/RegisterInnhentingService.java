@@ -109,22 +109,24 @@ public class RegisterInnhentingService {
     public MedlFakta hentMedlemskapsopplysninger(Behandling behandling) {
         Optional<PersonopplysningGrunnlag> pers = personopplysningService.hentHvisEksisterer(behandling);
         if (!pers.isPresent()) {
-            return new MedlFakta.Builder()
-                .medSøker(Optional.empty())
-                .medAnnenForelder(Optional.empty())
-                .build();
+            throw new IllegalStateException("Vi må ha personopplysninger for å kunne hente inn medlInfo.");
         }
         PersonopplysningGrunnlag personopplysningGrunnlag = pers.get();
         final var søkerAktørId = personopplysningGrunnlag.getSøker().getAktørId();
-        final var annenPartAktørId = personopplysningGrunnlag.getAnnenPart().getAktørId();
-
         final MedlemskapsInfo søkerMedlemskapsInfo = oppslagTjeneste.hentMedlemskapsUnntakFor(søkerAktørId);
-        final MedlemskapsInfo annenPartMedlemskapsInfo = oppslagTjeneste.hentMedlemskapsUnntakFor(annenPartAktørId);
 
         return new MedlFakta.Builder()
             .medSøker(søkerMedlemskapsInfo.getPersonIdent() == null ? Optional.empty() : Optional.of(søkerMedlemskapsInfo))
-            .medAnnenForelder(annenPartMedlemskapsInfo.getPersonIdent() == null ? Optional.empty() : Optional.of(annenPartMedlemskapsInfo))
+            .medAnnenForelder(hentAnnenPartMedl(personopplysningGrunnlag))
             .build();
+    }
+
+    private Optional<MedlemskapsInfo> hentAnnenPartMedl(PersonopplysningGrunnlag personopplysningGrunnlag) {
+        if (personopplysningGrunnlag.getAnnenPart() == null) {
+            return Optional.empty();
+        }
+        MedlemskapsInfo annenForelder = oppslagTjeneste.hentMedlemskapsUnntakFor(personopplysningGrunnlag.getAnnenPart().getAktørId());
+        return annenForelder.getPersonIdent() == null ? Optional.empty() : Optional.of(annenForelder);
     }
 
     private PersonMedHistorikk hentPersonMedHistorikk(AktørId aktørId) {
