@@ -11,6 +11,7 @@ import java.time.LocalDate
 data class RestPerson internal constructor(
     val fødselsnummer: String,
     val navn: String,
+    val kjønn: String?,
     val fødselsdato: LocalDate,
     val statsborgerskap: String,
     val relasjoner: List<RestPersonrelasjon>,
@@ -20,6 +21,7 @@ data class RestPerson internal constructor(
 fun Person.toRestPerson(oppslagTjeneste: OppslagTjeneste) = RestPerson(
         fødselsnummer = oppslagTjeneste.hentPersonIdent(this.aktørId.id).ident,
         navn = this.navn,
+        kjønn = this.kjønn,
         fødselsdato = this.fødselsdato,
         statsborgerskap = this.statsborgerskap.kode,
         relasjoner = this.relasjoner.map { it.toRestPersonrelasjon(oppslagTjeneste) },

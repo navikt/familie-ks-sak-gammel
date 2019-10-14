@@ -19,6 +19,7 @@ public class Personinfo {
 
     private AktørId aktørId;
     private String navn;
+    private String kjønn;
     private PersonIdent personIdent;
     private String adresse;
     private LocalDate fødselsdato;
@@ -51,6 +52,10 @@ public class Personinfo {
 
     public String getNavn() {
         return navn;
+    }
+
+    public String getKjønn() {
+        return kjønn;
     }
 
     public PersonstatusType getPersonstatus() {
@@ -124,6 +129,11 @@ public class Personinfo {
 
         public Builder medNavn(String navn) {
             personinfoMal.navn = navn;
+            return this;
+        }
+
+        public Builder medKjønn(String kjønn) {
+            personinfoMal.kjønn = kjønn;
             return this;
         }
 
