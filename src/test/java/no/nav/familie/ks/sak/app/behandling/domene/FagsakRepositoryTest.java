@@ -11,10 +11,9 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
 
@@ -36,11 +37,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Ignore //TODO kan fjernes når vi går over til github actions
-@RunWith(SpringRunner.class)
+
+
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ContextConfiguration(classes = DevLauncher.class, initializers = { FagsakRepositoryTest.Initializer.class })
+@Testcontainers
+@DisabledIfEnvironmentVariable(named="CIRCLECI", matches="true")
 public class FagsakRepositoryTest {
 
     @MockBean
@@ -58,7 +61,7 @@ public class FagsakRepositoryTest {
 
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
@@ -70,7 +73,7 @@ public class FagsakRepositoryTest {
             FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersonhistorikkInfo());
     }
 
-    @ClassRule
+    @Container
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest");
 
 
