@@ -8,6 +8,7 @@ import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.oppgave.domene.OppgaveBeskrivelse;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,10 +53,11 @@ public class MottaSøknadController {
 
             if (samletUtfallType.equals(UtfallType.OPPFYLT)) {
                 log.info("Søknad kan behandles automatisk. Årsak={}", samletUtfallType);
-                oppslagTjeneste.oppdaterGosysOppgave(saksnummer, søknad, "TODO: Tekst ved automatisk behandling");
+                oppslagTjeneste.oppdaterGosysOppgave(saksnummer, søknad, String.format(OppgaveBeskrivelse.FORESLÅ_VEDTAK,
+                    OppgaveBeskrivelse.args(vedtak, søknad)));
             } else {
                 log.info("Søknad kan ikke behandles automatisk. Årsak={}", vilkårvurdering.getResultater());
-                oppslagTjeneste.oppdaterGosysOppgave(saksnummer, søknad, "TODO: Tekst ved manuell behandling");
+                oppslagTjeneste.oppdaterGosysOppgave(saksnummer, søknad, OppgaveBeskrivelse.MANUELL_BEHANDLING);
             }
 
             return new ResponseEntity(HttpStatus.OK);
