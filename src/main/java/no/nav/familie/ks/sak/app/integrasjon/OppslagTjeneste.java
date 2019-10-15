@@ -155,7 +155,7 @@ public class OppslagTjeneste {
         URI uri = URI.create(oppslagServiceUri + "/infotrygd/harBarnAktivKontantstotte");
         logger.info("Henter info om løpende kontantstøtte fra " + oppslagServiceUri);
         try {
-            var response = requestMedAktørId(uri, personident, AktivKontantstøtteInfo.class);
+            var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
             secureLogger.info("Løpende kontantstøtte for {}: {}", personident, response.getBody());
 
             if (response.getStatusCode().is2xxSuccessful()) {
