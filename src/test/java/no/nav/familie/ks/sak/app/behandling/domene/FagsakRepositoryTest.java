@@ -71,6 +71,9 @@ public class FagsakRepositoryTest {
         when(oppslagTjeneste.hentHistorikkFor(any())).thenReturn(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
             FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersonhistorikkInfo(),
             FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersonhistorikkInfo());
+
+        when(oppslagTjeneste.hentMedlemskapsUnntakFor(any())).thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
+        when(oppslagTjeneste.hentMedlemskapsUnntakFor(any())).thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
     }
 
     @Container
