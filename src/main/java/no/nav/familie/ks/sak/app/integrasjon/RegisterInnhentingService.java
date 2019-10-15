@@ -106,6 +106,18 @@ public class RegisterInnhentingService {
     }
 
     public InfotrygdFakta hentInfotrygdFakta(TpsFakta tpsFakta) {
+        if (tpsFakta.getBarn() == null) {
+            logger.error("Ingen barn");
+            if (tpsFakta.getBarn().getPersoninfo() == null) {
+                logger.error("Personinfo er null");
+                if (tpsFakta.getBarn().getPersoninfo().getPersonIdent() == null) {
+                    logger.error("PersonIdent er null");
+                    if (tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent() == null) {
+                        logger.error("Ident er null");
+                    }
+                }
+            }
+        }
         return new InfotrygdFakta(oppslagTjeneste.hentInfoOmLøpendeKontantstøtteForBarn(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent()));
     }
 
