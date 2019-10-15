@@ -2,13 +2,15 @@ package no.nav.familie.ks.sak.app.integrasjon;
 
 import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
+import no.nav.familie.ks.kontrakter.oppgave.Oppgave;
+import no.nav.familie.ks.kontrakter.oppgave.OppgaveKt;
+import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
-import no.nav.familie.ks.sak.util.LocalSts;
 import no.nav.familie.log.mdc.MDCConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
@@ -58,6 +61,14 @@ public class OppslagTjeneste {
         HttpEntity httpEntity = new HttpEntity(headers);
 
         return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
+    }
+
+    private <T> ResponseEntity<T> postRequest(URI uri , String requestBody, Class<T> responseType) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(stsRestClient.getSystemOIDCToken());
+        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+
+        return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), responseType);
     }
 
     private <T> ResponseEntity<T> requestMedPersonIdent(URI uri, String personident, Class<T> clazz) {
@@ -207,6 +218,51 @@ public class OppslagTjeneste {
             } else {
                 String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
                 logger.warn("Kall mot oppslag feilet ved uthenting av medlemskapsinfo: " + feilmelding);
+                throw new OppslagException(feilmelding);
+            }
+        } catch (RestClientException e) {
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+        }
+    }
+
+
+    @Retryable(
+        value = { OppslagException.class },
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 5000))
+    public String opprettGosysOppgave(String saksnummer, Søknad søknad, String beskrivelse) {
+        URI uri = URI.create(oppslagServiceUri + "/oppgave/opprett");
+        logger.info("Sender \"opprett oppgave\"-request til " + uri);
+        return sendOppgave(opprettRequest(saksnummer, søknad, beskrivelse), uri, String.class);
+    }
+
+    @Retryable(
+        value = { OppslagException.class },
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 5000))
+    public Boolean oppdaterGosysOppgave(String saksnummer, Søknad søknad, String beskrivelse) {
+        URI uri = URI.create(oppslagServiceUri + "/oppgave/oppdater");
+        logger.info("Sender \"oppdater oppgave\"-request til " + uri);
+        return sendOppgave(oppdaterRequest(saksnummer, søknad, beskrivelse), uri, Boolean.class);
+    }
+
+    private Oppgave opprettRequest(String saksnummer, Søknad søknad, String beskrivelse) {
+        return new Oppgave(søknad.getSøkerFødselsnummer(),  saksnummer, null, "9", beskrivelse,0);
+    }
+
+    private Oppgave oppdaterRequest(String saksnummer, Søknad søknad, String beskrivelse) {
+        return new Oppgave(søknad.getSøkerFødselsnummer(), saksnummer, "", "9", beskrivelse, 0);
+    }
+
+    private <T> T sendOppgave(Oppgave request, URI uri, Class<T> responsType) {
+        try {
+            ResponseEntity<T> response = postRequest(uri, OppgaveKt.toJson(request), responsType);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return response.getBody();
+            } else {
+                String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
+                logger.warn("Kall mot oppslag feilet ved oppdatering av Gosys-oppgave: " + feilmelding);
                 throw new OppslagException(feilmelding);
             }
         } catch (RestClientException e) {
