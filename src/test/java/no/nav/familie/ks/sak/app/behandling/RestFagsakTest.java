@@ -40,6 +40,8 @@ import static org.mockito.Mockito.when;
 public class RestFagsakTest {
 
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
+    private static final String SAKSNUMMER = "TEST123";
+
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
 
@@ -93,7 +95,7 @@ public class RestFagsakTest {
         when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
 
         final var søknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
-        Vedtak vedtak = saksbehandling.behandle(søknad);
+        Vedtak vedtak = saksbehandling.behandle(søknad, SAKSNUMMER);
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
 
         assertThat(behandling).isPresent();
@@ -109,7 +111,7 @@ public class RestFagsakTest {
     @Test
     public void hentFagsaker() {
         when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass());
+        saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
 
         assertThat(restFagsakService.hentFagsaker()).hasSize(1);
     }
@@ -117,7 +119,7 @@ public class RestFagsakTest {
     @Test
     public void rest_fagsak_har_tps_informasjon() {
         when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass());
+        Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
 
         assert behandling.isPresent();

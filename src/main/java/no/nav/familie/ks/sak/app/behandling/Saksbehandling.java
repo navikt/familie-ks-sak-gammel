@@ -36,8 +36,8 @@ public class Saksbehandling {
     }
 
     @Transactional
-    public Vedtak behandle(Søknad søknad) {
-        final Behandling behandling = behandlingslagerService.nyBehandling(søknad);
+    public Vedtak behandle(Søknad søknad, String saksnummer) {
+        final Behandling behandling = behandlingslagerService.nyBehandling(søknad, saksnummer);
         TpsFakta tpsFakta = registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
         MedlFakta medlFakta = registerInnhentingService.hentMedlemskapsopplysninger(behandling);
         behandlingslagerService.trekkUtOgPersister(behandling, søknad);
