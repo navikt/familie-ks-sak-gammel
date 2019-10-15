@@ -106,6 +106,7 @@ public class RegisterInnhentingService {
     }
 
     public InfotrygdFakta hentInfotrygdFakta(Søknad søknad) {
+        // TODO: Legg til støtte for flerlinger.
         return new InfotrygdFakta(oppslagTjeneste.hentInfoOmLøpendeKontantstøtteForBarn(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer()));
     }
 
