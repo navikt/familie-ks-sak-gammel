@@ -10,7 +10,7 @@ public class SporingsLoggHelper {
     private SporingsLoggHelper() {
     }
 
-    public static void logSporing(Class<?> clazz, Sporingsdata sporingsdata, SporingsLoggActionType sporingsLoggActionType, String action) {
+    private static void logSporing(Class<?> clazz, Sporingsdata sporingsdata, SporingsLoggActionType sporingsLoggActionType, String action) {
         StringBuilder msg = new StringBuilder()
             .append("action=").append(action).append(SPACE_SEPARATOR)
             .append("actionType=").append(sporingsLoggActionType.getKode()).append(SPACE_SEPARATOR);
@@ -21,10 +21,10 @@ public class SporingsLoggHelper {
         LoggerFactory.getLogger(SPORING_LOG + "." + clazz.getName()).info(sanitizedMsg);
     }
 
-    public static void logSporing(Class<?> clazz, String saksnummer, String saksbehandler, SporingsLoggActionType sporingsLoggActionType, String action) {
+    public static void logSporing(Class<?> clazz, Long fagsakId, String saksbehandler, SporingsLoggActionType sporingsLoggActionType, String action) {
         Sporingsdata sporingsdata = Sporingsdata.opprett();
         sporingsdata.leggTilId(SporingsloggId.ANSVALIG_SAKSBEHANDLER, saksbehandler);
-        sporingsdata.leggTilId(SporingsloggId.SAKSNUMMER, saksnummer);
+        sporingsdata.leggTilId(SporingsloggId.FAGSAK_ID, fagsakId);
         logSporing(clazz, sporingsdata, sporingsLoggActionType, action);
     }
 }
