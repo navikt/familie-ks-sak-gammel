@@ -43,7 +43,6 @@ public class RegisterInnhentingService {
     }
 
     public TpsFakta innhentPersonopplysninger(Behandling behandling, Søknad søknad) {
-        final var søkerAktørId = behandling.getFagsak().getAktørId();
         final var oppgittAnnenPartPersonIdent = søknad.getOppgittAnnenPartFødselsnummer();
         // TODO skriv om når vi støtter flerlinger
         final var barnFødselsnummer = søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer();
@@ -52,9 +51,9 @@ public class RegisterInnhentingService {
         final PersonMedHistorikk søkerPersonMedHistorikk = hentPersonMedHistorikk(søknad.getSøkerFødselsnummer());
         final PersonMedHistorikk barnPersonMedHistorikk = hentPersonMedHistorikk(barnFødselsnummer);
 
-        mapPersonopplysninger(søkerAktørId, new PersonIdent(søknad.getSøkerFødselsnummer()), søkerPersonMedHistorikk, personopplysningGrunnlag, PersonType.SØKER);
+        mapPersonopplysninger(søkerPersonMedHistorikk, personopplysningGrunnlag, PersonType.SØKER);
         //TODO legg til støtte for flere barn!
-        mapPersonopplysninger(barnPersonMedHistorikk.getPersoninfo().getAktørId(), new PersonIdent(barnFødselsnummer), barnPersonMedHistorikk, personopplysningGrunnlag, PersonType.BARN);
+        mapPersonopplysninger(barnPersonMedHistorikk, personopplysningGrunnlag, PersonType.BARN);
 
         PersonMedHistorikk annenPartPersonMedHistorikk = null;
         final Optional<Familierelasjon> annenPartFamilierelasjon = barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
@@ -68,14 +67,14 @@ public class RegisterInnhentingService {
             annenPartPersonIdent = annenPartFamilierelasjon.get().getPersonIdent();
             annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartPersonIdent.getIdent());
 
-            mapPersonopplysninger(annenPartPersonMedHistorikk.getPersoninfo().getAktørId(), annenPartPersonIdent, annenPartPersonMedHistorikk, personopplysningGrunnlag, PersonType.ANNENPART);
+            mapPersonopplysninger(annenPartPersonMedHistorikk, personopplysningGrunnlag, PersonType.ANNENPART);
 
             //TODO legg til støtte for flere barn
             mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag);
 
             if (oppgittAnnenPartPersonIdent != null && !oppgittAnnenPartPersonIdent.isEmpty()) {
                 if (annenPartPersonIdent.getIdent().regionMatches(0, oppgittAnnenPartPersonIdent, 0, 6)) {
-                    if (!annenPartPersonIdent.equals(oppgittAnnenPartPersonIdent)) {
+                    if (!annenPartPersonIdent.getIdent().equals(oppgittAnnenPartPersonIdent)) {
                         oppgittAnnenPartStemmerDelvis.increment();
                     } else {
                         oppgittAnnenPartStemmer.increment();
@@ -133,11 +132,12 @@ public class RegisterInnhentingService {
         }
     }
 
-    private void mapPersonopplysninger(AktørId aktørId, PersonIdent personIdent, PersonMedHistorikk personMedHistorikk, PersonopplysningGrunnlag personopplysningGrunnlag, PersonType personType) {
+    private void mapPersonopplysninger(PersonMedHistorikk personMedHistorikk, PersonopplysningGrunnlag personopplysningGrunnlag, PersonType personType) {
         var personinfo = personMedHistorikk.getPersoninfo();
+        var aktørId = personinfo.getAktørId();
         var personhistorikk = personMedHistorikk.getPersonhistorikkInfo();
 
-        Person person = new Person(aktørId, personIdent, personType)
+        Person person = new Person(aktørId, personinfo.getPersonIdent(), personType)
             .medFødselsdato(personinfo.getFødselsdato())
             .medKjønn(personinfo.getKjønn())
             .medDødsdato(personinfo.getDødsdato())
