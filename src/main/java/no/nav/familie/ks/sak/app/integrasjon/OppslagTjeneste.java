@@ -152,7 +152,7 @@ public class OppslagTjeneste {
         if (personident == null || personident.isEmpty()) {
             throw new OppslagException("Ved henting av info om løpende kontantstøtte er personident null eller tom");
         }
-        URI uri = URI.create(oppslagServiceUri + "/api/infotrygd/harBarnAktivKontantstotte");
+        URI uri = URI.create(oppslagServiceUri + "/infotrygd/harBarnAktivKontantstotte");
         logger.info("Henter info om løpende kontantstøtte fra " + oppslagServiceUri);
         try {
             var response = requestMedAktørId(uri, personident, AktivKontantstøtteInfo.class);
