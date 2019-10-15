@@ -39,7 +39,6 @@ public class Familierelasjon {
     @Override
     public String toString() {
         return getClass().getSimpleName()
-                + "<ident=" + personIdent
                 + ", relasjon=" + relasjonsrolle
                 + ", fødselsdato=" + fødselsdato
                 + ", harSammeBosted=" + harSammeBosted

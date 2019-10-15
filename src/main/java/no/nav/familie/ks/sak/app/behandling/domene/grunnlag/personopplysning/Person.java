@@ -245,7 +245,6 @@ public class Person extends BaseEntitet {
     @Override
     public String toString() {
         return "PersonopplysningEntitet{" + "id=" + id +
-            ", PersonIdent=" + personIdent.toString() +
             ", type=" + type +
             ", navn='" + navn + '\'' +
             ", kjønn=" + kjønn +

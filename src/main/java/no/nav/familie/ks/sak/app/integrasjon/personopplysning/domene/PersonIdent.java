@@ -3,7 +3,6 @@ package no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -125,10 +124,5 @@ public class PersonIdent implements Comparable<PersonIdent> {
      */
     public boolean erFdatNummer() {
         return isFdatNummer(getPersonnummer(ident));
-    }
-
-    @Override
-    public String toString() {
-        return PersonIdent.class.getSimpleName() + "<ident=" + ident + ">";
     }
 }
