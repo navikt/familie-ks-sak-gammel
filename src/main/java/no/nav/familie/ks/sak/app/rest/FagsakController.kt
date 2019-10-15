@@ -60,7 +60,7 @@ class FagsakController (
     fun behandle(@RequestBody søknadJson: String): ResponseEntity<Ressurs> {
         val søknad: Søknad = søknadJson.toSøknad()
         val behandling: Behandling? = Result.runCatching {
-            val vedtak: Vedtak = saksbehandling.behandle(søknad)
+            val vedtak: Vedtak = saksbehandling.behandle(søknad, "GSAK")
             behandlingRepository.getOne(vedtak.behandlingsId)
         }.fold(
             onSuccess = { it },
