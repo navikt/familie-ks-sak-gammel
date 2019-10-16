@@ -13,12 +13,12 @@ import no.nav.fpsak.nare.specification.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-@RuleDocumentation(VilkårType.Constants.MEDLEMSKAPBOSTED_KODE)
+@RuleDocumentation(VilkårType.Constants.MEDLEMSKAP_BOSTED_KODE)
 public class MedlemskapBostedVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
 
     @Override
     public VilkårType getVilkårType() {
-        return VilkårType.MEDLEMSKAPBOSTED;
+        return VilkårType.MEDLEMSKAP_BOSTED;
     }
 
     @Override
