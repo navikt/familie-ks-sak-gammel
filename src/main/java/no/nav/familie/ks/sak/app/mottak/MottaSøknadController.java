@@ -37,7 +37,7 @@ public class MottaSøknadController {
         this.saksbehandling = saksbehandling;
     }
 
-    @PostMapping(/*consumes = MediaType.APPLICATION_JSON_VALUE, */path = "dokument")
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
     @Unprotected
     public ResponseEntity mottaDokument(@RequestBody SøknadDto søknadDto) {
         Søknad søknad = SøknadKt.toSøknad(søknadDto.getSøknadJson());
