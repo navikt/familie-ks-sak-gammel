@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.regel;
+package no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskapMedl.regel;
 
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;

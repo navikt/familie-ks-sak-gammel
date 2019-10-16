@@ -11,7 +11,7 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barnehage.BarnehageVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted.BostedVilkår;
-import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.MedlemskapBostedVilkår;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskapBosted.MedlemskapBostedVilkår;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import org.junit.Test;

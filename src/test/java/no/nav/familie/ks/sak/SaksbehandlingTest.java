@@ -12,7 +12,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.BarneVilkår;
-import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.MedlemskapBostedVilkår;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskapBosted.MedlemskapBostedVilkår;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import org.junit.Test;

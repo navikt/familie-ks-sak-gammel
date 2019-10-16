@@ -1,21 +1,25 @@
-package no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap;
+package no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskapStatsborgerskap;
 
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
-import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.regel.HarNorskStatsborgerskap;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskapStatsborgerskap.regel.HarNorskStatsborgerskap;
 import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Sluttpunkt;
 import no.nav.fpsak.nare.Ruleset;
+import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.Specification;
+import org.springframework.stereotype.Component;
 
+@Component
+@RuleDocumentation(VilkårType.Constants.MEDLEMSKAPSTATSBORGERSKAP_KODE)
 public class MedlemskapStatsborgerskapVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
 
 
     @Override
     public VilkårType getVilkårType() {
-        return VilkårType.MEDLEMSKAP;
+        return VilkårType.MEDLEMSKAPSTATSBORGERSKAP;
     }
 
     @Override

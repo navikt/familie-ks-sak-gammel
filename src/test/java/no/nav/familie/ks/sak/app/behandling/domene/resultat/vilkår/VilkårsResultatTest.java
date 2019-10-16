@@ -13,14 +13,14 @@ public class VilkårsResultatTest {
 
     @Test
     public void skal_utlede_rett_utfall() {
-        final var vilkårsResultat = new VilkårsResultat(Set.of(new VilkårResultat(VilkårType.MEDLEMSKAP, UtfallType.OPPFYLT, null, null)));
+        final var vilkårsResultat = new VilkårsResultat(Set.of(new VilkårResultat(VilkårType.MEDLEMSKAPBOSTED, UtfallType.OPPFYLT, null, null)));
 
         assertThat(vilkårsResultat.getSamletUtfall()).isEqualTo(UtfallType.OPPFYLT);
     }
 
     @Test
     public void skal_utlede_rett_utfall_2() {
-        final var vilkårsResultat = new VilkårsResultat(Set.of(new VilkårResultat(VilkårType.MEDLEMSKAP, UtfallType.OPPFYLT, null, null),
+        final var vilkårsResultat = new VilkårsResultat(Set.of(new VilkårResultat(VilkårType.MEDLEMSKAPBOSTED, UtfallType.OPPFYLT, null, null),
                 new VilkårResultat(VilkårType.BARNEHAGE, UtfallType.OPPFYLT, null, null)));
 
         assertThat(vilkårsResultat.getSamletUtfall()).isEqualTo(UtfallType.OPPFYLT);
@@ -28,7 +28,7 @@ public class VilkårsResultatTest {
 
     @Test
     public void skal_utlede_rett_utfall_3() {
-        final var vilkårsResultat = new VilkårsResultat(Set.of(new VilkårResultat(VilkårType.MEDLEMSKAP, UtfallType.OPPFYLT, null, null),
+        final var vilkårsResultat = new VilkårsResultat(Set.of(new VilkårResultat(VilkårType.MEDLEMSKAPBOSTED, UtfallType.OPPFYLT, null, null),
                 new VilkårResultat(VilkårType.BARNEHAGE, UtfallType.MANUELL_BEHANDLING, null, null)));
 
         assertThat(vilkårsResultat.getSamletUtfall()).isEqualTo(UtfallType.MANUELL_BEHANDLING);
@@ -36,7 +36,7 @@ public class VilkårsResultatTest {
 
     @Test
     public void skal_utlede_rett_utfall_4() {
-        final var vilkårsResultat = new VilkårsResultat(Set.of(new VilkårResultat(VilkårType.MEDLEMSKAP, UtfallType.OPPFYLT, null, null),
+        final var vilkårsResultat = new VilkårsResultat(Set.of(new VilkårResultat(VilkårType.MEDLEMSKAPBOSTED, UtfallType.OPPFYLT, null, null),
                 new VilkårResultat(VilkårType.BARNEHAGE, UtfallType.IKKE_OPPFYLT, null, null)));
 
         assertThat(vilkårsResultat.getSamletUtfall()).isEqualTo(UtfallType.IKKE_OPPFYLT);
@@ -44,7 +44,7 @@ public class VilkårsResultatTest {
 
     @Test
     public void skal_utlede_rett_utfall_5() {
-        final var vilkårsResultat = new VilkårsResultat(Set.of(new VilkårResultat(VilkårType.MEDLEMSKAP, UtfallType.OPPFYLT, null, null),
+        final var vilkårsResultat = new VilkårsResultat(Set.of(new VilkårResultat(VilkårType.MEDLEMSKAPBOSTED, UtfallType.OPPFYLT, null, null),
                 new VilkårResultat(VilkårType.BARNEHAGE, UtfallType.IKKE_VURDERT, null, null)));
 
         assertThat(vilkårsResultat.getSamletUtfall()).isEqualTo(UtfallType.UAVKLART);

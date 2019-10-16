@@ -116,7 +116,7 @@ public class RegisterInnhentingService {
         final MedlemskapsInfo søkerMedlemskapsInfo = oppslagTjeneste.hentMedlemskapsUnntakFor(søkerAktørId);
 
         return new MedlFakta.Builder()
-            .medSøker(søkerMedlemskapsInfo.getPersonIdent() == null ? Optional.empty() : Optional.of(søkerMedlemskapsInfo))
+            .medSøker(erTom(søkerMedlemskapsInfo.getPersonIdent()) ? Optional.empty() : Optional.of(søkerMedlemskapsInfo))
             .medAnnenForelder(hentAnnenPartMedl(personopplysningGrunnlag))
             .build();
     }
@@ -126,7 +126,11 @@ public class RegisterInnhentingService {
             return Optional.empty();
         }
         MedlemskapsInfo annenForelder = oppslagTjeneste.hentMedlemskapsUnntakFor(personopplysningGrunnlag.getAnnenPart().getAktørId());
-        return annenForelder.getPersonIdent() == null ? Optional.empty() : Optional.of(annenForelder);
+        return erTom(annenForelder.getPersonIdent()) ? Optional.empty() : Optional.of(annenForelder);
+    }
+
+    private boolean erTom(String personIdent) {
+        return personIdent == null || personIdent.isEmpty();
     }
 
     private PersonMedHistorikk hentPersonMedHistorikk(AktørId aktørId) {
