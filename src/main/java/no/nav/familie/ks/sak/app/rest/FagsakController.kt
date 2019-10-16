@@ -14,19 +14,32 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
+import java.util.stream.Collectors
+
+
 
 @RestController
 @RequestMapping("/api")
 @ProtectedWithClaims( issuer = "azuread" )
+//@PreAuthorize("hasAnyRole('GROUP_xxx', 'GROUP_xxx)")
 class FagsakController (
     private val saksbehandling: Saksbehandling,
     private val behandlingRepository: BehandlingRepository,
     private val restFagsakService: RestFagsakService) {
 
     @GetMapping(path = ["/fagsak/{fagsakId}"])
+    //@Secured("ROLE_xxx")
     fun fagsak(@PathVariable fagsakId: Long, principal: Principal?): ResponseEntity<Ressurs> {
+        val authentication: Authentication = SecurityContextHolder.getContext ().getAuthentication()
+
+        secureLogger.info(authentication.authorities.toString())
+
         logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", fagsakId)
         SporingsLoggHelper.logSporing(FagsakController::class.java, fagsakId, principal?.name ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
 
@@ -81,5 +94,6 @@ class FagsakController (
 
     companion object {
         val logger: Logger = LoggerFactory.getLogger(BehandlingslagerService::class.java)
+        val secureLogger = LoggerFactory.getLogger("secureLogger")
     }
 }
