@@ -25,11 +25,11 @@ public class PersonRelasjon extends BaseEntitet {
     private AktørId tilAktørId;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "personIdent", column = @Column(name = "fra_person_ident", updatable = false, nullable = false)))
+    @AttributeOverrides(@AttributeOverride(name = "ident", column = @Column(name = "fra_person_ident", updatable = false, nullable = false)))
     private PersonIdent fraPersonIdent;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "personIdent", column = @Column(name = "til_person_ident", updatable = false, nullable = false)))
+    @AttributeOverrides(@AttributeOverride(name = "ident", column = @Column(name = "til_person_ident", updatable = false, nullable = false)))
     private PersonIdent tilPersonIdent;
 
     @Enumerated(EnumType.STRING)

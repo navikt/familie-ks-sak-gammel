@@ -29,7 +29,7 @@ public class PersonIdent implements Comparable<PersonIdent> {
     private static final int PERSONNR_LENGDE = 5;
 
     @JsonProperty("id")
-    @Column(name = "person_ident", updatable = false, insertable = false, length = 50)
+    @Column(name = "person_ident", updatable = false, length = 50)
     private String ident;
 
     public PersonIdent() {

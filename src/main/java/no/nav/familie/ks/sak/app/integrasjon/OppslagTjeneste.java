@@ -179,7 +179,6 @@ public class OppslagTjeneste {
             secureLogger.info("Personinfo for {}: {}", personIdent, Objects.requireNonNull(response.getBody()).getFamilierelasjoner());
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                secureLogger.info("Personident fra TPS: {}", response.getBody().getPersonIdent().getIdent());
                 return response.getBody();
             } else {
                 String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
