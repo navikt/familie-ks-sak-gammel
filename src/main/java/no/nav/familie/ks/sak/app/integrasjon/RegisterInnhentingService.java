@@ -116,19 +116,34 @@ public class RegisterInnhentingService {
     private void mapRelasjoner(Personinfo søker, Personinfo annenPart, Personinfo barn, PersonopplysningGrunnlag personopplysningGrunnlag) {
         barn.getFamilierelasjoner()
             .stream()
-            .filter(it -> it.getPersonIdent().equals(søker.getPersonIdent()) || (annenPart != null && it.getPersonIdent().equals(annenPart.getPersonIdent())))
-            .forEach(relasjon -> personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+            .filter(it -> it.getPersonIdent().equals(søker.getPersonIdent()))
+            .forEach(relasjon -> personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getAktørId(), søker.getAktørId(), barn.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+
+        barn.getFamilierelasjoner()
+            .stream()
+            .filter(it -> annenPart != null && it.getPersonIdent().equals(annenPart.getPersonIdent()))
+            .forEach(relasjon -> personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getAktørId(), annenPart.getAktørId(), barn.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
 
         søker.getFamilierelasjoner()
             .stream()
-            .filter(it -> it.getPersonIdent().equals(barn.getPersonIdent()) || (annenPart != null && it.getPersonIdent().equals(annenPart.getPersonIdent())))
-            .forEach(relasjon ->  personopplysningGrunnlag.getSøker().leggTilPersonrelasjon(new PersonRelasjon(søker.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+            .filter(it -> it.getPersonIdent().equals(barn.getPersonIdent()))
+            .forEach(relasjon ->  personopplysningGrunnlag.getSøker().leggTilPersonrelasjon(new PersonRelasjon(søker.getAktørId(), barn.getAktørId(), søker.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+
+        søker.getFamilierelasjoner()
+            .stream()
+            .filter(it -> annenPart != null && it.getPersonIdent().equals(annenPart.getPersonIdent()))
+            .forEach(relasjon ->  personopplysningGrunnlag.getSøker().leggTilPersonrelasjon(new PersonRelasjon(søker.getAktørId(), annenPart.getAktørId(), søker.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
 
         if (annenPart != null) {
             annenPart.getFamilierelasjoner()
                 .stream()
-                .filter(it -> it.getPersonIdent().equals(barn.getPersonIdent()) || it.getPersonIdent().equals(søker.getPersonIdent()))
-                .forEach(relasjon -> personopplysningGrunnlag.getAnnenPart().leggTilPersonrelasjon(new PersonRelasjon(annenPart.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+                .filter(it -> it.getPersonIdent().equals(barn.getPersonIdent()))
+                .forEach(relasjon -> personopplysningGrunnlag.getAnnenPart().leggTilPersonrelasjon(new PersonRelasjon(annenPart.getAktørId(), barn.getAktørId(), annenPart.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+
+            annenPart.getFamilierelasjoner()
+                .stream()
+                .filter(it -> it.getPersonIdent().equals(søker.getPersonIdent()))
+                .forEach(relasjon -> personopplysningGrunnlag.getAnnenPart().leggTilPersonrelasjon(new PersonRelasjon(annenPart.getAktørId(), søker.getAktørId(), annenPart.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
         }
     }
 

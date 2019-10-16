@@ -53,7 +53,14 @@ public class PersonRelasjon extends BaseEntitet {
         this.harSammeBosted = relasjon.getHarSammeBosted();
     }
 
-    public PersonRelasjon(PersonIdent fraPersonIdent, PersonIdent tilPersonIdent, RelasjonsRolleType relasjonsrolle, Boolean harSammeBosted) {
+    public PersonRelasjon(AktørId fraAktørId,
+                          AktørId tilAktørId,
+                          PersonIdent fraPersonIdent,
+                          PersonIdent tilPersonIdent,
+                          RelasjonsRolleType relasjonsrolle,
+                          Boolean harSammeBosted) {
+        this.fraAktørId = fraAktørId;
+        this.tilAktørId = tilAktørId;
         this.fraPersonIdent = fraPersonIdent;
         this.tilPersonIdent = tilPersonIdent;
         this.relasjonsrolle = relasjonsrolle;
