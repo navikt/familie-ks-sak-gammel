@@ -3,6 +3,7 @@ package no.nav.familie.ks.sak.util;
 public enum SporingsloggId {
 
     SAKSNUMMER("saksnummer"),
+    FAGSAK_ID("fagsakId"),
     ANSVALIG_SAKSBEHANDLER("ansvarlig_saksbehandler"),
     FNR("fnr"),
     AKTOR_ID("aktorId");

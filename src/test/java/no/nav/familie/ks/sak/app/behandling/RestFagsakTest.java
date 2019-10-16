@@ -40,6 +40,8 @@ import static org.mockito.Mockito.when;
 public class RestFagsakTest {
 
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
+    private static final String SAKSNUMMER = "TEST123";
+
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
 
@@ -83,23 +85,23 @@ public class RestFagsakTest {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
 
         final var søknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
-        Vedtak vedtak = saksbehandling.behandle(søknad);
+        Vedtak vedtak = saksbehandling.behandle(søknad, SAKSNUMMER);
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
 
-        assertThat(behandling).isPresent();
+        assert behandling.isPresent();
 
-        final List<RestFagsak> restFagsaker = restFagsakService.hentRestFagsaker(behandling.get().getFagsak().getSaksnummer());
-        assertThat(restFagsaker).hasSize(1);
-        assertThat(restFagsaker.get(0).getId()).isEqualTo(behandling.get().getFagsak().getId());
+        final RestFagsak restFagsak = restFagsakService.hentRestFagsak(behandling.get().getFagsak().getId());
+        assertThat(restFagsak).isNotNull();
+        assertThat(restFagsak.getId()).isEqualTo(behandling.get().getFagsak().getId());
 
-        final List<RestBehandling> restBehandlinger = restFagsaker.get(0).getBehandlinger();
+        final List<RestBehandling> restBehandlinger = restFagsak.getBehandlinger();
         assertThat(restBehandlinger).hasSize(1);
     }
 
     @Test
     public void hentFagsaker() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass());
+        saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
 
         assertThat(restFagsakService.hentFagsaker()).hasSize(1);
     }
@@ -107,15 +109,16 @@ public class RestFagsakTest {
     @Test
     public void rest_fagsak_har_tps_informasjon() {
         when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass());
+        Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
 
         assert behandling.isPresent();
         behandling.ifPresent(behandling1 -> {
-            final List<RestFagsak> restFagsak = restFagsakService.hentRestFagsaker(behandling.get().getFagsak().getSaksnummer());
-            assertThat(restFagsak).hasSize(1);
+            final RestFagsak restFagsak = restFagsakService.hentRestFagsak(behandling.get().getFagsak().getId());
+            assertThat(restFagsak).isNotNull();
 
-            final var restPersoner = restFagsak.get(0).getBehandlinger().iterator().next().getPersonopplysninger();
+            final var restPersoner = restFagsak.getBehandlinger().iterator().next().getPersonopplysninger();
+            assertThat(restPersoner.getAnnenPart()).isNotNull();
 
             assertThat(restPersoner).isNotNull();
             assertThat(restPersoner.getSøker().getPersonIdent()).isEqualTo(SøknadTestdata.norskFamilieUtenBarnehageplass().getSøkerFødselsnummer());
