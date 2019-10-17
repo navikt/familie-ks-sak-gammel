@@ -14,29 +14,42 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
+import java.util.stream.Collectors
+
+
 
 @RestController
 @RequestMapping("/api")
 @ProtectedWithClaims( issuer = "azuread" )
+//@PreAuthorize("hasAnyRole('GROUP_xxx', 'GROUP_xxx)")
 class FagsakController (
-    private val saksbehandling: Saksbehandling,
-    private val behandlingRepository: BehandlingRepository,
-    private val restFagsakService: RestFagsakService) {
+        private val saksbehandling: Saksbehandling,
+        private val behandlingRepository: BehandlingRepository,
+        private val restFagsakService: RestFagsakService) {
 
     @GetMapping(path = ["/fagsak/{fagsakId}"])
+    //@Secured("ROLE_xxx")
     fun fagsak(@PathVariable fagsakId: Long, principal: Principal?): ResponseEntity<Ressurs> {
+        val authentication: Authentication = SecurityContextHolder.getContext ().getAuthentication()
+
+        secureLogger.info(authentication.authorities.toString())
+
         logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", fagsakId)
         SporingsLoggHelper.logSporing(FagsakController::class.java, fagsakId, principal?.name ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
 
         val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(fagsakId) }
                 .fold(
-                    onSuccess = { when(it) {
-                        null -> Ressurs.failure("Fant ikke fagsak med fagsakId: $fagsakId")
-                        else -> Ressurs.success( data = it )
-                    } },
-                    onFailure = { e -> Ressurs.failure( "Henting av fagsak med fagsakId $fagsakId feilet: ${e.message}", e) }
+                        onSuccess = { when(it) {
+                            null -> Ressurs.failure("Fant ikke fagsak med fagsakId: $fagsakId")
+                            else -> Ressurs.success( data = it )
+                        } },
+                        onFailure = { e -> Ressurs.failure( "Henting av fagsak med fagsakId $fagsakId feilet: ${e.message}", e) }
                 )
 
         return ResponseEntity.ok(ressurs)
@@ -47,10 +60,10 @@ class FagsakController (
         logger.info("{} henter fagsaker", principal?.name ?: "Ukjent")
 
         val ressurs: Ressurs = Result.runCatching { restFagsakService.hentFagsaker() }
-            .fold(
-                onSuccess = { Ressurs.success( data = it) },
-                onFailure = { e -> Ressurs.failure("Henting av fagsaker feilet.", e) }
-            )
+                .fold(
+                        onSuccess = { Ressurs.success( data = it) },
+                        onFailure = { e -> Ressurs.failure("Henting av fagsaker feilet.", e) }
+                )
 
         return ResponseEntity.ok(ressurs)
     }
@@ -63,17 +76,17 @@ class FagsakController (
             val vedtak: Vedtak = saksbehandling.behandle(søknad, "GSAK")
             behandlingRepository.getOne(vedtak.behandlingsId)
         }.fold(
-            onSuccess = { it },
-            onFailure = { null }
+                onSuccess = { it },
+                onFailure = { null }
         )
 
         val ressurs: Ressurs = when(behandling) {
             null -> Ressurs.failure("Behandling feilet")
             else -> Result.runCatching { restFagsakService.hentRessursFagsak(behandling.fagsak.id) }
-                .fold(
-                    onSuccess = { Ressurs.success( data = it) },
-                    onFailure = { e -> Ressurs.failure("Henting av fagsak feilet.", e) }
-                )
+                    .fold(
+                            onSuccess = { Ressurs.success( data = it) },
+                            onFailure = { e -> Ressurs.failure("Henting av fagsak feilet.", e) }
+                    )
         }
 
         return ResponseEntity.ok(ressurs)
@@ -81,5 +94,6 @@ class FagsakController (
 
     companion object {
         val logger: Logger = LoggerFactory.getLogger(BehandlingslagerService::class.java)
+        val secureLogger = LoggerFactory.getLogger("secureLogger")
     }
 }
