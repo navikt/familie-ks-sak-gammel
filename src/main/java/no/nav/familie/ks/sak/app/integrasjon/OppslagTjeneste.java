@@ -9,7 +9,6 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
-import no.nav.familie.ks.sak.util.LocalSts;
 import no.nav.familie.log.mdc.MDCConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +23,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -68,7 +68,7 @@ public class OppslagTjeneste {
         headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
 
         HttpEntity httpEntity = new HttpEntity(headers);
-
+        
         return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
@@ -159,16 +159,18 @@ public class OppslagTjeneste {
             var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
             secureLogger.info("Løpende kontantstøtte for {}: {}", personident, response.getBody());
 
-            if (response.getStatusCode().is2xxSuccessful()) {
-                var aktivKontantstøtteInfo = response.getBody();
-                if (aktivKontantstøtteInfo == null || aktivKontantstøtteInfo.getHarAktivKontantstotte() == null) {
-                    throw new OppslagException("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
-                } else {
-                    return aktivKontantstøtteInfo;
-                }
+            var aktivKontantstøtteInfo = response.getBody();
+            if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
+                return aktivKontantstøtteInfo;
             } else {
-                throw new OppslagException("Kall mot oppslag feilet ved uthenting av info om løpende kontantstøtte");
+                throw new OppslagException("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
             }
+        } catch (HttpClientErrorException.NotFound e) {
+            // TODO: Samkjør testmiljøene hos oss og i Infotrygd.
+            // Så lenge vi har overvekt av testsubjekter i preprod som ikke finnes i Infotrygds preprod, vil dette være nødvendig
+            // for å unngå at vi kræsjer i test.
+            logger.error("Personident ikke funnet i infotrygd");
+            return new AktivKontantstøtteInfo(false);
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
         }

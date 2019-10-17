@@ -6,6 +6,10 @@ public class AktivKontantstøtteInfo {
     public AktivKontantstøtteInfo() {
     }
 
+    public AktivKontantstøtteInfo(Boolean harAktivKontantstotte) {
+        this.harAktivKontantstotte = harAktivKontantstotte;
+    }
+
     public Boolean getHarAktivKontantstotte() {
         return harAktivKontantstotte;
     }
