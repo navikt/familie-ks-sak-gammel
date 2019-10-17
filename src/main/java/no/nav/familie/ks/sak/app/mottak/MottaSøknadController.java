@@ -18,8 +18,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/mottak")
@@ -43,8 +45,10 @@ public class MottaSøknadController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
-    public ResponseEntity mottaDokument(@RequestParam String søknadJson, @RequestParam String saksnummer) {
-        Søknad søknad = SøknadKt.toSøknad(søknadJson);
+    public ResponseEntity mottaDokument(@RequestBody Map<String, String> dto) {
+        Søknad søknad = SøknadKt.toSøknad(dto.get("søknadJson"));
+        String saksnummer = dto.get("saksnummer");
+
         try {
             Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer);
             final var vilkårvurdering = vedtak.getVilkårvurdering();
