@@ -245,11 +245,11 @@ public class OppslagTjeneste {
     }
 
     private Oppgave opprettRequest(String saksnummer, Søknad søknad, String beskrivelse) {
-        return new Oppgave(søknad.getSøkerFødselsnummer(),  saksnummer, null, "4820", beskrivelse,0);
+        return new Oppgave(søknad.getSøkerFødselsnummer(),  saksnummer, null, "4820", beskrivelse,2);
     }
 
     private Oppgave oppdaterRequest(String saksnummer, Søknad søknad, String beskrivelse) {
-        return new Oppgave(søknad.getSøkerFødselsnummer(), saksnummer, "", "4820", beskrivelse, 0);
+        return new Oppgave(søknad.getSøkerFødselsnummer(), saksnummer, "", "4820", beskrivelse, 2);
     }
 
     private <T> T sendOppgave(Oppgave request, URI uri, Class<T> responsType) {
