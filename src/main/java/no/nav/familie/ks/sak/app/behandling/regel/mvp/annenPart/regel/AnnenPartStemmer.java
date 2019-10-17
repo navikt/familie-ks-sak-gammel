@@ -9,7 +9,7 @@ import no.nav.fpsak.nare.specification.LeafSpecification;
 @RuleDocumentation(AnnenPartStemmer.ID)
 public class AnnenPartStemmer extends LeafSpecification<Faktagrunnlag> {
 
-    public static final String ID = "KS-BARN-1";
+    public static final String ID = "KS-ANNENPART-2";
 
     public AnnenPartStemmer() {
         super(ID);
