@@ -20,9 +20,11 @@ public class AnnenPartStemmer extends LeafSpecification<Faktagrunnlag> {
         PersonMedHistorikk annenPart = grunnlag.getTpsFakta().getAnnenForelder();
         String oppgittAnnenPartPersonIdent = grunnlag.getSøknadGrunnlag().getSøknad().getOppgittAnnenPartFødselsnummer();
 
-        if (annenPart == null && oppgittAnnenPartPersonIdent != null) {
+        if (annenPart == null && oppgittAnnenPartPersonIdent.equals("")) {
+            return ja();
+        } else if (annenPart == null && !oppgittAnnenPartPersonIdent.equals("")) {
             return nei();
-        } else if (annenPart != null && oppgittAnnenPartPersonIdent == null) {
+        } else if (annenPart != null && oppgittAnnenPartPersonIdent.equals("")) {
             return nei();
         }
 
