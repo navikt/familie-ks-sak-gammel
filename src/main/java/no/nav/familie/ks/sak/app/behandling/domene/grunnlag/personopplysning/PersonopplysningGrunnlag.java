@@ -2,8 +2,6 @@ package no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning;
 
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.util.*;

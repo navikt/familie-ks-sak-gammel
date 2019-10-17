@@ -34,23 +34,23 @@ import java.util.*;
 public final class FaktagrunnlagTestBuilder {
     private final static Long behandlingId = Long.valueOf("111111111");
 
-    public final static AktørId morAktørId = new AktørId(SøknadTestdata.morAktørId);
-    public final static PersonIdent morPersonident = new PersonIdent(SøknadTestdata.morPersonident);
+    private final static AktørId morAktørId = new AktørId(SøknadTestdata.morAktørId);
+    private final static PersonIdent morPersonident = new PersonIdent(SøknadTestdata.morPersonident);
 
-    public final static AktørId farAktørId = new AktørId(SøknadTestdata.farAktørId);
-    public final static PersonIdent farPersonident = new PersonIdent(SøknadTestdata.farPersonident);
+    private final static AktørId farAktørId = new AktørId(SøknadTestdata.farAktørId);
+    private final static PersonIdent farPersonident = new PersonIdent(SøknadTestdata.farPersonident);
 
-    public final static AktørId barnAktørId = new AktørId(SøknadTestdata.barnAktørId);
-    public final static PersonIdent barnPersonident = new PersonIdent(SøknadTestdata.barnPersonident);
+    private final static AktørId barnAktørId = new AktørId(SøknadTestdata.barnAktørId);
+    private final static PersonIdent barnPersonident = new PersonIdent(SøknadTestdata.barnPersonident);
 
-    public final static AktørId utenlandskBarnAktørId = new AktørId(SøknadTestdata.utenlandskBarnAktørId);
-    public final static PersonIdent utenlandskBarnPersonident = new PersonIdent(SøknadTestdata.utenlandskBarnPersonident);
+    private final static AktørId utenlandskBarnAktørId = new AktørId(SøknadTestdata.utenlandskBarnAktørId);
+    private final static PersonIdent utenlandskBarnPersonident = new PersonIdent(SøknadTestdata.utenlandskBarnPersonident);
 
-    public static AktørId utenlandskMorAktørId = new AktørId(SøknadTestdata.utenlandskMorAktørId);
-    public static PersonIdent utenlandskMorPersonident = new PersonIdent(SøknadTestdata.utenlandskMorPersonident);
+    private static AktørId utenlandskMorAktørId = new AktørId(SøknadTestdata.utenlandskMorAktørId);
+    private static PersonIdent utenlandskMorPersonident = new PersonIdent(SøknadTestdata.utenlandskMorPersonident);
 
-    public static AktørId utenlandskFarAktørId = new AktørId(SøknadTestdata.utenlandskFarAktørId);
-    public static PersonIdent utenlandskFarPersonident = new PersonIdent(SøknadTestdata.utenlandskFarPersonident);
+    private static AktørId utenlandskFarAktørId = new AktørId(SøknadTestdata.utenlandskFarAktørId);
+    private static PersonIdent utenlandskFarPersonident = new PersonIdent(SøknadTestdata.utenlandskFarPersonident);
 
     private static final String STATSBORGERSKAP_GYLDIG = "NOR";
 
@@ -94,22 +94,22 @@ public final class FaktagrunnlagTestBuilder {
 
     // Familierelasjoner
     private static Familierelasjon norskForelderRelasjonMor = new Familierelasjon(
-        personinfoMorNorsk.getAktørId(),
+        personinfoMorNorsk.getPersonIdent(),
         RelasjonsRolleType.MORA,
         null,
         true);
     private static Familierelasjon norskForelderRelasjonFar = new Familierelasjon(
-        personinfoFarNorsk.getAktørId(),
+        personinfoFarNorsk.getPersonIdent(),
         RelasjonsRolleType.FARA,
         null,
         true);
     private static Familierelasjon utenlandskMorRelasjonMedAnnetBosted = new Familierelasjon(
-        personinfoSvenskMor.getAktørId(),
+        personinfoSvenskMor.getPersonIdent(),
         RelasjonsRolleType.MORA,
         null,
         false);
     private static Familierelasjon utenlandskFarRelasjonMedAnnetBosted = new Familierelasjon(
-        personinfoSvenskFar.getAktørId(),
+        personinfoSvenskFar.getPersonIdent(),
         RelasjonsRolleType.FARA,
         null,
         false);
@@ -161,57 +161,57 @@ public final class FaktagrunnlagTestBuilder {
 
     // Personhistorikk
     private static PersonhistorikkInfo personhistorikkMorNorgeSeksÅr = new PersonhistorikkInfo.Builder()
-        .medAktørId(morAktørId.getId())
+        .medPersonIdent(morPersonident)
         .leggTil(norskAdresseSeksÅr)
         .leggTil(norskStatsborgerskapSeksÅr)
         .build();
     private static PersonhistorikkInfo personhistorikkFarNorgeSeksÅr = new PersonhistorikkInfo.Builder()
-        .medAktørId(farAktørId.getId())
+        .medPersonIdent(farPersonident)
         .leggTil(norskAdresseSeksÅr)
         .leggTil(norskStatsborgerskapSeksÅr)
         .build();
     private static PersonhistorikkInfo personhistorikkBarnNorgeSeksÅr = new PersonhistorikkInfo.Builder()
-        .medAktørId(barnAktørId.getId())
+        .medPersonIdent(barnPersonident)
         .leggTil(norskAdresseSeksÅr)
         .leggTil(norskStatsborgerskapSeksÅr)
         .build();
     private static PersonhistorikkInfo personhistorikkSvenskMorNorgeSeksÅr = new PersonhistorikkInfo.Builder()
-        .medAktørId(utenlandskMorAktørId.getId())
+        .medPersonIdent(utenlandskMorPersonident)
         .leggTil(norskAdresseSeksÅr)
         .leggTil(svenskStatsborger)
         .build();
     private static PersonhistorikkInfo personhistorikkSvenskFarNorgeSeksÅr = new PersonhistorikkInfo.Builder()
-        .medAktørId(utenlandskFarAktørId.getId())
+        .medPersonIdent(utenlandskFarPersonident)
         .leggTil(norskAdresseSeksÅr)
         .leggTil(svenskStatsborger)
         .build();
     private static PersonhistorikkInfo personhistorikkSvenskMor = new PersonhistorikkInfo.Builder()
-        .medAktørId(utenlandskMorAktørId.getId())
+        .medPersonIdent(utenlandskMorPersonident)
         .leggTil(svenskdresseSeksÅr)
         .leggTil(svenskStatsborger)
         .build();
     private static PersonhistorikkInfo personhistorikkSvenskFar = new PersonhistorikkInfo.Builder()
-        .medAktørId(utenlandskFarAktørId.getId())
+        .medPersonIdent(utenlandskFarPersonident)
         .leggTil(svenskdresseSeksÅr)
         .leggTil(svenskStatsborger)
         .build();
     private static PersonhistorikkInfo personhistorikkNorskMorUtlandskAdresseNorskStatsborger = new PersonhistorikkInfo.Builder()
-        .medAktørId(morAktørId.getId())
+        .medPersonIdent(morPersonident)
         .leggTil(svenskdresseSeksÅr)
         .leggTil(norskStatsborgerskapSeksÅr)
         .build();
     private static PersonhistorikkInfo personhistorikkNorskFarUtlandskAdresseNorskStatsborger = new PersonhistorikkInfo.Builder()
-        .medAktørId(farAktørId.getId())
+        .medPersonIdent(farPersonident)
         .leggTil(svenskdresseSeksÅr)
         .leggTil(norskStatsborgerskapSeksÅr)
         .build();
     private static PersonhistorikkInfo personhistorikkNorskFarNorgeEtÅr = new PersonhistorikkInfo.Builder()
-        .medAktørId(farAktørId.getId())
+        .medPersonIdent(farPersonident)
         .leggTil(norskAdresseEtÅr)
         .leggTil(norskStatsborgerskapEtÅr)
         .build();
     private static PersonhistorikkInfo personhistorikkNorskMorNorgeEtÅr = new PersonhistorikkInfo.Builder()
-        .medAktørId(morAktørId.getId())
+        .medPersonIdent(morPersonident)
         .leggTil(norskAdresseEtÅr)
         .leggTil(norskStatsborgerskapSeksÅr)
         .build();
@@ -241,8 +241,7 @@ public final class FaktagrunnlagTestBuilder {
         .medKjønn("MANN")
         .medFamilierelasjon(new HashSet<>(List.of(norskForelderRelasjonMor, norskForelderRelasjonFar)))
         .build()).medPersonhistorikk(new PersonhistorikkInfo.Builder()
-        .medAktørId(
-            barnAktørId.getId())
+        .medPersonIdent(barnPersonident)
         .leggTil(AdressePeriode.builder()
             .medAdresseType(AdresseType.BOSTEDSADRESSE)
             .medAdresselinje1("Svingen")
@@ -266,8 +265,7 @@ public final class FaktagrunnlagTestBuilder {
         .medKjønn("MANN")
         .medFamilierelasjon(new HashSet<>(List.of(norskForelderRelasjonMor)))
         .build()).medPersonhistorikk(new PersonhistorikkInfo.Builder()
-        .medAktørId(
-            barnAktørId.getId())
+        .medPersonIdent(barnPersonident)
         .leggTil(AdressePeriode.builder()
             .medAdresseType(AdresseType.BOSTEDSADRESSE)
             .medAdresselinje1("Svingen")
@@ -567,11 +565,11 @@ public final class FaktagrunnlagTestBuilder {
                     .medPersonIdent(morPersonident)
                     .medStatsborgerskap(Landkode.NORGE)
                     .medFamilierelasjon(Set.of(
-                        new Familierelasjon(barnAktørId, RelasjonsRolleType.BARN, barnFødselsdato, true),
-                        new Familierelasjon(farAktørId, RelasjonsRolleType.EKTE, farFødselsdato, true)))
+                        new Familierelasjon(barnPersonident, RelasjonsRolleType.BARN, barnFødselsdato, true),
+                        new Familierelasjon(farPersonident, RelasjonsRolleType.EKTE, farFødselsdato, true)))
                     .build())
                 .medPersonhistorikk(new PersonhistorikkInfo.Builder()
-                    .medAktørId(morAktørId.getId())
+                    .medPersonIdent(morPersonident)
                     .leggTil(AdressePeriode.builder()
                         .medAdresseType(AdresseType.BOSTEDSADRESSE)
                         .medAdresselinje1("Svingen")
@@ -592,11 +590,11 @@ public final class FaktagrunnlagTestBuilder {
                     .medKjønn("MANN")
                     .medStatsborgerskap(Landkode.NORGE)
                     .medFamilierelasjon(Set.of(
-                        new Familierelasjon(barnAktørId, RelasjonsRolleType.BARN, barnFødselsdato, true),
-                        new Familierelasjon(morAktørId, RelasjonsRolleType.EKTE, morFødselsdato, true)))
+                        new Familierelasjon(barnPersonident, RelasjonsRolleType.BARN, barnFødselsdato, true),
+                        new Familierelasjon(morPersonident, RelasjonsRolleType.EKTE, morFødselsdato, true)))
                     .build())
                 .medPersonhistorikk(new PersonhistorikkInfo.Builder()
-                    .medAktørId(farAktørId.getId())
+                    .medPersonIdent(farPersonident)
                     .leggTil(AdressePeriode.builder()
                         .medAdresseType(AdresseType.BOSTEDSADRESSE)
                         .medAdresselinje1("Svingen")
@@ -617,11 +615,11 @@ public final class FaktagrunnlagTestBuilder {
                     .medKjønn("MANN")
                     .medStatsborgerskap(Landkode.NORGE)
                     .medFamilierelasjon(Set.of(
-                        new Familierelasjon(farAktørId, RelasjonsRolleType.FARA, farFødselsdato, true),
-                        new Familierelasjon(morAktørId, RelasjonsRolleType.MORA, morFødselsdato, true)))
+                        new Familierelasjon(farPersonident, RelasjonsRolleType.FARA, farFødselsdato, true),
+                        new Familierelasjon(morPersonident, RelasjonsRolleType.MORA, morFødselsdato, true)))
                     .build())
                 .medPersonhistorikk(new PersonhistorikkInfo.Builder()
-                    .medAktørId(barnAktørId.getId())
+                    .medPersonIdent(barnPersonident)
                     .leggTil(AdressePeriode.builder()
                         .medAdresseType(AdresseType.BOSTEDSADRESSE)
                         .medAdresselinje1("Svingen")
