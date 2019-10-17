@@ -9,8 +9,10 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Landkode;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.DatoIntervallEntitet;
+import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
@@ -102,6 +104,33 @@ public class RegisterInnhentingService {
             .medBarn(List.of(barnPersonMedHistorikk))
             .medAnnenForelder(annenPartPersonMedHistorikk)
             .build();
+    }
+
+    public MedlFakta hentMedlemskapsopplysninger(Behandling behandling) {
+        Optional<PersonopplysningGrunnlag> pers = personopplysningService.hentHvisEksisterer(behandling);
+        if (!pers.isPresent()) {
+            throw new IllegalStateException("Vi må ha personopplysninger for å kunne hente inn medlInfo.");
+        }
+        PersonopplysningGrunnlag personopplysningGrunnlag = pers.get();
+        final var søkerAktørId = personopplysningGrunnlag.getSøker().getAktørId();
+        final MedlemskapsInfo søkerMedlemskapsInfo = oppslagTjeneste.hentMedlemskapsUnntakFor(søkerAktørId);
+
+        return new MedlFakta.Builder()
+            .medSøker(erTom(søkerMedlemskapsInfo.getPersonIdent()) ? Optional.empty() : Optional.of(søkerMedlemskapsInfo))
+            .medAnnenForelder(hentAnnenPartMedl(personopplysningGrunnlag))
+            .build();
+    }
+
+    private Optional<MedlemskapsInfo> hentAnnenPartMedl(PersonopplysningGrunnlag personopplysningGrunnlag) {
+        if (personopplysningGrunnlag.getAnnenPart() == null) {
+            return Optional.empty();
+        }
+        MedlemskapsInfo annenForelder = oppslagTjeneste.hentMedlemskapsUnntakFor(personopplysningGrunnlag.getAnnenPart().getAktørId());
+        return erTom(annenForelder.getPersonIdent()) ? Optional.empty() : Optional.of(annenForelder);
+    }
+
+    private boolean erTom(String personIdent) {
+        return personIdent == null || personIdent.isEmpty();
     }
 
     private PersonMedHistorikk hentPersonMedHistorikk(AktørId aktørId) {

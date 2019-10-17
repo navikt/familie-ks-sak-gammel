@@ -82,11 +82,17 @@ public class RestFagsakTest {
             .thenReturn(tpsFakta.getAnnenForelder().getPersonhistorikkInfo());
         when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getBarn().getPersoninfo().getAktørId()))
             .thenReturn(tpsFakta.getBarn().getPersonhistorikkInfo());
+
+        when(oppslagTjeneste.hentMedlemskapsUnntakFor(tpsFakta.getForelder().getPersoninfo().getAktørId()))
+            .thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
+        when(oppslagTjeneste.hentMedlemskapsUnntakFor(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId()))
+            .thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
     }
+
 
     @Test
     public void hentRestFagsak() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
 
         final var søknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
         Vedtak vedtak = saksbehandling.behandle(søknad, SAKSNUMMER);
@@ -104,7 +110,7 @@ public class RestFagsakTest {
 
     @Test
     public void hentFagsaker() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
 
         assertThat(restFagsakService.hentFagsaker()).hasSize(1);
@@ -112,7 +118,7 @@ public class RestFagsakTest {
 
     @Test
     public void rest_fagsak_har_tps_informasjon() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
 
