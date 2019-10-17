@@ -5,6 +5,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barneh
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
+import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.InfotrygdFakta;
 
@@ -22,7 +23,7 @@ public class FastsettingService {
         this.barnehageBarnGrunnlagRepository = barnehageBarnGrunnlagRepository;
     }
 
-    public Faktagrunnlag fastsettFakta(Behandling behandling, TpsFakta tpsFakta, InfotrygdFakta infotrygdFakta) {
+    public Faktagrunnlag fastsettFakta(Behandling behandling, TpsFakta tpsFakta, MedlFakta medlFakta, InfotrygdFakta infotrygdFakta) {
         SøknadGrunnlag søknadGrunnlag = søknadGrunnlagRepository.finnGrunnlag(behandling.getId()).orElseThrow();
         BarnehageBarnGrunnlag barnehageBarnGrunnlag = barnehageBarnGrunnlagRepository.finnGrunnlag(behandling.getId()).orElseThrow();
 
@@ -30,6 +31,7 @@ public class FastsettingService {
             .medBarnehageBarnGrunnlag(barnehageBarnGrunnlag)
             .medSøknadGrunnlag(søknadGrunnlag)
             .medTpsFakta(tpsFakta)
+            .medMedlFakta(medlFakta)
             .medInfotrygdFakta(infotrygdFakta)
             .build();
     }

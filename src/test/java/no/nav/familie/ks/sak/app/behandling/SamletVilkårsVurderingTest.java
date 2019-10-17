@@ -6,7 +6,7 @@ import no.nav.familie.ks.sak.app.behandling.vilkår.InngangsvilkårRegel;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Regelresultat;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barnehage.BarnehageVilkår;
-import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.MedlemskapsVilkår;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskapBosted.MedlemskapBostedVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted.BostedVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.mvp.utland.UtlandVilkår;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SamletVilkårsVurderingTest {
 
-    private final List<InngangsvilkårRegel> inngangsvilkår = List.of(new BarnehageVilkår(), new MedlemskapsVilkår(), new BostedVilkår(), new BarneVilkår(), new UtlandVilkår());
+    private final List<InngangsvilkårRegel> inngangsvilkår = List.of(new BarnehageVilkår(), new MedlemskapBostedVilkår(), new BostedVilkår(), new BarneVilkår(), new UtlandVilkår());
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(inngangsvilkår);
 
     @Test

@@ -2,6 +2,7 @@ package no.nav.familie.ks.sak.app.behandling.fastsetting;
 
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
+import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.InfotrygdFakta;
 
@@ -13,6 +14,7 @@ public class Faktagrunnlag {
     private BarnehageBarnGrunnlag barnehageBarnGrunnlag;
     private SøknadGrunnlag søknadGrunnlag;
     private TpsFakta tpsFakta;
+    private MedlFakta medlFakta;
     private InfotrygdFakta infotrygdFakta;
 
     public Faktagrunnlag() {
@@ -35,10 +37,14 @@ public class Faktagrunnlag {
         return tpsFakta;
     }
 
+    public MedlFakta getMedlFakta() {
+        return medlFakta;
+    }
+    
     public InfotrygdFakta getInfotrygdFakta() {
         return infotrygdFakta;
     }
-
+    
     public static final class Builder {
 
         private Faktagrunnlag kladd;
@@ -62,14 +68,20 @@ public class Faktagrunnlag {
             return this;
         }
 
+        public Faktagrunnlag.Builder medMedlFakta(MedlFakta medlFakta) {
+            kladd.medlFakta = medlFakta;
+            return this;
+        }
+        
         public Faktagrunnlag.Builder medInfotrygdFakta(InfotrygdFakta infotrygdFakta) {
             kladd.infotrygdFakta = infotrygdFakta;
             return this;
         }
-
+        
         public Faktagrunnlag build() {
             Objects.requireNonNull(kladd.søknadGrunnlag, "Må ha opplysninger fra fastsetting");
             Objects.requireNonNull(kladd.tpsFakta, "Må ha opplysninger fra TPS");
+            Objects.requireNonNull(kladd.medlFakta, "Må ha opplysninger fra MEDL");
             return kladd;
         }
     }

@@ -9,9 +9,12 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Landkode;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.DatoIntervallEntitet;
+import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.InfotrygdFakta;
+import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
@@ -43,40 +46,38 @@ public class RegisterInnhentingService {
     }
 
     public TpsFakta innhentPersonopplysninger(Behandling behandling, Søknad søknad) {
-        final var søkerAktørId = behandling.getFagsak().getAktørId();
         final var oppgittAnnenPartPersonIdent = søknad.getOppgittAnnenPartFødselsnummer();
         // TODO skriv om når vi støtter flerlinger
-        final var barnAktørId = oppslagTjeneste.hentAktørId(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer());
+        final var barnFødselsnummer = søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer();
         final var personopplysningGrunnlag = new PersonopplysningGrunnlag(behandling.getId());
 
-        final PersonMedHistorikk søkerPersonMedHistorikk = hentPersonMedHistorikk(søkerAktørId);
-        final PersonMedHistorikk barnPersonMedHistorikk = hentPersonMedHistorikk(barnAktørId);
+        final PersonMedHistorikk søkerPersonMedHistorikk = hentPersonMedHistorikk(søknad.getSøkerFødselsnummer());
+        final PersonMedHistorikk barnPersonMedHistorikk = hentPersonMedHistorikk(barnFødselsnummer);
 
-        mapPersonopplysninger(søkerAktørId, søkerPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag, PersonType.SØKER);
+        mapPersonopplysninger(søkerPersonMedHistorikk, personopplysningGrunnlag, PersonType.SØKER);
         //TODO legg til støtte for flere barn!
-        mapPersonopplysninger(barnAktørId, barnPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag, PersonType.BARN);
+        mapPersonopplysninger(barnPersonMedHistorikk, personopplysningGrunnlag, PersonType.BARN);
 
         PersonMedHistorikk annenPartPersonMedHistorikk = null;
         final Optional<Familierelasjon> annenPartFamilierelasjon = barnPersonMedHistorikk.getPersoninfo().getFamilierelasjoner().stream().filter(
             familierelasjon ->
                 (familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
-                    && !familierelasjon.getAktørId().equals(søkerAktørId))
+                    && !familierelasjon.getPersonIdent().getIdent().equals(søknad.getSøkerFødselsnummer()))
             .findFirst();
 
-        AktørId annenPartAktørId;
+        PersonIdent annenPartPersonIdent;
         if (annenPartFamilierelasjon.isPresent()) {
-            annenPartAktørId = annenPartFamilierelasjon.get().getAktørId();
-            annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartAktørId);
-            String annenPartPersonIdent = oppslagTjeneste.hentPersonIdent(annenPartAktørId.getId()).getIdent();
+            annenPartPersonIdent = annenPartFamilierelasjon.get().getPersonIdent();
+            annenPartPersonMedHistorikk = hentPersonMedHistorikk(annenPartPersonIdent.getIdent());
 
-            mapPersonopplysninger(annenPartAktørId, annenPartPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag, PersonType.ANNENPART);
+            mapPersonopplysninger(annenPartPersonMedHistorikk, personopplysningGrunnlag, PersonType.ANNENPART);
 
             //TODO legg til støtte for flere barn
             mapRelasjoner(søkerPersonMedHistorikk.getPersoninfo(), annenPartPersonMedHistorikk.getPersoninfo(), barnPersonMedHistorikk.getPersoninfo(), personopplysningGrunnlag);
 
             if (oppgittAnnenPartPersonIdent != null && !oppgittAnnenPartPersonIdent.isEmpty()) {
-                if (annenPartPersonIdent.regionMatches(0, oppgittAnnenPartPersonIdent, 0, 6)) {
-                    if (!annenPartPersonIdent.equals(oppgittAnnenPartPersonIdent)) {
+                if (annenPartPersonIdent.getIdent().regionMatches(0, oppgittAnnenPartPersonIdent, 0, 6)) {
+                    if (!annenPartPersonIdent.getIdent().equals(oppgittAnnenPartPersonIdent)) {
                         oppgittAnnenPartStemmerDelvis.increment();
                     } else {
                         oppgittAnnenPartStemmer.increment();
@@ -110,9 +111,37 @@ public class RegisterInnhentingService {
         return new InfotrygdFakta(oppslagTjeneste.hentInfoOmLøpendeKontantstøtteForBarn(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer()));
     }
 
-    private PersonMedHistorikk hentPersonMedHistorikk(AktørId aktørId) {
-        final Personinfo personinfo = oppslagTjeneste.hentPersoninfoFor(aktørId);
-        final PersonhistorikkInfo personhistorikkInfo = oppslagTjeneste.hentHistorikkFor(aktørId);
+    public MedlFakta hentMedlemskapsopplysninger(Behandling behandling) {
+        Optional<PersonopplysningGrunnlag> pers = personopplysningService.hentHvisEksisterer(behandling);
+        if (!pers.isPresent()) {
+            throw new IllegalStateException("Vi må ha personopplysninger for å kunne hente inn medlInfo.");
+        }
+        PersonopplysningGrunnlag personopplysningGrunnlag = pers.get();
+        final var søkerAktørId = personopplysningGrunnlag.getSøker().getAktørId();
+        final MedlemskapsInfo søkerMedlemskapsInfo = oppslagTjeneste.hentMedlemskapsUnntakFor(søkerAktørId);
+
+        return new MedlFakta.Builder()
+            .medSøker(erTom(søkerMedlemskapsInfo.getPersonIdent()) ? Optional.empty() : Optional.of(søkerMedlemskapsInfo))
+            .medAnnenForelder(hentAnnenPartMedl(personopplysningGrunnlag))
+            .build();
+    }
+
+    private Optional<MedlemskapsInfo> hentAnnenPartMedl(PersonopplysningGrunnlag personopplysningGrunnlag) {
+        if (personopplysningGrunnlag.getAnnenPart() == null) {
+            return Optional.empty();
+        }
+        MedlemskapsInfo annenForelder = oppslagTjeneste.hentMedlemskapsUnntakFor(personopplysningGrunnlag.getAnnenPart().getAktørId());
+        return erTom(annenForelder.getPersonIdent()) ? Optional.empty() : Optional.of(annenForelder);
+    }
+
+    private boolean erTom(String personIdent) {
+        return personIdent == null || personIdent.isEmpty();
+    }
+
+    private PersonMedHistorikk hentPersonMedHistorikk(String personIdent) {
+        final AktørId aktørId = oppslagTjeneste.hentAktørId(personIdent);
+        final Personinfo personinfo = oppslagTjeneste.hentPersoninfoFor(personIdent).medAktørId(aktørId);
+        final PersonhistorikkInfo personhistorikkInfo = oppslagTjeneste.hentHistorikkFor(personIdent);
         return new PersonMedHistorikk.Builder()
             .medInfo(personinfo)
             .medPersonhistorikk(personhistorikkInfo)
@@ -122,26 +151,43 @@ public class RegisterInnhentingService {
     private void mapRelasjoner(Personinfo søker, Personinfo annenPart, Personinfo barn, PersonopplysningGrunnlag personopplysningGrunnlag) {
         barn.getFamilierelasjoner()
             .stream()
-            .filter(it -> it.getAktørId().equals(søker.getAktørId()) || (annenPart != null && it.getAktørId().equals(annenPart.getAktørId())))
-            .forEach(relasjon -> personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+            .filter(it -> it.getPersonIdent().equals(søker.getPersonIdent()))
+            .forEach(relasjon -> personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getAktørId(), søker.getAktørId(), barn.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+
+        barn.getFamilierelasjoner()
+            .stream()
+            .filter(it -> annenPart != null && it.getPersonIdent().equals(annenPart.getPersonIdent()))
+            .forEach(relasjon -> personopplysningGrunnlag.getBarn(barn.getAktørId()).leggTilPersonrelasjon(new PersonRelasjon(barn.getAktørId(), annenPart.getAktørId(), barn.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
 
         søker.getFamilierelasjoner()
             .stream()
-            .filter(it -> it.getAktørId().equals(barn.getAktørId()) || (annenPart != null && it.getAktørId().equals(annenPart.getAktørId())))
-            .forEach(relasjon ->  personopplysningGrunnlag.getSøker().leggTilPersonrelasjon(new PersonRelasjon(søker.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+            .filter(it -> it.getPersonIdent().equals(barn.getPersonIdent()))
+            .forEach(relasjon ->  personopplysningGrunnlag.getSøker().leggTilPersonrelasjon(new PersonRelasjon(søker.getAktørId(), barn.getAktørId(), søker.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+
+        søker.getFamilierelasjoner()
+            .stream()
+            .filter(it -> annenPart != null && it.getPersonIdent().equals(annenPart.getPersonIdent()))
+            .forEach(relasjon ->  personopplysningGrunnlag.getSøker().leggTilPersonrelasjon(new PersonRelasjon(søker.getAktørId(), annenPart.getAktørId(), søker.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
 
         if (annenPart != null) {
             annenPart.getFamilierelasjoner()
                 .stream()
-                .filter(it -> it.getAktørId().equals(barn.getAktørId()) || it.getAktørId().equals(søker.getAktørId()))
-                .forEach(relasjon -> personopplysningGrunnlag.getAnnenPart().leggTilPersonrelasjon(new PersonRelasjon(annenPart.getAktørId(), relasjon.getAktørId(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+                .filter(it -> it.getPersonIdent().equals(barn.getPersonIdent()))
+                .forEach(relasjon -> personopplysningGrunnlag.getAnnenPart().leggTilPersonrelasjon(new PersonRelasjon(annenPart.getAktørId(), barn.getAktørId(), annenPart.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
+
+            annenPart.getFamilierelasjoner()
+                .stream()
+                .filter(it -> it.getPersonIdent().equals(søker.getPersonIdent()))
+                .forEach(relasjon -> personopplysningGrunnlag.getAnnenPart().leggTilPersonrelasjon(new PersonRelasjon(annenPart.getAktørId(), søker.getAktørId(), annenPart.getPersonIdent(), relasjon.getPersonIdent(), relasjon.getRelasjonsrolle(), relasjon.getHarSammeBosted())));
         }
     }
 
-    private void mapPersonopplysninger(AktørId aktørId, Personinfo personinfo, PersonopplysningGrunnlag personopplysningGrunnlag, PersonType personType) {
-        final var personhistorikk = oppslagTjeneste.hentHistorikkFor(aktørId);
+    private void mapPersonopplysninger(PersonMedHistorikk personMedHistorikk, PersonopplysningGrunnlag personopplysningGrunnlag, PersonType personType) {
+        var personinfo = personMedHistorikk.getPersoninfo();
+        var aktørId = personinfo.getAktørId();
+        var personhistorikk = personMedHistorikk.getPersonhistorikkInfo();
 
-        Person person = new Person(aktørId, personType)
+        Person person = new Person(aktørId, personinfo.getPersonIdent(), personType)
             .medFødselsdato(personinfo.getFødselsdato())
             .medKjønn(personinfo.getKjønn())
             .medDødsdato(personinfo.getDødsdato())

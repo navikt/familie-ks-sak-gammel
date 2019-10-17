@@ -12,6 +12,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.Per
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.config.ApplicationConfig;
@@ -54,11 +55,13 @@ public class RegisterInnhentingServiceTest {
     private final Faktagrunnlag faktagrunnlag = FaktagrunnlagTestBuilder.beggeForeldreBorINorgeOgErNorskeStatsborgere();
     private final TpsFakta tpsFakta = faktagrunnlag.getTpsFakta();
 
-    private AktørId søker = tpsFakta.getForelder().getPersoninfo().getAktørId();
+    private PersonIdent søker = tpsFakta.getForelder().getPersoninfo().getPersonIdent();
+    private AktørId søkerAktørId = tpsFakta.getForelder().getPersoninfo().getAktørId();
     private Personinfo søkerPersoninfo = tpsFakta.getForelder().getPersoninfo();
     private PersonhistorikkInfo søkerPersonhistorikk = tpsFakta.getForelder().getPersonhistorikkInfo();
 
-    private AktørId annenPart = tpsFakta.getAnnenForelder().getPersoninfo().getAktørId();
+    private PersonIdent annenPart = tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent();
+    private AktørId annenPartAktørId = tpsFakta.getAnnenForelder().getPersoninfo().getAktørId();
     private Personinfo annenPartPersoninfo = tpsFakta.getAnnenForelder().getPersoninfo();
     private PersonhistorikkInfo annenPartPersonhistorikk = tpsFakta.getAnnenForelder().getPersonhistorikkInfo();
 
@@ -66,27 +69,28 @@ public class RegisterInnhentingServiceTest {
     public void setUp() {
         when(oppslagTjeneste.hentPersonIdent(any())).thenReturn(søkerPersoninfo.getPersonIdent());
 
-        when(oppslagTjeneste.hentAktørId(eq(søkerPersoninfo.getPersonIdent().getIdent()))).thenReturn(søker);
-        when(oppslagTjeneste.hentPersoninfoFor(eq(søker))).thenReturn(søkerPersoninfo);
-        when(oppslagTjeneste.hentHistorikkFor(eq(søker))).thenReturn(søkerPersonhistorikk);
+        when(oppslagTjeneste.hentAktørId(eq(søkerPersoninfo.getPersonIdent().getIdent()))).thenReturn(søkerAktørId);
+        when(oppslagTjeneste.hentPersoninfoFor(eq(søker.getIdent()))).thenReturn(søkerPersoninfo);
+        when(oppslagTjeneste.hentHistorikkFor(eq(søker.getIdent()))).thenReturn(søkerPersonhistorikk);
 
         when(oppslagTjeneste.hentPersonIdent(annenPartPersoninfo.getAktørId().getId())).thenReturn(annenPartPersoninfo.getPersonIdent());
-        when(oppslagTjeneste.hentAktørId(eq(annenPartPersoninfo.getPersonIdent().getIdent()))).thenReturn(annenPart);
-        when(oppslagTjeneste.hentPersoninfoFor(eq(annenPart))).thenReturn(annenPartPersoninfo);
-        when(oppslagTjeneste.hentHistorikkFor(eq(annenPart))).thenReturn(annenPartPersonhistorikk);
+        when(oppslagTjeneste.hentAktørId(eq(annenPartPersoninfo.getPersonIdent().getIdent()))).thenReturn(annenPartAktørId);
+        when(oppslagTjeneste.hentPersoninfoFor(eq(annenPart.getIdent()))).thenReturn(annenPartPersoninfo);
+        when(oppslagTjeneste.hentHistorikkFor(eq(annenPart.getIdent()))).thenReturn(annenPartPersonhistorikk);
     }
 
     @Test
     public void skal_lagre_ned_respons() {
-        AktørId barn = tpsFakta.getBarn().getPersoninfo().getAktørId();
-        Personinfo barnPersoninfo = tpsFakta.getBarn().getPersoninfo();
-        PersonhistorikkInfo barnPersonhistorikk = tpsFakta.getBarn().getPersonhistorikkInfo();
+        PersonIdent barn = tpsFakta.getBarna().get(0).getPersoninfo().getPersonIdent();
+        AktørId barnAktørId = tpsFakta.getBarna().get(0).getPersoninfo().getAktørId();
+        Personinfo barnPersoninfo = tpsFakta.getBarna().get(0).getPersoninfo();
+        PersonhistorikkInfo barnPersonhistorikk = tpsFakta.getBarna().get(0).getPersonhistorikkInfo();
 
-        when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barn);
-        when(oppslagTjeneste.hentPersoninfoFor(eq(barn))).thenReturn(barnPersoninfo);
-        when(oppslagTjeneste.hentHistorikkFor(eq(barn))).thenReturn(barnPersonhistorikk);
+        when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barnAktørId);
+        when(oppslagTjeneste.hentPersoninfoFor(eq(barn.getIdent()))).thenReturn(barnPersoninfo);
+        when(oppslagTjeneste.hentHistorikkFor(eq(barn.getIdent()))).thenReturn(barnPersonhistorikk);
 
-        final var fagsak = Fagsak.opprettNy(søker, "123412341234");
+        final var fagsak = Fagsak.opprettNy(søkerAktørId, "123412341234");
         fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak).build();
@@ -114,15 +118,16 @@ public class RegisterInnhentingServiceTest {
         final Faktagrunnlag faktagrunnlagUtenAnnenPart = FaktagrunnlagTestBuilder.aleneForelderNorskStatsborgerskapUtenBarnehage();
         final TpsFakta tpsFaktaUtenAnnenPart = faktagrunnlagUtenAnnenPart.getTpsFakta();
 
-        AktørId barn = tpsFaktaUtenAnnenPart.getBarn().getPersoninfo().getAktørId();
-        Personinfo barnPersoninfo = tpsFaktaUtenAnnenPart.getBarn().getPersoninfo();
-        PersonhistorikkInfo barnPersonhistorikk = tpsFaktaUtenAnnenPart.getBarn().getPersonhistorikkInfo();
+        AktørId barnAktørId = tpsFaktaUtenAnnenPart.getBarna().get(0).getPersoninfo().getAktørId();
+        PersonIdent barnPersonIdent = tpsFaktaUtenAnnenPart.getBarna().get(0).getPersoninfo().getPersonIdent();
+        Personinfo barnPersoninfo = tpsFaktaUtenAnnenPart.getBarna().get(0).getPersoninfo();
+        PersonhistorikkInfo barnPersonhistorikk = tpsFaktaUtenAnnenPart.getBarna().get(0).getPersonhistorikkInfo();
 
-        when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barn);
-        when(oppslagTjeneste.hentPersoninfoFor(eq(barn))).thenReturn(barnPersoninfo);
-        when(oppslagTjeneste.hentHistorikkFor(eq(barn))).thenReturn(barnPersonhistorikk);
+        when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barnAktørId);
+        when(oppslagTjeneste.hentPersoninfoFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersoninfo);
+        when(oppslagTjeneste.hentHistorikkFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersonhistorikk);
 
-        final var fagsak = Fagsak.opprettNy(søker, "123412341234");
+        final var fagsak = Fagsak.opprettNy(søkerAktørId, "123412341234");
         fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak).build();

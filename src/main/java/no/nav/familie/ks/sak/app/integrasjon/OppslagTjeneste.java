@@ -4,6 +4,7 @@ import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.AktivKontantstøtteInfo;
+import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
@@ -177,13 +178,13 @@ public class OppslagTjeneste {
         value = { OppslagException.class },
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public PersonhistorikkInfo hentHistorikkFor(AktørId aktørId) {
+    public PersonhistorikkInfo hentHistorikkFor(String personident) {
         final var iDag = LocalDate.now();
-        URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?id=" + aktørId.getId() + "&fomDato=" + formaterDato(iDag.minusYears(6)) + "&tomDato=" + formaterDato(iDag));
+        URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?fomDato=" + formaterDato(iDag.minusYears(6)) + "&tomDato=" + formaterDato(iDag));
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
-            ResponseEntity<PersonhistorikkInfo> response = request(uri, PersonhistorikkInfo.class);
-            secureLogger.info("Personhistorikk for {}: {}", aktørId, response.getBody());
+            ResponseEntity<PersonhistorikkInfo> response = requestMedPersonIdent(uri, personident, PersonhistorikkInfo.class);
+            secureLogger.info("Personhistorikk for {}: {}", personident, response.getBody());
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 return response.getBody();
@@ -201,18 +202,41 @@ public class OppslagTjeneste {
         value = { OppslagException.class },
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public Personinfo hentPersoninfoFor(AktørId aktørId) {
-        URI uri = URI.create(oppslagServiceUri + "/personopplysning/info?id=" + aktørId.getId());
+    public Personinfo hentPersoninfoFor(String personIdent) {
+        URI uri = URI.create(oppslagServiceUri + "/personopplysning/info");
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {
-            ResponseEntity<Personinfo> response = request(uri, Personinfo.class);
-            secureLogger.info("Personinfo for {}: {}", aktørId, Objects.requireNonNull(response.getBody()).getFamilierelasjoner());
+            ResponseEntity<Personinfo> response = requestMedPersonIdent(uri, personIdent, Personinfo.class);
+            secureLogger.info("Personinfo for {}: {}", personIdent, Objects.requireNonNull(response.getBody()).getFamilierelasjoner());
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 return response.getBody();
             } else {
                 String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
                 logger.warn("Kall mot oppslag feilet ved uthenting av personinfo: " + feilmelding);
+                throw new OppslagException(feilmelding);
+            }
+        } catch (RestClientException e) {
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+        }
+    }
+
+    @Retryable(
+        value = { OppslagException.class },
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 5000))
+    public MedlemskapsInfo hentMedlemskapsUnntakFor(AktørId aktørId) {
+        URI uri = URI.create(oppslagServiceUri + "/medlemskap/?id=" + aktørId.getId());
+        logger.info("Henter medlemskapsUnntak fra " + oppslagServiceUri);
+        try {
+            ResponseEntity<MedlemskapsInfo> response = request(uri, MedlemskapsInfo.class);
+            secureLogger.info("MedlemskapsInfo for {}: {}", aktørId, response.getBody());
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return response.getBody();
+            } else {
+                String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
+                logger.warn("Kall mot oppslag feilet ved uthenting av medlemskapsinfo: " + feilmelding);
                 throw new OppslagException(feilmelding);
             }
         } catch (RestClientException e) {

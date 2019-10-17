@@ -61,32 +61,34 @@ public class RestFagsakTest {
     public void setUp() {
         TpsFakta tpsFakta = FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage().getTpsFakta();
 
-        when(oppslagTjeneste.hentPersonIdent(tpsFakta.getForelder().getPersoninfo().getAktørId().getId())).thenReturn(tpsFakta.getForelder().getPersoninfo().getPersonIdent());
-        when(oppslagTjeneste.hentPersonIdent(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId().getId())).thenReturn(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent());
-        when(oppslagTjeneste.hentPersonIdent(tpsFakta.getBarn().getPersoninfo().getAktørId().getId())).thenReturn(tpsFakta.getBarn().getPersoninfo().getPersonIdent());
-
         when(oppslagTjeneste.hentAktørId(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent())).thenReturn(tpsFakta.getForelder().getPersoninfo().getAktørId());
         when(oppslagTjeneste.hentAktørId(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent())).thenReturn(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId());
         when(oppslagTjeneste.hentAktørId(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent())).thenReturn(tpsFakta.getBarn().getPersoninfo().getAktørId());
 
-        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getForelder().getPersoninfo().getAktørId()))
+        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getForelder().getPersoninfo());
-        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId()))
+        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getAnnenForelder().getPersoninfo());
-        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getBarn().getPersoninfo().getAktørId()))
+        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getBarn().getPersoninfo());
 
-        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getForelder().getPersoninfo().getAktørId()))
+        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getForelder().getPersonhistorikkInfo());
-        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId()))
+        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getAnnenForelder().getPersonhistorikkInfo());
-        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getBarn().getPersoninfo().getAktørId()))
+        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getBarn().getPersonhistorikkInfo());
+
+        when(oppslagTjeneste.hentMedlemskapsUnntakFor(tpsFakta.getForelder().getPersoninfo().getAktørId()))
+            .thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
+        when(oppslagTjeneste.hentMedlemskapsUnntakFor(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId()))
+            .thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
     }
+
 
     @Test
     public void hentRestFagsak() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
 
         final var søknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
         Vedtak vedtak = saksbehandling.behandle(søknad, SAKSNUMMER);
@@ -104,7 +106,7 @@ public class RestFagsakTest {
 
     @Test
     public void hentFagsaker() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
 
         assertThat(restFagsakService.hentFagsaker()).hasSize(1);
@@ -112,7 +114,7 @@ public class RestFagsakTest {
 
     @Test
     public void rest_fagsak_har_tps_informasjon() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
 
@@ -125,8 +127,8 @@ public class RestFagsakTest {
             assertThat(restPersoner.getAnnenPart()).isNotNull();
 
             assertThat(restPersoner).isNotNull();
-            assertThat(restPersoner.getSøker().getFødselsnummer()).isEqualTo(SøknadTestdata.norskFamilieUtenBarnehageplass().getSøkerFødselsnummer());
-            assertThat(restPersoner.getAnnenPart().getFødselsnummer()).isEqualTo(SøknadTestdata.norskFamilieUtenBarnehageplass().getOppgittAnnenPartFødselsnummer());
+            assertThat(restPersoner.getSøker().getPersonIdent()).isEqualTo(SøknadTestdata.norskFamilieUtenBarnehageplass().getSøkerFødselsnummer());
+            assertThat(restPersoner.getAnnenPart().getPersonIdent()).isEqualTo(SøknadTestdata.norskFamilieUtenBarnehageplass().getOppgittAnnenPartFødselsnummer());
         });
     }
 }

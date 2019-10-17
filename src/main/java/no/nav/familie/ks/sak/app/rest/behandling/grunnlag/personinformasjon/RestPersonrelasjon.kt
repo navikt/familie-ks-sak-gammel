@@ -2,17 +2,16 @@ package no.nav.familie.ks.sak.app.rest.behandling.grunnlag.personinformasjon
 
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonRelasjon
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.RelasjonsRolleType
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
 
 data class RestPersonrelasjon(
-    var fraFødselsnummer: String,
-    var tilFødselsnummer: String,
-    var relasjonsrolle: RelasjonsRolleType,
-    var harSammeBosted: Boolean)
+        var fraPersonIdent: String,
+        var tilPersonIdent: String,
+        var relasjonsrolle: RelasjonsRolleType,
+        var harSammeBosted: Boolean)
 
-fun PersonRelasjon.toRestPersonrelasjon(oppslagTjeneste: OppslagTjeneste) = RestPersonrelasjon(
-    fraFødselsnummer = oppslagTjeneste.hentPersonIdent(this.fraAktørId.id).ident,
-    tilFødselsnummer = oppslagTjeneste.hentPersonIdent(this.tilAktørId.id).ident,
+fun PersonRelasjon.toRestPersonrelasjon() = RestPersonrelasjon(
+    fraPersonIdent = this.fraPersonIdent.ident,
+    tilPersonIdent = this.tilPersonIdent.ident,
     relasjonsrolle = this.relasjonsrolle,
     harSammeBosted = this.harSammeBosted
 )
