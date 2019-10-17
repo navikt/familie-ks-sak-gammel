@@ -26,7 +26,7 @@ public class Person extends BaseEntitet {
     private AktørId aktørId;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "personIdent", column = @Column(name = "person_ident", updatable = false)))
+    @AttributeOverrides(@AttributeOverride(name = "ident", column = @Column(name = "person_ident", updatable = false)))
     private PersonIdent personIdent;
 
     @Column(name = "navn")
