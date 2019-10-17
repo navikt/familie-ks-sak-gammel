@@ -36,9 +36,9 @@ class FagsakController (
     @GetMapping(path = ["/fagsak/{fagsakId}"])
     //@Secured("ROLE_xxx")
     fun fagsak(@PathVariable fagsakId: Long, principal: Principal?): ResponseEntity<Ressurs> {
-        val authentication: Authentication = SecurityContextHolder.getContext ().getAuthentication()
+        val authentication: Authentication = SecurityContextHolder.getContext().getAuthentication()
 
-        secureLogger.info(authentication.authorities.toString())
+        //secureLogger.info(authentication.authorities.toString())
 
         logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", fagsakId)
         SporingsLoggHelper.logSporing(FagsakController::class.java, fagsakId, principal?.name ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
