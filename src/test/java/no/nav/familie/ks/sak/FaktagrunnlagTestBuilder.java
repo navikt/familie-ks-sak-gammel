@@ -68,8 +68,26 @@ public final class FaktagrunnlagTestBuilder {
         .medStatsborgerskap(Landkode.NORGE)
         .medFødselsdato(LocalDate.now().minusYears(30))
         .medAktørId(farAktørId)
-        .medKjønn("MANN")
         .medPersonIdent(farPersonident)
+        .medKjønn("MANN")
+        .medAdresse("testadresse")
+        .medNavn("test testesen")
+        .build();
+    private static Personinfo personinfoFarNorskStemmerDelvis = new Personinfo.Builder()
+        .medStatsborgerskap(Landkode.NORGE)
+        .medFødselsdato(LocalDate.now().minusYears(30))
+        .medAktørId(farAktørId)
+        .medPersonIdent(morPersonident)
+        .medKjønn("MANN")
+        .medAdresse("testadresse")
+        .medNavn("test testesen")
+        .build();
+    private static Personinfo personinfoFarNorskStemmerIkke = new Personinfo.Builder()
+        .medStatsborgerskap(Landkode.NORGE)
+        .medFødselsdato(LocalDate.now().minusYears(30))
+        .medAktørId(farAktørId)
+        .medPersonIdent(new PersonIdent("12345678910"))
+        .medKjønn("MANN")
         .medAdresse("testadresse")
         .medNavn("test testesen")
         .build();
@@ -225,6 +243,14 @@ public final class FaktagrunnlagTestBuilder {
         .medInfo(personinfoFarNorsk)
         .medPersonhistorikk(personhistorikkFarNorgeSeksÅr)
         .build();
+    private static PersonMedHistorikk personMedHistorikkFarNorskStemmerDelvis = new PersonMedHistorikk.Builder()
+        .medInfo(personinfoFarNorskStemmerDelvis)
+        .medPersonhistorikk(personhistorikkFarNorgeSeksÅr)
+        .build();
+    private static PersonMedHistorikk personMedHistorikkFarNorskStemmerIkke = new PersonMedHistorikk.Builder()
+        .medInfo(personinfoFarNorskStemmerIkke)
+        .medPersonhistorikk(personhistorikkFarNorgeSeksÅr)
+        .build();
     private static PersonMedHistorikk personMedHistorikkMorNorskMenIkkeBoddFemÅrINorge = new PersonMedHistorikk.Builder()
         .medInfo(personinfoMorNorsk)
         .medPersonhistorikk(personhistorikkNorskMorNorgeEtÅr)
@@ -336,6 +362,16 @@ public final class FaktagrunnlagTestBuilder {
     private static TpsFakta beggeForeldreOgBarnNorskStatsborger = new TpsFakta.Builder()
         .medForelder(personMedHistorikkMorNorsk)
         .medAnnenForelder(personMedHistorikkFarNorsk)
+        .medBarn(List.of(personMedHistorikkBarnNorsk))
+        .build();
+    private static TpsFakta beggeForeldreOgBarnNorskStatsborgerAnnenPartStemmerDelvis = new TpsFakta.Builder()
+        .medForelder(personMedHistorikkMorNorsk)
+        .medAnnenForelder(personMedHistorikkFarNorskStemmerDelvis)
+        .medBarn(List.of(personMedHistorikkBarnNorsk))
+        .build();
+    private static TpsFakta beggeForeldreOgBarnNorskStatsborgerAnnenPartStemmerIkke = new TpsFakta.Builder()
+        .medForelder(personMedHistorikkMorNorsk)
+        .medAnnenForelder(personMedHistorikkFarNorskStemmerIkke)
         .medBarn(List.of(personMedHistorikkBarnNorsk))
         .build();
     private static TpsFakta beggeForeldreOgFlerlingerNorskStatsborger = new TpsFakta.Builder()
@@ -473,6 +509,24 @@ public final class FaktagrunnlagTestBuilder {
     public static Faktagrunnlag familieNorskStatsborgerskapUtenBarnehage() {
         return new Faktagrunnlag.Builder()
             .medTpsFakta(beggeForeldreOgBarnNorskStatsborger)
+            .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
+            .build();
+    }
+
+    public static Faktagrunnlag familieNorskStatsborgerskapUtenBarnehageAnnenPartStemmerDelvis() {
+        return new Faktagrunnlag.Builder()
+            .medTpsFakta(beggeForeldreOgBarnNorskStatsborgerAnnenPartStemmerDelvis)
+            .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
+            .medMedlFakta(ingenMedlemsopplysninger)
+            .build();
+    }
+
+    public static Faktagrunnlag familieNorskStatsborgerskapUtenBarnehageAnnenPartStemmerIkke() {
+        return new Faktagrunnlag.Builder()
+            .medTpsFakta(beggeForeldreOgBarnNorskStatsborgerAnnenPartStemmerIkke)
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
