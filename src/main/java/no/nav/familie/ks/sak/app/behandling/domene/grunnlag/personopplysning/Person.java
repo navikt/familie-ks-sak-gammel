@@ -45,6 +45,9 @@ public class Person extends BaseEntitet {
     @Column(name = "doedsdato")
     private LocalDate dødsdato;
 
+    @OneToOne(mappedBy = REF_NAME, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    private PersonAdresse bostedsadresse;
+
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "kode", column = @Column(name = "statsborgerskap")))
     private Landkode statsborgerskap = Landkode.UDEFINERT;
