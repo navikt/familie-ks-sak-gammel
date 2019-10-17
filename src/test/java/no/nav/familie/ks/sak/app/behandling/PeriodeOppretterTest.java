@@ -11,7 +11,7 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barnehage.BarnehageVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted.BostedVilkår;
-import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskap.MedlemskapsVilkår;
+import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskapBosted.MedlemskapBostedVilkår;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import org.junit.Test;
@@ -32,13 +32,13 @@ public class PeriodeOppretterTest {
 
     private final BehandlingslagerService behandlingslagerMock = mock(BehandlingslagerService.class);
     private final RegisterInnhentingService registerInnhentingServiceMock = mock(RegisterInnhentingService.class);
-    private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapsVilkår(), new BarnehageVilkår(), new BostedVilkår()));
+    private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapBostedVilkår(), new BarnehageVilkår(), new BostedVilkår()));
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
     private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(ResultatService.class));
 
     @Test
     public void søknad_med_barnehage_gir_feil() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapMedGradertBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapMedGradertBarnehage());
         when(behandlingslagerMock.nyBehandling(any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
         Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieGradertBarnehageplass(), SAKSNUMMER);
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.MANUELL_BEHANDLING);
@@ -46,7 +46,7 @@ public class PeriodeOppretterTest {
 
     @Test
     public void at_søknad_uten_barnehage_gir_stønadperiode() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         when(behandlingslagerMock.nyBehandling(any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
         Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.OPPFYLT);

@@ -1,6 +1,8 @@
 package no.nav.familie.ks.sak.app.grunnlag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
+import no.nav.familie.ks.sak.app.integrasjon.medlemskap.PeriodeStatusÅrsak;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status.PersonstatusType;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
@@ -23,6 +25,17 @@ public class OppslagTjenesteTest {
         assertThat(personhistorikkInfo.getStatsborgerskaphistorikk().get(0).getTilhørendeLand().getKode()).isEqualTo(NORGE);
         assertThat(personhistorikkInfo.getPersonstatushistorikk().get(0).getPersonstatus()).isEqualByComparingTo(PersonstatusType.BOSA);
         assertThat(personhistorikkInfo.getPersonIdent().getIdent()).isNotEmpty();
+    }
+
+    @Test
+    public void medlemskapsinfo_deserialiseres() throws IOException {
+        File medlemskapsinfoResponseBody = new File(getFile("medlemskapsInfo.json"));
+        MedlemskapsInfo medlemskapsInfo = oppslagMapper.readValue(medlemskapsinfoResponseBody, MedlemskapsInfo.class);
+
+        assertThat(medlemskapsInfo.getGyldigePerioder().size()).isEqualTo(1);
+        assertThat(medlemskapsInfo.getGyldigePerioder().get(0).getPeriodeStatusÅrsak()).isNull();
+        assertThat(medlemskapsInfo.getAvvistePerioder().get(0).getPeriodeStatusÅrsak()).isEqualTo(PeriodeStatusÅrsak.Feilregistrert);
+        assertThat(medlemskapsInfo.getUavklartePerioder().get(0).isGjelderMedlemskapIFolketrygden()).isFalse();
     }
 
     private String getFile(String filnavn) {
