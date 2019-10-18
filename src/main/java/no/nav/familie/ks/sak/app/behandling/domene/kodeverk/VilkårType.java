@@ -3,6 +3,7 @@ package no.nav.familie.ks.sak.app.behandling.domene.kodeverk;
 public enum VilkårType {
 
     MEDLEMSKAP_BOSTED(Constants.MEDLEMSKAP_BOSTED_KODE, "Medlemskap til folketrygden", "§2 og §3"),
+    MEDLEMSKAP_BOSTED_NÅ(Constants.MEDLEMSKAP_BOSTED_NÅ_KODE, "Medlemskap til folketrygden", "§2 og §3"),
     MEDLEMSKAP_MEDL(Constants.MEDLEMSKAP_MEDL_KODE, "Medlemskap til folketrygden", "§2 og §3"),
     MEDLEMSKAP_STATSBORGERSKAP(Constants.MEDLEMSKAP_STATSBORGERSKAP_KODE, "Medlemskap til folketrygden", "§2 og §3"),
     BARNEHAGE(Constants.BARNEHAGE_KODE, "Retten til basert på plass i barnehage", "§1"),
@@ -53,9 +54,10 @@ public enum VilkårType {
 
     public static class Constants {
         public static final String ANNEN_PART_KODE = "ANNEN_PART";
-        public static final String MEDLEMSKAP_BOSTED_KODE = "MEDL";
-        public static final String MEDLEMSKAP_MEDL_KODE = "MEDL";
-        public static final String MEDLEMSKAP_STATSBORGERSKAP_KODE = "MEDL";
+        public static final String MEDLEMSKAP_BOSTED_KODE = "MEDL1";
+        public static final String MEDLEMSKAP_BOSTED_NÅ_KODE = "MEDL2";
+        public static final String MEDLEMSKAP_MEDL_KODE = "MEDL3";
+        public static final String MEDLEMSKAP_STATSBORGERSKAP_KODE = "MEDL4";
         public static final String BARNEHAGE_KODE = "BHAG";
         public static final String BOSTED_KODE = "BOST";
         public static final String BARN_KODE = "BARN";

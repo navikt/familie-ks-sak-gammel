@@ -33,6 +33,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 
+import static no.nav.familie.ks.sak.app.behandling.domene.typer.Tid.TIDENES_BEGYNNELSE;
+import static no.nav.familie.ks.sak.app.behandling.domene.typer.Tid.TIDENES_ENDE;
+
 @Component
 public class OppslagTjeneste {
 
@@ -181,8 +184,9 @@ public class OppslagTjeneste {
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public PersonhistorikkInfo hentHistorikkFor(String personident) {
-        final var iDag = LocalDate.now();
-        URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?fomDato=" + formaterDato(iDag.minusYears(6)) + "&tomDato=" + formaterDato(iDag));
+        final var fom = TIDENES_BEGYNNELSE;
+        final var tom = TIDENES_ENDE;
+        URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?fomDato=" + formaterDato(fom) + "&tomDato=" + formaterDato(tom));
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
             ResponseEntity<PersonhistorikkInfo> response = requestMedPersonIdent(uri, personident, PersonhistorikkInfo.class);
