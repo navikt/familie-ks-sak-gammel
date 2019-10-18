@@ -41,7 +41,7 @@ public class MottaSøknadController {
         Søknad søknad = SøknadKt.toSøknad(søknadDto.getSøknadJson());
         String saksnummer = søknadDto.getSaksnummer();
         try {
-            Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer);
+            Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer, journalpostID);
             final var vilkårvurdering = vedtak.getVilkårvurdering();
             final var samletUtfallType = vilkårvurdering.getSamletUtfallType();
 
