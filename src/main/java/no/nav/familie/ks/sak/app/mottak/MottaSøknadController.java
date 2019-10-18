@@ -40,6 +40,7 @@ public class MottaSøknadController {
     public ResponseEntity mottaDokument(@RequestBody SøknadDto søknadDto) {
         Søknad søknad = SøknadKt.toSøknad(søknadDto.getSøknadJson());
         String saksnummer = søknadDto.getSaksnummer();
+        String journalpostID = søknadDto.getJournalpostID();
         try {
             Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer, journalpostID);
             final var vilkårvurdering = vedtak.getVilkårvurdering();
