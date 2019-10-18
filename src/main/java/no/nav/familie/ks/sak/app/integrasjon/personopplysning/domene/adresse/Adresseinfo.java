@@ -66,6 +66,19 @@ public class Adresseinfo {
         this.personstatus = personstatus;
     }
 
+    @Override
+    public String toString() {
+        return "Adresse{" + "adresseType=" + gjeldendePostadresseType +
+            ", adresselinje1='" + adresselinje1 + '\'' +
+            ", adresselinje2='" + adresselinje2 + '\'' +
+            ", adresselinje3='" + adresselinje3 + '\'' +
+            ", adresselinje4='" + adresselinje4 + '\'' +
+            ", postnummer='" + postNr + '\'' +
+            ", poststed='" + poststed + '\'' +
+            ", land='" + land + '\'' +
+            '}';
+    }
+
     public static class Builder {
         private final AdresseType gjeldendePostadresseType;
         private final String mottakerNavn;
