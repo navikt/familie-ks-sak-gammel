@@ -9,10 +9,15 @@ public class SøknadDto {
 
     private String saksnummer;
 
+    private String journalpostID;
+
+
     @JsonCreator
-    public SøknadDto(@JsonProperty("søknadJson") String søknadJson, @JsonProperty("saksnummer") String saksnummer) {
+    public SøknadDto(@JsonProperty("søknadJson") String søknadJson, @JsonProperty("saksnummer") String saksnummer,
+                     @JsonProperty("journalpostID") String journalpostID) {
         this.søknadJson = søknadJson;
         this.saksnummer = saksnummer;
+        this.journalpostID = journalpostID;
     }
 
 
@@ -22,5 +27,9 @@ public class SøknadDto {
 
     public String getSaksnummer() {
         return saksnummer;
+    }
+
+    public String getJournalpostID() {
+        return journalpostID;
     }
 }
