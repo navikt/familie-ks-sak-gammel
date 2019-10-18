@@ -12,7 +12,9 @@ public enum VilkårType {
 
     KUN_ET_BARN(Constants.BARN_KODE, "Kun et barn er oppgitt i søknaden (MVP)", "MVP"),
     UTLAND(Constants.UTLAND_KODE, "Søker har ikke oppgitt noen tilknytning til utland (MVP)", "lovreferanse"),
-    BARN_MELLOM_10_OG_14_MÅNEDER(Constants.BARN_MELLOM_10_OG_14_MÅNEDER_KODE, "Barn er mellom 10 og 14 måneder", "MVP: Se regel 1.7 i Confluence");
+    BARN_MELLOM_10_OG_14_MÅNEDER(Constants.BARN_MELLOM_10_OG_14_MÅNEDER_KODE, "Barn er mellom 10 og 14 måneder", "MVP: Se regel 1.7 i Confluence"),
+    ANNEN_PART_STEMMER(Constants.ANNEN_PART_KODE, "Oppgitt annen part fra søknaden og annen part fra TPS stemme", "MVP"),
+    ANNEN_PART_ER_OPPGITT(Constants.ANNEN_PART_KODE, "Annen part er tilstedet i grunnlaget fra TPS ", "MVP");
 
     private final String kode;
     private final String beskrivelse;
@@ -51,6 +53,7 @@ public enum VilkårType {
     }
 
     public static class Constants {
+        public static final String ANNEN_PART_KODE = "ANNEN_PART";
         public static final String MEDLEMSKAP_BOSTED_KODE = "MEDL1";
         public static final String MEDLEMSKAP_BOSTED_NÅ_KODE = "MEDL2";
         public static final String MEDLEMSKAP_MEDL_KODE = "MEDL3";

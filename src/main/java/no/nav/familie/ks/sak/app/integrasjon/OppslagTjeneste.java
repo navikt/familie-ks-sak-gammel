@@ -3,12 +3,12 @@ package no.nav.familie.ks.sak.app.integrasjon;
 import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
+import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.AktivKontantstøtteInfo;
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
-import no.nav.familie.ks.sak.util.LocalSts;
 import no.nav.familie.log.mdc.MDCConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +23,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -70,7 +71,7 @@ public class OppslagTjeneste {
         headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
 
         HttpEntity httpEntity = new HttpEntity(headers);
-
+        
         return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
@@ -142,6 +143,37 @@ public class OppslagTjeneste {
                 logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + feilmelding);
                 throw new OppslagException(feilmelding);
             }
+        } catch (RestClientException e) {
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+        }
+    }
+
+    @Retryable(
+        value = { OppslagException.class },
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 5000))
+    public AktivKontantstøtteInfo hentInfoOmLøpendeKontantstøtteForBarn(String personident) {
+        if (personident == null || personident.isEmpty()) {
+            throw new OppslagException("Ved henting av info om løpende kontantstøtte er personident null eller tom");
+        }
+        URI uri = URI.create(oppslagServiceUri + "/infotrygd/harBarnAktivKontantstotte");
+        logger.info("Henter info om løpende kontantstøtte fra " + oppslagServiceUri);
+        try {
+            var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
+            secureLogger.info("Løpende kontantstøtte for {}: {}", personident, response.getBody());
+
+            var aktivKontantstøtteInfo = response.getBody();
+            if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
+                return aktivKontantstøtteInfo;
+            } else {
+                throw new OppslagException("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
+            }
+        } catch (HttpClientErrorException.NotFound e) {
+            // TODO: Samkjør testmiljøene hos oss og i Infotrygd.
+            // Så lenge vi har overvekt av testsubjekter i preprod som ikke finnes i Infotrygds preprod, vil dette være nødvendig
+            // for å unngå at vi kræsjer i test.
+            logger.error("Personident ikke funnet i infotrygd");
+            return new AktivKontantstøtteInfo(false);
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
         }
