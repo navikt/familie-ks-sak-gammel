@@ -35,7 +35,7 @@ public class SaksbehandlingTest {
 
     @Test
     public void positivt_vedtak_ved_oppfylte_vilkår() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         when(behandlingslagerMock.nyBehandling(any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
 
         Søknad innsendtSøknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
@@ -45,7 +45,7 @@ public class SaksbehandlingTest {
 
     @Test
     public void negativt_vedtak_ved_ikke_oppfylte_vilkår() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieUtenlandskStatsborgerskapMedBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieUtenlandskStatsborgerskapMedBarnehage());
         when(behandlingslagerMock.nyBehandling(any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
 
         Søknad innsendtSøknad = SøknadTestdata.norskFamilieGradertBarnehageplass();

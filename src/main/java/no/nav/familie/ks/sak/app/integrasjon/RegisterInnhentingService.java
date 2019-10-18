@@ -12,6 +12,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.typer.DatoIntervallEntitet;
 import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.InfotrygdFakta;
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
@@ -103,6 +104,11 @@ public class RegisterInnhentingService {
             .medBarn(List.of(barnPersonMedHistorikk))
             .medAnnenForelder(annenPartPersonMedHistorikk)
             .build();
+    }
+
+    public InfotrygdFakta hentInfotrygdFakta(Søknad søknad) {
+        // TODO: Legg til støtte for flerlinger.
+        return new InfotrygdFakta(oppslagTjeneste.hentInfoOmLøpendeKontantstøtteForBarn(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer()));
     }
 
     public MedlFakta hentMedlemskapsopplysninger(Behandling behandling) {

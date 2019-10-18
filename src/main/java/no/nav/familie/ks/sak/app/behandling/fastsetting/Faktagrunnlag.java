@@ -4,6 +4,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barneh
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.InfotrygdFakta;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -14,6 +15,7 @@ public class Faktagrunnlag {
     private SøknadGrunnlag søknadGrunnlag;
     private TpsFakta tpsFakta;
     private MedlFakta medlFakta;
+    private InfotrygdFakta infotrygdFakta;
 
     public Faktagrunnlag() {
         behandlingstidspunkt = LocalDate.now();
@@ -38,7 +40,11 @@ public class Faktagrunnlag {
     public MedlFakta getMedlFakta() {
         return medlFakta;
     }
-
+    
+    public InfotrygdFakta getInfotrygdFakta() {
+        return infotrygdFakta;
+    }
+    
     public static final class Builder {
 
         private Faktagrunnlag kladd;
@@ -66,7 +72,12 @@ public class Faktagrunnlag {
             kladd.medlFakta = medlFakta;
             return this;
         }
-
+        
+        public Faktagrunnlag.Builder medInfotrygdFakta(InfotrygdFakta infotrygdFakta) {
+            kladd.infotrygdFakta = infotrygdFakta;
+            return this;
+        }
+        
         public Faktagrunnlag build() {
             Objects.requireNonNull(kladd.søknadGrunnlag, "Må ha opplysninger fra fastsetting");
             Objects.requireNonNull(kladd.tpsFakta, "Må ha opplysninger fra TPS");
@@ -74,5 +85,4 @@ public class Faktagrunnlag {
             return kladd;
         }
     }
-
 }
