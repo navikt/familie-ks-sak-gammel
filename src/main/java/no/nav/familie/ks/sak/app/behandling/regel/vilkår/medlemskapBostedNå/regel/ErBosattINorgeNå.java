@@ -7,11 +7,16 @@ import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RuleDocumentation(ErBosattINorgeNå.ID)
 public class ErBosattINorgeNå extends LeafSpecification<Faktagrunnlag> {
 
     public static final String ID = "KS-MEDL-4";
+
+    private static final Logger log = LoggerFactory.getLogger(ErBosattINorgeNå.class);
+
 
     public ErBosattINorgeNå() {
         super(ID);
@@ -35,6 +40,7 @@ public class ErBosattINorgeNå extends LeafSpecification<Faktagrunnlag> {
     }
 
     private boolean erBosattINorge(PersonMedHistorikk forelder) {
+        log.info("Bostedsadresse for er: " + forelder.getPersoninfo().getBostedsadresse().toString());
         return Landkode.NORGE.getKode().matches(forelder.getPersoninfo().getBostedsadresse().getLand());
     }
 

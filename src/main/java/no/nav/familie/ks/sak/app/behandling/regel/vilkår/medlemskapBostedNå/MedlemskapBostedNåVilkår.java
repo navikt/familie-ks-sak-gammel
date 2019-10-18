@@ -41,34 +41,3 @@ public class MedlemskapBostedNåVilkår implements InngangsvilkårRegel<Faktagru
     }
 
 }
-
-/*
-@Component
-@RuleDocumentation(VilkårType.Constants.MEDLEMSKAP_BOSTED_NÅ_KODE)
-public class MedlemskapBostedVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
-
-    @Override
-    public VilkårType getVilkårType() {
-        return VilkårType.MEDLEMSKAP_BOSTED_NÅ;
-    }
-
-    @Override
-    public Faktagrunnlag konverterInput(Faktagrunnlag faktagrunnlag) {
-        return faktagrunnlag;
-    }
-
-    @Override
-    public Evaluation evaluer(Faktagrunnlag input) {
-        return getSpecification().evaluate(input);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Specification<Faktagrunnlag> getSpecification() {
-        final var rs = new Ruleset<Faktagrunnlag>();
-        return rs.hvisRegel(ErBosattINorgeNå.ID, "Vurder om søker har vært bosatt i Norge siste fem år")
-                .hvis(new ErBosattINorgeNå(), Sluttpunkt.oppfylt())
-                .ellers(Sluttpunkt.ikkeOppfylt(VilkårIkkeOppfyltÅrsak));
-    }
-}
- */
