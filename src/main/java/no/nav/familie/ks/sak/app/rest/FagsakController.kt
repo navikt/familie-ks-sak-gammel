@@ -28,18 +28,18 @@ class FagsakController (
     private val tilgangskontrollService: TilgangskontrollService,
     private val behandlingRepository: BehandlingRepository,
     private val restFagsakService: RestFagsakService,
-    private val tokenValidationContextHolder: TokenValidationContextHolder) {
+    private val oidcUtil: OIDCUtil) {
 
     @GetMapping(path = ["/fagsak/{fagsakId}"])
     fun fagsak(@PathVariable fagsakId: Long): ResponseEntity<Ressurs> {
 
-        val saksbehandlerId = OIDCUtil.getSubjectFromAzureOIDCToken(tokenValidationContextHolder, "azuread")
+        val saksbehandlerId = oidcUtil.autentisertBruker()
 
         logger.info("{} henter fagsak med id {}", saksbehandlerId ?: "Ukjent", fagsakId)
 
         SporingsLoggHelper.logSporing(FagsakController::class.java, fagsakId, saksbehandlerId ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
 
-        if (!tilgangskontrollService.sjekkTilgang(fagsakId, saksbehandlerId)){
+        if (!tilgangskontrollService.harTilgang(fagsakId, saksbehandlerId)){
             return ResponseEntity.ok(Ressurs.failure("Brukeren har ikke tilgang til denne fagsaken", null))
         }
 

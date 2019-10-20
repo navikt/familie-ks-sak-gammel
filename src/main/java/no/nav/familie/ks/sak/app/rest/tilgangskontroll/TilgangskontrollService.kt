@@ -17,7 +17,7 @@ class TilgangskontrollService(
         private val fagsakRepository: FagsakRepository) {
 
 
-    fun sjekkTilgang(fagsakId: Long, saksbehandlerId: String): Boolean {
+    fun harTilgang(fagsakId: Long, saksbehandlerId: String): Boolean {
         val optionalFagsak = fagsakRepository.finnFagsak(fagsakId)
         if (optionalFagsak.isEmpty) {
             return true;
