@@ -169,7 +169,7 @@ public class OppslagTjeneste {
         if (saksbehandlerId == null || personident == null) {
             throw new OppslagException("Ved sjekking av tilgang: saksbehandlerId eller personident er null");
         }
-        URI uri = URI.create(oppslagServiceUri + "/api/tilgang/person");
+        URI uri = URI.create(oppslagServiceUri + "/tilgang/person");
         logger.info("Sjekker tilgang  " + oppslagServiceUri);
         try {
             ResponseEntity<Object> response = requestMedPersonIdentOgSaksbehandlerId(uri, personident, saksbehandlerId, Object.class);
