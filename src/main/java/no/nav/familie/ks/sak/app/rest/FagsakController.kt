@@ -27,12 +27,13 @@ class FagsakController (
     private val saksbehandling: Saksbehandling,
     private val tilgangskontrollService: TilgangskontrollService,
     private val behandlingRepository: BehandlingRepository,
-    private val restFagsakService: RestFagsakService) {
+    private val restFagsakService: RestFagsakService,
+    private val tokenValidationContextHolder: TokenValidationContextHolder) {
 
     @GetMapping(path = ["/fagsak/{fagsakId}"])
-    fun fagsak(@PathVariable fagsakId: Long, contextHolder: TokenValidationContextHolder): ResponseEntity<Ressurs> {
+    fun fagsak(@PathVariable fagsakId: Long): ResponseEntity<Ressurs> {
 
-        val saksbehandlerId = OIDCUtil.getSubjectFromAzureOIDCToken(contextHolder, "azuread")
+        val saksbehandlerId = OIDCUtil.getSubjectFromAzureOIDCToken(tokenValidationContextHolder, "azuread")
 
         logger.info("{} henter fagsak med id {}", saksbehandlerId ?: "Ukjent", fagsakId)
 
