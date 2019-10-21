@@ -18,17 +18,21 @@ public class Behandling extends BaseEntitet {
     @JoinColumn(name = "fagsak_id", nullable = false, updatable = false)
     private Fagsak fagsak;
 
+    @Column(name = "journalpostID")
+    private String journalpostID;
+
     Behandling() {
         // Hibernate
     }
 
-    private Behandling(Fagsak fagsak) {
+    private Behandling(Fagsak fagsak, String journalpostID) {
         Objects.requireNonNull(fagsak, "behandling må tilknyttes parent Fagsak");
         this.fagsak = fagsak;
+        this.journalpostID = journalpostID;
     }
 
-    public static Behandling.Builder forFørstegangssøknad(Fagsak fagsak) {
-        return new Builder(fagsak);
+    public static Behandling.Builder forFørstegangssøknad(Fagsak fagsak, String journalpostID) {
+        return new Builder(fagsak, journalpostID);
     }
 
     @Override
@@ -36,11 +40,16 @@ public class Behandling extends BaseEntitet {
         return "behandling{" +
                 "id=" + id +
                 "fagsak=" + fagsak +
+                "journalpostID=" + journalpostID +
                 '}';
     }
 
     public Fagsak getFagsak() {
         return fagsak;
+    }
+
+    public String getJournalpostID() {
+        return journalpostID;
     }
 
     public Long getId() {
@@ -49,15 +58,17 @@ public class Behandling extends BaseEntitet {
 
     public static class Builder {
         private Fagsak fagsak;
+        private String journalpostID;
 
 
-        private Builder(Fagsak fagsak) {
+        private Builder(Fagsak fagsak, String journalpostID) {
             Objects.requireNonNull(fagsak, "fagsak"); //$NON-NLS-1$
             this.fagsak = fagsak;
+            this.journalpostID = journalpostID;
         }
 
         public Behandling build() {
-            return new Behandling(fagsak);
+            return new Behandling(fagsak, journalpostID);
         }
     }
 }
