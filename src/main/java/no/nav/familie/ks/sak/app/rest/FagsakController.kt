@@ -40,7 +40,7 @@ class FagsakController (
         SporingsLoggHelper.logSporing(FagsakController::class.java, fagsakId, saksbehandlerId ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
 
         if (!tilgangskontrollService.harTilgang(fagsakId, saksbehandlerId)){
-            return ResponseEntity.ok(Ressurs.failure("Brukeren har ikke tilgang til denne fagsaken", null))
+            return ResponseEntity.ok(Ressurs.ikkeTilgang("Du har ikke tilgang til denne fagsaken"))
         }
 
         val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(fagsakId) }
