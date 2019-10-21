@@ -22,5 +22,5 @@ APPDYNAMICS_AGENT_ACCOUNT_NAME: PROD
 FAMILIE_KS_OPPSLAG_API_URL: http://familie-ks-oppslag/api
 
 #Unleash
-UNLEASH_API_URL: https://unleashproxy.nais.oera.no/api/
+UNLEASH_API_URL: https://unleash.nais.adeo.no/api/
 ENVIRONMENT_NAME: p

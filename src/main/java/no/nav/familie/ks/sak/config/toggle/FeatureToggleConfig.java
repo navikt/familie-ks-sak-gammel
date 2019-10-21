@@ -4,6 +4,8 @@ import no.finn.unleash.DefaultUnleash;
 import no.finn.unleash.Unleash;
 import no.finn.unleash.strategy.Strategy;
 import no.finn.unleash.util.UnleashConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +20,7 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 
 @Configuration
 public class FeatureToggleConfig {
+    private static final Logger logger = LoggerFactory.getLogger(FeatureToggleConfig.class);
     private static final String APP_NAME_PROPERTY_NAME = "${NAIS_APP_NAME}";
     private static final String UNLEASH_API_URL_PROPERTY_NAME = "${UNLEASH_API_URL}";
     private static final String ENVIRONMENT_NAME = "${ENVIRONMENT_NAME}";
@@ -33,6 +36,7 @@ public class FeatureToggleConfig {
             @Value(UNLEASH_API_URL_PROPERTY_NAME) String unleashApiUrl,
             Strategy... strategies
     ) {
+        logger.info("oppretter UnleashConfig med appName: " + appName + ", unleashApi: " + unleashApiUrl);
         UnleashConfig config = UnleashConfig.builder()
                 .appName(appName)
                 .unleashAPI(unleashApiUrl)
