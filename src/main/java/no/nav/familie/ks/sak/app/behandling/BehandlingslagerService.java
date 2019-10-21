@@ -52,7 +52,7 @@ public class BehandlingslagerService {
         return behandling;
     }
 
-    void trekkUtOgPersister(Behandling behandling, Søknad søknad) {
+    void trekkUtOgPersisterSøknad(Behandling behandling, Søknad søknad) {
         final var familieforholdBuilder = new OppgittFamilieforhold.Builder();
         familieforholdBuilder.setBarna(mapOgHentBarna(søknad));
         familieforholdBuilder.setBorBeggeForeldreSammen(søknad.getOppgittFamilieforhold().getBorBeggeForeldreSammen());

@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår;
 
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.InputType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
@@ -22,7 +23,7 @@ public class VilkårResultat extends BaseEntitet {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vilkar")
-    private VilkårType vilkårType;
+    private InputType vilkårType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "utfall")
@@ -37,7 +38,7 @@ public class VilkårResultat extends BaseEntitet {
     VilkårResultat() {
     }
 
-    public VilkårResultat(VilkårType vilkårType, UtfallType utfall, String regelInput, String regelOutput) {
+    public VilkårResultat(InputType vilkårType, UtfallType utfall, String regelInput, String regelOutput) {
         this.vilkårType = vilkårType;
         this.utfall = utfall;
         this.regelInput = regelInput;
@@ -48,7 +49,7 @@ public class VilkårResultat extends BaseEntitet {
         this.vilkårsResultat = vilkårsResultat;
     }
 
-    public VilkårType getVilkårType() {
+    public InputType getVilkårType() {
         return vilkårType;
     }
 

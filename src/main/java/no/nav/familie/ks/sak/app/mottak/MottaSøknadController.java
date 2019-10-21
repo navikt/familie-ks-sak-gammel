@@ -4,7 +4,9 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.kontrakter.søknad.SøknadKt;
+import no.nav.familie.ks.sak.app.behandling.AvviksVurdering;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
+import no.nav.familie.ks.sak.app.behandling.SamletVilkårsVurdering;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
@@ -47,10 +49,16 @@ public class MottaSøknadController {
 
             funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
 
-            if (samletUtfallType.equals(UtfallType.OPPFYLT)) {
-                log.info("Søknad kan behandles automatisk. Årsak={}", samletUtfallType);
-            } else {
-                log.info("Søknad kan ikke behandles automatisk. Årsak={}", vilkårvurdering.getResultater());
+            if (vilkårvurdering instanceof SamletVilkårsVurdering) {
+                var samletVilkårVurdering = (SamletVilkårsVurdering) vilkårvurdering;
+                if (samletUtfallType.equals(UtfallType.OPPFYLT)) {
+                    log.info("Søknad kan behandles automatisk. Årsak={}", samletUtfallType);
+                } else {
+                    log.info("Søknad kan ikke behandles automatisk. Årsak={}", samletVilkårVurdering.getResultater());
+                }
+            } else if (vilkårvurdering instanceof AvviksVurdering) {
+                var avviksvurdering = (AvviksVurdering) vilkårvurdering;
+                log.info("Søknad ble avvikshåndtert. Årsak={}", avviksvurdering.getAvvik());
             }
 
             return new ResponseEntity(HttpStatus.OK);

@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene.kodeverk;
 
-public enum VilkårType {
+public enum VilkårType implements InputType {
 
     MEDLEMSKAP_BOSTED(Constants.MEDLEMSKAP_BOSTED_KODE, "Medlemskap til folketrygden", "§2 og §3"),
     MEDLEMSKAP_MEDL(Constants.MEDLEMSKAP_MEDL_KODE, "Medlemskap til folketrygden", "§2 og §3"),

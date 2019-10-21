@@ -13,6 +13,7 @@ import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.FDATException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
@@ -44,7 +45,7 @@ public class RegisterInnhentingService {
         this.oppslagTjeneste = oppslagTjeneste;
     }
 
-    public TpsFakta innhentPersonopplysninger(Behandling behandling, Søknad søknad) {
+    public TpsFakta innhentPersonopplysninger(Behandling behandling, Søknad søknad) throws FDATException {
         final var oppgittAnnenPartPersonIdent = søknad.getOppgittAnnenPartFødselsnummer();
         // TODO skriv om når vi støtter flerlinger
         final var barnFødselsnummer = søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer();
@@ -52,6 +53,9 @@ public class RegisterInnhentingService {
 
         final PersonMedHistorikk søkerPersonMedHistorikk = hentPersonMedHistorikk(søknad.getSøkerFødselsnummer());
         final PersonMedHistorikk barnPersonMedHistorikk = hentPersonMedHistorikk(barnFødselsnummer);
+        if (barnHarRelasjonerMedFDAT(barnPersonMedHistorikk)) {
+            throw new FDATException();
+        }
 
         mapPersonopplysninger(søkerPersonMedHistorikk, personopplysningGrunnlag, PersonType.SØKER);
         //TODO legg til støtte for flere barn!
@@ -107,7 +111,7 @@ public class RegisterInnhentingService {
 
     public MedlFakta hentMedlemskapsopplysninger(Behandling behandling) {
         Optional<PersonopplysningGrunnlag> pers = personopplysningService.hentHvisEksisterer(behandling);
-        if (!pers.isPresent()) {
+        if (pers.isEmpty()) {
             throw new IllegalStateException("Vi må ha personopplysninger for å kunne hente inn medlInfo.");
         }
         PersonopplysningGrunnlag personopplysningGrunnlag = pers.get();
@@ -118,6 +122,14 @@ public class RegisterInnhentingService {
             .medSøker(erTom(søkerMedlemskapsInfo.getPersonIdent()) ? Optional.empty() : Optional.of(søkerMedlemskapsInfo))
             .medAnnenForelder(hentAnnenPartMedl(personopplysningGrunnlag))
             .build();
+    }
+
+    private boolean barnHarRelasjonerMedFDAT(PersonMedHistorikk barn) {
+        long antallFdatRelasjoner = barn.getPersoninfo().getFamilierelasjoner().stream()
+            .filter(familierelasjon -> familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
+            .map(relasjon -> relasjon.getPersonIdent().erFdatNummer()).count();
+
+        return antallFdatRelasjoner > 0;
     }
 
     private Optional<MedlemskapsInfo> hentAnnenPartMedl(PersonopplysningGrunnlag personopplysningGrunnlag) {

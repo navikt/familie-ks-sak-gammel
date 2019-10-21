@@ -6,6 +6,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRe
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår.VilkårResultat;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår.VilkårsResultat;
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår.VilkårsResultatRepository;
+import no.nav.familie.ks.sak.app.behandling.vilkår.SamletVurdering;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +24,20 @@ public class ResultatService {
         this.vilkårsResultatRepository = vilkårsResultatRepository;
     }
 
-    public void persisterResultat(Behandling behandling, SamletVilkårsVurdering samletVilkårsVurdering) {
+    public void persisterResultat(Behandling behandling, SamletVurdering samletVurdering) {
         final var vilkårsSet = new HashSet<VilkårResultat>();
-        samletVilkårsVurdering.getResultater()
+        if (samletVurdering instanceof SamletVilkårsVurdering) {
+            final var samletVilkårsVurdering = (SamletVilkårsVurdering) samletVurdering;
+            samletVilkårsVurdering.getResultater()
                 .forEach(vurdering -> vilkårsSet.add(new VilkårResultat(vurdering.getVilkårType(), vurdering.getUtfallType(), vurdering.getInputJson(), vurdering.getRegelSporingJson())));
-        final var vilkårsResultat = new VilkårsResultat(vilkårsSet);
+        } else if (samletVurdering instanceof AvviksVurdering) {
+            final var avviksVurdering = (AvviksVurdering) samletVurdering;
 
+            avviksVurdering.getResultater()
+                .forEach(vurdering -> vilkårsSet.add(new VilkårResultat(vurdering.getAvvikType(), vurdering.getUtfallType(), null, null)));
+        }
+
+        final var vilkårsResultat = new VilkårsResultat(vilkårsSet);
         vilkårsResultatRepository.save(vilkårsResultat);
         behandlingresultatRepository.save(new BehandlingResultat(behandling, vilkårsResultat));
     }

@@ -9,6 +9,7 @@ import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.FDATException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,9 +39,19 @@ public class Saksbehandling {
     @Transactional
     public Vedtak behandle(Søknad søknad, String saksnummer) {
         final Behandling behandling = behandlingslagerService.nyBehandling(søknad, saksnummer);
-        TpsFakta tpsFakta = registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
+        behandlingslagerService.trekkUtOgPersisterSøknad(behandling, søknad);
+
+        TpsFakta tpsFakta;
+        try {
+            tpsFakta = registerInnhentingService.innhentPersonopplysninger(behandling, søknad);
+        } catch (FDATException e) {
+            Vedtak vedtak = new Vedtak(new AvviksVurdering());
+            vedtak.setBehandlingsId(behandling.getId());
+            resultatService.persisterResultat(behandling, vedtak.getVilkårvurdering());
+            return vedtak;
+        }
+
         MedlFakta medlFakta = registerInnhentingService.hentMedlemskapsopplysninger(behandling);
-        behandlingslagerService.trekkUtOgPersister(behandling, søknad);
         Faktagrunnlag faktagrunnlag = fastsettingService.fastsettFakta(behandling, tpsFakta, medlFakta);
 
         SamletVilkårsVurdering vilkårvurdering = vurderVilkår(behandling, faktagrunnlag);

@@ -12,6 +12,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.Per
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.FDATException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
@@ -80,7 +81,7 @@ public class RegisterInnhentingServiceTest {
     }
 
     @Test
-    public void skal_lagre_ned_respons() {
+    public void skal_lagre_ned_respons() throws FDATException {
         PersonIdent barn = tpsFakta.getBarna().get(0).getPersoninfo().getPersonIdent();
         AktørId barnAktørId = tpsFakta.getBarna().get(0).getPersoninfo().getAktørId();
         Personinfo barnPersoninfo = tpsFakta.getBarna().get(0).getPersoninfo();
@@ -114,7 +115,7 @@ public class RegisterInnhentingServiceTest {
     }
 
     @Test
-    public void skal_lagre_ned_respons_uten_annen_part() {
+    public void skal_lagre_ned_respons_uten_annen_part() throws FDATException {
         final Faktagrunnlag faktagrunnlagUtenAnnenPart = FaktagrunnlagTestBuilder.aleneForelderNorskStatsborgerskapUtenBarnehage();
         final TpsFakta tpsFaktaUtenAnnenPart = faktagrunnlagUtenAnnenPart.getTpsFakta();
 
