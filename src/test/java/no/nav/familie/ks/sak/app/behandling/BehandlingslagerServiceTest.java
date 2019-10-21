@@ -80,7 +80,7 @@ public class BehandlingslagerServiceTest {
     public void skal_lagre_søknad_og_hente_opp_igjen() {
         final var søknad = SøknadTestdata.norskFamilieMedBarnehageplass();
         final var saksnummer = "TEST123";
-        Behandling nyBehandling = tjeneste.nyBehandling(søknad, saksnummer);
+        Behandling nyBehandling = tjeneste.nyBehandling(søknad, saksnummer, "12345678");
         tjeneste.trekkUtOgPersister(nyBehandling, søknad);
         final var fagsaker = fagsakRepository.findAll();
         assertThat(fagsaker).hasSize(1);
