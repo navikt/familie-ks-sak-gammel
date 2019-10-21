@@ -48,6 +48,7 @@ public class MottaSøknadController {
     public ResponseEntity mottaDokument(@RequestBody Map<String, String> dto) {
         Søknad søknad = SøknadKt.toSøknad(dto.get("søknadJson"));
         String saksnummer = dto.get("saksnummer");
+        String journalpostID = dto.get("journalpostID");
 
         try {
             Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer);
@@ -55,14 +56,15 @@ public class MottaSøknadController {
             final var samletUtfallType = vilkårvurdering.getSamletUtfallType();
             funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
 
+            String oppgaveBeskrivelse;
             if (samletUtfallType.equals(UtfallType.OPPFYLT)) {
                 log.info("Søknad kan behandles automatisk. Årsak={}", samletUtfallType);
-                oppslagTjeneste.oppdaterGosysOppgave(saksnummer, søknad, String.format(OppgaveBeskrivelse.FORESLÅ_VEDTAK,
-                    OppgaveBeskrivelse.args(vedtak, søknad)));
+                oppgaveBeskrivelse = String.format(OppgaveBeskrivelse.FORESLÅ_VEDTAK, OppgaveBeskrivelse.args(vedtak, søknad));
             } else {
                 log.info("Søknad kan ikke behandles automatisk. Årsak={}", vilkårvurdering.getResultater());
-                oppslagTjeneste.oppdaterGosysOppgave(saksnummer, søknad, OppgaveBeskrivelse.MANUELL_BEHANDLING);
+                oppgaveBeskrivelse = OppgaveBeskrivelse.MANUELL_BEHANDLING;
             }
+            oppslagTjeneste.oppdaterGosysOppgave(søknad.getSøkerFødselsnummer(), journalpostID, oppgaveBeskrivelse);
 
             return new ResponseEntity(HttpStatus.OK);
         } catch (Exception e) {

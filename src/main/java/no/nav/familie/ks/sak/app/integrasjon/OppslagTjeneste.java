@@ -223,33 +223,15 @@ public class OppslagTjeneste {
         }
     }
 
-
     @Retryable(
         value = { OppslagException.class },
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public String opprettGosysOppgave(String saksnummer, Søknad søknad, String beskrivelse) {
-        URI uri = URI.create(oppslagServiceUri + "/oppgave/opprett");
-        logger.info("Sender \"opprett oppgave\"-request til " + uri);
-        return sendOppgave(opprettRequest(saksnummer, søknad, beskrivelse), uri, String.class);
-    }
-
-    @Retryable(
-        value = { OppslagException.class },
-        maxAttempts = 3,
-        backoff = @Backoff(delay = 5000))
-    public Boolean oppdaterGosysOppgave(String saksnummer, Søknad søknad, String beskrivelse) {
+    public String oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
         URI uri = URI.create(oppslagServiceUri + "/oppgave/oppdater");
         logger.info("Sender \"oppdater oppgave\"-request til " + uri);
-        return sendOppgave(oppdaterRequest(saksnummer, søknad, beskrivelse), uri, Boolean.class);
-    }
-
-    private Oppgave opprettRequest(String saksnummer, Søknad søknad, String beskrivelse) {
-        return new Oppgave(søknad.getSøkerFødselsnummer(),  saksnummer, null, "4820", beskrivelse,2);
-    }
-
-    private Oppgave oppdaterRequest(String saksnummer, Søknad søknad, String beskrivelse) {
-        return new Oppgave(søknad.getSøkerFødselsnummer(), saksnummer, "", "4820", beskrivelse, 2);
+        Oppgave oppgave = new Oppgave(hentAktørId(fnr).getId(), journalpostID, null, beskrivelse);
+        return sendOppgave(oppgave, uri, String.class);
     }
 
     private <T> T sendOppgave(Oppgave request, URI uri, Class<T> responsType) {
