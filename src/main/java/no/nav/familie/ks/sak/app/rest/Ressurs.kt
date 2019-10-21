@@ -11,7 +11,7 @@ data class Ressurs(
         val melding: String,
         val errorMelding: String?
 ) {
-    enum class Status { SUKSESS, FEILET, IKKE_HENTET }
+    enum class Status { SUKSESS, FEILET, IKKE_HENTET, IKKE_TILGANG }
 
     companion object {
         val objectMapper: ObjectMapper = ObjectMapper()
@@ -32,6 +32,13 @@ data class Ressurs(
             status = Status.FEILET,
             melding = errorMessage ?: "Kunne ikke hente data: ${error?.message}",
             errorMelding = error?.message
+        )
+
+        fun ikkeTilgang(melding: String): Ressurs = Ressurs(
+                data = null,
+                status = Status.IKKE_TILGANG,
+                melding = melding,
+                errorMelding = ""
         )
     }
 }

@@ -45,13 +45,13 @@ public class MottaSøknadController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
-    public ResponseEntity mottaDokument(@RequestBody Map<String, String> dto) {
-        Søknad søknad = SøknadKt.toSøknad(dto.get("søknadJson"));
-        String saksnummer = dto.get("saksnummer");
-        String journalpostID = dto.get("journalpostID");
+    public ResponseEntity mottaDokument(@RequestBody SøknadDto søknadDto) {
+        Søknad søknad = SøknadKt.toSøknad(søknadDto.getSøknadJson());
+        String saksnummer = søknadDto.getSaksnummer();
+        String journalpostID = søknadDto.getJournalpostID();
 
         try {
-            Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer);
+            Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer, journalpostID);
             final var vilkårvurdering = vedtak.getVilkårvurdering();
             final var samletUtfallType = vilkårvurdering.getSamletUtfallType();
             funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);

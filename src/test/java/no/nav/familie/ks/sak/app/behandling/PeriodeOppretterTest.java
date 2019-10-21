@@ -29,6 +29,7 @@ public class PeriodeOppretterTest {
     private static final int MAKS_ALDER_I_MÅNEDER = 23;
     private static final int MAKS_UTBETALINGSGRAD = 100;
     private static final String SAKSNUMMER = "TEST123";
+    private static final String JOURNALPOSTID = "???";
 
     private final BehandlingslagerService behandlingslagerMock = mock(BehandlingslagerService.class);
     private final RegisterInnhentingService registerInnhentingServiceMock = mock(RegisterInnhentingService.class);
@@ -38,17 +39,17 @@ public class PeriodeOppretterTest {
 
     @Test
     public void søknad_med_barnehage_gir_feil() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapMedGradertBarnehage());
-        when(behandlingslagerMock.nyBehandling(any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
-        Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieGradertBarnehageplass(), SAKSNUMMER);
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapMedGradertBarnehage());
+        when(behandlingslagerMock.nyBehandling(any(), any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), ""), "").build());
+        Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieGradertBarnehageplass(), SAKSNUMMER, JOURNALPOSTID);
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.MANUELL_BEHANDLING);
     }
 
     @Test
     public void at_søknad_uten_barnehage_gir_stønadperiode() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        when(behandlingslagerMock.nyBehandling(any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), "")).build());
-        Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(behandlingslagerMock.nyBehandling(any(), any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), ""), "").build());
+        Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER, JOURNALPOSTID);
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.OPPFYLT);
         assertThat(vedtak.getStønadperiode().getFom()).isEqualTo(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo().getFødselsdato().plusMonths(MIN_ALDER_I_MÅNEDER).withDayOfMonth(1));
         assertThat(vedtak.getStønadperiode().getTom()).isEqualTo(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo().getFødselsdato().plusMonths(MAKS_ALDER_I_MÅNEDER).withDayOfMonth(1));

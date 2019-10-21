@@ -7,6 +7,7 @@ public enum VilkårIkkeOppfyltÅrsak implements VilkårUtfallÅrsak {
     // Medlemskap
     IKKE_FEM_ÅR_MEDLEMSKAP(8301, "Må ha vært medlem av den norske folketrygden i minst fem år", VilkårType.MEDLEMSKAP_BOSTED),
     IKKE_BOSATT_I_NORGE_FEM_ÅR(8303, "Ikke vært bosatt i Norge sammenhengende siste fem år", VilkårType.MEDLEMSKAP_BOSTED),
+    IKKE_BOSATT_I_NORGE_NÅ(8308, "Ikke vært bosatt i Norge sammenhengende siste fem år", VilkårType.MEDLEMSKAP_BOSTED),
     IKKE_NORSKE_STATSBORGERE(8304, "Foreldre er ikke norsk statsborger nå", VilkårType.MEDLEMSKAP_STATSBORGERSKAP),
     HAR_MEDLEMSKAPSOPPLYSNINGER(8305, "Foreldre har medlemskapsopplysninger", VilkårType.MEDLEMSKAP_MEDL),
 
@@ -24,7 +25,9 @@ public enum VilkårIkkeOppfyltÅrsak implements VilkårUtfallÅrsak {
     // MVP
     OPPGITT_TILKNYTNING_UTLAND(8309, "Søker har svart ja på spørsmål som indikerer tilknytning til utland", VilkårType.UTLAND),
     BARN_IKKE_MELLOM_10_OG_14_MÅNEDER(8310, "Barnet det søkes for er ikke mellom 10 og 14 måneder", VilkårType.BARN_MELLOM_10_OG_14_MÅNEDER),
-    OPPGITT_FLERE_BARN(8311, "Søker har oppgitt flere barn i søknaden", VilkårType.KUN_ET_BARN);
+    OPPGITT_FLERE_BARN(8311, "Søker har oppgitt flere barn i søknaden", VilkårType.KUN_ET_BARN),
+    ANNEN_PART_STEMMER_IKKE(8312, "Oppgitt annen part fra søknaden og annen part fra TPS stemmer ikke", VilkårType.ANNEN_PART_STEMMER),
+    ANNEN_PART_ER_IKKE_OPPGITT(8313, "Annen part er ikke tilstedet i grunnlaget fra TPS", VilkårType.ANNEN_PART_ER_OPPGITT);
 
     private final int årsakKode;
     private final String beskrivelse;
