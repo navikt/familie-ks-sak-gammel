@@ -90,7 +90,7 @@ public class RegisterInnhentingServiceTest {
         when(oppslagTjeneste.hentPersoninfoFor(eq(barn.getIdent()))).thenReturn(barnPersoninfo);
         when(oppslagTjeneste.hentHistorikkFor(eq(barn.getIdent()))).thenReturn(barnPersonhistorikk);
 
-        final var fagsak = Fagsak.opprettNy(søkerAktørId, "123412341234");
+        final var fagsak = Fagsak.opprettNy(søkerAktørId, søkerPersoninfo.getPersonIdent(), "123412341234");
         fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak, "12345678").build();
@@ -127,7 +127,7 @@ public class RegisterInnhentingServiceTest {
         when(oppslagTjeneste.hentPersoninfoFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersoninfo);
         when(oppslagTjeneste.hentHistorikkFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersonhistorikk);
 
-        final var fagsak = Fagsak.opprettNy(søkerAktørId, "123412341234");
+        final var fagsak = Fagsak.opprettNy(søkerAktørId, søkerPersoninfo.getPersonIdent(), "123412341234");
         fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak, "12345678").build();

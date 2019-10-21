@@ -7,25 +7,18 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barneh
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
 import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling
 import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.personinformasjon.RestPersoner
 import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.personinformasjon.toRestPerson
-import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestOppgittErklæring
-import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestOppgittFamilieforhold
-import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestOppgittUtlandsTilknytning
-import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.RestSøknad
-import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.toRestAktørArbeidYtelseUtland
-import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.toRestAktørTilknytningUtland
-import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.toRestBarn
+import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.*
 import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestBehandlingsresultat
 import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestVilkårsResultat
 import no.nav.familie.ks.sak.app.rest.behandling.toRestFagsak
 import org.springframework.stereotype.Service
 
 @Service
-class RestFagsakService (
+class RestFagsakService(
         private val behandlingresultatRepository: BehandlingresultatRepository,
         private val barnehageBarnGrunnlagRepository: BarnehageBarnGrunnlagRepository,
         private val søknadGrunnlagRepository: SøknadGrunnlagRepository,
@@ -74,9 +67,9 @@ class RestFagsakService (
             // Grunnlag fra TPS
             val personopplysninger: RestPersoner = personopplysningGrunnlagRepository.findByBehandlingAndAktiv(it.id).map { personopplysningGrunnlag ->
                 RestPersoner(
-                    søker = personopplysningGrunnlag.søker.toRestPerson(),
-                    annenPart = personopplysningGrunnlag.annenPart?.toRestPerson(),
-                    barna = personopplysningGrunnlag.barna.map { barn -> barn.toRestPerson() }
+                        søker = personopplysningGrunnlag.søker.toRestPerson(),
+                        annenPart = personopplysningGrunnlag.annenPart?.toRestPerson(),
+                        barna = personopplysningGrunnlag.barna.map { barn -> barn.toRestPerson() }
                 )
             }.orElseThrow()
 
@@ -92,14 +85,17 @@ class RestFagsakService (
             RestBehandling(it.id, søknad, restBehandlingsresultat, personopplysninger)
         }
 
-        return fagsak.toRestFagsak(restBehandlinger, søkerFødselsnummer )
+        return fagsak.toRestFagsak(restBehandlinger, søkerFødselsnummer)
     }
 
     fun hentRessursFagsak(fagsakId: Long): RestFagsak? {
         return hentRestFagsak(fagsakId)
     }
 
-    fun hentFagsaker(): List<Fagsak> {
-        return fagsakRepository.findAll()
+    fun hentFagsaker(filter: String?): List<Fagsak> {
+        return when (filter) {
+            null -> fagsakRepository.findAll()
+            else -> fagsakRepository.findAll().filter { it.id.toString().contains(filter) || it.saksnummer.contains(filter) || it.personIdent.ident.contains(filter) }
+        }
     }
 }
