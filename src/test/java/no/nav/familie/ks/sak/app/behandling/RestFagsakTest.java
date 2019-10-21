@@ -110,7 +110,7 @@ public class RestFagsakTest {
         when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER, JOURNALPOSTID);
 
-        assertThat(restFagsakService.hentFagsaker()).hasSize(1);
+        assertThat(restFagsakService.hentFagsaker(null)).hasSize(1);
     }
 
     @Test
