@@ -19,7 +19,7 @@ public class IkkeLøpendeKSForBarn extends LeafSpecification<Faktagrunnlag> {
         // TODO: Støtte for flerlinger.
         // TODO: Dette er en MVP-regel, som skal erstattes når vi har på plass et endepunkt mot infotrygd som gir mer data.
         // Dette faktapunktet gir true for barn som har løpende kontantstøtte ELLER der saken er under behandling.
-        var barnHarLøpendeKontantstøtte = faktagrunnlag.getInfotrygdFakta().getAktivKontantStøtteInfo().getHarAktivKontantstotte();
+        var barnHarLøpendeKontantstøtte = faktagrunnlag.getInfotrygdFakta().getAktivKontantstøtteInfo().getHarAktivKontantstotte();
         
         if (!barnHarLøpendeKontantstøtte) {
             return ja();
