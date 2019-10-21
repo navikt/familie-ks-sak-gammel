@@ -38,9 +38,10 @@ import static org.mockito.Mockito.when;
     loader = AnnotationConfigContextLoader.class)
 @DataJpaTest(excludeAutoConfiguration = FlywayAutoConfiguration.class)
 public class RestFagsakTest {
-
-    private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
     private static final String SAKSNUMMER = "TEST123";
+
+    @MockBean
+    private FastsettingService fastsettingService;
 
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
@@ -88,7 +89,7 @@ public class RestFagsakTest {
 
     @Test
     public void hentRestFagsak() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingService.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
 
         final var søknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
         Vedtak vedtak = saksbehandling.behandle(søknad, SAKSNUMMER);
@@ -106,7 +107,7 @@ public class RestFagsakTest {
 
     @Test
     public void hentFagsaker() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingService.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
 
         assertThat(restFagsakService.hentFagsaker()).hasSize(1);
@@ -114,7 +115,7 @@ public class RestFagsakTest {
 
     @Test
     public void rest_fagsak_har_tps_informasjon() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingService.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
 
