@@ -9,6 +9,7 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
+import no.nav.familie.ks.sak.app.integrasjon.tilgangskontroll.Tilgang;
 import no.nav.familie.log.mdc.MDCConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,14 +166,14 @@ public class OppslagTjeneste {
         value = { OppslagException.class },
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public ResponseEntity sjekkTilgangTilPerson(String saksbehandlerId, String personident) {
+    public ResponseEntity<Tilgang> sjekkTilgangTilPerson(String saksbehandlerId, String personident) {
         if (saksbehandlerId == null || personident == null) {
             throw new OppslagException("Ved sjekking av tilgang: saksbehandlerId eller personident er null");
         }
         URI uri = URI.create(oppslagServiceUri + "/tilgang/person");
         logger.info("Sjekker tilgang  " + oppslagServiceUri);
         try {
-            ResponseEntity<Object> response = requestMedPersonIdentOgSaksbehandlerId(uri, personident, saksbehandlerId, Object.class);
+            ResponseEntity<Tilgang> response = requestMedPersonIdentOgSaksbehandlerId(uri, personident, saksbehandlerId, Tilgang.class);
             secureLogger.info("Saksbehandler {} forsøker å få tilgang til {} med resultat {}", saksbehandlerId, personident, response.getBody());
             return response;
         } catch (RestClientException e) {
