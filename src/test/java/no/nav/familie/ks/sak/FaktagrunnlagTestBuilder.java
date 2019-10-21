@@ -26,7 +26,9 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.AdressePeriode;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.Adresseinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.status.PersonstatusType;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.Landkode;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighet.StatsborgerskapPeriode;
 
@@ -63,7 +65,7 @@ public final class FaktagrunnlagTestBuilder {
         .medAktørId(morAktørId)
         .medKjønn("KVINNE")
         .medPersonIdent(morPersonident)
-        .medAdresse("testadresse")
+        .medBostedsadresse(medBostedsadresse("NOR"))
         .medNavn("test testesen")
         .build();
     private static Personinfo personinfoFarNorsk = new Personinfo.Builder()
@@ -72,7 +74,8 @@ public final class FaktagrunnlagTestBuilder {
         .medAktørId(farAktørId)
         .medPersonIdent(farPersonident)
         .medKjønn("MANN")
-        .medAdresse("testadresse")
+        .medPersonIdent(farPersonident)
+        .medBostedsadresse(medBostedsadresse("NOR"))
         .medNavn("test testesen")
         .build();
     private static Personinfo personinfoFarNorskStemmerDelvis = new Personinfo.Builder()
@@ -81,7 +84,7 @@ public final class FaktagrunnlagTestBuilder {
         .medAktørId(farAktørId)
         .medPersonIdent(morPersonident)
         .medKjønn("MANN")
-        .medAdresse("testadresse")
+        .medBostedsadresse(medBostedsadresse("NOR"))
         .medNavn("test testesen")
         .build();
     private static Personinfo personinfoFarNorskStemmerIkke = new Personinfo.Builder()
@@ -90,7 +93,7 @@ public final class FaktagrunnlagTestBuilder {
         .medAktørId(farAktørId)
         .medPersonIdent(new PersonIdent("12345678910"))
         .medKjønn("MANN")
-        .medAdresse("testadresse")
+        .medBostedsadresse(medBostedsadresse("NOR"))
         .medNavn("test testesen")
         .build();
     private static Personinfo personinfoSvenskMor = new Personinfo.Builder()
@@ -99,7 +102,7 @@ public final class FaktagrunnlagTestBuilder {
         .medAktørId(utenlandskMorAktørId)
         .medKjønn("KVINNE")
         .medPersonIdent(utenlandskMorPersonident)
-        .medAdresse("testadresse")
+        .medBostedsadresse(medBostedsadresse("SWE"))
         .medNavn("Svensk Svenskesen")
         .build();
     private static Personinfo personinfoSvenskFar = new Personinfo.Builder()
@@ -108,7 +111,7 @@ public final class FaktagrunnlagTestBuilder {
         .medAktørId(utenlandskFarAktørId)
         .medKjønn("MANN")
         .medPersonIdent(utenlandskFarPersonident)
-        .medAdresse("annen adresse")
+        .medBostedsadresse(medBostedsadresse("SWE"))
         .medNavn("test testesen")
         .build();
 
@@ -264,7 +267,7 @@ public final class FaktagrunnlagTestBuilder {
         .medAktørId(barnAktørId)
         .medPersonIdent(barnPersonident)
         .medStatsborgerskap(Landkode.NORGE)
-        .medAdresse("testadresse")
+        .medBostedsadresse(medBostedsadresse("NOR"))
         .medNavn("test testesen")
         .medKjønn("MANN")
         .medFamilierelasjon(new HashSet<>(List.of(norskForelderRelasjonMor, norskForelderRelasjonFar)))
@@ -288,7 +291,7 @@ public final class FaktagrunnlagTestBuilder {
         .medAktørId(barnAktørId)
         .medPersonIdent(barnPersonident)
         .medStatsborgerskap(Landkode.NORGE)
-        .medAdresse("testadresse")
+        .medBostedsadresse(medBostedsadresse("NOR"))
         .medNavn("test testesen")
         .medKjønn("MANN")
         .medFamilierelasjon(new HashSet<>(List.of(norskForelderRelasjonMor)))
@@ -311,7 +314,7 @@ public final class FaktagrunnlagTestBuilder {
         .medAktørId(utenlandskBarnAktørId)
         .medPersonIdent(utenlandskBarnPersonident)
         .medStatsborgerskap(Landkode.SVERIGE)
-        .medAdresse("svensk adresse")
+        .medBostedsadresse(medBostedsadresse("SWE"))
         .medNavn("test testesen")
         .medKjønn("MANN")
         .build()).build();
@@ -320,7 +323,7 @@ public final class FaktagrunnlagTestBuilder {
         .medAktørId(barnAktørId)
         .medPersonIdent(barnPersonident)
         .medStatsborgerskap(Landkode.NORGE)
-        .medAdresse("testadresse")
+        .medBostedsadresse(medBostedsadresse("NOR"))
         .medNavn("test testesen")
         .medKjønn("MANN")
         .medFamilierelasjon(new HashSet<>(Arrays.asList(utenlandskMorRelasjonMedAnnetBosted, utenlandskFarRelasjonMedAnnetBosted)))
@@ -330,7 +333,7 @@ public final class FaktagrunnlagTestBuilder {
         .medAktørId(barnAktørId)
         .medPersonIdent(barnPersonident)
         .medStatsborgerskap(Landkode.NORGE)
-        .medAdresse("testadresse")
+        .medBostedsadresse(medBostedsadresse("NOR"))
         .medNavn("test testesen")
         .medKjønn("MANN")
         .medFamilierelasjon(new HashSet<>(Arrays.asList(norskForelderRelasjonFar, utenlandskMorRelasjonMedAnnetBosted)))
@@ -456,6 +459,15 @@ public final class FaktagrunnlagTestBuilder {
         return new MedlemskapsInfo.Builder()
             .medPersonIdent(null)
             .medGyldigePerioder(null)
+            .build();
+    }
+
+    public static Adresseinfo medBostedsadresse(String landkode) {
+        return new Adresseinfo.Builder(AdresseType.BOSTEDSADRESSE, "test testesen", PersonstatusType.BOSA)
+            .medAdresselinje1("Svingen")
+            .medPostNr("0001")
+            .medPoststed("Oslo")
+            .medLand(landkode)
             .build();
     }
 

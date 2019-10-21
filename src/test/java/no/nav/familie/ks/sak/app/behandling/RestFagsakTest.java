@@ -39,6 +39,7 @@ import static org.mockito.Mockito.when;
 @DataJpaTest(excludeAutoConfiguration = FlywayAutoConfiguration.class)
 public class RestFagsakTest {
     private static final String SAKSNUMMER = "TEST123";
+    private static final String JOURNALPOSTID = "12345678";
 
     @MockBean
     private FastsettingService fastsettingService;
@@ -92,7 +93,7 @@ public class RestFagsakTest {
         when(fastsettingService.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
 
         final var søknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
-        Vedtak vedtak = saksbehandling.behandle(søknad, SAKSNUMMER);
+        Vedtak vedtak = saksbehandling.behandle(søknad, SAKSNUMMER, JOURNALPOSTID);
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
 
         assert behandling.isPresent();
@@ -108,15 +109,14 @@ public class RestFagsakTest {
     @Test
     public void hentFagsaker() {
         when(fastsettingService.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
-
+        saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER, JOURNALPOSTID);
         assertThat(restFagsakService.hentFagsaker()).hasSize(1);
     }
 
     @Test
     public void rest_fagsak_har_tps_informasjon() {
         when(fastsettingService.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER);
+        Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER, JOURNALPOSTID);
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
 
         assert behandling.isPresent();

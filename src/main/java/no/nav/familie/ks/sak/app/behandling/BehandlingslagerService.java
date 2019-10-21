@@ -41,12 +41,12 @@ public class BehandlingslagerService {
         this.oppslagTjeneste = oppslag;
     }
 
-    public Behandling nyBehandling(Søknad søknad, String saksnummer) {
+    public Behandling nyBehandling(Søknad søknad, String saksnummer, String journalpostID) {
         final var søkerAktørId = oppslagTjeneste.hentAktørId(søknad.getSøkerFødselsnummer());
         final var fagsak = Fagsak.opprettNy(søkerAktørId, saksnummer);
         fagsakRepository.save(fagsak);
 
-        final var behandling = Behandling.forFørstegangssøknad(fagsak).build();
+        final var behandling = Behandling.forFørstegangssøknad(fagsak, journalpostID).build();
         behandlingRepository.save(behandling);
 
         return behandling;

@@ -33,6 +33,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 
+import static no.nav.familie.ks.sak.app.behandling.domene.typer.Tid.TIDENES_BEGYNNELSE;
+import static no.nav.familie.ks.sak.app.behandling.domene.typer.Tid.TIDENES_ENDE;
+
 @Component
 public class OppslagTjeneste {
 
@@ -68,7 +71,19 @@ public class OppslagTjeneste {
         headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
 
         HttpEntity httpEntity = new HttpEntity(headers);
-        
+
+        return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
+    }
+
+    private <T> ResponseEntity<T> requestMedPersonIdentOgSaksbehandlerId(URI uri, String personident, String saksbehandlerId, Class<T> clazz) {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken());
+        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+        headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
+        headers.add("saksbehandlerId", saksbehandlerId);
+
+        HttpEntity httpEntity = new HttpEntity(headers);
+
         return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
@@ -114,6 +129,7 @@ public class OppslagTjeneste {
         }
     }
 
+
     @Retryable(
         value = { OppslagException.class },
         maxAttempts = 3,
@@ -140,6 +156,25 @@ public class OppslagTjeneste {
                 logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + feilmelding);
                 throw new OppslagException(feilmelding);
             }
+        } catch (RestClientException e) {
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+        }
+    }
+
+    @Retryable(
+        value = { OppslagException.class },
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 5000))
+    public ResponseEntity sjekkTilgangTilPerson(String saksbehandlerId, String personident) {
+        if (saksbehandlerId == null || personident == null) {
+            throw new OppslagException("Ved sjekking av tilgang: saksbehandlerId eller personident er null");
+        }
+        URI uri = URI.create(oppslagServiceUri + "/tilgang/person");
+        logger.info("Sjekker tilgang  " + oppslagServiceUri);
+        try {
+            ResponseEntity<Object> response = requestMedPersonIdentOgSaksbehandlerId(uri, personident, saksbehandlerId, Object.class);
+            secureLogger.info("Saksbehandler {} forsøker å få tilgang til {} med resultat {}", saksbehandlerId, personident, response.getBody());
+            return response;
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
         }
@@ -181,8 +216,9 @@ public class OppslagTjeneste {
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public PersonhistorikkInfo hentHistorikkFor(String personident) {
-        final var iDag = LocalDate.now();
-        URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?fomDato=" + formaterDato(iDag.minusYears(6)) + "&tomDato=" + formaterDato(iDag));
+        final var fom = TIDENES_BEGYNNELSE;
+        final var tom = TIDENES_ENDE;
+        URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?fomDato=" + formaterDato(fom) + "&tomDato=" + formaterDato(tom));
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
             ResponseEntity<PersonhistorikkInfo> response = requestMedPersonIdent(uri, personident, PersonhistorikkInfo.class);
