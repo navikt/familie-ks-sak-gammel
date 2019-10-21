@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import static no.nav.familie.ks.sak.config.toggle.UnleashProvider.toggle;
 
 @RestController
 @RequestMapping("/api/mottak")
@@ -29,6 +29,7 @@ import java.util.Map;
 public class MottaSøknadController {
 
     private static final Logger log = LoggerFactory.getLogger(MottaSøknadController.class);
+    private static final String OPPDATER_OPPGAVE = "kontantstotte.oppdater_oppgave";
 
     private final Counter feiledeBehandlinger = Metrics.counter("soknad.kontantstotte.funksjonell.feiledebehandlinger");
 
@@ -64,7 +65,9 @@ public class MottaSøknadController {
                 log.info("Søknad kan ikke behandles automatisk. Årsak={}", vilkårvurdering.getResultater());
                 oppgaveBeskrivelse = OppgaveBeskrivelse.MANUELL_BEHANDLING;
             }
-            oppslagTjeneste.oppdaterGosysOppgave(søknad.getSøkerFødselsnummer(), journalpostID, oppgaveBeskrivelse);
+            if (toggle(OPPDATER_OPPGAVE).isEnabled()) {
+                oppslagTjeneste.oppdaterGosysOppgave(søknad.getSøkerFødselsnummer(), journalpostID, oppgaveBeskrivelse);
+            }
 
             return new ResponseEntity(HttpStatus.OK);
         } catch (Exception e) {
