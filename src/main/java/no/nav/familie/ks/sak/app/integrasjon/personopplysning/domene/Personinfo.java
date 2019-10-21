@@ -21,7 +21,7 @@ public class Personinfo {
     private String navn;
     private String kjønn;
     private PersonIdent personIdent;
-    private String adresse;
+    private Adresseinfo bostedsadresse;
     private LocalDate fødselsdato;
     private LocalDate dødsdato;
     private PersonstatusType personstatus;
@@ -74,8 +74,8 @@ public class Personinfo {
         return Collections.unmodifiableSet(familierelasjoner);
     }
 
-    public String getAdresse() {
-        return adresse;
+    public Adresseinfo getBostedsadresse() {
+        return bostedsadresse;
     }
 
     public LocalDate getDødsdato() {
@@ -156,8 +156,8 @@ public class Personinfo {
             return this;
         }
 
-        public Builder medAdresse(String adresse) {
-            personinfoMal.adresse = adresse;
+        public Builder medBostedsadresse(Adresseinfo adresse) {
+            personinfoMal.bostedsadresse = adresse;
             return this;
         }
 

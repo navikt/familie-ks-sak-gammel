@@ -94,7 +94,7 @@ public class RegisterInnhentingServiceTest {
         final var fagsak = Fagsak.opprettNy(søkerAktørId, "123412341234");
         fagsakRepository.save(fagsak);
 
-        final var behandling = Behandling.forFørstegangssøknad(fagsak).build();
+        final var behandling = Behandling.forFørstegangssøknad(fagsak, "12345678").build();
         behandlingRepository.save(behandling);
 
         tjeneste.innhentPersonopplysninger(behandling, SøknadTestdata.norskFamilieUtenBarnehageplass());
@@ -131,7 +131,7 @@ public class RegisterInnhentingServiceTest {
         final var fagsak = Fagsak.opprettNy(søkerAktørId, "123412341234");
         fagsakRepository.save(fagsak);
 
-        final var behandling = Behandling.forFørstegangssøknad(fagsak).build();
+        final var behandling = Behandling.forFørstegangssøknad(fagsak, "12345678").build();
         behandlingRepository.save(behandling);
 
         tjeneste.innhentPersonopplysninger(behandling, SøknadTestdata.norskFamilieUtenAnnenPartOgUtenBarnehageplass());

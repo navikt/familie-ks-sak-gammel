@@ -10,7 +10,6 @@ public class Adresseinfo {
 
     private AdresseType gjeldendePostadresseType;
     private String mottakerNavn;
-    private PersonIdent personIdent;
     private String adresselinje1;
     private String adresselinje2;
     private String adresselinje3;
@@ -55,10 +54,6 @@ public class Adresseinfo {
         return land;
     }
 
-    public PersonIdent getPersonIdent() {
-        return personIdent;
-    }
-
     public AdresseType getGjeldendePostadresseType() {
         return gjeldendePostadresseType;
     }
@@ -71,10 +66,22 @@ public class Adresseinfo {
         this.personstatus = personstatus;
     }
 
+    @Override
+    public String toString() {
+        return "Adresse{" + "adresseType=" + gjeldendePostadresseType +
+            ", adresselinje1='" + adresselinje1 + '\'' +
+            ", adresselinje2='" + adresselinje2 + '\'' +
+            ", adresselinje3='" + adresselinje3 + '\'' +
+            ", adresselinje4='" + adresselinje4 + '\'' +
+            ", postnummer='" + postNr + '\'' +
+            ", poststed='" + poststed + '\'' +
+            ", land='" + land + '\'' +
+            '}';
+    }
+
     public static class Builder {
         private final AdresseType gjeldendePostadresseType;
         private final String mottakerNavn;
-        private final PersonIdent fnr;
         private String adresselinje1;
         private String adresselinje2;
         private String adresselinje3;
@@ -84,9 +91,8 @@ public class Adresseinfo {
         private String land;
         private PersonstatusType personstatus;
 
-        public Builder(AdresseType gjeldende, PersonIdent fnr, String mottakerNavn, PersonstatusType personstatus) {
+        public Builder(AdresseType gjeldende, String mottakerNavn, PersonstatusType personstatus) {
             this.gjeldendePostadresseType = gjeldende;
-            this.fnr = fnr;
             this.mottakerNavn = mottakerNavn;
             this.personstatus = personstatus;
         }
@@ -131,7 +137,6 @@ public class Adresseinfo {
             Adresseinfo adresseinfo = new Adresseinfo();
             adresseinfo.gjeldendePostadresseType = this.gjeldendePostadresseType;
             adresseinfo.mottakerNavn = this.mottakerNavn;
-            adresseinfo.personIdent = this.fnr;
             adresseinfo.adresselinje1 = this.adresselinje1;
             adresseinfo.adresselinje2 = this.adresselinje2;
             adresseinfo.adresselinje3 = this.adresselinje3;
@@ -145,7 +150,6 @@ public class Adresseinfo {
 
         private void verifyStateForBuild() {
             Objects.requireNonNull(mottakerNavn, "mottakerNavn");
-            Objects.requireNonNull(fnr, "fnr");
             Objects.requireNonNull(gjeldendePostadresseType, "gjeldendePostadresseType");
         }
     }

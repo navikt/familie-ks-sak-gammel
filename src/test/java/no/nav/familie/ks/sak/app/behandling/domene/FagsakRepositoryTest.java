@@ -63,7 +63,7 @@ public class FagsakRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
         when(oppslagTjeneste.hentPersoninfoFor(any())).thenReturn(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersoninfo(),
             FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersoninfo(),
@@ -86,7 +86,7 @@ public class FagsakRepositoryTest {
         //given
         final var søknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
         final var saksnummer = "TEST123";
-        Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer);
+        Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer, "1234567");
 
         // when
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
@@ -106,7 +106,7 @@ public class FagsakRepositoryTest {
         final var saksnummer = "TEST123";
 
         // when
-        Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer);
+        Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer, "1234567");
 
         // then
         Optional<Behandling> behandling = behandlingRepository.findById(vedtak.getBehandlingsId());
