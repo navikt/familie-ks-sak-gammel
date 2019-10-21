@@ -57,7 +57,7 @@ class FagsakController (
 
     @GetMapping(path = ["/fagsak"])
     fun fagsak(@RequestHeader filter: String?): ResponseEntity<Ressurs> {
-        val saksbehandlerId = null
+        val saksbehandlerId = oidcUtil.navIdent
 
         logger.info("{} henter fagsaker", saksbehandlerId ?: "Ukjent")
 
