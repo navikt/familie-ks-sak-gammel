@@ -36,7 +36,7 @@ data class Ressurs(
 
         fun ikkeTilgang(melding: String): Ressurs = Ressurs(
                 data = null,
-                status = Status.FEILET,
+                status = Status.IKKE_TILGANG,
                 melding = melding,
                 errorMelding = ""
         )
