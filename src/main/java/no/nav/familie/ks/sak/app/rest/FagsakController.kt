@@ -33,7 +33,7 @@ class FagsakController (
     @GetMapping(path = ["/fagsak/{fagsakId}"])
     fun fagsak(@PathVariable fagsakId: Long): ResponseEntity<Ressurs> {
 
-        val saksbehandlerId = oidcUtil.autentisertBruker()
+        val saksbehandlerId = oidcUtil.navIdent
 
         logger.info("{} henter fagsak med id {}", saksbehandlerId ?: "Ukjent", fagsakId)
 

@@ -30,6 +30,13 @@ public class OIDCUtil {
                        .orElseThrow(() -> new JwtTokenValidatorException("Fant ikke subject", getExpiryDate()));
     }
 
+    public String getNavIdent() {
+        return Optional.ofNullable(claimSet())
+                       .map(c -> c.get("NAVident"))
+                       .map(Object::toString)
+                       .orElseThrow(() -> new JwtTokenValidatorException("Fant ikke NAVident", getExpiryDate()));
+    }
+
     private JwtTokenClaims claimSet() {
         return Optional.ofNullable(context())
                        .map(s -> s.getClaims("azuread"))
