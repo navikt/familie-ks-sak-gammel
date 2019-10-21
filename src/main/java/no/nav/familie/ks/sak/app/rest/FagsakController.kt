@@ -7,9 +7,12 @@ import no.nav.familie.ks.sak.app.behandling.Saksbehandling
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak
+import no.nav.familie.ks.sak.app.rest.tilgangskontroll.OIDCUtil
+import no.nav.familie.ks.sak.app.rest.tilgangskontroll.TilgangskontrollService
 import no.nav.familie.ks.sak.util.SporingsLoggActionType
 import no.nav.familie.ks.sak.util.SporingsLoggHelper
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
@@ -22,13 +25,23 @@ import java.security.Principal
 @ProtectedWithClaims( issuer = "azuread" )
 class FagsakController (
     private val saksbehandling: Saksbehandling,
+    private val tilgangskontrollService: TilgangskontrollService,
     private val behandlingRepository: BehandlingRepository,
-    private val restFagsakService: RestFagsakService) {
+    private val restFagsakService: RestFagsakService,
+    private val oidcUtil: OIDCUtil) {
 
     @GetMapping(path = ["/fagsak/{fagsakId}"])
-    fun fagsak(@PathVariable fagsakId: Long, principal: Principal?): ResponseEntity<Ressurs> {
-        logger.info("{} henter fagsak med id {}", principal?.name ?: "Ukjent", fagsakId)
-        SporingsLoggHelper.logSporing(FagsakController::class.java, fagsakId, principal?.name ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
+    fun fagsak(@PathVariable fagsakId: Long): ResponseEntity<Ressurs> {
+
+        val saksbehandlerId = oidcUtil.navIdent
+
+        logger.info("{} henter fagsak med id {}", saksbehandlerId ?: "Ukjent", fagsakId)
+
+        SporingsLoggHelper.logSporing(FagsakController::class.java, fagsakId, saksbehandlerId ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
+
+        if (!tilgangskontrollService.harTilgang(fagsakId, saksbehandlerId)){
+            return ResponseEntity.ok(Ressurs.ikkeTilgang("Du har ikke tilgang til denne fagsaken"))
+        }
 
         val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(fagsakId) }
                 .fold(
