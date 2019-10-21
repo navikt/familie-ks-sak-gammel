@@ -28,7 +28,7 @@ public interface OppgaveBeskrivelse {
     String MANUELL_BEHANDLING = "\nSaken må behandles manuelt\n";
 
     static Object[] args(Vedtak vedtak, Søknad søknad) {
-        DateTimeFormatter datoFormat = DateTimeFormatter.ofPattern("DD.MM.YYYY");
+        DateTimeFormatter datoFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
         String stønadFom = vedtak.getStønadperiode().getFom().format(datoFormat);
         String mottattDato = Optional.ofNullable(søknad.getInnsendtTidspunkt())
@@ -41,6 +41,7 @@ public interface OppgaveBeskrivelse {
             .map(fnr -> LocalDate.parse(fnr.substring(0, 6), DateTimeFormatter.ofPattern("ddMMyy")).format(datoFormat))
             .orElse("xx.xx.xxxx");
 
-        return new String[]{stønadFom, mottattDato, barnetsFødselsdato, "TODO: oppgi link"};
+        String saksbehandlingUrl = "https://kontantstotte.nais.adeo.no/";
+        return new String[]{stønadFom, mottattDato, barnetsFødselsdato, saksbehandlingUrl + vedtak.getBehandlingsId()};
     }
 }
