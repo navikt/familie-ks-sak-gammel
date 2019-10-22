@@ -65,7 +65,16 @@ public class MottaSøknadController {
                 log.info("Søknad kan ikke behandles automatisk. Årsak={}", vilkårvurdering.getResultater());
                 oppgaveBeskrivelse = OppgaveBeskrivelse.MANUELL_BEHANDLING;
             }
-            if (toggle(OPPDATER_OPPGAVE).isEnabled()) {
+
+            boolean oppdatertOppgave;
+            try {
+                oppdatertOppgave = toggle(OPPDATER_OPPGAVE).isEnabled();
+            } catch (Exception e) {
+                log.error("Unleash toggle feilet. Setter oppdatertOppgave = true for å ikke hindre videre testing");
+                oppdatertOppgave = true;
+            }
+
+            if (oppdatertOppgave) {
                 oppslagTjeneste.oppdaterGosysOppgave(søknad.getSøkerFødselsnummer(), journalpostID, oppgaveBeskrivelse);
             }
 
