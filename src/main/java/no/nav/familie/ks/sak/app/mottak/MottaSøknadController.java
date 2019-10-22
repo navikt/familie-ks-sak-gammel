@@ -9,6 +9,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.integrasjon.oppgave.domene.OppgaveBeskrivelse;
+import no.nav.familie.ks.sak.config.toggle.UnleashProvider;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import static no.nav.familie.ks.sak.config.toggle.UnleashProvider.toggle;
 
 @RestController
 @RequestMapping("/api/mottak")
@@ -37,12 +36,17 @@ public class MottaSøknadController {
     private final Saksbehandling saksbehandling;
     private final OppslagTjeneste oppslagTjeneste;
 
-    public MottaSøknadController(@Autowired Saksbehandling saksbehandling,
-                                 @Autowired FunksjonelleMetrikker funksjonelleMetrikker,
-                                 @Autowired OppslagTjeneste oppslagTjeneste) {
+    private UnleashProvider unleash;
+
+    @Autowired
+    public MottaSøknadController(Saksbehandling saksbehandling,
+                                 FunksjonelleMetrikker funksjonelleMetrikker,
+                                 OppslagTjeneste oppslagTjeneste,
+                                 UnleashProvider unleash) {
         this.funksjonelleMetrikker = funksjonelleMetrikker;
         this.saksbehandling = saksbehandling;
         this.oppslagTjeneste = oppslagTjeneste;
+        this.unleash = unleash;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
@@ -68,7 +72,7 @@ public class MottaSøknadController {
 
             boolean oppdatertOppgave;
             try {
-                oppdatertOppgave = toggle(OPPDATER_OPPGAVE).isEnabled();
+                oppdatertOppgave = unleash.toggle(OPPDATER_OPPGAVE).isEnabled();
             } catch (Exception e) {
                 log.error("Unleash toggle feilet. Setter oppdatertOppgave = true for å ikke hindre videre testing");
                 oppdatertOppgave = true;

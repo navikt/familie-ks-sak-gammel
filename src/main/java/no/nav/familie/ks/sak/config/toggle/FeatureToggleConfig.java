@@ -13,8 +13,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 
-import javax.annotation.PostConstruct;
-
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
 
 
@@ -25,12 +23,10 @@ public class FeatureToggleConfig {
     private static final String UNLEASH_API_URL_PROPERTY_NAME = "${UNLEASH_API_URL}";
     private static final String ENVIRONMENT_NAME = "${ENVIRONMENT_NAME}";
 
-    @Autowired
-    private static Unleash unleash;
-
     @Profile("!dev")
     @Bean
     @Scope(SCOPE_SINGLETON)
+    @Autowired
     public Unleash unleash(
             @Value(APP_NAME_PROPERTY_NAME) String appName,
             @Value(UNLEASH_API_URL_PROPERTY_NAME) String unleashApiUrl,
@@ -58,9 +54,4 @@ public class FeatureToggleConfig {
         return new ByEnvironmentStrategy(env);
     }
 
-    @PostConstruct
-    public void initUnleashProvider() {
-        logger.info("Kaller initUnleashProvider");
-        UnleashProvider.initialize(unleash);
-    }
 }
