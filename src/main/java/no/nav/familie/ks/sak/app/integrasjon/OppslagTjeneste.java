@@ -2,6 +2,9 @@ package no.nav.familie.ks.sak.app.integrasjon;
 
 import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
+import no.nav.familie.ks.kontrakter.oppgave.Oppgave;
+import no.nav.familie.ks.kontrakter.oppgave.OppgaveKt;
+import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.AktivKontantstøtteInfo;
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
@@ -16,9 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -63,6 +64,15 @@ public class OppslagTjeneste {
         HttpEntity httpEntity = new HttpEntity(headers);
 
         return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
+    }
+
+    private <T> ResponseEntity<T> postRequest(URI uri , String requestBody, Class<T> responseType) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(stsRestClient.getSystemOIDCToken());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+
+        return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), responseType);
     }
 
     private <T> ResponseEntity<T> requestMedPersonIdent(URI uri, String personident, Class<T> clazz) {
@@ -187,26 +197,28 @@ public class OppslagTjeneste {
         backoff = @Backoff(delay = 5000))
     public AktivKontantstøtteInfo hentInfoOmLøpendeKontantstøtteForBarn(String personident) {
         if (personident == null || personident.isEmpty()) {
-            throw new OppslagException("Ved henting av info om løpende kontantstøtte er personident null eller tom");
+            throw new OppslagException("Personident null eller tom");
         }
         URI uri = URI.create(oppslagServiceUri + "/infotrygd/harBarnAktivKontantstotte");
-        logger.info("Henter info om løpende kontantstøtte fra " + oppslagServiceUri);
+        logger.info("Henter info om kontantstøtte fra " + oppslagServiceUri);
         try {
             var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
             var aktivKontantstøtteInfo = response.getBody();
             
             if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
-                secureLogger.info("Løpende kontantstøtte for {}: {}", personident, aktivKontantstøtteInfo.getHarAktivKontantstotte());
+                if (aktivKontantstøtteInfo.getHarAktivKontantstotte()) {
+                    secureLogger.info("Personident {}: Har løpende kontantstøtte eller er under behandling for kontantstøtte.", personident);
+                    logger.info("Har løpende kontantstøtte eller er under behandling for kontantstøtte.");
+                } else {
+                    secureLogger.info("Kontantstøtten for {} har opphørt", personident);
+                    logger.info("Kontantstøtten for barnet har opphørt");
+                }
                 return aktivKontantstøtteInfo;
             } else {
                 throw new OppslagException("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
             }
         } catch (HttpClientErrorException.NotFound e) {
-            // TODO: Samkjør testmiljøene hos oss og i Infotrygd.
-            // Så lenge vi har overvekt av testsubjekter i preprod som ikke finnes i Infotrygds preprod, vil dette være nødvendig
-            // for å unngå at vi kræsjer i test.
-            logger.info("Personident ikke funnet i infotrygd");
-            secureLogger.info("Personident ikke funnet i infotrygd. Personident: {}", personident);
+            secureLogger.info("Personident ikke funnet i infotrygds kontantstøttedatabase. Personident: {}", personident);
             return new AktivKontantstøtteInfo(false);
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
@@ -277,6 +289,33 @@ public class OppslagTjeneste {
             } else {
                 String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
                 logger.warn("Kall mot oppslag feilet ved uthenting av medlemskapsinfo: " + feilmelding);
+                throw new OppslagException(feilmelding);
+            }
+        } catch (RestClientException e) {
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+        }
+    }
+
+    @Retryable(
+        value = { OppslagException.class },
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 5000))
+    public String oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
+        URI uri = URI.create(oppslagServiceUri + "/oppgave/oppdater");
+        logger.info("Sender \"oppdater oppgave\"-request til " + uri);
+        Oppgave oppgave = new Oppgave(hentAktørId(fnr).getId(), journalpostID, null, beskrivelse);
+        return sendOppgave(oppgave, uri, String.class);
+    }
+
+    private <T> T sendOppgave(Oppgave request, URI uri, Class<T> responsType) {
+        try {
+            ResponseEntity<T> response = postRequest(uri, OppgaveKt.toJson(request), responsType);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return response.getBody();
+            } else {
+                String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
+                logger.warn("Kall mot oppslag feilet ved oppdatering av Gosys-oppgave: " + feilmelding);
                 throw new OppslagException(feilmelding);
             }
         } catch (RestClientException e) {

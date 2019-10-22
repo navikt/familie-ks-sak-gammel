@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.integrasjon;
 
+import no.finn.unleash.Unleash;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
@@ -51,6 +52,8 @@ public class RegisterInnhentingServiceTest {
     private PersonopplysningService personopplysningService;
     @Autowired
     private BehandlingRepository behandlingRepository;
+    @MockBean
+    private Unleash unleash;
 
     private final Faktagrunnlag faktagrunnlag = FaktagrunnlagTestBuilder.beggeForeldreBorINorgeOgErNorskeStatsborgere();
     private final TpsFakta tpsFakta = faktagrunnlag.getTpsFakta();
