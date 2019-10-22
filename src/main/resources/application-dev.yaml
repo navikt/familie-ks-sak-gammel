@@ -29,3 +29,6 @@ server:
   port: 8083
 
 FAMILIE_KS_OPPSLAG_API_URL: http://localhost:8085/api
+
+#Unleash
+UNLEASH_API_URL: http://localhost

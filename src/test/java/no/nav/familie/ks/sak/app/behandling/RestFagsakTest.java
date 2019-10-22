@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling;
 
+import no.finn.unleash.Unleash;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
@@ -46,6 +47,9 @@ public class RestFagsakTest {
 
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
+
+    @MockBean
+    private Unleash unleash;
 
     @MockBean
     private StsRestClient stsRestClient;
