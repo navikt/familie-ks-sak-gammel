@@ -7,6 +7,7 @@ import no.nav.familie.ks.kontrakter.søknad.SøknadKt;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
+import no.nav.familie.ks.sak.app.rest.Ressurs;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public class MottaSøknadController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
-    public ResponseEntity mottaDokument(@RequestBody SøknadDto søknadDto) {
+    public ResponseEntity<Ressurs> mottaDokument(@RequestBody SøknadDto søknadDto) {
         Søknad søknad = SøknadKt.toSøknad(søknadDto.getSøknadJson());
         String saksnummer = søknadDto.getSaksnummer();
         String journalpostID = søknadDto.getJournalpostID();
@@ -58,8 +59,8 @@ public class MottaSøknadController {
         } catch (Exception e) {
             log.error("behandling feilet", e);
             feiledeBehandlinger.increment();
-
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            Ressurs failure = Ressurs.Companion.failure( "mottaDokument feilet", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(failure);
         }
     }
 }
