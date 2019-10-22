@@ -15,6 +15,7 @@ import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskapBosted.MedlemskapBostedVilkår;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.FDATException;
 import org.junit.Test;
 
 import java.util.List;
@@ -52,5 +53,17 @@ public class SaksbehandlingTest {
         Søknad innsendtSøknad = SøknadTestdata.norskFamilieGradertBarnehageplass();
         Vedtak vedtak = saksbehandling.behandle(innsendtSøknad, SAKSNUMMER, JOURNALPOSTID);
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.MANUELL_BEHANDLING);
+    }
+
+    @Test
+    public void negativt_vedtak_ved_person_ikke_funnet_avvik() throws FDATException {
+        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieUtenlandskStatsborgerskapMedBarnehage());
+        when(behandlingslagerMock.nyBehandling(any(), any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), ""), "").build());
+        when(registerInnhentingServiceMock.innhentPersonopplysninger(any(), any())).thenThrow(new FDATException());
+
+        Søknad innsendtSøknad = SøknadTestdata.utenlandskFamilieMedBarnehageplass();
+        Vedtak vedtak = saksbehandling.behandle(innsendtSøknad, SAKSNUMMER, JOURNALPOSTID);
+
+        assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualByComparingTo(UtfallType.MANUELL_BEHANDLING);
     }
 }
