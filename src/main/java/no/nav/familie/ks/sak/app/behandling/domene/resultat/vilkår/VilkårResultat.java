@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår;
 
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.InputType;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.AvvikType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
@@ -23,7 +23,11 @@ public class VilkårResultat extends BaseEntitet {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vilkar")
-    private InputType vilkårType;
+    private VilkårType vilkårType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "avvik")
+    private AvvikType avvikType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "utfall")
@@ -38,19 +42,29 @@ public class VilkårResultat extends BaseEntitet {
     VilkårResultat() {
     }
 
-    public VilkårResultat(InputType vilkårType, UtfallType utfall, String regelInput, String regelOutput) {
+    public VilkårResultat(VilkårType vilkårType, UtfallType utfall, String regelInput, String regelOutput) {
         this.vilkårType = vilkårType;
         this.utfall = utfall;
         this.regelInput = regelInput;
         this.regelOutput = regelOutput;
     }
 
+    public VilkårResultat(AvvikType avvikType, UtfallType utfall) {
+        this.avvikType = avvikType;
+        this.utfall = utfall;
+    }
+
     void setVilkårsResultat(VilkårsResultat vilkårsResultat) {
         this.vilkårsResultat = vilkårsResultat;
     }
 
-    public InputType getVilkårType() {
+    public VilkårType getVilkårType() {
         return vilkårType;
+    }
+
+
+    public AvvikType getAvvikType() {
+        return avvikType;
     }
 
     public UtfallType getUtfall() {

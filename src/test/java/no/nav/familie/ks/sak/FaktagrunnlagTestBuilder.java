@@ -89,7 +89,7 @@ public final class FaktagrunnlagTestBuilder {
         .medStatsborgerskap(Landkode.NORGE)
         .medFødselsdato(LocalDate.now().minusYears(30))
         .medAktørId(farAktørId)
-        .medPersonIdent(new PersonIdent("12345678910"))
+        .medPersonIdent(new PersonIdent("00000000011"))
         .medKjønn("MANN")
         .medBostedsadresse(medBostedsadresse("NOR"))
         .medNavn("test testesen")

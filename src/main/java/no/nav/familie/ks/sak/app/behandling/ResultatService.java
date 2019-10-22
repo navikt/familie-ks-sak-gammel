@@ -34,7 +34,7 @@ public class ResultatService {
             final var avviksVurdering = (AvviksVurdering) samletVurdering;
 
             avviksVurdering.getResultater()
-                .forEach(vurdering -> vilkårsSet.add(new VilkårResultat(vurdering.getAvvikType(), vurdering.getUtfallType(), null, null)));
+                .forEach(vurdering -> vilkårsSet.add(new VilkårResultat(vurdering.getAvvikType(), vurdering.getUtfallType())));
         }
 
         final var vilkårsResultat = new VilkårsResultat(vilkårsSet);
