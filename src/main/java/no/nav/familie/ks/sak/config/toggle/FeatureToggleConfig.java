@@ -37,6 +37,8 @@ public class FeatureToggleConfig {
             Strategy... strategies
     ) {
         logger.info("oppretter UnleashConfig med appName: " + appName + ", unleashApi: " + unleashApiUrl);
+        logger.info(unleash.toString());
+
         UnleashConfig config = UnleashConfig.builder()
                 .appName(appName)
                 .unleashAPI(unleashApiUrl)
@@ -59,6 +61,7 @@ public class FeatureToggleConfig {
 
     @PostConstruct
     public void initUnleashProvider() {
+        logger.info("Kaller initUnleashProvider");
         UnleashProvider.initialize(unleash);
     }
 }
