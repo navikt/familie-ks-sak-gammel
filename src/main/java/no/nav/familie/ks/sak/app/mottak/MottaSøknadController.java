@@ -70,16 +70,11 @@ public class MottaSøknadController {
                 oppgaveBeskrivelse = OppgaveBeskrivelse.MANUELL_BEHANDLING;
             }
 
-            boolean oppdatertOppgave;
-            try {
-                oppdatertOppgave = unleash.toggle(OPPDATER_OPPGAVE).isEnabled();
-            } catch (Exception e) {
-                log.error("Unleash toggle feilet. Setter oppdatertOppgave = true for å ikke hindre videre testing");
-                oppdatertOppgave = true;
-            }
-
-            if (oppdatertOppgave) {
+            if (unleash.toggle(OPPDATER_OPPGAVE).isEnabled()) {
+                log.info("Oppdater oppgave toggle er: Enabled\n Kaller oppslagTjeneste.oppdaterGosysOppgave...");
                 oppslagTjeneste.oppdaterGosysOppgave(søknad.getSøkerFødselsnummer(), journalpostID, oppgaveBeskrivelse);
+            } else {
+                log.info("Oppdater oppgave toggle er: Disabled");
             }
 
             return new ResponseEntity(HttpStatus.OK);
