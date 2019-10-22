@@ -37,7 +37,6 @@ public class FeatureToggleConfig {
             Strategy... strategies
     ) {
         logger.info("oppretter UnleashConfig med appName: " + appName + ", unleashApi: " + unleashApiUrl);
-        logger.info(unleash.toString());
 
         UnleashConfig config = UnleashConfig.builder()
                 .appName(appName)
