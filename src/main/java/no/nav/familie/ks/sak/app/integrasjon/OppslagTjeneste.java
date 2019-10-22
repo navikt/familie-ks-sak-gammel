@@ -216,9 +216,9 @@ public class OppslagTjeneste {
         value = { OppslagException.class },
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public PersonhistorikkInfo hentHistorikkFor(String personident) {
-        final var fom = TIDENES_BEGYNNELSE;
-        final var tom = TIDENES_ENDE;
+    public PersonhistorikkInfo hentHistorikkFor(String personident, LocalDate fødselsdato) {
+        final var fom = fødselsdato;
+        final var tom = LocalDate.now();
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?fomDato=" + formaterDato(fom) + "&tomDato=" + formaterDato(tom));
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
