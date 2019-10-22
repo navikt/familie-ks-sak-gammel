@@ -1,6 +1,7 @@
 package no.nav.familie.ks.sak.app.behandling;
 
 import no.nav.familie.ks.kontrakter.søknad.Søknad;
+import no.nav.familie.ks.sak.app.behandling.avvik.AvviksVurdering;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;

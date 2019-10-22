@@ -1,4 +1,4 @@
-package no.nav.familie.ks.sak.app.behandling.avvik.personIkkeFunnet.regel;
+package no.nav.familie.ks.sak.app.behandling.avvik.personIkkeFunnet;
 
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.fpsak.nare.evaluation.Evaluation;

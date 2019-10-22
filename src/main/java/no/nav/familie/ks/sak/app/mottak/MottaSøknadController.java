@@ -4,7 +4,7 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.kontrakter.søknad.SøknadKt;
-import no.nav.familie.ks.sak.app.behandling.AvviksVurdering;
+import no.nav.familie.ks.sak.app.behandling.avvik.AvviksVurdering;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.SamletVilkårsVurdering;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;

@@ -1,9 +1,8 @@
-package no.nav.familie.ks.sak.app.behandling;
+package no.nav.familie.ks.sak.app.behandling.avvik;
 
-import no.nav.familie.ks.sak.app.behandling.avvik.AvvikResultat;
+import no.nav.familie.ks.sak.app.behandling.avvik.personIkkeFunnet.PersonIkkeFunnet;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.AvvikType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
-import no.nav.familie.ks.sak.app.behandling.avvik.personIkkeFunnet.regel.PersonIkkeFunnet;
 import no.nav.familie.ks.sak.app.behandling.vilkår.SamletVurdering;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 
