@@ -30,7 +30,7 @@ class TilgangskontrollService(
             for (personopplysning in personopplysningGrunnlagRepository.findByBehandlingAndAktiv(behandling.id).stream()) {
                 for (person in personopplysning.registrertePersoner.get().iterator()) {
                     val respons = oppslagTjeneste.sjekkTilgangTilPerson(saksbehandlerId, person.personIdent.ident)
-                    if (respons.statusCode.equals(HttpStatus.FORBIDDEN)) {
+                    if (!respons.body.isHarTilgang) {
                         return false;
                     }
                 }

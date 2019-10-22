@@ -74,12 +74,12 @@ public class RegisterInnhentingServiceTest {
 
         when(oppslagTjeneste.hentAktørId(eq(søkerPersoninfo.getPersonIdent().getIdent()))).thenReturn(søkerAktørId);
         when(oppslagTjeneste.hentPersoninfoFor(eq(søker.getIdent()))).thenReturn(søkerPersoninfo);
-        when(oppslagTjeneste.hentHistorikkFor(eq(søker.getIdent()))).thenReturn(søkerPersonhistorikk);
+        when(oppslagTjeneste.hentHistorikkFor(eq(søker.getIdent()), eq(søkerPersoninfo.getFødselsdato()))).thenReturn(søkerPersonhistorikk);
 
         when(oppslagTjeneste.hentPersonIdent(annenPartPersoninfo.getAktørId().getId())).thenReturn(annenPartPersoninfo.getPersonIdent());
         when(oppslagTjeneste.hentAktørId(eq(annenPartPersoninfo.getPersonIdent().getIdent()))).thenReturn(annenPartAktørId);
         when(oppslagTjeneste.hentPersoninfoFor(eq(annenPart.getIdent()))).thenReturn(annenPartPersoninfo);
-        when(oppslagTjeneste.hentHistorikkFor(eq(annenPart.getIdent()))).thenReturn(annenPartPersonhistorikk);
+        when(oppslagTjeneste.hentHistorikkFor(eq(annenPart.getIdent()), eq(annenPartPersoninfo.getFødselsdato()))).thenReturn(annenPartPersonhistorikk);
     }
 
     @Test
@@ -91,9 +91,9 @@ public class RegisterInnhentingServiceTest {
 
         when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barnAktørId);
         when(oppslagTjeneste.hentPersoninfoFor(eq(barn.getIdent()))).thenReturn(barnPersoninfo);
-        when(oppslagTjeneste.hentHistorikkFor(eq(barn.getIdent()))).thenReturn(barnPersonhistorikk);
+        when(oppslagTjeneste.hentHistorikkFor(eq(barn.getIdent()), eq(barnPersoninfo.getFødselsdato()))).thenReturn(barnPersonhistorikk);
 
-        final var fagsak = Fagsak.opprettNy(søkerAktørId, "123412341234");
+        final var fagsak = Fagsak.opprettNy(søkerAktørId, søkerPersoninfo.getPersonIdent(), "123412341234");
         fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak, "12345678").build();
@@ -128,9 +128,9 @@ public class RegisterInnhentingServiceTest {
 
         when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barnAktørId);
         when(oppslagTjeneste.hentPersoninfoFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersoninfo);
-        when(oppslagTjeneste.hentHistorikkFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersonhistorikk);
+        when(oppslagTjeneste.hentHistorikkFor(eq(barnPersonIdent.getIdent()), eq(barnPersoninfo.getFødselsdato()))).thenReturn(barnPersonhistorikk);
 
-        final var fagsak = Fagsak.opprettNy(søkerAktørId, "123412341234");
+        final var fagsak = Fagsak.opprettNy(søkerAktørId, søkerPersoninfo.getPersonIdent(), "123412341234");
         fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak, "12345678").build();

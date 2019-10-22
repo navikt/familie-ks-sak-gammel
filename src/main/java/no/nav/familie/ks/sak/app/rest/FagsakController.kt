@@ -56,12 +56,14 @@ class FagsakController (
     }
 
     @GetMapping(path = ["/fagsak"])
-    fun fagsak(principal: Principal?): ResponseEntity<Ressurs> {
-        logger.info("{} henter fagsaker", principal?.name ?: "Ukjent")
+    fun fagsak(@RequestHeader filter: String?): ResponseEntity<Ressurs> {
+        val saksbehandlerId = oidcUtil.navIdent
 
-        val ressurs: Ressurs = Result.runCatching { restFagsakService.hentFagsaker() }
+        logger.info("{} henter fagsaker", saksbehandlerId ?: "Ukjent")
+
+        val ressurs: Ressurs = Result.runCatching { restFagsakService.hentFagsaker(filter) }
             .fold(
-                onSuccess = { Ressurs.success( data = it) },
+                onSuccess = { Ressurs.success( data = it ) },
                 onFailure = { e -> Ressurs.failure("Henting av fagsaker feilet.", e) }
             )
 
