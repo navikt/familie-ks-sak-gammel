@@ -19,7 +19,7 @@ public enum VilkårIkkeOppfyltÅrsak implements VilkårUtfallÅrsak {
     BARN_IKKE_NORSK_STATSBORGER(8307, "Barn er ikke norsk statsborger", VilkårType.BARN),
 
     // §3: Vilkår knyttet til støttemottaker
-    IKKE_BEGGE_FORELDRE(8307, "Begge foreldre er ikke registrert på barn i TPS", VilkårType.BOSTED),
+    IKKE_BEGGE_FORELDRE(8314, "Begge foreldre er ikke registrert på barn i TPS", VilkårType.BOSTED),
     IKKE_BOSATT_SAMMEN(8306, "Barn er ikke bosatt sammen med begge foreldre", VilkårType.BOSTED),
 
     // MVP

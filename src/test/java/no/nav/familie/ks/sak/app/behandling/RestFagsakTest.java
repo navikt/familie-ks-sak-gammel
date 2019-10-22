@@ -74,12 +74,12 @@ public class RestFagsakTest {
         when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getBarn().getPersoninfo());
 
-        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent()))
-            .thenReturn(tpsFakta.getForelder().getPersonhistorikkInfo());
-        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent()))
-            .thenReturn(tpsFakta.getAnnenForelder().getPersonhistorikkInfo());
-        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent()))
-            .thenReturn(tpsFakta.getBarn().getPersonhistorikkInfo());
+        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent(),
+            tpsFakta.getForelder().getPersoninfo().getFødselsdato())).thenReturn(tpsFakta.getForelder().getPersonhistorikkInfo());
+        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent(),
+            tpsFakta.getAnnenForelder().getPersoninfo().getFødselsdato())).thenReturn(tpsFakta.getAnnenForelder().getPersonhistorikkInfo());
+        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent(),
+            tpsFakta.getBarn().getPersoninfo().getFødselsdato())).thenReturn(tpsFakta.getBarn().getPersonhistorikkInfo());
 
         when(oppslagTjeneste.hentMedlemskapsUnntakFor(tpsFakta.getForelder().getPersoninfo().getAktørId()))
             .thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
@@ -110,7 +110,8 @@ public class RestFagsakTest {
     public void hentFagsaker() {
         when(fastsettingService.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
         saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER, JOURNALPOSTID);
-        assertThat(restFagsakService.hentFagsaker()).hasSize(1);
+
+        assertThat(restFagsakService.hentFagsaker(null)).hasSize(1);
     }
 
     @Test

@@ -9,6 +9,7 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
+import no.nav.familie.ks.sak.app.integrasjon.tilgangskontroll.Tilgang;
 import no.nav.familie.log.mdc.MDCConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,14 +166,14 @@ public class OppslagTjeneste {
         value = { OppslagException.class },
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public ResponseEntity sjekkTilgangTilPerson(String saksbehandlerId, String personident) {
+    public ResponseEntity<Tilgang> sjekkTilgangTilPerson(String saksbehandlerId, String personident) {
         if (saksbehandlerId == null || personident == null) {
             throw new OppslagException("Ved sjekking av tilgang: saksbehandlerId eller personident er null");
         }
         URI uri = URI.create(oppslagServiceUri + "/tilgang/person");
         logger.info("Sjekker tilgang  " + oppslagServiceUri);
         try {
-            ResponseEntity<Object> response = requestMedPersonIdentOgSaksbehandlerId(uri, personident, saksbehandlerId, Object.class);
+            ResponseEntity<Tilgang> response = requestMedPersonIdentOgSaksbehandlerId(uri, personident, saksbehandlerId, Tilgang.class);
             secureLogger.info("Saksbehandler {} forsøker å få tilgang til {} med resultat {}", saksbehandlerId, personident, response.getBody());
             return response;
         } catch (RestClientException e) {
@@ -192,10 +193,10 @@ public class OppslagTjeneste {
         logger.info("Henter info om løpende kontantstøtte fra " + oppslagServiceUri);
         try {
             var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
-            secureLogger.info("Løpende kontantstøtte for {}: {}", personident, response.getBody());
-
             var aktivKontantstøtteInfo = response.getBody();
+            
             if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
+                secureLogger.info("Løpende kontantstøtte for {}: {}", personident, aktivKontantstøtteInfo.getHarAktivKontantstotte());
                 return aktivKontantstøtteInfo;
             } else {
                 throw new OppslagException("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
@@ -204,7 +205,8 @@ public class OppslagTjeneste {
             // TODO: Samkjør testmiljøene hos oss og i Infotrygd.
             // Så lenge vi har overvekt av testsubjekter i preprod som ikke finnes i Infotrygds preprod, vil dette være nødvendig
             // for å unngå at vi kræsjer i test.
-            logger.error("Personident ikke funnet i infotrygd");
+            logger.info("Personident ikke funnet i infotrygd");
+            secureLogger.info("Personident ikke funnet i infotrygd. Personident: {}", personident);
             return new AktivKontantstøtteInfo(false);
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
@@ -215,9 +217,9 @@ public class OppslagTjeneste {
         value = { OppslagException.class },
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public PersonhistorikkInfo hentHistorikkFor(String personident) {
-        final var fom = TIDENES_BEGYNNELSE;
-        final var tom = TIDENES_ENDE;
+    public PersonhistorikkInfo hentHistorikkFor(String personident, LocalDate fødselsdato) {
+        final var fom = fødselsdato;
+        final var tom = LocalDate.now();
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?fomDato=" + formaterDato(fom) + "&tomDato=" + formaterDato(tom));
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {

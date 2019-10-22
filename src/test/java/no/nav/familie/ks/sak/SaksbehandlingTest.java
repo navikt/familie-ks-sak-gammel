@@ -15,6 +15,7 @@ import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskapBosted.MedlemskapBostedVilkår;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import org.junit.Test;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class SaksbehandlingTest {
     @Test
     public void positivt_vedtak_ved_oppfylte_vilkår() {
         when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        when(behandlingslagerMock.nyBehandling(any(), any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), ""), "").build());
+        when(behandlingslagerMock.nyBehandling(any(), any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), new PersonIdent(""),""), "").build());
 
         Søknad innsendtSøknad = SøknadTestdata.norskFamilieUtenBarnehageplass();
         Vedtak vedtak = saksbehandling.behandle(innsendtSøknad, SAKSNUMMER, JOURNALPOSTID);
@@ -47,7 +48,7 @@ public class SaksbehandlingTest {
     @Test
     public void negativt_vedtak_ved_ikke_oppfylte_vilkår() {
         when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieUtenlandskStatsborgerskapMedBarnehage());
-        when(behandlingslagerMock.nyBehandling(any(), any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), ""), "").build());
+        when(behandlingslagerMock.nyBehandling(any(), any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), new PersonIdent(""), ""), "").build());
 
         Søknad innsendtSøknad = SøknadTestdata.norskFamilieGradertBarnehageplass();
         Vedtak vedtak = saksbehandling.behandle(innsendtSøknad, SAKSNUMMER, JOURNALPOSTID);
