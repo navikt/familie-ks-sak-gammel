@@ -29,7 +29,7 @@ import static no.nav.familie.ks.sak.config.toggle.UnleashProvider.toggle;
 public class MottaSøknadController {
 
     private static final Logger log = LoggerFactory.getLogger(MottaSøknadController.class);
-    private static final String OPPDATER_OPPGAVE = "kontantstotte.oppdater_oppgave";
+    private static final String OPPDATER_OPPGAVE = "familie-ks-sak.oppdater_oppgave";
 
     private final Counter feiledeBehandlinger = Metrics.counter("soknad.kontantstotte.funksjonell.feiledebehandlinger");
 
