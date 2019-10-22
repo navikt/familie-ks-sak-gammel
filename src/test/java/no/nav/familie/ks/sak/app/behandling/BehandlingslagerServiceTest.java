@@ -68,7 +68,7 @@ public class BehandlingslagerServiceTest {
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersoninfo(),
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo()
             );
-        when(oppslagTjeneste.hentHistorikkFor(any()))
+        when(oppslagTjeneste.hentHistorikkFor(any(), any()))
             .thenReturn(
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersonhistorikkInfo(),
