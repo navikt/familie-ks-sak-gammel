@@ -187,25 +187,28 @@ public class OppslagTjeneste {
         backoff = @Backoff(delay = 5000))
     public AktivKontantstøtteInfo hentInfoOmLøpendeKontantstøtteForBarn(String personident) {
         if (personident == null || personident.isEmpty()) {
-            throw new OppslagException("Ved henting av info om løpende kontantstøtte er personident null eller tom");
+            throw new OppslagException("Personident null eller tom");
         }
         URI uri = URI.create(oppslagServiceUri + "/infotrygd/harBarnAktivKontantstotte");
-        logger.info("Henter info om løpende kontantstøtte fra " + oppslagServiceUri);
+        logger.info("Henter info om kontantstøtte fra " + oppslagServiceUri);
         try {
             var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
-            secureLogger.info("Løpende kontantstøtte for {}: {}", personident, response.getBody());
-
             var aktivKontantstøtteInfo = response.getBody();
+            
             if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
+                if (aktivKontantstøtteInfo.getHarAktivKontantstotte()) {
+                    secureLogger.info("Personident {}: Har løpende kontantstøtte eller er under behandling for kontantstøtte.", personident);
+                    logger.info("Har løpende kontantstøtte eller er under behandling for kontantstøtte.");
+                } else {
+                    secureLogger.info("Kontantstøtten for {} har opphørt", personident);
+                    logger.info("Kontantstøtten for barnet har opphørt");
+                }
                 return aktivKontantstøtteInfo;
             } else {
                 throw new OppslagException("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
             }
         } catch (HttpClientErrorException.NotFound e) {
-            // TODO: Samkjør testmiljøene hos oss og i Infotrygd.
-            // Så lenge vi har overvekt av testsubjekter i preprod som ikke finnes i Infotrygds preprod, vil dette være nødvendig
-            // for å unngå at vi kræsjer i test.
-            logger.error("Personident ikke funnet i infotrygd");
+            secureLogger.info("Personident ikke funnet i infotrygds kontantstøttedatabase. Personident: {}", personident);
             return new AktivKontantstøtteInfo(false);
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
@@ -216,9 +219,9 @@ public class OppslagTjeneste {
         value = { OppslagException.class },
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public PersonhistorikkInfo hentHistorikkFor(String personident) {
-        final var fom = TIDENES_BEGYNNELSE;
-        final var tom = TIDENES_ENDE;
+    public PersonhistorikkInfo hentHistorikkFor(String personident, LocalDate fødselsdato) {
+        final var fom = fødselsdato;
+        final var tom = LocalDate.now();
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?fomDato=" + formaterDato(fom) + "&tomDato=" + formaterDato(tom));
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
