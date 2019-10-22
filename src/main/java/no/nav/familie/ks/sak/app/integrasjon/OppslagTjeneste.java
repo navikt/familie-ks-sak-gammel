@@ -193,10 +193,10 @@ public class OppslagTjeneste {
         logger.info("Henter info om løpende kontantstøtte fra " + oppslagServiceUri);
         try {
             var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
-            secureLogger.info("Løpende kontantstøtte for {}: {}", personident, response.getBody());
-
             var aktivKontantstøtteInfo = response.getBody();
+            
             if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
+                secureLogger.info("Løpende kontantstøtte for {}: {}", personident, aktivKontantstøtteInfo.getHarAktivKontantstotte());
                 return aktivKontantstøtteInfo;
             } else {
                 throw new OppslagException("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
