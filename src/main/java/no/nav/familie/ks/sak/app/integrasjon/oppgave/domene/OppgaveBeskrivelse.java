@@ -41,7 +41,7 @@ public interface OppgaveBeskrivelse {
             .map(fnr -> LocalDate.parse(fnr.substring(0, 6), DateTimeFormatter.ofPattern("ddMMyy")).format(datoFormat))
             .orElse("xx.xx.xxxx");
 
-        String saksbehandlingUrl = "https://kontantstotte.nais.adeo.no/";
-        return new String[]{stønadFom, mottattDato, barnetsFødselsdato, saksbehandlingUrl + vedtak.getBehandlingsId()};
+        String saksbehandlingUrl = "https://kontantstotte.nais.adeo.no/fagsak/";
+        return new String[]{stønadFom, mottattDato, barnetsFødselsdato, saksbehandlingUrl + vedtak.getFagsakId()};
     }
 }
