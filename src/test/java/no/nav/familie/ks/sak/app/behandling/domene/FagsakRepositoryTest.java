@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene;
 
+import no.finn.unleash.Unleash;
 import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.ApplicationTestPropertyValues;
 import no.nav.familie.ks.sak.DevLauncher;
@@ -48,6 +49,9 @@ public class FagsakRepositoryTest {
 
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
+
+    @MockBean
+    private Unleash unleash;
 
     @Autowired
     private FagsakRepository fagsakRepository;

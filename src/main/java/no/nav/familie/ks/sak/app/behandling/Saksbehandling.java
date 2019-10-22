@@ -50,6 +50,7 @@ public class Saksbehandling {
 
         Vedtak vedtak = fattVedtak(vilkårvurdering, faktagrunnlag);
         vedtak.setBehandlingsId(behandling.getId());
+        vedtak.setFagsakId(behandling.getFagsak().getId());
         return vedtak;
     }
 
