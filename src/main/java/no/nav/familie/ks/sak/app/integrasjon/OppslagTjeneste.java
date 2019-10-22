@@ -193,10 +193,10 @@ public class OppslagTjeneste {
         logger.info("Henter info om løpende kontantstøtte fra " + oppslagServiceUri);
         try {
             var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
-            secureLogger.info("Løpende kontantstøtte for {}: {}", personident, response.getBody());
-
             var aktivKontantstøtteInfo = response.getBody();
+            
             if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
+                secureLogger.info("Løpende kontantstøtte for {}: {}", personident, aktivKontantstøtteInfo.getHarAktivKontantstotte());
                 return aktivKontantstøtteInfo;
             } else {
                 throw new OppslagException("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
@@ -205,7 +205,8 @@ public class OppslagTjeneste {
             // TODO: Samkjør testmiljøene hos oss og i Infotrygd.
             // Så lenge vi har overvekt av testsubjekter i preprod som ikke finnes i Infotrygds preprod, vil dette være nødvendig
             // for å unngå at vi kræsjer i test.
-            logger.error("Personident ikke funnet i infotrygd");
+            logger.info("Personident ikke funnet i infotrygd");
+            secureLogger.info("Personident ikke funnet i infotrygd. Personident: {}", personident);
             return new AktivKontantstøtteInfo(false);
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
