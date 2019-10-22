@@ -315,6 +315,7 @@ public final class FaktagrunnlagTestBuilder {
         .medBostedsadresse(medBostedsadresse("SWE"))
         .medNavn("test testesen")
         .medKjønn("MANN")
+        .medFamilierelasjon(new HashSet<>(Arrays.asList(utenlandskMorRelasjonMedAnnetBosted, utenlandskFarRelasjonMedAnnetBosted)))
         .build()).build();
     private static PersonMedHistorikk personMedHistorikkBarnNorskMedUtenlandskForeldre = new PersonMedHistorikk.Builder().medInfo(new Personinfo.Builder()
         .medFødselsdato(LocalDate.now().minusMonths(13))

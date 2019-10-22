@@ -144,4 +144,35 @@ public class RegisterInnhentingServiceTest {
 
         assertThat(personopplysningGrunnlag.get().getAnnenPart()).isNull();
     }
+
+    @Test(expected = FDATException.class)
+    public void skal_kaste_exception_for_relasjoner_med_FDAT() throws FDATException {
+        final Faktagrunnlag faktagrunnlagUtenlandskFamilie = FaktagrunnlagTestBuilder.familieUtenlandskStatsborgerskapMedBarnehage();
+        final TpsFakta tpsFaktaUtenlandskFamilie = faktagrunnlagUtenlandskFamilie.getTpsFakta();
+
+        AktørId barnAktørId = tpsFaktaUtenlandskFamilie.getBarna().get(0).getPersoninfo().getAktørId();
+        PersonIdent barnPersonIdent = tpsFaktaUtenlandskFamilie.getBarna().get(0).getPersoninfo().getPersonIdent();
+        Personinfo barnPersoninfo = tpsFaktaUtenlandskFamilie.getBarna().get(0).getPersoninfo();
+        PersonhistorikkInfo barnPersonhistorikk = tpsFaktaUtenlandskFamilie.getBarna().get(0).getPersonhistorikkInfo();
+
+        PersonIdent søker = tpsFaktaUtenlandskFamilie.getForelder().getPersoninfo().getPersonIdent();
+        AktørId søkerAktørId = tpsFaktaUtenlandskFamilie.getForelder().getPersoninfo().getAktørId();
+        Personinfo søkerPersoninfo = tpsFaktaUtenlandskFamilie.getForelder().getPersoninfo();
+        PersonhistorikkInfo søkerPersonhistorikk = tpsFaktaUtenlandskFamilie.getForelder().getPersonhistorikkInfo();
+
+        when(oppslagTjeneste.hentAktørId(eq(søkerPersoninfo.getPersonIdent().getIdent()))).thenReturn(søkerAktørId);
+        when(oppslagTjeneste.hentPersoninfoFor(eq(søker.getIdent()))).thenReturn(søkerPersoninfo);
+        when(oppslagTjeneste.hentHistorikkFor(eq(søker.getIdent()))).thenReturn(søkerPersonhistorikk);
+        when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barnAktørId);
+        when(oppslagTjeneste.hentPersoninfoFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersoninfo);
+        when(oppslagTjeneste.hentHistorikkFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersonhistorikk);
+
+        final var fagsak = Fagsak.opprettNy(søkerAktørId, "123412341234");
+        fagsakRepository.save(fagsak);
+
+        final var behandling = Behandling.forFørstegangssøknad(fagsak, "12345678").build();
+        behandlingRepository.save(behandling);
+
+        tjeneste.innhentPersonopplysninger(behandling, SøknadTestdata.utenlandskFamilieMedBarnehageplass());
+    }
 }
