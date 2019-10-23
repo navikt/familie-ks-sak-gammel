@@ -14,12 +14,15 @@ import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.fpsak.tidsserie.LocalDateSegment;
 import no.nav.fpsak.tidsserie.LocalDateTimeline;
 import no.nav.fpsak.tidsserie.StandardCombinators;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 @RuleDocumentation(HarVærtBosattFemÅrINorge.ID)
 public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag> {
+    private static final Logger log = LoggerFactory.getLogger(HarVærtBosattFemÅrINorge.class);
 
     public static final String ID = "KS-MEDL-1";
     private static int MIN_ANTALL_ÅR = 5;
@@ -34,11 +37,14 @@ public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag>
         PersonMedHistorikk forelder = grunnlag.getTpsFakta().getForelder();
         PersonMedHistorikk annenForelder = grunnlag.getTpsFakta().getAnnenForelder();
 
+        log.info("Annen forelder" + annenForelder);
         if (annenForelder == null) {
             if (bosattFemÅrINorge(forelder)) {
                 return ja();
             }
         } else {
+            log.info(forelder.getPersoninfo().toString());
+            log.info(annenForelder.getPersoninfo().toString());
             if (bosattFemÅrINorge(forelder) && bosattFemÅrINorge(annenForelder)) {
                 return ja();
             }
@@ -57,9 +63,12 @@ public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag>
                 .map(periode -> new LocalDateSegment<>(periode.getFom(), periode.getTom() != Tid.TIDENES_ENDE ? periode.getTom() : LocalDate.now(), true))
                 .collect(Collectors.toList());
 
+        log.info("segmenter [" + forelder.getPersoninfo().getPersonIdent().getIdent() + "]: " + segmenter);
         final var bostedstidslinje = new LocalDateTimeline<>(segmenter, StandardCombinators::alwaysTrueForMatch).compress();
         final var antallDagerINorge = bostedstidslinje.getDatoIntervaller().stream().map(LocalDateInterval::totalDays).reduce(0L, Long::sum);
 
+        log.info("antallDagerINorge [" + forelder.getPersoninfo().getPersonIdent().getIdent() + "]: " + antallDagerINorge);
+        log.info("antall dager vi sjekke mot: " + MIN_ANTALL_ÅR * ANTALL_DAGER_I_ÅRET);
         return antallDagerINorge >= MIN_ANTALL_ÅR * ANTALL_DAGER_I_ÅRET;
     }
 
