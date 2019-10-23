@@ -17,8 +17,8 @@ public class VilkårResultat extends BaseEntitet {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "vilkars_resultat_id")
-    private VilkårsResultat vilkårsResultat;
+    @JoinColumn(name = "samlet_vilkar_resultat_id")
+    private SamletVilkårResultat samletVilkårResultat;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vilkar")
@@ -44,8 +44,8 @@ public class VilkårResultat extends BaseEntitet {
         this.regelOutput = regelOutput;
     }
 
-    void setVilkårsResultat(VilkårsResultat vilkårsResultat) {
-        this.vilkårsResultat = vilkårsResultat;
+    public void setSamletVilkårResultat(SamletVilkårResultat samletVilkårResultat) {
+        this.samletVilkårResultat = samletVilkårResultat;
     }
 
     public VilkårType getVilkårType() {

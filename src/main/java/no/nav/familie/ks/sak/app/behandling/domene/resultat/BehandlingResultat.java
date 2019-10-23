@@ -1,7 +1,7 @@
 package no.nav.familie.ks.sak.app.behandling.domene.resultat;
 
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
-import no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår.VilkårsResultat;
+import no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår.SamletVilkårResultat;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
 
 import javax.persistence.*;
@@ -20,7 +20,7 @@ public class BehandlingResultat extends BaseEntitet {
 
     @ManyToOne
     @JoinColumn(name = "vilkars_resultat_id", updatable = false)
-    private VilkårsResultat vilkårsResultat;
+    private SamletVilkårResultat samletVilkårResultat;
 
     @Column(name = "aktiv")
     private boolean aktiv = true;
@@ -28,13 +28,13 @@ public class BehandlingResultat extends BaseEntitet {
     BehandlingResultat() {
     }
 
-    public BehandlingResultat(Behandling behandling, VilkårsResultat vilkårsResultat) {
+    public BehandlingResultat(Behandling behandling, SamletVilkårResultat samletVilkårResultat) {
         this.behandlingId = behandling.getId();
-        this.vilkårsResultat = vilkårsResultat;
+        this.samletVilkårResultat = samletVilkårResultat;
     }
 
-    public VilkårsResultat getVilkårsResultat() {
-        return vilkårsResultat;
+    public SamletVilkårResultat getVilkårsResultat() {
+        return samletVilkårResultat;
     }
 
     public Long getBehandlingId() {
@@ -50,7 +50,7 @@ public class BehandlingResultat extends BaseEntitet {
         return "BehandlingResultat{" +
                 "id=" + id +
                 ", behandlingId=" + behandlingId +
-                ", vilkårsResultat=" + vilkårsResultat +
+                ", samletVilkårResultat=" + samletVilkårResultat +
                 ", aktiv=" + aktiv +
                 '}';
     }
