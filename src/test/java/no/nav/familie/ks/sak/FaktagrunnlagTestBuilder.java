@@ -16,6 +16,8 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.PersonMedHistorikk;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.AktivKontantstøtteInfo;
+import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.InfotrygdFakta;
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.PeriodeInfo;
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.PeriodeStatus;
@@ -451,6 +453,8 @@ public final class FaktagrunnlagTestBuilder {
         .medAnnenForelder(Optional.empty())
         .build();
 
+    public static InfotrygdFakta typiskInfotrygdFakta = new InfotrygdFakta(new AktivKontantstøtteInfo(false));
+
     public static MedlemskapsInfo tomMedlemskapsinfo() {
         return new MedlemskapsInfo.Builder()
             .medPersonIdent(null)
@@ -497,6 +501,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.utenlandskFamilieMedBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.utenlandskFamilieMedBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -506,6 +511,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medMedlFakta(treffIMedlBeggeForeldrene)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -515,6 +521,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.tilknytningUtlandUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.tilknytningUtlandUtenBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -524,6 +531,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -533,6 +541,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -542,6 +551,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -551,6 +561,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplassFlerlinger()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplassFlerlinger()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -560,6 +571,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieMedBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieMedBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -569,6 +581,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag((SøknadTestdata.norskFamilieGradertBarnehageplass())))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieGradertBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -578,6 +591,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenAnnenPartOgUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenAnnenPartOgUtenBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -587,6 +601,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.enForelderIUtlandUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.enForelderIUtlandUtenBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -596,6 +611,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -605,6 +621,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -614,6 +631,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 
@@ -705,6 +723,7 @@ public final class FaktagrunnlagTestBuilder {
             .medBarnehageBarnGrunnlag(genererBarnehageBarnGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medSøknadGrunnlag(genererSøknadGrunnlag(SøknadTestdata.norskFamilieUtenBarnehageplass()))
             .medMedlFakta(ingenMedlemsopplysninger)
+            .medInfotrygdFakta(typiskInfotrygdFakta)
             .build();
     }
 }

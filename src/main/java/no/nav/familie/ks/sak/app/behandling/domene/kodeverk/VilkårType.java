@@ -14,7 +14,8 @@ public enum VilkårType {
     UTLAND(Constants.UTLAND_KODE, "Søker har ikke oppgitt noen tilknytning til utland (MVP)", "lovreferanse"),
     BARN_MELLOM_10_OG_14_MÅNEDER(Constants.BARN_MELLOM_10_OG_14_MÅNEDER_KODE, "Barn er mellom 10 og 14 måneder", "MVP: Se regel 1.7 i Confluence"),
     ANNEN_PART_STEMMER(Constants.ANNEN_PART_KODE, "Oppgitt annen part fra søknaden og annen part fra TPS stemme", "MVP"),
-    ANNEN_PART_ER_OPPGITT(Constants.ANNEN_PART_KODE, "Annen part er tilstedet i grunnlaget fra TPS ", "MVP");
+    ANNEN_PART_ER_OPPGITT(Constants.ANNEN_PART_KODE, "Annen part er tilstedet i grunnlaget fra TPS ", "MVP"),
+    IKKE_LØPENDE_KS_FOR_BARN(Constants.IKKE_LØPENDE_KS_FOR_BARN, "Barnet skal ikke motta kontantstøtte eller være under behandling for kontantstøtte.", "MVP");
 
     private final String kode;
     private final String beskrivelse;
@@ -63,5 +64,6 @@ public enum VilkårType {
         public static final String BARN_KODE = "BARN";
         public static final String UTLAND_KODE = "UTL";
         public static final String BARN_MELLOM_10_OG_14_MÅNEDER_KODE = "BARN_MELLOM_10_OG_14_MÅNEDER";
+        public static final String IKKE_LØPENDE_KS_FOR_BARN = "IKKE_LØPENDE_KS_FOR_BARN";
     }
 }

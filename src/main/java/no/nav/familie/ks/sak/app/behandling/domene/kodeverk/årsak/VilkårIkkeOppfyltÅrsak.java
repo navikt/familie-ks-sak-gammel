@@ -27,7 +27,8 @@ public enum VilkårIkkeOppfyltÅrsak implements VilkårUtfallÅrsak {
     BARN_IKKE_MELLOM_10_OG_14_MÅNEDER(8310, "Barnet det søkes for er ikke mellom 10 og 14 måneder", VilkårType.BARN_MELLOM_10_OG_14_MÅNEDER),
     OPPGITT_FLERE_BARN(8311, "Søker har oppgitt flere barn i søknaden", VilkårType.KUN_ET_BARN),
     ANNEN_PART_STEMMER_IKKE(8312, "Oppgitt annen part fra søknaden og annen part fra TPS stemmer ikke", VilkårType.ANNEN_PART_STEMMER),
-    ANNEN_PART_ER_IKKE_OPPGITT(8313, "Annen part er ikke tilstedet i grunnlaget fra TPS", VilkårType.ANNEN_PART_ER_OPPGITT);
+    ANNEN_PART_ER_IKKE_OPPGITT(8313, "Annen part er ikke tilstedet i grunnlaget fra TPS", VilkårType.ANNEN_PART_ER_OPPGITT),
+    BARN_MOTTAR_KONTANTSTØTTE_ELLER_HAR_SAK_UNDER_BEHANDLING(8315, "Barnet er mottaker av kontantstøtte eller har en sak for kontantstøtte under behandling", VilkårType.IKKE_LØPENDE_KS_FOR_BARN);
 
     private final int årsakKode;
     private final String beskrivelse;
