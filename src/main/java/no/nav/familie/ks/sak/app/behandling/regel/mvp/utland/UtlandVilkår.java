@@ -18,7 +18,7 @@ public class UtlandVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
 
     @Override
     public VilkårType getVilkårType() {
-        return VilkårType.UTLAND;
+        return VilkårType.OPPGITT_TILKNYTNING_TIL_UTLAND;
     }
 
     @Override
