@@ -26,7 +26,7 @@ public class FunksjonelleMetrikker {
     private final HashMap<String, Counter> vilkårIkkeOppfylt = new HashMap<>();
     private final Map<VilkårType, Map<String, Counter>> vilkårsUtfall = new HashMap<>();
     private final Counter antallSøknaderMottatt = Metrics.counter("soknad.kontantstotte.funksjonell.antallsoknader");
-    private final Counter antallSøknaderMedAvvik = Metrics.counter("soknad.kontantstotte.funksjonell.antallvvik");
+    private final Counter antallSøknaderMedAvvik = Metrics.counter("soknad.kontantstotte.funksjonell.antallavvik");
 
     private final HashMap<String, Counter> barnehagestatus = new HashMap<>();
     private final HashMap<String, Counter> boddEllerJobbetINorgeEllerEøsIFemÅr = new HashMap<>();
