@@ -57,6 +57,7 @@ public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag>
         if (forelder == null) {
             return false;
         }
+        log.info("segmenter [" + forelder.getPersoninfo().getPersonIdent().getIdent() + "]: " + forelder.getPersonhistorikkInfo().getAdressehistorikk().toString());
         var segmenter = forelder.getPersonhistorikkInfo().getAdressehistorikk().stream()
                 .filter(this::erNorskBostedsadresse)
                 .map(AdressePeriode::getPeriode)
