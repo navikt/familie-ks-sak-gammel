@@ -54,7 +54,7 @@ public class HarVærtBosattFemÅrINorge extends LeafSpecification<Faktagrunnlag>
         var segmenter = forelder.getPersonhistorikkInfo().getAdressehistorikk().stream()
                 .filter(this::erNorskBostedsadresse)
                 .map(AdressePeriode::getPeriode)
-                .map(periode -> new LocalDateSegment<>(periode.getFom(), periode.getTom() != Tid.TIDENES_ENDE ? periode.getTom() : LocalDate.now(), true))
+                .map(periode -> new LocalDateSegment<>(periode.getFom(), !periode.getTom().equals(Tid.TIDENES_ENDE) ? periode.getTom() : LocalDate.now(), true))
                 .collect(Collectors.toList());
 
         final var bostedstidslinje = new LocalDateTimeline<>(segmenter, StandardCombinators::alwaysTrueForMatch).compress();
