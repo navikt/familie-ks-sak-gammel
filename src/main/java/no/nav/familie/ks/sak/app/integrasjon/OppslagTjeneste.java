@@ -311,7 +311,7 @@ public class OppslagTjeneste {
         try {
             ResponseEntity<T> response = postRequest(uri, OppgaveKt.toJson(request), responsType);
 
-            if (response.getStatusCode().is2xxSuccessful()) {
+            if (response.getStatusCode().value() == HttpStatus.OK.value()) {
                 return response.getBody();
             } else {
                 String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
