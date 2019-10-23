@@ -132,8 +132,10 @@ public class RegisterInnhentingService {
 
     private boolean barnHarRelasjonerMedFDAT(PersonMedHistorikk barn) {
         long antallFdatRelasjoner = barn.getPersoninfo().getFamilierelasjoner().stream()
-            .filter(familierelasjon -> familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
-            .filter(relasjon -> relasjon.getPersonIdent().erFdatNummer()).count();
+            .filter(familierelasjon ->
+                (familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.FARA) || familierelasjon.getRelasjonsrolle().equals(RelasjonsRolleType.MORA))
+                    && familierelasjon.getPersonIdent().erFdatNummer())
+            .count();
 
         return antallFdatRelasjoner > 0;
     }

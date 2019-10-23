@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene.kodeverk;
 
-public interface InputType {
+public interface VilkårEllerAvvikType {
     String getKode();
     String getBeskrivelse();
     String getLovReferanse();

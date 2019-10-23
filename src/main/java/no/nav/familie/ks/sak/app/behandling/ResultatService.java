@@ -33,7 +33,6 @@ public class ResultatService {
                 .forEach(vurdering -> vilkårsSet.add(new VilkårResultat(vurdering.getVilkårType(), vurdering.getUtfallType(), vurdering.getInputJson(), vurdering.getRegelSporingJson())));
         } else if (samletVurdering instanceof AvviksVurdering) {
             final var avviksVurdering = (AvviksVurdering) samletVurdering;
-
             avviksVurdering.getResultater()
                 .forEach(vurdering -> vilkårsSet.add(new VilkårResultat(vurdering.getAvvikType(), vurdering.getUtfallType())));
         }

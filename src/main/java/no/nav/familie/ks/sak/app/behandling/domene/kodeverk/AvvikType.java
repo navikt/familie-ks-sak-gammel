@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene.kodeverk;
 
-public enum AvvikType implements InputType {
+public enum AvvikType implements VilkårEllerAvvikType {
 
 
     AVVIK_PERSON_IKKE_FUNNET(Constants.PERSON_IKKE_FUNNET_KODE, "Avvik: Klarte ikke innhente personopplysninger for søker, medforelder og/eller barn");

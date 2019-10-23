@@ -59,7 +59,7 @@ public class SaksbehandlingTest {
     @Test
     public void negativt_vedtak_ved_person_ikke_funnet_avvik() throws FDATException {
         when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieUtenlandskStatsborgerskapMedBarnehage());
-        when(behandlingslagerMock.nyBehandling(any(), any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), ""), "").build());
+        when(behandlingslagerMock.nyBehandling(any(), any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), new PersonIdent("123"), ""), "").build());
         when(registerInnhentingServiceMock.innhentPersonopplysninger(any(), any())).thenThrow(new FDATException());
 
         Søknad innsendtSøknad = SøknadTestdata.utenlandskFamilieMedBarnehageplass();
