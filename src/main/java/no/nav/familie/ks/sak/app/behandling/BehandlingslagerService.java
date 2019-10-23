@@ -14,6 +14,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittErkl�
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class BehandlingslagerService {
 
     public Behandling nyBehandling(Søknad søknad, String saksnummer, String journalpostID) {
         final var søkerAktørId = oppslagTjeneste.hentAktørId(søknad.getSøkerFødselsnummer());
-        final var fagsak = Fagsak.opprettNy(søkerAktørId, saksnummer);
+        final var fagsak = Fagsak.opprettNy(søkerAktørId, new PersonIdent(søknad.getSøkerFødselsnummer()), saksnummer);
         fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak, journalpostID).build();

@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling;
 
+import no.finn.unleash.Unleash;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
@@ -56,6 +57,9 @@ public class BehandlingslagerServiceTest {
     @MockBean
     private PersonopplysningGrunnlagRepository personopplysningGrunnlagRepository;
 
+    @MockBean
+    private Unleash unleash;
+
     @Before
     public void setUp() {
         when(personopplysningGrunnlagRepository.findByBehandlingAndAktiv(any()))
@@ -68,7 +72,7 @@ public class BehandlingslagerServiceTest {
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersoninfo(),
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo()
             );
-        when(oppslagTjeneste.hentHistorikkFor(any()))
+        when(oppslagTjeneste.hentHistorikkFor(any(), any()))
             .thenReturn(
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersonhistorikkInfo(),

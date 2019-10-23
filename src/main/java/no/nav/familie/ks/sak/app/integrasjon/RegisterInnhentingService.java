@@ -153,7 +153,7 @@ public class RegisterInnhentingService {
     private PersonMedHistorikk hentPersonMedHistorikk(String personIdent) {
         final AktørId aktørId = oppslagTjeneste.hentAktørId(personIdent);
         final Personinfo personinfo = oppslagTjeneste.hentPersoninfoFor(personIdent).medAktørId(aktørId);
-        final PersonhistorikkInfo personhistorikkInfo = oppslagTjeneste.hentHistorikkFor(personIdent);
+        final PersonhistorikkInfo personhistorikkInfo = oppslagTjeneste.hentHistorikkFor(personIdent, personinfo.getFødselsdato());
         return new PersonMedHistorikk.Builder()
             .medInfo(personinfo)
             .medPersonhistorikk(personhistorikkInfo)
