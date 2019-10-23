@@ -165,12 +165,12 @@ public class RegisterInnhentingServiceTest {
 
         when(oppslagTjeneste.hentAktørId(eq(søkerPersoninfo.getPersonIdent().getIdent()))).thenReturn(søkerAktørId);
         when(oppslagTjeneste.hentPersoninfoFor(eq(søker.getIdent()))).thenReturn(søkerPersoninfo);
-        when(oppslagTjeneste.hentHistorikkFor(eq(søker.getIdent()))).thenReturn(søkerPersonhistorikk);
+        when(oppslagTjeneste.hentHistorikkFor(eq(søker.getIdent()), eq(søkerPersoninfo.getFødselsdato()))).thenReturn(søkerPersonhistorikk);
         when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barnAktørId);
         when(oppslagTjeneste.hentPersoninfoFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersoninfo);
-        when(oppslagTjeneste.hentHistorikkFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersonhistorikk);
+        when(oppslagTjeneste.hentHistorikkFor(eq(barnPersonIdent.getIdent()), eq(barnPersoninfo.getFødselsdato()))).thenReturn(barnPersonhistorikk);
 
-        final var fagsak = Fagsak.opprettNy(søkerAktørId, "123412341234");
+        final var fagsak = Fagsak.opprettNy(søkerAktørId, søker);
         fagsakRepository.save(fagsak);
 
         final var behandling = Behandling.forFørstegangssøknad(fagsak, "12345678").build();
