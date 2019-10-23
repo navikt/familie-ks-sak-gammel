@@ -1,0 +1,3 @@
+TRUNCATE fagsak cascade;
+
+
