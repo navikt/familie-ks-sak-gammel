@@ -1,0 +1,1 @@
+alter table behandling_resultat rename column vilkars_resultat_id to samlet_vilkar_resultat_id;
