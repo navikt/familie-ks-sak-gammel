@@ -18,9 +18,9 @@ public class OppslagException extends RuntimeException {
     }
 
     public OppslagException(String msg, Exception e, URI uri, String ident) {
-        super(msg);
+        super(msg, e);
 
-        secureLogger.info("Ukjent feil ved oppslag mot {}. ident={} {}", uri, ident, e.getMessage());
+        secureLogger.info("Ukjent feil ved oppslag mot {}. ident={} {}", uri, ident, e);
         logger.warn("Ukjent feil ved oppslag mot '" + uri + "'.");
     }
 }
