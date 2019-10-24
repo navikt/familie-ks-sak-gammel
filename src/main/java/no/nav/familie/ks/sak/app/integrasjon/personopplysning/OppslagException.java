@@ -17,10 +17,10 @@ public class OppslagException extends RuntimeException {
         super(msg);
     }
 
-    public OppslagException(String msg, Exception e, URI uri) {
+    public OppslagException(String msg, Exception e, URI uri, String ident) {
         super(msg);
 
-        secureLogger.info("Ukjent feil ved oppslag mot {}. {}", uri, e.getMessage());
+        secureLogger.info("Ukjent feil ved oppslag mot {}. ident={} {}", uri, ident, e.getMessage());
         logger.warn("Ukjent feil ved oppslag mot '" + uri + "'.");
     }
 }
