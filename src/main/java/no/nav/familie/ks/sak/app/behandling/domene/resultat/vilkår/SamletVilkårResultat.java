@@ -8,29 +8,29 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "vilkars_resultat")
-public class VilkårsResultat extends BaseEntitet {
+@Table(name = "samlet_vilkar_resultat")
+public class SamletVilkårResultat extends BaseEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "vilkars_resultat_seq")
     @SequenceGenerator(name = "vilkars_resultat_seq")
     private Long id;
 
-    @OneToMany(mappedBy = "vilkårsResultat", cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
-    private Set<VilkårResultat> vilkårsResultat;
+    @OneToMany(mappedBy = "samletVilkårResultat", cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
+    private Set<VilkårResultat> samletVilkårResultat;
 
-    VilkårsResultat() {
+    SamletVilkårResultat() {
     }
 
-    public VilkårsResultat(Set<VilkårResultat> vilkårsResultat) {
-        this.vilkårsResultat = vilkårsResultat.stream().peek(it -> it.setVilkårsResultat(this)).collect(Collectors.toSet());
+    public SamletVilkårResultat(Set<VilkårResultat> samletVilkårResultat) {
+        this.samletVilkårResultat = samletVilkårResultat.stream().peek(it -> it.setSamletVilkårResultat(this)).collect(Collectors.toSet());
     }
 
     UtfallType getSamletUtfall() {
-        if (vilkårsResultat == null || vilkårsResultat.isEmpty()) {
+        if (samletVilkårResultat == null || samletVilkårResultat.isEmpty()) {
             return UtfallType.IKKE_VURDERT;
         }
-        final var utfall = vilkårsResultat.stream().map(VilkårResultat::getUtfall).collect(Collectors.toSet());
+        final var utfall = samletVilkårResultat.stream().map(VilkårResultat::getUtfall).collect(Collectors.toSet());
         if (utfall.size() == 1) {
             return utfall.iterator().next();
         }
@@ -46,16 +46,16 @@ public class VilkårsResultat extends BaseEntitet {
         throw new IllegalStateException("Ukjent utfall :" + utfall);
     }
 
-    public Set<VilkårResultat> getVilkårsResultat() {
-        return vilkårsResultat;
+    public Set<VilkårResultat> getSamletVilkårResultat() {
+        return samletVilkårResultat;
     }
 
     @Override
     public String toString() {
-        return "VilkårsResultat{" +
+        return "SamletVilkårResultat{" +
                 "id=" + id +
                 "samletVurdering=" + getSamletUtfall() +
-                ", vilkårsResultat=" + vilkårsResultat +
+                ", samletVilkårResultat=" + samletVilkårResultat +
                 '}';
     }
 }

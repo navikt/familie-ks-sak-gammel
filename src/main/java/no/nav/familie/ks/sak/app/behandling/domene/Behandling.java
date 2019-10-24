@@ -18,7 +18,7 @@ public class Behandling extends BaseEntitet {
     @JoinColumn(name = "fagsak_id", nullable = false, updatable = false)
     private Fagsak fagsak;
 
-    @Column(name = "journalpostID")
+    @Column(name = "journalpost_id", nullable = false)
     private String journalpostID;
 
     Behandling() {
