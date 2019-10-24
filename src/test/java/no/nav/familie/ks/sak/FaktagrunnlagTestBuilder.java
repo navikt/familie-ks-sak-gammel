@@ -91,7 +91,7 @@ public final class FaktagrunnlagTestBuilder {
         .medStatsborgerskap(Landkode.NORGE)
         .medFødselsdato(LocalDate.now().minusYears(30))
         .medAktørId(farAktørId)
-        .medPersonIdent(new PersonIdent("12345678910"))
+        .medPersonIdent(new PersonIdent("00000000011"))
         .medKjønn("MANN")
         .medBostedsadresse(medBostedsadresse("NOR"))
         .medNavn("test testesen")
@@ -317,6 +317,7 @@ public final class FaktagrunnlagTestBuilder {
         .medBostedsadresse(medBostedsadresse("SWE"))
         .medNavn("test testesen")
         .medKjønn("MANN")
+        .medFamilierelasjon(new HashSet<>(Arrays.asList(utenlandskMorRelasjonMedAnnetBosted, utenlandskFarRelasjonMedAnnetBosted)))
         .build()).build();
     private static PersonMedHistorikk personMedHistorikkBarnNorskMedUtenlandskForeldre = new PersonMedHistorikk.Builder().medInfo(new Personinfo.Builder()
         .medFødselsdato(LocalDate.now().minusMonths(13))

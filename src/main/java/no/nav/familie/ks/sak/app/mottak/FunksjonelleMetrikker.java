@@ -3,6 +3,8 @@ package no.nav.familie.ks.sak.app.mottak;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.ks.kontrakter.søknad.Søknad;
+import no.nav.familie.ks.sak.app.behandling.avvik.AvviksVurdering;
+import no.nav.familie.ks.sak.app.behandling.SamletVilkårsVurdering;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
@@ -24,6 +26,7 @@ public class FunksjonelleMetrikker {
     private final HashMap<String, Counter> vilkårIkkeOppfylt = new HashMap<>();
     private final Map<VilkårType, Map<String, Counter>> vilkårsUtfall = new HashMap<>();
     private final Counter antallSøknaderMottatt = Metrics.counter("soknad.kontantstotte.funksjonell.antallsoknader");
+    private final Counter antallSøknaderMedAvvik = Metrics.counter("soknad.kontantstotte.funksjonell.antallavvik");
 
     private final HashMap<String, Counter> barnehagestatus = new HashMap<>();
     private final HashMap<String, Counter> boddEllerJobbetINorgeEllerEøsIFemÅr = new HashMap<>();
@@ -72,16 +75,22 @@ public class FunksjonelleMetrikker {
             log.info("Fant ikke counter for samlet utfall: " + vilkårvurdering.getSamletUtfallType().name());
         }
 
-        vilkårvurdering.getResultater().forEach(r -> {
-            if (r.getUtfallType().equals(UtfallType.MANUELL_BEHANDLING)) {
-                final Counter counter = vilkårIkkeOppfylt.get(r.getUtfallÅrsak().getKode());
-                if (counter != null) {
-                    counter.increment();
-                } else {
-                    log.info("Fant ikke counter for årsak til ikke oppfylt vilkår: " + r.getUtfallÅrsak().getKode());
+        if (vilkårvurdering instanceof SamletVilkårsVurdering) {
+            var samletVilkårvurdering = (SamletVilkårsVurdering) vilkårvurdering;
+
+            samletVilkårvurdering.getResultater().forEach(r -> {
+                if (r.getUtfallType().equals(UtfallType.MANUELL_BEHANDLING)) {
+                    final Counter counter = vilkårIkkeOppfylt.get(r.getUtfallÅrsak().getKode());
+                    if (counter != null) {
+                        counter.increment();
+                    } else {
+                        log.info("Fant ikke counter for årsak til ikke oppfylt vilkår: " + r.getUtfallÅrsak().getKode());
+                    }
                 }
-            }
-        });
+            });
+        } else if (vilkårvurdering instanceof AvviksVurdering) {
+            antallSøknaderMedAvvik.increment();
+        }
 
         barnehagestatus.get(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getBarnehageStatus().name()).increment();
 

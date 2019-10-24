@@ -5,7 +5,9 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.kontrakter.søknad.SøknadKt;
+import no.nav.familie.ks.sak.app.behandling.avvik.AvviksVurdering;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
+import no.nav.familie.ks.sak.app.behandling.SamletVilkårsVurdering;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
@@ -32,25 +34,16 @@ public class MottaSøknadController {
 
     private static final Logger log = LoggerFactory.getLogger(MottaSøknadController.class);
     private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
-    private static final String OPPDATER_OPPGAVE = "familie-ks-sak.oppdater_oppgave";
 
     private final Counter feiledeBehandlinger = Metrics.counter("soknad.kontantstotte.funksjonell.feiledebehandlinger");
 
     private final FunksjonelleMetrikker funksjonelleMetrikker;
     private final Saksbehandling saksbehandling;
-    private final OppslagTjeneste oppslagTjeneste;
-
-    private UnleashProvider unleash;
 
     @Autowired
-    public MottaSøknadController(Saksbehandling saksbehandling,
-                                 FunksjonelleMetrikker funksjonelleMetrikker,
-                                 OppslagTjeneste oppslagTjeneste,
-                                 UnleashProvider unleash) {
+    public MottaSøknadController(Saksbehandling saksbehandling, FunksjonelleMetrikker funksjonelleMetrikker) {
         this.funksjonelleMetrikker = funksjonelleMetrikker;
         this.saksbehandling = saksbehandling;
-        this.oppslagTjeneste = oppslagTjeneste;
-        this.unleash = unleash;
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -84,26 +77,7 @@ public class MottaSøknadController {
 
         try {
             Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer, journalpostID);
-            final var vilkårvurdering = vedtak.getVilkårvurdering();
-            final var samletUtfallType = vilkårvurdering.getSamletUtfallType();
             funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
-
-            String oppgaveBeskrivelse;
-            if (samletUtfallType.equals(UtfallType.OPPFYLT)) {
-                log.info("Søknad kan behandles automatisk. Årsak={}", samletUtfallType);
-                oppgaveBeskrivelse = String.format(OppgaveBeskrivelse.FORESLÅ_VEDTAK, OppgaveBeskrivelse.args(vedtak, søknad));
-            } else {
-                log.info("Søknad kan ikke behandles automatisk. Årsak={}", vilkårvurdering.getResultater());
-                oppgaveBeskrivelse = OppgaveBeskrivelse.MANUELL_BEHANDLING;
-            }
-
-            if (unleash.toggle(OPPDATER_OPPGAVE).isEnabled()) {
-                log.info("Oppdater oppgave toggle er: Enabled\n Kaller oppslagTjeneste.oppdaterGosysOppgave...");
-                oppslagTjeneste.oppdaterGosysOppgave(søknad.getSøkerFødselsnummer(), journalpostID, oppgaveBeskrivelse);
-            } else {
-                log.info("Oppdater oppgave toggle er: Disabled");
-            }
-
             return new ResponseEntity<>(Ressurs.Companion.success("Motta dokument vellykket"), HttpStatus.OK);
         } catch (Exception e) {
             log.error("behandling feilet", e);
