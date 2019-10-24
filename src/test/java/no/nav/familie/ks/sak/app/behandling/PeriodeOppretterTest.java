@@ -13,8 +13,11 @@ import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barnehage.BarnehageVil
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted.BostedVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskapBosted.MedlemskapBostedVilkår;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
+import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
+import no.nav.familie.ks.sak.config.toggle.UnleashProvider;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -36,7 +39,15 @@ public class PeriodeOppretterTest {
     private final RegisterInnhentingService registerInnhentingServiceMock = mock(RegisterInnhentingService.class);
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapBostedVilkår(), new BarnehageVilkår(), new BostedVilkår()));
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
-    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(ResultatService.class));
+    private final UnleashProvider unleashProviderMock = mock(UnleashProvider.class);
+    private final UnleashProvider.Toggle toggleMock = mock(UnleashProvider.Toggle.class);
+    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(OppslagTjeneste.class), unleashProviderMock, mock(ResultatService.class));
+
+    @Before
+    public void setUp() {
+        when(unleashProviderMock.toggle(any())).thenReturn(toggleMock);
+        when(toggleMock.isEnabled()).thenReturn(true);
+    }
 
     @Test
     public void søknad_med_barnehage_gir_feil() {

@@ -14,9 +14,12 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barn.BarneVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskapBosted.MedlemskapBostedVilkår;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
+import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.FDATException;
+import no.nav.familie.ks.sak.config.toggle.UnleashProvider;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -34,7 +37,15 @@ public class SaksbehandlingTest {
     private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapBostedVilkår()));
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
     private final RegisterInnhentingService registerInnhentingServiceMock = mock(RegisterInnhentingService.class);
-    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(ResultatService.class));
+    private final UnleashProvider unleashProviderMock = mock(UnleashProvider.class);
+    private final UnleashProvider.Toggle toggleMock = mock(UnleashProvider.Toggle.class);
+    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(OppslagTjeneste.class), unleashProviderMock, mock(ResultatService.class));
+
+    @Before
+    public void setUp() {
+        when(unleashProviderMock.toggle(any())).thenReturn(toggleMock);
+        when(toggleMock.isEnabled()).thenReturn(false);
+    }
 
     @Test
     public void positivt_vedtak_ved_oppfylte_vilkår() {
