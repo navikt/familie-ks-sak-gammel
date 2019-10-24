@@ -14,16 +14,17 @@ public interface OppgaveBeskrivelse {
         "\n" +
         "Foreslått vedtak: Innvilget\n" +
         "Bruker skal ha kontantstøtte f.o.m: %s\n" +
-        "Medlemskap i Folketrygden (Botidskrav) oppfylt for søker: JA\n" +
-        "Medlemskap i Folketrygden (Botidskrav) oppfylt for den andre forelderen: JA\n" +
-        "Avtalt oppholdstid: 0 timer\n" +
-        "Beløp: 7500 nkr\n" +
+        "Medlemskap i Folketrygden oppfylt for søker: JA\n" +
+        "Medlemskap i Folketrygden oppfylt for den andre forelderen: JA\n" +
+        "Avtalt oppholdstid i barnehage: 0 timer\n" +
+        "Beløp: 7500 kroner\n" +
         "\n" +
         "Etterbetaling: NEI\n" +
         "Søknad mottatt dato: %s\n" +
         "Barnets fødselsdato: %s\n" +
         "\n" +
-        "Se saksbehandlingsløsningen for kontantstøtte (NB! må åpnes i chrome): %s\n";
+        "Se saksbehandlingsløsningen for kontantstøtte (NB! Bør åpnes i Chrome): \n\n" +
+        "%s\n";
 
     String MANUELL_BEHANDLING = "\nSaken må behandles manuelt\n";
 
