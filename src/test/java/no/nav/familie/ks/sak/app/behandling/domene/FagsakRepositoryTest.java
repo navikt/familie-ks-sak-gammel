@@ -78,6 +78,7 @@ public class FagsakRepositoryTest {
 
         when(oppslagTjeneste.hentMedlemskapsUnntakFor(any())).thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
         when(oppslagTjeneste.hentMedlemskapsUnntakFor(any())).thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
+        when(oppslagTjeneste.hentInfoOmLøpendeKontantstøtteForBarn(any())).thenReturn(FaktagrunnlagTestBuilder.typiskInfotrygdFakta.getAktivKontantstøtteInfo());
     }
 
     @Container

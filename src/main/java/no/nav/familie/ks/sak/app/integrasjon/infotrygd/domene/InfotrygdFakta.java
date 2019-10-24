@@ -7,7 +7,7 @@ public class InfotrygdFakta {
         this.aktivKontantstøtteInfo = aktivKontantstøtteInfo;
     }
 
-    public AktivKontantstøtteInfo getAktivKontantStøtteInfo() {
+    public AktivKontantstøtteInfo getAktivKontantstøtteInfo() {
         return aktivKontantstøtteInfo;
     }
 }
