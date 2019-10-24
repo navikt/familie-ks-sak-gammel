@@ -13,14 +13,10 @@ public class OppslagException extends RuntimeException {
     private static final Logger logger = LoggerFactory.getLogger(OppslagTjeneste.class);
     private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
 
-    public OppslagException(String msg) {
-        super(msg);
-    }
-
     public OppslagException(String msg, Exception e, URI uri, String ident) {
-        super(msg);
+        super(msg, e);
 
-        secureLogger.info("Ukjent feil ved oppslag mot {}. ident={} {}", uri, ident, e.getMessage());
+        secureLogger.info("Ukjent feil ved oppslag mot {}. ident={} {}", uri, ident, e);
         logger.warn("Ukjent feil ved oppslag mot '" + uri + "'.");
     }
 }
