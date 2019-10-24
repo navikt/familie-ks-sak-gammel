@@ -68,15 +68,15 @@ public class MottaSøknadController {
             if (vilkårvurdering instanceof SamletVilkårsVurdering) {
                 var samletVilkårVurdering = (SamletVilkårsVurdering) vilkårvurdering;
                 if (samletUtfallType.equals(UtfallType.OPPFYLT)) {
-                    log.info("Søknad kan behandles automatisk. Årsak={}", samletUtfallType);
+                    log.info("Søknad kan behandles automatisk. Fagsak-ID: {}, Årsak: {}", vedtak.getFagsakId(), samletUtfallType);
                     oppgaveBeskrivelse = String.format(OppgaveBeskrivelse.FORESLÅ_VEDTAK, OppgaveBeskrivelse.args(vedtak, søknad));
                 } else {
-                    log.info("Søknad kan ikke behandles automatisk. Årsak={}", samletVilkårVurdering.getResultater());
+                    log.info("Søknad kan ikke behandles automatisk. Fagsak-ID: {}, Årsak: {}", vedtak.getFagsakId(), samletVilkårVurdering.getResultater());
                     oppgaveBeskrivelse = OppgaveBeskrivelse.MANUELL_BEHANDLING;
                 }
             } else {
                 var avviksvurdering = (AvviksVurdering) vilkårvurdering;
-                log.info("Søknad ble avvikshåndtert. Årsak={}", avviksvurdering.getAvvik());
+                log.info("Søknad ble avvikshåndtert. Fagsak-ID: {}, Årsak: {}", vedtak.getFagsakId(), avviksvurdering.getAvvik());
                 oppgaveBeskrivelse = OppgaveBeskrivelse.MANUELL_BEHANDLING;
             }
 
