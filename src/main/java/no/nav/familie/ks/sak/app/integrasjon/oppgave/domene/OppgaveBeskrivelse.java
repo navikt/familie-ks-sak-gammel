@@ -23,7 +23,8 @@ public interface OppgaveBeskrivelse {
         "Søknad mottatt dato: %s\n" +
         "Barnets fødselsdato: %s\n" +
         "\n" +
-        "Se saksbehandlingsløsningen for kontantstøtte (NB! Bør åpnes i Chrome): %s\n";
+        "Se saksbehandlingsløsningen for kontantstøtte (NB! Bør åpnes i Chrome): \n\n" +
+        "%s\n";
 
     String MANUELL_BEHANDLING = "\nSaken må behandles manuelt\n";
 
