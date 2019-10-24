@@ -19,7 +19,7 @@ public class BehandlingResultat extends BaseEntitet {
     private Long behandlingId;
 
     @ManyToOne
-    @JoinColumn(name = "vilkars_resultat_id", updatable = false)
+    @JoinColumn(name = "samlet_vilkar_resultat_id", updatable = false)
     private SamletVilkårResultat samletVilkårResultat;
 
     @Column(name = "aktiv")
