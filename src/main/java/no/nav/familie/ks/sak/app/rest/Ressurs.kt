@@ -27,6 +27,13 @@ data class Ressurs(
             )
         }
 
+        fun success(melding: String): Ressurs = Ressurs(
+                data = null,
+                status = Status.SUKSESS,
+                melding = melding,
+                errorMelding = null
+        )
+
         fun failure(errorMessage: String? = null, error: Throwable? = null): Ressurs = Ressurs(
             data = null,
             status = Status.FEILET,

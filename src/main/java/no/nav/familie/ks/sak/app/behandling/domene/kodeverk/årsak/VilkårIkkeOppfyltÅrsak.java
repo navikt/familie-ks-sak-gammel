@@ -5,9 +5,8 @@ import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 public enum VilkårIkkeOppfyltÅrsak implements VilkårUtfallÅrsak {
 
     // Medlemskap
-    IKKE_FEM_ÅR_MEDLEMSKAP(8301, "Må ha vært medlem av den norske folketrygden i minst fem år", VilkårType.MEDLEMSKAP_BOSTED),
     IKKE_BOSATT_I_NORGE_FEM_ÅR(8303, "Ikke vært bosatt i Norge sammenhengende siste fem år", VilkårType.MEDLEMSKAP_BOSTED),
-    IKKE_BOSATT_I_NORGE_NÅ(8308, "Ikke bosatt i Norge nå", VilkårType.MEDLEMSKAP_BOSTED),
+    IKKE_BOSATT_I_NORGE_NÅ(8308, "Ikke bosatt i Norge nå", VilkårType.MEDLEMSKAP_BOSTED_NÅ),
     IKKE_NORSKE_STATSBORGERE(8304, "Foreldre er ikke norsk statsborger nå", VilkårType.MEDLEMSKAP_STATSBORGERSKAP),
     HAR_MEDLEMSKAPSOPPLYSNINGER(8305, "Foreldre har medlemskapsopplysninger", VilkårType.MEDLEMSKAP_MEDL),
 

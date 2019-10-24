@@ -75,7 +75,7 @@ class RestFagsakService(
 
             // Grunnlag fra regelkjøring
             val restBehandlingsresultat = behandlingresultatRepository.finnBehandlingsresultat(it.id).map { behandlingsresultat ->
-                val restVilkårsResultat = behandlingsresultat.vilkårsResultat.vilkårsResultat.map { vilkårResultat ->
+                val restVilkårsResultat = behandlingsresultat.vilkårsResultat.samletVilkårResultat.map { vilkårResultat ->
                     RestVilkårsResultat(vilkårResultat.vilkårType, vilkårResultat.utfall)
                 }
 

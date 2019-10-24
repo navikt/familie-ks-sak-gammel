@@ -3,12 +3,17 @@ package no.nav.familie.ks.sak.app.mottak;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.NotBlank;
+
 public class SøknadDto {
 
+    @NotBlank
     private String søknadJson;
 
+    @NotBlank
     private String saksnummer;
 
+    @NotBlank
     private String journalpostID;
 
 
