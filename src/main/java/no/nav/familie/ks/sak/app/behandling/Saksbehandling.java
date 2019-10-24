@@ -66,6 +66,9 @@ public class Saksbehandling {
             Vedtak vedtak = new Vedtak(new AvviksVurdering());
             vedtak.setBehandlingsId(behandling.getId());
             resultatService.persisterResultat(behandling, vedtak.getVilkårvurdering());
+            vedtak.setBehandlingsId(behandling.getId());
+            vedtak.setFagsakId(behandling.getFagsak().getId());
+            oppdaterGosysOppgave(vedtak, søknad, journalpostID);
             return vedtak;
         }
         MedlFakta medlFakta = registerInnhentingService.hentMedlemskapsopplysninger(behandling);
