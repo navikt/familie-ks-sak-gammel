@@ -204,7 +204,7 @@ public class OppslagTjeneste {
         try {
             var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
             var aktivKontantstøtteInfo = response.getBody();
-            
+
             if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
                 if (aktivKontantstøtteInfo.getHarAktivKontantstotte()) {
                     secureLogger.info("Personident {}: Har løpende kontantstøtte eller er under behandling for kontantstøtte.", personident);
@@ -311,7 +311,7 @@ public class OppslagTjeneste {
         try {
             ResponseEntity<T> response = postRequest(uri, OppgaveKt.toJson(request), responsType);
 
-            if (response.getStatusCode().value() == HttpStatus.OK.value()) {
+            if (response.getStatusCode() == HttpStatus.OK) {
                 return response.getBody();
             } else {
                 String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
