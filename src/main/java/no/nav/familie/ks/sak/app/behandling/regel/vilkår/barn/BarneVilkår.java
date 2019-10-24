@@ -18,7 +18,7 @@ public class BarneVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
 
     @Override
     public VilkårType getVilkårType() {
-        return VilkårType.BARN;
+        return VilkårType.BARN_NORSK_STATSBORGER;
     }
 
     @Override

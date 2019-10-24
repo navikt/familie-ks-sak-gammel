@@ -19,7 +19,7 @@ public class BostedVilkår implements InngangsvilkårRegel<Faktagrunnlag> {
 
     @Override
     public VilkårType getVilkårType() {
-        return VilkårType.BOSTED;
+        return VilkårType.BARN_BOR_MED_FORELDRE;
     }
 
     @Override
