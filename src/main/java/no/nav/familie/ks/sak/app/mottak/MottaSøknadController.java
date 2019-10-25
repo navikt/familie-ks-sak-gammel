@@ -5,15 +5,10 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.kontrakter.søknad.SøknadKt;
-import no.nav.familie.ks.sak.app.behandling.avvik.AvviksVurdering;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
-import no.nav.familie.ks.sak.app.behandling.SamletVilkårsVurdering;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
-import no.nav.familie.ks.sak.app.integrasjon.oppgave.domene.OppgaveBeskrivelse;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.rest.Ressurs;
-import no.nav.familie.ks.sak.config.toggle.UnleashProvider;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +64,13 @@ public class MottaSøknadController {
         return Ressurs.Companion.failure("MissingKotlinParameterException ved validering av søknadJson", null);
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(OppslagException.class)
+    public Ressurs handleOppslagException(OppslagException ex) {
+        log.error("behandling feilet", ex);
+        return Ressurs.Companion.failure("mottaDokument feilet " + ex.getResponseBodyAsString(), ex);
+    }
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
     public ResponseEntity<Ressurs> mottaDokument(@Valid @RequestBody SøknadDto søknadDto) {
         Søknad søknad = SøknadKt.toSøknad(søknadDto.getSøknadJson());
@@ -79,6 +81,9 @@ public class MottaSøknadController {
             Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer, journalpostID);
             funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
             return new ResponseEntity<>(Ressurs.Companion.success("Motta dokument vellykket"), HttpStatus.OK);
+        } catch (OppslagException e) {
+            feiledeBehandlinger.increment();
+            throw e;
         } catch (Exception e) {
             log.error("behandling feilet", e);
             feiledeBehandlinger.increment();
