@@ -13,6 +13,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.Per
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.FDATException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
@@ -83,7 +84,7 @@ public class RegisterInnhentingServiceTest {
     }
 
     @Test
-    public void skal_lagre_ned_respons() {
+    public void skal_lagre_ned_respons() throws FDATException {
         PersonIdent barn = tpsFakta.getBarna().get(0).getPersoninfo().getPersonIdent();
         AktørId barnAktørId = tpsFakta.getBarna().get(0).getPersoninfo().getAktørId();
         Personinfo barnPersoninfo = tpsFakta.getBarna().get(0).getPersoninfo();
@@ -117,7 +118,7 @@ public class RegisterInnhentingServiceTest {
     }
 
     @Test
-    public void skal_lagre_ned_respons_uten_annen_part() {
+    public void skal_lagre_ned_respons_uten_annen_part() throws FDATException {
         final Faktagrunnlag faktagrunnlagUtenAnnenPart = FaktagrunnlagTestBuilder.aleneForelderNorskStatsborgerskapUtenBarnehage();
         final TpsFakta tpsFaktaUtenAnnenPart = faktagrunnlagUtenAnnenPart.getTpsFakta();
 
@@ -145,5 +146,36 @@ public class RegisterInnhentingServiceTest {
         assertThat(registerVersjonOpt).isPresent();
 
         assertThat(personopplysningGrunnlag.get().getAnnenPart()).isNull();
+    }
+
+    @Test(expected = FDATException.class)
+    public void skal_kaste_exception_for_relasjoner_med_FDAT() throws FDATException {
+        final Faktagrunnlag faktagrunnlagUtenlandskFamilie = FaktagrunnlagTestBuilder.familieUtenlandskStatsborgerskapMedBarnehage();
+        final TpsFakta tpsFaktaUtenlandskFamilie = faktagrunnlagUtenlandskFamilie.getTpsFakta();
+
+        AktørId barnAktørId = tpsFaktaUtenlandskFamilie.getBarna().get(0).getPersoninfo().getAktørId();
+        PersonIdent barnPersonIdent = tpsFaktaUtenlandskFamilie.getBarna().get(0).getPersoninfo().getPersonIdent();
+        Personinfo barnPersoninfo = tpsFaktaUtenlandskFamilie.getBarna().get(0).getPersoninfo();
+        PersonhistorikkInfo barnPersonhistorikk = tpsFaktaUtenlandskFamilie.getBarna().get(0).getPersonhistorikkInfo();
+
+        PersonIdent søker = tpsFaktaUtenlandskFamilie.getForelder().getPersoninfo().getPersonIdent();
+        AktørId søkerAktørId = tpsFaktaUtenlandskFamilie.getForelder().getPersoninfo().getAktørId();
+        Personinfo søkerPersoninfo = tpsFaktaUtenlandskFamilie.getForelder().getPersoninfo();
+        PersonhistorikkInfo søkerPersonhistorikk = tpsFaktaUtenlandskFamilie.getForelder().getPersonhistorikkInfo();
+
+        when(oppslagTjeneste.hentAktørId(eq(søkerPersoninfo.getPersonIdent().getIdent()))).thenReturn(søkerAktørId);
+        when(oppslagTjeneste.hentPersoninfoFor(eq(søker.getIdent()))).thenReturn(søkerPersoninfo);
+        when(oppslagTjeneste.hentHistorikkFor(eq(søker.getIdent()), eq(søkerPersoninfo.getFødselsdato()))).thenReturn(søkerPersonhistorikk);
+        when(oppslagTjeneste.hentAktørId(eq(barnPersoninfo.getPersonIdent().getIdent()))).thenReturn(barnAktørId);
+        when(oppslagTjeneste.hentPersoninfoFor(eq(barnPersonIdent.getIdent()))).thenReturn(barnPersoninfo);
+        when(oppslagTjeneste.hentHistorikkFor(eq(barnPersonIdent.getIdent()), eq(barnPersoninfo.getFødselsdato()))).thenReturn(barnPersonhistorikk);
+
+        final var fagsak = Fagsak.opprettNy(søkerAktørId, søker);
+        fagsakRepository.save(fagsak);
+
+        final var behandling = Behandling.forFørstegangssøknad(fagsak, "12345678").build();
+        behandlingRepository.save(behandling);
+
+        tjeneste.innhentPersonopplysninger(behandling, SøknadTestdata.utenlandskFamilieMedBarnehageplass());
     }
 }

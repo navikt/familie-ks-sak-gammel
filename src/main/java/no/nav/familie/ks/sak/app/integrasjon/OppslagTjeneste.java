@@ -136,7 +136,7 @@ public class OppslagTjeneste {
                 throw new OppslagException(feilmelding);
             }
         } catch (RestClientException e) {
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, personident);
         }
     }
 
@@ -168,7 +168,7 @@ public class OppslagTjeneste {
                 throw new OppslagException(feilmelding);
             }
         } catch (RestClientException e) {
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, aktørId);
         }
     }
 
@@ -187,7 +187,7 @@ public class OppslagTjeneste {
             secureLogger.info("Saksbehandler {} forsøker å få tilgang til {} med resultat {}", saksbehandlerId, personident, response.getBody());
             return response;
         } catch (RestClientException e) {
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, personident);
         }
     }
 
@@ -221,7 +221,7 @@ public class OppslagTjeneste {
             secureLogger.info("Personident ikke funnet i infotrygds kontantstøttedatabase. Personident: {}", personident);
             return new AktivKontantstøtteInfo(false);
         } catch (RestClientException e) {
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, personident);
         }
     }
 
@@ -246,7 +246,7 @@ public class OppslagTjeneste {
                 throw new OppslagException(feilmelding);
             }
         } catch (RestClientException e) {
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, personident);
         }
     }
 
@@ -269,7 +269,7 @@ public class OppslagTjeneste {
                 throw new OppslagException(feilmelding);
             }
         } catch (RestClientException e) {
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, personIdent);
         }
     }
 
@@ -292,7 +292,7 @@ public class OppslagTjeneste {
                 throw new OppslagException(feilmelding);
             }
         } catch (RestClientException e) {
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, aktørId.getId());
         }
     }
 
@@ -319,7 +319,7 @@ public class OppslagTjeneste {
                 throw new OppslagException(feilmelding);
             }
         } catch (RestClientException e) {
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri);
+            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, request.getAktorId());
         }
     }
 

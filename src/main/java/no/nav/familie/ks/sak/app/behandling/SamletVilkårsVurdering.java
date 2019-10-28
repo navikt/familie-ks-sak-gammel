@@ -3,17 +3,16 @@ package no.nav.familie.ks.sak.app.behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårIkkeOppfyltÅrsak;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.årsak.VilkårUtfallÅrsak;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.Faktagrunnlag;
 import no.nav.familie.ks.sak.app.behandling.vilkår.Regelresultat;
+import no.nav.familie.ks.sak.app.behandling.vilkår.SamletVurdering;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SamletVilkårsVurdering {
+public class SamletVilkårsVurdering implements SamletVurdering {
 
     private final Map<VilkårType, Evaluation> vurderinger;
     private final Faktagrunnlag faktagrunnlag;
@@ -44,6 +43,7 @@ public class SamletVilkårsVurdering {
     }
 
     // FIXME vurder om samlet utfall også kan være manuell_behandling
+    @Override
     public UtfallType getSamletUtfallType() {
         final var utfall = getResultater()
                 .stream()

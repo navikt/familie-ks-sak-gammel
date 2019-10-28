@@ -1,6 +1,9 @@
 package no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår;
 
 
+import no.nav.familie.ks.sak.app.behandling.avvik.AvvikResultat;
+import no.nav.familie.ks.sak.app.behandling.avvik.personIkkeFunnet.PersonIkkeFunnet;
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.AvvikType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import org.junit.Test;
@@ -48,5 +51,13 @@ public class SamletVilkårResultatTest {
                 new VilkårResultat(VilkårType.BARNEHAGE, UtfallType.IKKE_VURDERT, null, null)));
 
         assertThat(samletVilkårResultatTest.getSamletUtfall()).isEqualTo(UtfallType.UAVKLART);
+    }
+
+    @Test
+    public void skal_utlede_rett_utfall_ved_avvik() {
+        final var avviksResultat = new AvvikResultat(AvvikType.AVVIK_PERSON_IKKE_FUNNET, new PersonIkkeFunnet().evaluate(null));
+        final var vilkårsResultat = new SamletVilkårResultat(Set.of(new VilkårResultat(avviksResultat.getAvvikType(), avviksResultat.getUtfallType())));
+
+        assertThat(vilkårsResultat.getSamletUtfall()).isEqualByComparingTo(UtfallType.MANUELL_BEHANDLING);
     }
 }

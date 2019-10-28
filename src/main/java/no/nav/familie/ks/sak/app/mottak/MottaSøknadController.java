@@ -6,12 +6,9 @@ import io.micrometer.core.instrument.Metrics;
 import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.kontrakter.søknad.SøknadKt;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
-import no.nav.familie.ks.sak.app.integrasjon.oppgave.domene.OppgaveBeskrivelse;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
 import no.nav.familie.ks.sak.app.rest.Ressurs;
-import no.nav.familie.ks.sak.config.toggle.UnleashProvider;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,25 +29,16 @@ public class MottaSøknadController {
 
     private static final Logger log = LoggerFactory.getLogger(MottaSøknadController.class);
     private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
-    private static final String OPPDATER_OPPGAVE = "familie-ks-sak.oppdater_oppgave";
 
     private final Counter feiledeBehandlinger = Metrics.counter("soknad.kontantstotte.funksjonell.feiledebehandlinger");
 
     private final FunksjonelleMetrikker funksjonelleMetrikker;
     private final Saksbehandling saksbehandling;
-    private final OppslagTjeneste oppslagTjeneste;
-
-    private UnleashProvider unleash;
 
     @Autowired
-    public MottaSøknadController(Saksbehandling saksbehandling,
-                                 FunksjonelleMetrikker funksjonelleMetrikker,
-                                 OppslagTjeneste oppslagTjeneste,
-                                 UnleashProvider unleash) {
+    public MottaSøknadController(Saksbehandling saksbehandling, FunksjonelleMetrikker funksjonelleMetrikker) {
         this.funksjonelleMetrikker = funksjonelleMetrikker;
         this.saksbehandling = saksbehandling;
-        this.oppslagTjeneste = oppslagTjeneste;
-        this.unleash = unleash;
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -76,6 +64,13 @@ public class MottaSøknadController {
         return Ressurs.Companion.failure("MissingKotlinParameterException ved validering av søknadJson", null);
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(OppslagException.class)
+    public Ressurs handleOppslagException(OppslagException ex) {
+        log.error("behandling feilet", ex);
+        return Ressurs.Companion.failure("mottaDokument feilet " + ex.getResponseBodyAsString(), ex);
+    }
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
     public ResponseEntity<Ressurs> mottaDokument(@Valid @RequestBody SøknadDto søknadDto) {
         Søknad søknad = SøknadKt.toSøknad(søknadDto.getSøknadJson());
@@ -84,27 +79,11 @@ public class MottaSøknadController {
 
         try {
             Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer, journalpostID);
-            final var vilkårvurdering = vedtak.getVilkårvurdering();
-            final var samletUtfallType = vilkårvurdering.getSamletUtfallType();
             funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
-
-            String oppgaveBeskrivelse;
-            if (samletUtfallType.equals(UtfallType.OPPFYLT)) {
-                log.info("Søknad kan behandles automatisk. Årsak={}", samletUtfallType);
-                oppgaveBeskrivelse = String.format(OppgaveBeskrivelse.FORESLÅ_VEDTAK, OppgaveBeskrivelse.args(vedtak, søknad));
-            } else {
-                log.info("Søknad kan ikke behandles automatisk. Årsak={}", vilkårvurdering.getResultater());
-                oppgaveBeskrivelse = OppgaveBeskrivelse.MANUELL_BEHANDLING;
-            }
-
-            if (unleash.toggle(OPPDATER_OPPGAVE).isEnabled()) {
-                log.info("Oppdater oppgave toggle er: Enabled\n Kaller oppslagTjeneste.oppdaterGosysOppgave...");
-                oppslagTjeneste.oppdaterGosysOppgave(søknad.getSøkerFødselsnummer(), journalpostID, oppgaveBeskrivelse);
-            } else {
-                log.info("Oppdater oppgave toggle er: Disabled");
-            }
-
             return new ResponseEntity<>(Ressurs.Companion.success("Motta dokument vellykket"), HttpStatus.OK);
+        } catch (OppslagException e) {
+            feiledeBehandlinger.increment();
+            throw e;
         } catch (Exception e) {
             log.error("behandling feilet", e);
             feiledeBehandlinger.increment();

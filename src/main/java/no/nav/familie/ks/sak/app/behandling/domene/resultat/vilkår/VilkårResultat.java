@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling.domene.resultat.vilkår;
 
+import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.AvvikType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.BaseEntitet;
@@ -25,6 +26,10 @@ public class VilkårResultat extends BaseEntitet {
     private VilkårType vilkårType;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "avvik")
+    private AvvikType avvikType;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "utfall")
     private UtfallType utfall = UtfallType.IKKE_VURDERT;
 
@@ -44,12 +49,22 @@ public class VilkårResultat extends BaseEntitet {
         this.regelOutput = regelOutput;
     }
 
-    public void setSamletVilkårResultat(SamletVilkårResultat samletVilkårResultat) {
+    public VilkårResultat(AvvikType avvikType, UtfallType utfall) {
+        this.avvikType = avvikType;
+        this.utfall = utfall;
+    }
+
+    void setSamletVilkårResultat(SamletVilkårResultat samletVilkårResultat) {
         this.samletVilkårResultat = samletVilkårResultat;
     }
 
     public VilkårType getVilkårType() {
         return vilkårType;
+    }
+
+
+    public AvvikType getAvvikType() {
+        return avvikType;
     }
 
     public UtfallType getUtfall() {
