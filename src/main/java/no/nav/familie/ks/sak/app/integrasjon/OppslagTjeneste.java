@@ -202,7 +202,6 @@ public class OppslagTjeneste {
             var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
             var aktivKontantstøtteInfo = response.getBody();
 
-            logger.info("Status: " + response.getStatusCode() + ", body: " + response.getBody());
             if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
                 if (aktivKontantstøtteInfo.getHarAktivKontantstotte()) {
                     secureLogger.info("Personident {}: Har løpende kontantstøtte eller er under behandling for kontantstøtte.", personident);
