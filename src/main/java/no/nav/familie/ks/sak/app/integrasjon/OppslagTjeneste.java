@@ -212,7 +212,8 @@ public class OppslagTjeneste {
                 }
                 return aktivKontantstøtteInfo;
             } else {
-                throw new OppslagException("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
+                logger.info("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
+                return new AktivKontantstøtteInfo(false);
             }
         } catch (HttpClientErrorException.NotFound e) {
             secureLogger.info("Personident ikke funnet i infotrygds kontantstøttedatabase. Personident: {}", personident);
