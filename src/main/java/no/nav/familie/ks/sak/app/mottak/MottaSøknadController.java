@@ -24,7 +24,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/mottak")
-@ProtectedWithClaims(issuer = "intern")
+@ProtectedWithClaims(issuer = "azuread")
 public class MottaSøknadController {
 
     private static final Logger log = LoggerFactory.getLogger(MottaSøknadController.class);
@@ -90,5 +90,10 @@ public class MottaSøknadController {
             Ressurs failure = Ressurs.Companion.failure("mottaDokument feilet", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(failure);
         }
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "test")
+    public ResponseEntity mottaDokument() {
+        return ResponseEntity.ok().build();
     }
 }
