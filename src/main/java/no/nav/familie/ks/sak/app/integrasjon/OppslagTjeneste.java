@@ -4,7 +4,6 @@ import no.nav.familie.http.client.NavHttpHeaders;
 import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.kontrakter.oppgave.Oppgave;
 import no.nav.familie.ks.kontrakter.oppgave.OppgaveKt;
-import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.AktivKontantstøtteInfo;
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
@@ -35,8 +34,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 
-import static no.nav.familie.ks.sak.app.behandling.domene.typer.Tid.TIDENES_BEGYNNELSE;
-import static no.nav.familie.ks.sak.app.behandling.domene.typer.Tid.TIDENES_ENDE;
 
 @Component
 public class OppslagTjeneste {
@@ -215,7 +212,8 @@ public class OppslagTjeneste {
                 }
                 return aktivKontantstøtteInfo;
             } else {
-                throw new OppslagException("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
+                logger.info("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
+                return new AktivKontantstøtteInfo(false);
             }
         } catch (HttpClientErrorException.NotFound e) {
             secureLogger.info("Personident ikke funnet i infotrygds kontantstøttedatabase. Personident: {}", personident);
