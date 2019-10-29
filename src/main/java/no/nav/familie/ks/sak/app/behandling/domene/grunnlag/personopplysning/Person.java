@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Entity(name = "Person")
 @Table(name = "PO_PERSON")
@@ -45,6 +46,10 @@ public class Person extends BaseEntitet {
     @Column(name = "doedsdato")
     private LocalDate dødsdato;
 
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "BOSTEDSADRESSE_ID")
+    private Bostedsadresse bostedsadresse;
+
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "kode", column = @Column(name = "statsborgerskap")))
     private Landkode statsborgerskap = Landkode.UDEFINERT;
@@ -73,6 +78,7 @@ public class Person extends BaseEntitet {
         this.kjønn = person.getKjønn();
         this.fødselsdato = person.getFødselsdato();
         this.dødsdato = person.getDødsdato();
+        this.bostedsadresse = person.getBostedsadressen();
         this.statsborgerskap = person.getStatsborgerskap();
     }
 
@@ -153,6 +159,24 @@ public class Person extends BaseEntitet {
 
     public Person medStatsborgerskap(Landkode statsborgerskap) {
         this.statsborgerskap = statsborgerskap;
+        return this;
+    }
+
+    public Optional<Bostedsadresse> getBostedsadresse() {
+        return Optional.ofNullable(bostedsadresse);
+    }
+
+    // Kun for bruk av konstruktøren
+    private Bostedsadresse getBostedsadressen() {
+        return bostedsadresse;
+    }
+
+    public void setBostedsadresse(Bostedsadresse bostedsadresse) {
+        this.bostedsadresse = bostedsadresse;
+    }
+
+    public Person medBostedsadresse(Bostedsadresse bostedsadresse) {
+        this.bostedsadresse = bostedsadresse;
         return this;
     }
 

@@ -206,6 +206,7 @@ public class RegisterInnhentingService {
             .medKjønn(personinfo.getKjønn())
             .medDødsdato(personinfo.getDødsdato())
             .medNavn(personinfo.getNavn())
+            .medBostedsadresse(Bostedsadresse.opprettNy(aktørId, personinfo.getBostedsadresse()))
             .medStatsborgerskap(new Landkode(personinfo.getStatsborgerskap().getKode()));
         personopplysningGrunnlag.leggTilPerson(person);
 
@@ -216,16 +217,7 @@ public class RegisterInnhentingService {
                     new Landkode(statsborgerskap.getTilhørendeLand().getKode()))));
 
             personhistorikk.getAdressehistorikk()
-                .forEach(adresse -> person.leggTilAdresse(new PersonAdresse(aktørId,
-                    DatoIntervallEntitet.fraOgMedTilOgMed(adresse.getPeriode().getFom(), adresse.getPeriode().getTom()))
-                    .medAdresseType(adresse.getAdresse().getAdresseType())
-                    .medAdresselinje1(adresse.getAdresse().getAdresselinje1())
-                    .medAdresselinje2(adresse.getAdresse().getAdresselinje2())
-                    .medAdresselinje3(adresse.getAdresse().getAdresselinje3())
-                    .medAdresselinje4(adresse.getAdresse().getAdresselinje4())
-                    .medPostnummer(adresse.getAdresse().getPostnummer())
-                    .medPoststed(adresse.getAdresse().getPoststed())
-                    .medLand(new Landkode(adresse.getAdresse().getLand()))));
+                .forEach(adresse -> person.leggTilAdresse(PersonAdresse.opprettNy(aktørId, adresse)));
         }
     }
 }
