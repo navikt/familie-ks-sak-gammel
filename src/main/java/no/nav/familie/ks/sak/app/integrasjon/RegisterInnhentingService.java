@@ -18,6 +18,7 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.FDATException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.adresse.Adresseinfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.relasjon.Familierelasjon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -206,7 +207,7 @@ public class RegisterInnhentingService {
             .medKjønn(personinfo.getKjønn())
             .medDødsdato(personinfo.getDødsdato())
             .medNavn(personinfo.getNavn())
-            .medBostedsadresse(Bostedsadresse.opprettNy(aktørId, personinfo.getBostedsadresse()))
+            .medBostedsadresse(leggTilBostedsadresse(aktørId, personinfo.getBostedsadresse()))
             .medStatsborgerskap(new Landkode(personinfo.getStatsborgerskap().getKode()));
         personopplysningGrunnlag.leggTilPerson(person);
 
@@ -219,5 +220,12 @@ public class RegisterInnhentingService {
             personhistorikk.getAdressehistorikk()
                 .forEach(adresse -> person.leggTilAdresse(PersonAdresse.opprettNy(aktørId, adresse)));
         }
+    }
+    private Bostedsadresse leggTilBostedsadresse(AktørId aktørId, Adresseinfo adresseinfo) {
+        if (adresseinfo == null) {
+            return null;
+        }
+        logger.info("Bostedsadresse er: " + adresseinfo.toString());
+        return Bostedsadresse.opprettNy(aktørId, adresseinfo);
     }
 }
