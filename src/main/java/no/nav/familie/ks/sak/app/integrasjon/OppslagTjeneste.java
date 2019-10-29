@@ -202,6 +202,7 @@ public class OppslagTjeneste {
             var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
             var aktivKontantstøtteInfo = response.getBody();
 
+            logger.info("Status: " + response.getStatusCode() + ", body: " + response.getBody());
             if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
                 if (aktivKontantstøtteInfo.getHarAktivKontantstotte()) {
                     secureLogger.info("Personident {}: Har løpende kontantstøtte eller er under behandling for kontantstøtte.", personident);
@@ -212,7 +213,8 @@ public class OppslagTjeneste {
                 }
                 return aktivKontantstøtteInfo;
             } else {
-                throw new OppslagException("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
+                logger.info("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
+                return new AktivKontantstøtteInfo(false);
             }
         } catch (HttpClientErrorException.NotFound e) {
             secureLogger.info("Personident ikke funnet i infotrygds kontantstøttedatabase. Personident: {}", personident);
