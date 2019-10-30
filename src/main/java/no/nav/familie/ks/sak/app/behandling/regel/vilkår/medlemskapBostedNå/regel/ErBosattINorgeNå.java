@@ -35,6 +35,9 @@ public class ErBosattINorgeNå extends LeafSpecification<Faktagrunnlag> {
     }
 
     private boolean erBosattINorge(PersonMedHistorikk forelder) {
+        if (forelder.getPersoninfo().getBostedsadresse() == null) {
+            return false;
+        }
         return Landkode.NORGE.getKode().matches(forelder.getPersoninfo().getBostedsadresse().getLand());
     }
 

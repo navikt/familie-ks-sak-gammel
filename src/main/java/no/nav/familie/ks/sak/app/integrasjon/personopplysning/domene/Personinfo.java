@@ -8,10 +8,7 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.tilhørighe
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 
