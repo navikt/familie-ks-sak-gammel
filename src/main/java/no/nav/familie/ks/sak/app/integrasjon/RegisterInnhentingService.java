@@ -225,7 +225,6 @@ public class RegisterInnhentingService {
         if (adresseinfo == null) {
             return null;
         }
-        logger.info("Bostedsadresse er: " + adresseinfo.toString());
         return Bostedsadresse.opprettNy(aktørId, adresseinfo);
     }
 }
