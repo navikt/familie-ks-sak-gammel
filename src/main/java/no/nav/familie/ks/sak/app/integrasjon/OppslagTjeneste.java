@@ -257,7 +257,7 @@ public class OppslagTjeneste {
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {
             ResponseEntity<Personinfo> response = requestMedPersonIdent(uri, personIdent, Personinfo.class);
-            secureLogger.info("Personinfo for {}: {}", personIdent, Objects.requireNonNull(response.getBody()).getFamilierelasjoner());
+            secureLogger.info("Personinfo for {}: {}", personIdent, response.getBody());
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 return response.getBody();
