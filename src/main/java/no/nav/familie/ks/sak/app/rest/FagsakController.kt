@@ -7,18 +7,16 @@ import no.nav.familie.ks.sak.app.behandling.Saksbehandling
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak
-import no.nav.familie.ks.sak.app.rest.tilgangskontroll.OIDCUtil
 import no.nav.familie.ks.sak.app.rest.tilgangskontroll.TilgangskontrollService
 import no.nav.familie.ks.sak.util.SporingsLoggActionType
 import no.nav.familie.ks.sak.util.SporingsLoggHelper
+import no.nav.familie.sikkerhet.OIDCUtil
 import no.nav.security.token.support.core.api.ProtectedWithClaims
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.security.Principal
 
 @RestController
 @RequestMapping("/api")
@@ -33,7 +31,7 @@ class FagsakController (
     @GetMapping(path = ["/fagsak/{fagsakId}"])
     fun fagsak(@PathVariable fagsakId: Long): ResponseEntity<Ressurs> {
 
-        val saksbehandlerId = oidcUtil.navIdent
+        val saksbehandlerId = oidcUtil.getClaim("preffered_username")
 
         logger.info("{} henter fagsak med id {}", saksbehandlerId ?: "Ukjent", fagsakId)
 
@@ -57,7 +55,7 @@ class FagsakController (
 
     @GetMapping(path = ["/fagsak"])
     fun fagsak(@RequestHeader filter: String?): ResponseEntity<Ressurs> {
-        val saksbehandlerId = oidcUtil.navIdent
+        val saksbehandlerId = oidcUtil.getClaim("preffered_username")
 
         logger.info("{} henter fagsaker", saksbehandlerId ?: "Ukjent")
 

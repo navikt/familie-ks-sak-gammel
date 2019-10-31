@@ -91,9 +91,4 @@ public class MottaSøknadController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(failure);
         }
     }
-
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "test")
-    public ResponseEntity mottaDokument() {
-        return ResponseEntity.ok().build();
-    }
 }
