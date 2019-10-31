@@ -31,7 +31,7 @@ class FagsakController (
     @GetMapping(path = ["/fagsak/{fagsakId}"])
     fun fagsak(@PathVariable fagsakId: Long): ResponseEntity<Ressurs> {
 
-        val saksbehandlerId = oidcUtil.getClaim("preffered_username")
+        val saksbehandlerId = oidcUtil.getClaim("preferred_username")
 
         logger.info("{} henter fagsak med id {}", saksbehandlerId ?: "Ukjent", fagsakId)
 
@@ -55,7 +55,7 @@ class FagsakController (
 
     @GetMapping(path = ["/fagsak"])
     fun fagsak(@RequestHeader filter: String?): ResponseEntity<Ressurs> {
-        val saksbehandlerId = oidcUtil.getClaim("preffered_username")
+        val saksbehandlerId = oidcUtil.getClaim("preferred_username")
 
         logger.info("{} henter fagsaker", saksbehandlerId ?: "Ukjent")
 
