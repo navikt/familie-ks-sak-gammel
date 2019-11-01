@@ -17,10 +17,8 @@ public class PeriodeOppretter {
      */
 
     public GradertPeriode opprettStønadPeriode(Faktagrunnlag grunnlag) {
-        LocalDate søknadsDato = LocalDate.now();
-        LocalDate gyldigAlderFom = grunnlag.getTpsFakta().getBarn().getPersoninfo().getFødselsdato().plusMonths(13).withDayOfMonth(1);
-        LocalDate gyldigAlderTom = grunnlag.getTpsFakta().getBarn().getPersoninfo().getFødselsdato().plusMonths(23).withDayOfMonth(1);
-        LocalDate startDato = søknadsDato.isBefore(gyldigAlderFom) ? gyldigAlderFom : søknadsDato.withDayOfMonth(1);
-        return new GradertPeriode(startDato, gyldigAlderTom, FULL_UTBETALINGSGRAD);
+        LocalDate stønadFom = grunnlag.getTpsFakta().getBarn().getPersoninfo().getFødselsdato().plusMonths(13).withDayOfMonth(1);
+        LocalDate stønadTom = grunnlag.getTpsFakta().getBarn().getPersoninfo().getFødselsdato().plusMonths(23).withDayOfMonth(1);
+        return new GradertPeriode(stønadFom, stønadTom, FULL_UTBETALINGSGRAD);
     }
 }
