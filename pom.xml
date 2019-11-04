@@ -25,7 +25,7 @@
         <cxf.version>3.3.1</cxf.version>
         <tjenestespesifikasjoner.version>1.2019.06.11-13.36-786a4cec3151</tjenestespesifikasjoner.version>
         <common-java-modules.version>2018.10.02.19.54</common-java-modules.version>
-        <felles.version>1.0_20190819103533_69f5183</felles.version>
+        <felles.version>1.0_20191101145453_96ece0d</felles.version>
         <kontrakt.version>1.0_20191024145448_d452ee4</kontrakt.version>
         <unleash.version>3.1.0</unleash.version>
         <spring-boot.version>${project.parent.version}</spring-boot.version>
@@ -131,6 +131,12 @@
             <version>${token-validation-spring.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>sikkerhet</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>no.nav.fpsak.nare</groupId>
             <artifactId>fpsak-nare-core</artifactId>
