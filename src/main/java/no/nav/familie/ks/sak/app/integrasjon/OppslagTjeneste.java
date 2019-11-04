@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -31,6 +32,8 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -298,27 +301,35 @@ public class OppslagTjeneste {
         value = { OppslagException.class },
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public String oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
+    public ResponseEntity oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
         URI uri = URI.create(oppslagServiceUri + "/oppgave/oppdater");
         logger.info("Sender \"oppdater oppgave\"-request til " + uri);
         Oppgave oppgave = new Oppgave(hentAktørId(fnr).getId(), journalpostID, null, beskrivelse);
-        return sendOppgave(oppgave, uri, String.class);
+        return sendOppgave(oppgave, uri);
     }
 
-    private <T> T sendOppgave(Oppgave request, URI uri, Class<T> responsType) {
+    private ResponseEntity sendOppgave(Oppgave request, URI uri) {
         try {
-            ResponseEntity<T> response = postRequest(uri, OppgaveKt.toJson(request), responsType);
+            ParameterizedTypeReference<HashMap<String, String>> responseType = new ParameterizedTypeReference<HashMap<String, String>>() {};
+            ResponseEntity response = postRequest(uri, OppgaveKt.toJson(request), responseType.getClass());
+            Map<String, String> responseBody = (Map<String, String>) response.getBody();
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                return response.getBody();
+                logger.warn("Oppgave returnerte successful!");
+                return response;
+
+            } else if (response.getStatusCode().equals(HttpStatus.NOT_FOUND) && responseBody.containsKey("ikke_exception")) {
+                logger.warn("Oppgave returnerte 404, men kaster ikke feil.");
+
             } else {
-                String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
+                String feilmelding = responseBody.containsKey("error") ? responseBody.get("error") : "Ingen feilmelding";
                 logger.warn("Kall mot oppslag feilet ved oppdatering av Gosys-oppgave: " + feilmelding);
                 throw new OppslagException(feilmelding);
             }
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, request.getAktorId());
         }
+        return null; // FJERNE DENNE
     }
 
     private String formaterDato(LocalDate date) {
