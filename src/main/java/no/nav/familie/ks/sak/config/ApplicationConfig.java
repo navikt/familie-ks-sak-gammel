@@ -15,7 +15,7 @@ import org.springframework.retry.annotation.EnableRetry;
 
 @SpringBootConfiguration
 @EnableJpaAuditing
-@ComponentScan({"no.nav.familie.ks.sak"})
+@ComponentScan({"no.nav.familie"})
 @EnableRetry
 @EnableJwtTokenValidation
 public class ApplicationConfig {
