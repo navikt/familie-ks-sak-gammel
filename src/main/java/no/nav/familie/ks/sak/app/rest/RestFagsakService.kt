@@ -24,16 +24,13 @@ import org.springframework.stereotype.Service
 
 @Service
 class RestFagsakService(
-        restTemplateBuilderMedProxy: RestTemplateBuilder,
-        clientConfigurationProperties: ClientConfigurationProperties,
-        oAuth2AccessTokenService: OAuth2AccessTokenService,
         private val tilgangskontrollService: TilgangskontrollService,
         private val behandlingresultatRepository: BehandlingresultatRepository,
         private val barnehageBarnGrunnlagRepository: BarnehageBarnGrunnlagRepository,
         private val søknadGrunnlagRepository: SøknadGrunnlagRepository,
         private val behandlingRepository: BehandlingRepository,
         private val personopplysningGrunnlagRepository: PersonopplysningGrunnlagRepository,
-        private val fagsakRepository: FagsakRepository) : BaseService("ks-oppslag-onbehalfof", restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService) {
+        private val fagsakRepository: FagsakRepository) {
 
     fun hentRestFagsak(fagsakId: Long): RestFagsak? {
         val optionalFagsak = fagsakRepository.finnFagsak(fagsakId)
@@ -68,7 +65,7 @@ class RestFagsakService(
                     RestOppgittFamilieforhold(barna, barnehageBarnGrunnlag.familieforhold.isBorBeggeForeldreSammen)
                 }.orElseThrow()
 
-                søkerFødselsnummer = søknadGrunnlag.søknad.søkerFødselsnummer;
+                søkerFødselsnummer = søknadGrunnlag.søknad.søkerFødselsnummer
 
                 RestSøknad(søknadGrunnlag.søknad.innsendtTidspunkt, familieforhold, oppgittUtlandsTilknytning, oppgittErklæring)
             }.orElseThrow()
@@ -97,12 +94,16 @@ class RestFagsakService(
         return fagsak.toRestFagsak(restBehandlinger, søkerFødselsnummer)
     }
 
-    fun hentRessursFagsak(fagsakId: Long): Ressurs? {
+    fun hentRessursFagsak(fagsakId: Long): Ressurs {
         if (!tilgangskontrollService.harTilgang(fagsakId)){
             return Ressurs.ikkeTilgang("Du har ikke tilgang til denne fagsaken")
         }
 
-        return Ressurs.success(hentRestFagsak(fagsakId))
+        val restFagsak = hentRestFagsak(fagsakId)
+        return when(restFagsak) {
+            null -> Ressurs.failure("Fant ikke fagsak med fagsakId: $fagsakId")
+            else -> Ressurs.success( data = restFagsak )
+        }
     }
 
     fun hentFagsaker(filter: String?): List<Fagsak> {

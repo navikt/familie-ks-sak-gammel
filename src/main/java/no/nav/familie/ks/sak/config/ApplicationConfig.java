@@ -1,6 +1,7 @@
 package no.nav.familie.ks.sak.config;
 
 import no.nav.familie.log.filter.LogFilter;
+import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.retry.annotation.EnableRetry;
 @ComponentScan({"no.nav"})
 @EnableRetry
 @EnableJwtTokenValidation
+@EnableOAuth2Client(cacheEnabled = true)
 public class ApplicationConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);

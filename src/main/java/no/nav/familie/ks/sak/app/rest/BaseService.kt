@@ -4,27 +4,30 @@ import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
+import org.springframework.http.client.ClientHttpRequestInterceptor
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.web.client.RestTemplate
-import java.net.http.HttpRequest
 import java.util.*
+
+class BearerAuthorizationInterceptor(private val oAuth2AccessTokenService: OAuth2AccessTokenService, private val clientProperties: ClientProperties) : ClientHttpRequestInterceptor {
+    override fun intercept(request: HttpRequest, body: ByteArray, execution: ClientHttpRequestExecution): ClientHttpResponse {
+        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
+
+        request.headers.setBearerAuth(response.accessToken)
+        return execution.execute(request, body)
+    }
+}
 
 open class BaseService(clientConfigKey: String, restTemplateBuilder: RestTemplateBuilder,
                        clientConfigurationProperties: ClientConfigurationProperties,
-                       private val oAuth2AccessTokenService: OAuth2AccessTokenService) {
-
-    val restTemplate: RestTemplate = restTemplateBuilder
-            .interceptors(bearerTokenInterceptor())
-            .build()
+                       oAuth2AccessTokenService: OAuth2AccessTokenService) {
     private val clientProperties: ClientProperties = Optional.ofNullable(
             clientConfigurationProperties.registration[clientConfigKey])
             .orElseThrow { RuntimeException("could not find oauth2 client config for key=$clientConfigKey") }
 
-    private fun bearerTokenInterceptor(): (HttpRequest, byte[], ClientHttpRequestExecution) -> ClientHttpRequestInterceptor {
-        return { (request: HttpRequest, body: byte[], execution: ClientHttpRequestExecution) ->
-            val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-            request.getHeaders().setBearerAuth(response.getAccessToken())
-            execution.execute(request, body)
-        }
-    }
+    val restTemplate: RestTemplate = restTemplateBuilder
+            .additionalInterceptors(BearerAuthorizationInterceptor(oAuth2AccessTokenService, clientProperties))
+            .build()
 }

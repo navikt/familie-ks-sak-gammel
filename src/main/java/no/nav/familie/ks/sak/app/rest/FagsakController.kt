@@ -37,13 +37,10 @@ class FagsakController (
         SporingsLoggHelper.logSporing(FagsakController::class.java, fagsakId, saksbehandlerId ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
 
         val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(fagsakId) }
-                .fold(
-                    onSuccess = { when(it) {
-                        null -> Ressurs.failure("Fant ikke fagsak med fagsakId: $fagsakId")
-                        else -> Ressurs.success( data = it )
-                    } },
-                    onFailure = { e -> Ressurs.failure( "Henting av fagsak med fagsakId $fagsakId feilet: ${e.message}", e) }
-                )
+            .fold(
+                onSuccess = { it },
+                onFailure = { e -> Ressurs.failure( "Henting av fagsak med fagsakId $fagsakId feilet: ${e.message}", e) }
+            )
 
         return ResponseEntity.ok(ressurs)
     }

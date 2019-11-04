@@ -37,7 +37,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 
-
 @Component
 public class OppslagTjeneste extends BaseService {
 
