@@ -30,6 +30,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -76,14 +77,14 @@ public class OppslagTjeneste extends BaseService {
         return getRestTemplate().exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), responseType);
     }
 
-    private <T> ResponseEntity<T> requestMedPersonIdent(URI uri, String personident, Class<T> clazz) {
+    private <T> ResponseEntity<T> requestMedPersonIdent(RestTemplate restTemplate, URI uri, String personident, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
 
         HttpEntity httpEntity = new HttpEntity(headers);
 
-        return getRestTemplate().exchange(uri, HttpMethod.GET, httpEntity, clazz);
+        return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
     private <T> ResponseEntity<T> requestMedAktørId(URI uri, String aktørId, Class<T> clazz) {
@@ -107,7 +108,7 @@ public class OppslagTjeneste extends BaseService {
         URI uri = URI.create(oppslagServiceUri + "/aktoer");
         logger.info("Henter aktørId fra " + oppslagServiceUri);
         try {
-            ResponseEntity<String> response = requestMedPersonIdent(uri, personident, String.class);
+            ResponseEntity<String> response = requestMedPersonIdent(getRestTemplate(), uri, personident, String.class);
             secureLogger.info("Vekslet inn fnr: {} til aktørId: {}", personident, response.getBody());
 
             if (response.getStatusCode().is2xxSuccessful()) {
@@ -163,14 +164,14 @@ public class OppslagTjeneste extends BaseService {
         value = { OppslagException.class },
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public ResponseEntity<Tilgang> sjekkTilgangTilPerson(String personident) {
+    public ResponseEntity<Tilgang> sjekkTilgangTilPerson(String personident, RestTemplate restTemplate) {
         if (personident == null) {
             throw new OppslagException("Ved sjekking av tilgang: personident er null");
         }
         URI uri = URI.create(oppslagServiceUri + "/tilgang/person");
         logger.info("Sjekker tilgang  " + oppslagServiceUri);
         try {
-            ResponseEntity<Tilgang> response = requestMedPersonIdent(uri, personident, Tilgang.class);
+            ResponseEntity<Tilgang> response = requestMedPersonIdent(restTemplate, uri, personident, Tilgang.class);
             secureLogger.info("Saksbehandler {} forsøker å få tilgang til {} med resultat {}", oidcUtil.getClaim("preferred_username"), personident, response.getBody());
             return response;
         } catch (RestClientException e) {
@@ -189,7 +190,7 @@ public class OppslagTjeneste extends BaseService {
         URI uri = URI.create(oppslagServiceUri + "/infotrygd/harBarnAktivKontantstotte");
         logger.info("Henter info om kontantstøtte fra " + oppslagServiceUri);
         try {
-            var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
+            var response = requestMedPersonIdent(getRestTemplate(), uri, personident, AktivKontantstøtteInfo.class);
             var aktivKontantstøtteInfo = response.getBody();
 
             if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
@@ -223,7 +224,7 @@ public class OppslagTjeneste extends BaseService {
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?fomDato=" + formaterDato(fom) + "&tomDato=" + formaterDato(tom));
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
-            ResponseEntity<PersonhistorikkInfo> response = requestMedPersonIdent(uri, personident, PersonhistorikkInfo.class);
+            ResponseEntity<PersonhistorikkInfo> response = requestMedPersonIdent(getRestTemplate(), uri, personident, PersonhistorikkInfo.class);
             secureLogger.info("Personhistorikk for {}: {}", personident, response.getBody());
 
             if (response.getStatusCode().is2xxSuccessful()) {
@@ -246,7 +247,7 @@ public class OppslagTjeneste extends BaseService {
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/info");
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {
-            ResponseEntity<Personinfo> response = requestMedPersonIdent(uri, personIdent, Personinfo.class);
+            ResponseEntity<Personinfo> response = requestMedPersonIdent(getRestTemplate(), uri, personIdent, Personinfo.class);
             secureLogger.info("Personinfo for {}: {}", personIdent, Objects.requireNonNull(response.getBody()).getFamilierelasjoner());
 
             if (response.getStatusCode().is2xxSuccessful()) {

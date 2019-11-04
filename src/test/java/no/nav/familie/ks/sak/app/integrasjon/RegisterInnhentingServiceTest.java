@@ -1,7 +1,6 @@
 package no.nav.familie.ks.sak.app.integrasjon;
 
 import no.finn.unleash.Unleash;
-import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
@@ -43,8 +42,6 @@ public class RegisterInnhentingServiceTest {
 
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
-    @MockBean
-    private StsRestClient stsRestClient;
     @Autowired
     private RegisterInnhentingService tjeneste;
     @Autowired
@@ -113,8 +110,6 @@ public class RegisterInnhentingServiceTest {
             assertThat(person.getRelasjoner()).hasSize(2);
             assertThat(person.getStatsborgerskapHistorikk()).hasSize(1);
         }
-
-
     }
 
     @Test

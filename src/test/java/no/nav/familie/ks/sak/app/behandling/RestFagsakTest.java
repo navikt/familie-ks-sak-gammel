@@ -1,7 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling;
 
 import no.finn.unleash.Unleash;
-import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
@@ -49,9 +48,6 @@ public class RestFagsakTest {
 
     @MockBean
     private Unleash unleash;
-
-    @MockBean
-    private StsRestClient stsRestClient;
 
     @Autowired
     private RestFagsakService restFagsakService;

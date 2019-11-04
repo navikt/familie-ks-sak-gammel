@@ -1,6 +1,5 @@
 package no.nav.familie.ks.sak.app.Rest;
 
-import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.sak.ApplicationTestPropertyValues;
 import no.nav.familie.ks.sak.DevLauncher;
 import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
@@ -44,8 +43,6 @@ public class FagsakControllerTest {
 
     @MockBean
     private OppslagTjeneste oppslagTjeneste;
-    @MockBean
-    private StsRestClient stsRestClient;
 
     @Autowired
     private RestFagsakService restFagsakService;
