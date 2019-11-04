@@ -2,7 +2,6 @@ package no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad
 
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barn
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.BarnehageplassStatus
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
 import java.time.LocalDate
 
 data class RestBarn(

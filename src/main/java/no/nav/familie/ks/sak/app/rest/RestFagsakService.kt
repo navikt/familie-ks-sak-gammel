@@ -6,8 +6,6 @@ import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.AvvikType
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository
 import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling
 import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak
@@ -17,16 +15,25 @@ import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.*
 import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestBehandlingsresultat
 import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestVilkårsResultat
 import no.nav.familie.ks.sak.app.rest.behandling.toRestFagsak
+import no.nav.familie.ks.sak.app.rest.tilgangskontroll.TilgangskontrollService
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
 class RestFagsakService(
+        restTemplateBuilderMedProxy: RestTemplateBuilder,
+        clientConfigurationProperties: ClientConfigurationProperties,
+        oAuth2AccessTokenService: OAuth2AccessTokenService,
+        private val tilgangskontrollService: TilgangskontrollService,
         private val behandlingresultatRepository: BehandlingresultatRepository,
         private val barnehageBarnGrunnlagRepository: BarnehageBarnGrunnlagRepository,
         private val søknadGrunnlagRepository: SøknadGrunnlagRepository,
         private val behandlingRepository: BehandlingRepository,
         private val personopplysningGrunnlagRepository: PersonopplysningGrunnlagRepository,
-        private val fagsakRepository: FagsakRepository) {
+        private val fagsakRepository: FagsakRepository) : BaseService("ks-oppslag-onbehalfof", restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService) {
 
     fun hentRestFagsak(fagsakId: Long): RestFagsak? {
         val optionalFagsak = fagsakRepository.finnFagsak(fagsakId)
@@ -90,8 +97,12 @@ class RestFagsakService(
         return fagsak.toRestFagsak(restBehandlinger, søkerFødselsnummer)
     }
 
-    fun hentRessursFagsak(fagsakId: Long): RestFagsak? {
-        return hentRestFagsak(fagsakId)
+    fun hentRessursFagsak(fagsakId: Long): Ressurs? {
+        if (!tilgangskontrollService.harTilgang(fagsakId)){
+            return Ressurs.ikkeTilgang("Du har ikke tilgang til denne fagsaken")
+        }
+
+        return Ressurs.success(hentRestFagsak(fagsakId))
     }
 
     fun hentFagsaker(filter: String?): List<Fagsak> {

@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*
 @ProtectedWithClaims( issuer = "azuread" )
 class FagsakController (
     private val saksbehandling: Saksbehandling,
-    private val tilgangskontrollService: TilgangskontrollService,
     private val behandlingRepository: BehandlingRepository,
     private val restFagsakService: RestFagsakService,
     private val oidcUtil: OIDCUtil) {
@@ -36,10 +35,6 @@ class FagsakController (
         logger.info("{} henter fagsak med id {}", saksbehandlerId ?: "Ukjent", fagsakId)
 
         SporingsLoggHelper.logSporing(FagsakController::class.java, fagsakId, saksbehandlerId ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
-
-        if (!tilgangskontrollService.harTilgang(fagsakId, saksbehandlerId)){
-            return ResponseEntity.ok(Ressurs.ikkeTilgang("Du har ikke tilgang til denne fagsaken"))
-        }
 
         val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(fagsakId) }
                 .fold(

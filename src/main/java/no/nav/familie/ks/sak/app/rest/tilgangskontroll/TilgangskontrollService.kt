@@ -6,7 +6,6 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.Per
 import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,10 +16,10 @@ class TilgangskontrollService(
         private val fagsakRepository: FagsakRepository) {
 
 
-    fun harTilgang(fagsakId: Long, saksbehandlerId: String): Boolean {
+    fun harTilgang(fagsakId: Long): Boolean {
         val optionalFagsak = fagsakRepository.finnFagsak(fagsakId)
         if (optionalFagsak.isEmpty) {
-            return true;
+            return true
         }
 
         val fagsak = optionalFagsak.get()
@@ -29,14 +28,14 @@ class TilgangskontrollService(
         for (behandling in behandlinger) {
             for (personopplysning in personopplysningGrunnlagRepository.findByBehandlingAndAktiv(behandling.id).stream()) {
                 for (person in personopplysning.registrertePersoner.get().iterator()) {
-                    val respons = oppslagTjeneste.sjekkTilgangTilPerson(saksbehandlerId, person.personIdent.ident)
+                    val respons = oppslagTjeneste.sjekkTilgangTilPerson(person.personIdent.ident)
                     if (!respons.body.isHarTilgang) {
-                        return false;
+                        return false
                     }
                 }
             }
         }
-        return true;
+        return true
     }
 
     companion object {

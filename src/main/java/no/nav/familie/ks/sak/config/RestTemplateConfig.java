@@ -7,6 +7,8 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+
 @Configuration
 public class RestTemplateConfig {
 
@@ -29,5 +31,13 @@ public class RestTemplateConfig {
 
             }
         };
+    }
+
+    @Bean
+    public RestTemplateBuilder restTemplateBuilderMedProxy() {
+        return new RestTemplateBuilder()
+            .setConnectTimeout(Duration.ofSeconds(5))
+            .setReadTimeout(Duration.ofSeconds(5))
+            .additionalCustomizers(new NaisProxyCustomizer());
     }
 }
