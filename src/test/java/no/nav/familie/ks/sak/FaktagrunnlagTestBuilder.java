@@ -648,6 +648,7 @@ public final class FaktagrunnlagTestBuilder {
                     .medNavn("Kari Nordmann")
                     .medKjønn("KVINNE")
                     .medPersonIdent(morPersonident)
+                    .medBostedsadresse(medBostedsadresse("NOR"))
                     .medStatsborgerskap(Landkode.NORGE)
                     .medFamilierelasjon(Set.of(
                         new Familierelasjon(barnPersonident, RelasjonsRolleType.BARN, barnFødselsdato, true),
@@ -671,6 +672,7 @@ public final class FaktagrunnlagTestBuilder {
                     .medAktørId(farAktørId)
                     .medFødselsdato(farFødselsdato)
                     .medPersonIdent(farPersonident)
+                    .medBostedsadresse(medBostedsadresse("NOR"))
                     .medNavn("Ola Nordmann")
                     .medKjønn("MANN")
                     .medStatsborgerskap(Landkode.NORGE)
@@ -696,6 +698,7 @@ public final class FaktagrunnlagTestBuilder {
                     .medAktørId(barnAktørId)
                     .medFødselsdato(barnFødselsdato)
                     .medPersonIdent(barnPersonident)
+                    .medBostedsadresse(medBostedsadresse("NOR"))
                     .medNavn("Espen Askeladd")
                     .medKjønn("MANN")
                     .medStatsborgerskap(Landkode.NORGE)
