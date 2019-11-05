@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -66,7 +67,7 @@ public class OppslagTjeneste {
         return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
-    private <T> ResponseEntity<T> postRequest(URI uri , String requestBody, Class<T> responseType) {
+    private <T> ResponseEntity<T> postRequest(URI uri, String requestBody, Class<T> responseType) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(stsRestClient.getSystemOIDCToken());
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -110,7 +111,7 @@ public class OppslagTjeneste {
     }
 
     @Retryable(
-        value = { OppslagException.class },
+        value = {OppslagException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public AktørId hentAktørId(String personident) {
@@ -123,18 +124,16 @@ public class OppslagTjeneste {
             ResponseEntity<String> response = requestMedPersonIdent(uri, personident, String.class);
             secureLogger.info("Vekslet inn fnr: {} til aktørId: {}", personident, response.getBody());
 
-            if (response.getStatusCode().is2xxSuccessful()) {
-                String aktørId = response.getBody();
-                if (aktørId == null || aktørId.isEmpty()) {
-                    throw new OppslagException("AktørId fra oppslagstjenesten er tom");
-                } else {
-                    return new AktørId(aktørId);
-                }
+            String aktørId = response.getBody();
+            if (aktørId == null || aktørId.isEmpty()) {
+                throw new OppslagException("AktørId fra oppslagstjenesten er tom");
             } else {
-                String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
-                logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + feilmelding);
-                throw new OppslagException(feilmelding);
+                return new AktørId(aktørId);
             }
+        } catch (HttpStatusCodeException e) {
+            String feilmelding = Optional.ofNullable(e.getResponseHeaders().getFirst("message")).orElse("Ingen feilmelding");
+            logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + feilmelding);
+            throw new OppslagException(feilmelding);
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, personident);
         }
@@ -142,7 +141,7 @@ public class OppslagTjeneste {
 
 
     @Retryable(
-        value = { OppslagException.class },
+        value = {OppslagException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public PersonIdent hentPersonIdent(String aktørId) {
@@ -155,25 +154,24 @@ public class OppslagTjeneste {
             ResponseEntity<String> response = requestMedAktørId(uri, aktørId, String.class);
             secureLogger.info("Vekslet inn aktørId: {} til fnr: {}", aktørId, response.getBody());
 
-            if (response.getStatusCode().is2xxSuccessful()) {
-                String personIdent = response.getBody();
-                if (personIdent == null || personIdent.isEmpty()) {
-                    throw new OppslagException("Personident fra oppslagstjenesten er tom");
-                } else {
-                    return new PersonIdent(personIdent);
-                }
+            String personIdent = response.getBody();
+            if (personIdent == null || personIdent.isEmpty()) {
+                throw new OppslagException("Personident fra oppslagstjenesten er tom");
             } else {
-                String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
-                logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + feilmelding);
-                throw new OppslagException(feilmelding);
+                return new PersonIdent(personIdent);
             }
+
+        } catch (HttpStatusCodeException e) {
+            String feilmelding = Optional.ofNullable(e.getResponseHeaders().getFirst("message")).orElse("Ingen feilmelding");
+            logger.warn("Kall mot oppslag feilet ved uthenting av aktørId: " + feilmelding);
+            throw new OppslagException(feilmelding);
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, aktørId);
         }
     }
 
     @Retryable(
-        value = { OppslagException.class },
+        value = {OppslagException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public ResponseEntity<Tilgang> sjekkTilgangTilPerson(String saksbehandlerId, String personident) {
@@ -192,7 +190,7 @@ public class OppslagTjeneste {
     }
 
     @Retryable(
-        value = { OppslagException.class },
+        value = {OppslagException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public AktivKontantstøtteInfo hentInfoOmLøpendeKontantstøtteForBarn(String personident) {
@@ -221,13 +219,14 @@ public class OppslagTjeneste {
         } catch (HttpClientErrorException.NotFound e) {
             secureLogger.info("Personident ikke funnet i infotrygds kontantstøttedatabase. Personident: {}", personident);
             return new AktivKontantstøtteInfo(false);
+
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, personident);
         }
     }
 
     @Retryable(
-        value = { OppslagException.class },
+        value = {OppslagException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public PersonhistorikkInfo hentHistorikkFor(String personident, LocalDate fødselsdato) {
@@ -238,21 +237,18 @@ public class OppslagTjeneste {
         try {
             ResponseEntity<PersonhistorikkInfo> response = requestMedPersonIdent(uri, personident, PersonhistorikkInfo.class);
             secureLogger.info("Personhistorikk for {}: {}", personident, response.getBody());
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return response.getBody();
-            } else {
-                String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
-                logger.warn("Kall mot oppslag feilet ved uthenting av historikk: " + feilmelding);
-                throw new OppslagException(feilmelding);
-            }
+            return response.getBody();
+        } catch (HttpStatusCodeException e) {
+            String feilmelding = Optional.ofNullable(e.getResponseHeaders().getFirst("message")).orElse("Ingen feilmelding");
+            logger.warn("Kall mot oppslag feilet ved uthenting av historikk: " + feilmelding);
+            throw new OppslagException(feilmelding);
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, personident);
         }
     }
 
     @Retryable(
-        value = { OppslagException.class },
+        value = {OppslagException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public Personinfo hentPersoninfoFor(String personIdent) {
@@ -261,21 +257,18 @@ public class OppslagTjeneste {
         try {
             ResponseEntity<Personinfo> response = requestMedPersonIdent(uri, personIdent, Personinfo.class);
             secureLogger.info("Personinfo for {}: {}", personIdent, response.getBody());
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return response.getBody();
-            } else {
-                String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
-                logger.warn("Kall mot oppslag feilet ved uthenting av personinfo: " + feilmelding);
-                throw new OppslagException(feilmelding);
-            }
+            return response.getBody();
+        } catch (HttpStatusCodeException e) {
+            String feilmelding = Optional.ofNullable(e.getResponseHeaders().getFirst("message")).orElse("Ingen feilmelding");
+            logger.warn("Kall mot oppslag feilet ved uthenting av personinfo: " + feilmelding);
+            throw new OppslagException(feilmelding);
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, personIdent);
         }
     }
 
     @Retryable(
-        value = { OppslagException.class },
+        value = {OppslagException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public MedlemskapsInfo hentMedlemskapsUnntakFor(AktørId aktørId) {
@@ -284,53 +277,29 @@ public class OppslagTjeneste {
         try {
             ResponseEntity<MedlemskapsInfo> response = request(uri, MedlemskapsInfo.class);
             secureLogger.info("MedlemskapsInfo for {}: {}", aktørId, response.getBody());
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return response.getBody();
-            } else {
-                String feilmelding = Optional.ofNullable(response.getHeaders().getFirst("message")).orElse("Ingen feilmelding");
-                logger.warn("Kall mot oppslag feilet ved uthenting av medlemskapsinfo: " + feilmelding);
-                throw new OppslagException(feilmelding);
-            }
+            return response.getBody();
+        } catch (HttpStatusCodeException e) {
+            String feilmelding = Optional.ofNullable(e.getResponseHeaders().getFirst("message")).orElse("Ingen feilmelding");
+            logger.warn("Kall mot oppslag feilet ved uthenting av medlemskapsinfo: " + feilmelding);
+            throw new OppslagException(feilmelding);
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, aktørId.getId());
         }
     }
 
     @Retryable(
-        value = { OppslagException.class },
+        value = {OppslagException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public ResponseEntity oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
         URI uri = URI.create(oppslagServiceUri + "/oppgave/oppdater");
         logger.info("Sender \"oppdater oppgave\"-request til " + uri);
-        Oppgave oppgave = new Oppgave(hentAktørId(fnr).getId(), journalpostID, null, beskrivelse);
-        return sendOppgave(oppgave, uri);
-    }
-
-    private ResponseEntity sendOppgave(Oppgave request, URI uri) {
+        Oppgave oppgave = new Oppgave(fnr, journalpostID, null, beskrivelse);
         try {
-            ResponseEntity response = postRequest(uri, OppgaveKt.toJson(request), String.class);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                logger.warn("Oppgave returnerte successful!");
-                return response;
-
-            } else if (response.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-                Map<String, String> responseBody = (Map<String, String>) response.getBody();
-                if (responseBody.containsKey("ikke_exception")) {
-                    logger.warn("Oppgave returnerte 404, men kaster ikke feil.");
-                }
-
-            } else {
-                Map<String, String> responseBody = (Map<String, String>) response.getBody();
-
-                String feilmelding = responseBody.containsKey("error") ? responseBody.get("error") : "Ingen feilmelding";
-                logger.warn("Kall mot oppslag feilet ved oppdatering av Gosys-oppgave: " + feilmelding);
-                throw new OppslagException(feilmelding);
-            }
+            ResponseEntity<String> response = postRequest(uri, OppgaveKt.toJson(oppgave), String.class);
+            return response.getBody();
         } catch (RestClientException e) {
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, request.getAktorId());
+            throw new OppslagException("Kan ikke oppdater Gosys-oppgave", e, uri, oppgave.getAktorId());
         }
         return null; // FJERNE DENNE
     }
