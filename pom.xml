@@ -142,6 +142,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>sikkerhet</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>no.nav.fpsak.nare</groupId>
             <artifactId>fpsak-nare-core</artifactId>
             <version>${fpsak.nare.version}</version>
