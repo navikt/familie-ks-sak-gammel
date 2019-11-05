@@ -13,21 +13,6 @@ public class RestTemplateConfig {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplateBuilder()
-            .errorHandler(passivErrorHandler())
             .build();
-    }
-
-    private ResponseErrorHandler passivErrorHandler() {
-        return new ResponseErrorHandler() {
-            @Override
-            public boolean hasError(ClientHttpResponse response) {
-                return false;
-            }
-
-            @Override
-            public void handleError(ClientHttpResponse response) {
-
-            }
-        };
     }
 }
