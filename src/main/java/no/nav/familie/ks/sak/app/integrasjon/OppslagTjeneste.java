@@ -291,7 +291,7 @@ public class OppslagTjeneste {
         value = {OppslagException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public ResponseEntity oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
+    public String oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
         URI uri = URI.create(oppslagServiceUri + "/oppgave/oppdater");
         logger.info("Sender \"oppdater oppgave\"-request til " + uri);
         Oppgave oppgave = new Oppgave(fnr, journalpostID, null, beskrivelse);
@@ -301,7 +301,6 @@ public class OppslagTjeneste {
         } catch (RestClientException e) {
             throw new OppslagException("Kan ikke oppdater Gosys-oppgave", e, uri, oppgave.getAktorId());
         }
-        return null; // FJERNE DENNE
     }
 
     private String formaterDato(LocalDate date) {
