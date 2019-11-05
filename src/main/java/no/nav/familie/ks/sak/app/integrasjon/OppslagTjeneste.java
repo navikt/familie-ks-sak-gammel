@@ -310,8 +310,7 @@ public class OppslagTjeneste {
 
     private ResponseEntity sendOppgave(Oppgave request, URI uri) {
         try {
-            ParameterizedTypeReference<HashMap<String, String>> responseType = new ParameterizedTypeReference<HashMap<String, String>>() {};
-            ResponseEntity response = postRequest(uri, OppgaveKt.toJson(request), responseType.getClass());
+            ResponseEntity response = postRequest(uri, OppgaveKt.toJson(request), String.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 logger.warn("Oppgave returnerte successful!");
