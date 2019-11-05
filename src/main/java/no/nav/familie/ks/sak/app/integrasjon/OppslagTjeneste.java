@@ -312,16 +312,20 @@ public class OppslagTjeneste {
         try {
             ParameterizedTypeReference<HashMap<String, String>> responseType = new ParameterizedTypeReference<HashMap<String, String>>() {};
             ResponseEntity response = postRequest(uri, OppgaveKt.toJson(request), responseType.getClass());
-            Map<String, String> responseBody = (Map<String, String>) response.getBody();
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 logger.warn("Oppgave returnerte successful!");
                 return response;
 
-            } else if (response.getStatusCode().equals(HttpStatus.NOT_FOUND) && responseBody.containsKey("ikke_exception")) {
-                logger.warn("Oppgave returnerte 404, men kaster ikke feil.");
+            } else if (response.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+                Map<String, String> responseBody = (Map<String, String>) response.getBody();
+                if (responseBody.containsKey("ikke_exception")) {
+                    logger.warn("Oppgave returnerte 404, men kaster ikke feil.");
+                }
 
             } else {
+                Map<String, String> responseBody = (Map<String, String>) response.getBody();
+
                 String feilmelding = responseBody.containsKey("error") ? responseBody.get("error") : "Ingen feilmelding";
                 logger.warn("Kall mot oppslag feilet ved oppdatering av Gosys-oppgave: " + feilmelding);
                 throw new OppslagException(feilmelding);
