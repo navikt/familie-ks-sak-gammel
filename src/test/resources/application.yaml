@@ -11,7 +11,7 @@ no.nav.security.jwt:
         grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
         scope: ${KS_OPPSLAG_SCOPE}
         authentication:
-          client-id: ${CLIENT_ID}
+          client-id: ${KS_SAK_CLIENT_ID}
           client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
       ks-oppslag-clientcredentials:
@@ -20,7 +20,7 @@ no.nav.security.jwt:
         grant-type: client_credentials
         scope: ${KS_OPPSLAG_SCOPE}
         authentication:
-          client-id: ${CLIENT_ID}
+          client-id: ${KS_SAK_CLIENT_ID}
           client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
 

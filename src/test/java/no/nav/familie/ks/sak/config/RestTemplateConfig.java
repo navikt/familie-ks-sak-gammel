@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 
 @Configuration
-@Profile("!dev")
+@Profile("dev")
 public class RestTemplateConfig {
 
     @Bean
@@ -24,7 +24,6 @@ public class RestTemplateConfig {
     public RestTemplateBuilder restTemplateBuilderMedProxy() {
         return new RestTemplateBuilder()
             .setConnectTimeout(Duration.ofSeconds(5))
-            .setReadTimeout(Duration.ofSeconds(5))
-            .additionalCustomizers(new NaisProxyCustomizer());
+            .setReadTimeout(Duration.ofSeconds(5));
     }
 }
