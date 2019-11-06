@@ -34,9 +34,10 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
+import java.util.Collections;
 import java.util.Optional;
 
 @Component
@@ -73,6 +74,7 @@ public class OppslagTjeneste extends BaseService {
     private <T> ResponseEntity<T> postRequest(URI uri, String requestBody, Class<T> responseType) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
         headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
 
         return getRestTemplate().exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), responseType);
