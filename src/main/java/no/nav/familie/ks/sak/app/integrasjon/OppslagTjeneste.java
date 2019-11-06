@@ -243,7 +243,7 @@ public class OppslagTjeneste extends BaseService {
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/info");
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {
-            ResponseEntity<Personinfo> response = requestMedPersonIdent(uri, personIdent, Personinfo.class);
+            ResponseEntity<Personinfo> response = requestMedPersonIdent(getRestTemplate(), uri, personIdent, Personinfo.class);
             secureLogger.info("Personinfo for {}: {}", personIdent, response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
