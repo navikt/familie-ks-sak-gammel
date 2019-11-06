@@ -17,9 +17,9 @@ public class BarnMellom10Og14Måneder extends LeafSpecification<Faktagrunnlag> {
     @Override
     public Evaluation evaluate(Faktagrunnlag faktagrunnlag) {
         var behandlingsdato = faktagrunnlag.getBehandlingstidspunkt();
-        var fødselsdato = faktagrunnlag.getTpsFakta().getBarn().getPersoninfo().getFødselsdato();
-        var tiMånedersDato = fødselsdato.plusMonths(10);
-        var fjortenMånedersDato = fødselsdato.plusMonths(14);
+        var førsteDagIFødselsmåneden = faktagrunnlag.getTpsFakta().getBarn().getPersoninfo().getFødselsdato().withDayOfMonth(1);
+        var tiMånedersDato = førsteDagIFødselsmåneden.plusMonths(10);
+        var fjortenMånedersDato = førsteDagIFødselsmåneden.plusMonths(14);
         
         if ((behandlingsdato.isEqual(tiMånedersDato) || behandlingsdato.isAfter(tiMånedersDato)) && 
             behandlingsdato.isBefore(fjortenMånedersDato)) {

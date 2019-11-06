@@ -19,7 +19,7 @@ public class BarnMellom10Og14MånederVilkårTest {
 
     @Test
     public void ikke_oppfylt_hvis_barn_er_under_10_måneder() {
-        when(faktagrunnlag.getBehandlingstidspunkt()).thenReturn(fødselsdato.plusMonths(10).minusDays(1));
+        when(faktagrunnlag.getBehandlingstidspunkt()).thenReturn(fødselsdato.plusMonths(10).withDayOfMonth(1).minusDays(1));
         final var evaluering = vilkår.evaluer(faktagrunnlag);
         assertThat(evaluering.result()).isEqualByComparingTo(Resultat.NEI);
     }
@@ -33,7 +33,7 @@ public class BarnMellom10Og14MånederVilkårTest {
 
     @Test
     public void oppfylt_hvis_barn_er_nesten_14_måneder() {
-        when(faktagrunnlag.getBehandlingstidspunkt()).thenReturn(fødselsdato.plusMonths(14).minusDays(1));
+        when(faktagrunnlag.getBehandlingstidspunkt()).thenReturn(fødselsdato.plusMonths(14).withDayOfMonth(1).minusDays(1));
         final var evaluering = vilkår.evaluer(faktagrunnlag);
         assertThat(evaluering.result()).isEqualByComparingTo(Resultat.JA);
     }
