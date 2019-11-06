@@ -291,7 +291,7 @@ public class OppslagTjeneste {
     public void oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
         URI uri = URI.create(oppslagServiceUri + "/oppgave/oppdater");
         logger.info("Sender \"oppdater oppgave\"-request til " + uri);
-        Oppgave oppgave = new Oppgave(fnr, journalpostID, null, beskrivelse);
+        Oppgave oppgave = new Oppgave(hentAktørId(fnr).getId(), journalpostID, null, beskrivelse);
         try {
             postRequest(uri, OppgaveKt.toJson(oppgave), String.class);
         } catch (HttpClientErrorException.NotFound e) {
