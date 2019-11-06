@@ -19,7 +19,6 @@ public class RestTemplateConfig {
         return new RestTemplateBuilder()
             .build();
     }
-
     @Bean
     public RestTemplateBuilder restTemplateBuilderMedProxy() {
         return new RestTemplateBuilder()
