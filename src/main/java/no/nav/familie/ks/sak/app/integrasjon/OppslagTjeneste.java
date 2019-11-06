@@ -288,13 +288,14 @@ public class OppslagTjeneste {
         value = {OppslagException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public String oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
+    public void oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
         URI uri = URI.create(oppslagServiceUri + "/oppgave/oppdater");
         logger.info("Sender \"oppdater oppgave\"-request til " + uri);
         Oppgave oppgave = new Oppgave(fnr, journalpostID, null, beskrivelse);
         try {
-            ResponseEntity<String> response = postRequest(uri, OppgaveKt.toJson(oppgave), String.class);
-            return response.getBody();
+            postRequest(uri, OppgaveKt.toJson(oppgave), String.class);
+        } catch (HttpClientErrorException.NotFound e) {
+            logger.warn("Oppgave returnerte 404, men kaster ikke feil. Uri: {}", uri);
         } catch (RestClientException e) {
             throw new OppslagException("Kan ikke oppdater Gosys-oppgave", e, uri, oppgave.getAktorId());
         }
