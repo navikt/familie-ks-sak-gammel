@@ -32,19 +32,17 @@ logging:
   config: "classpath:logback-test.xml"
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   jpa:
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
         format_sql=false
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
   flyway:
-    enabled: false
+    enabled: true
 server:
   port: 8083
-
 FAMILIE_KS_OPPSLAG_API_URL: http://localhost:8085/api
-
-#Unleash
-UNLEASH_API_URL: http://localhost

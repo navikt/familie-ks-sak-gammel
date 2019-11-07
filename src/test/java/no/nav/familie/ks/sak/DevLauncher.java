@@ -15,7 +15,7 @@ import java.io.File;
 @SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
 @EnableTransactionManagement
 @AutoConfigureDataJpa
-@Import({ApplicationConfig.class, TokenGeneratorConfiguration.class})
+@Import({ApplicationConfig.class})
 public class DevLauncher {
 
     private static final String TRUSTSTORE_PASSW_PROP = "javax.net.ssl.trustStorePassword";

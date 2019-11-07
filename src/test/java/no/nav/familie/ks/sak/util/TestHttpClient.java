@@ -17,8 +17,8 @@ import org.springframework.web.client.RestTemplate;
 public class TestHttpClient {
     @Qualifier("testRestTemplate")
     @Bean()
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.requestFactory(this::requestFactory)
+    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
+        return restTemplateBuilder.requestFactory(this::requestFactory)
             .build();
     }
 

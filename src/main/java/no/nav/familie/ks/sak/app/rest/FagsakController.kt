@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*
 @ProtectedWithClaims( issuer = "azuread" )
 class FagsakController (
     private val saksbehandling: Saksbehandling,
-    private val tilgangskontrollService: TilgangskontrollService,
     private val behandlingRepository: BehandlingRepository,
     private val restFagsakService: RestFagsakService,
     private val oidcUtil: OIDCUtil) {
@@ -31,31 +30,24 @@ class FagsakController (
     @GetMapping(path = ["/fagsak/{fagsakId}"])
     fun fagsak(@PathVariable fagsakId: Long): ResponseEntity<Ressurs> {
 
-        val saksbehandlerId = oidcUtil.navIdent
+        val saksbehandlerId = oidcUtil.getClaim("preferred_username")
 
         logger.info("{} henter fagsak med id {}", saksbehandlerId ?: "Ukjent", fagsakId)
 
         SporingsLoggHelper.logSporing(FagsakController::class.java, fagsakId, saksbehandlerId ?: "Ukjent", SporingsLoggActionType.READ, "fagsak")
 
-        if (!tilgangskontrollService.harTilgang(fagsakId, saksbehandlerId)){
-            return ResponseEntity.ok(Ressurs.ikkeTilgang("Du har ikke tilgang til denne fagsaken"))
-        }
-
         val ressurs: Ressurs = Result.runCatching { restFagsakService.hentRessursFagsak(fagsakId) }
-                .fold(
-                    onSuccess = { when(it) {
-                        null -> Ressurs.failure("Fant ikke fagsak med fagsakId: $fagsakId")
-                        else -> Ressurs.success( data = it )
-                    } },
-                    onFailure = { e -> Ressurs.failure( "Henting av fagsak med fagsakId $fagsakId feilet: ${e.message}", e) }
-                )
+            .fold(
+                onSuccess = { it },
+                onFailure = { e -> Ressurs.failure( "Henting av fagsak med fagsakId $fagsakId feilet: ${e.message}", e) }
+            )
 
         return ResponseEntity.ok(ressurs)
     }
 
     @GetMapping(path = ["/fagsak"])
     fun fagsak(@RequestHeader filter: String?): ResponseEntity<Ressurs> {
-        val saksbehandlerId = oidcUtil.navIdent
+        val saksbehandlerId = oidcUtil.getClaim("preferred_username")
 
         logger.info("{} henter fagsaker", saksbehandlerId ?: "Ukjent")
 

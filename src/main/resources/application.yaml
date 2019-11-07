@@ -43,7 +43,5 @@ credential:
   username: "srv-ks-sak"
   password: "not-a-real-password"
 
-STS_URL: http://security-token-service.default.svc.nais.local
-
 CREDENTIAL_USERNAME: INVALID_USERNAME
 CREDENTIAL_PASSWORD: INVALID_PASSWORD

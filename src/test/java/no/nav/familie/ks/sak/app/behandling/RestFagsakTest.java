@@ -1,7 +1,6 @@
 package no.nav.familie.ks.sak.app.behandling;
 
 import no.finn.unleash.Unleash;
-import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
@@ -21,23 +20,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-    classes = {ApplicationConfig.class},
-    loader = AnnotationConfigContextLoader.class)
+    classes = {ApplicationConfig.class})
 @DataJpaTest(excludeAutoConfiguration = FlywayAutoConfiguration.class)
+@ActiveProfiles("dev")
 public class RestFagsakTest {
     private static final String SAKSNUMMER = "TEST123";
     private static final String JOURNALPOSTID = "12345678";
@@ -50,9 +48,6 @@ public class RestFagsakTest {
 
     @MockBean
     private Unleash unleash;
-
-    @MockBean
-    private StsRestClient stsRestClient;
 
     @Autowired
     private RestFagsakService restFagsakService;

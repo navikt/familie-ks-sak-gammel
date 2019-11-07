@@ -1,7 +1,6 @@
 package no.nav.familie.ks.sak.app.integrasjon;
 
 import no.nav.familie.http.client.NavHttpHeaders;
-import no.nav.familie.http.sts.StsRestClient;
 import no.nav.familie.ks.kontrakter.oppgave.Oppgave;
 import no.nav.familie.ks.kontrakter.oppgave.OppgaveKt;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
@@ -12,13 +11,21 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.tilgangskontroll.Tilgang;
+import no.nav.familie.ks.sak.app.rest.BaseService;
 import no.nav.familie.log.mdc.MDCConstants;
+import no.nav.familie.sikkerhet.OIDCUtil;
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -32,64 +39,51 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 import java.util.Optional;
 
-
 @Component
-public class OppslagTjeneste {
+public class OppslagTjeneste extends BaseService {
 
     private static final Logger logger = LoggerFactory.getLogger(OppslagTjeneste.class);
     private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
+    private static final String OAUTH2_CLIENT_CONFIG_KEY = "ks-oppslag-clientcredentials";
+
     private URI oppslagServiceUri;
-    private StsRestClient stsRestClient;
-    private RestTemplate restTemplate;
+    private OIDCUtil oidcUtil;
 
     @Autowired
     public OppslagTjeneste(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
-                           RestTemplate restTemplate,
-                           StsRestClient stsRestClient) {
+                           RestTemplateBuilder restTemplateBuilderMedProxy,
+                           ClientConfigurationProperties clientConfigurationProperties,
+                           OAuth2AccessTokenService oAuth2AccessTokenService,
+                           OIDCUtil oidcUtil) {
+        super(OAUTH2_CLIENT_CONFIG_KEY, restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService);
+
         this.oppslagServiceUri = oppslagServiceUri;
-        this.stsRestClient = stsRestClient;
-        this.restTemplate = restTemplate;
+        this.oidcUtil = oidcUtil;
     }
 
     private <T> ResponseEntity<T> request(URI uri, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken());
         headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
 
         HttpEntity httpEntity = new HttpEntity(headers);
 
-        return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
+        return getRestTemplate().exchange(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
     private <T> ResponseEntity<T> postRequest(URI uri, String requestBody, Class<T> responseType) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(stsRestClient.getSystemOIDCToken());
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Content-Type", "application/json;charset=UTF-8");
         headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
 
-        return restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), responseType);
+        return getRestTemplate().exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), responseType);
     }
 
-    private <T> ResponseEntity<T> requestMedPersonIdent(URI uri, String personident, Class<T> clazz) {
+    private <T> ResponseEntity<T> requestMedPersonIdent(RestTemplate restTemplate, URI uri, String personident, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken());
         headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
-
-        HttpEntity httpEntity = new HttpEntity(headers);
-
-        return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
-    }
-
-    private <T> ResponseEntity<T> requestMedPersonIdentOgSaksbehandlerId(URI uri, String personident, String saksbehandlerId, Class<T> clazz) {
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken());
-        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
-        headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
-        headers.add("saksbehandlerId", saksbehandlerId);
 
         HttpEntity httpEntity = new HttpEntity(headers);
 
@@ -98,13 +92,12 @@ public class OppslagTjeneste {
 
     private <T> ResponseEntity<T> requestMedAktørId(URI uri, String aktørId, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", "Bearer " + stsRestClient.getSystemOIDCToken());
         headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         headers.add("Nav-Aktorid", aktørId);
 
         HttpEntity httpEntity = new HttpEntity(headers);
 
-        return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
+        return getRestTemplate().exchange(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
     @Retryable(
@@ -118,7 +111,7 @@ public class OppslagTjeneste {
         URI uri = URI.create(oppslagServiceUri + "/aktoer");
         logger.info("Henter aktørId fra " + oppslagServiceUri);
         try {
-            ResponseEntity<String> response = requestMedPersonIdent(uri, personident, String.class);
+            ResponseEntity<String> response = requestMedPersonIdent(getRestTemplate(), uri, personident, String.class);
             secureLogger.info("Vekslet inn fnr: {} til aktørId: {}", personident, response.getBody());
 
             String aktørId = response.getBody();
@@ -171,15 +164,15 @@ public class OppslagTjeneste {
         value = {OppslagException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
-    public ResponseEntity<Tilgang> sjekkTilgangTilPerson(String saksbehandlerId, String personident) {
-        if (saksbehandlerId == null || personident == null) {
-            throw new OppslagException("Ved sjekking av tilgang: saksbehandlerId eller personident er null");
+    public ResponseEntity<Tilgang> sjekkTilgangTilPerson(String personident, RestTemplate restTemplate) {
+        if (personident == null) {
+            throw new OppslagException("Ved sjekking av tilgang: personident er null");
         }
         URI uri = URI.create(oppslagServiceUri + "/tilgang/person");
         logger.info("Sjekker tilgang  " + oppslagServiceUri);
         try {
-            ResponseEntity<Tilgang> response = requestMedPersonIdentOgSaksbehandlerId(uri, personident, saksbehandlerId, Tilgang.class);
-            secureLogger.info("Saksbehandler {} forsøker å få tilgang til {} med resultat {}", saksbehandlerId, personident, response.getBody());
+            ResponseEntity<Tilgang> response = requestMedPersonIdent(restTemplate, uri, personident, Tilgang.class);
+            secureLogger.info("Saksbehandler {} forsøker å få tilgang til {} med resultat {}", oidcUtil.getClaim("preferred_username"), personident, response.getBody());
             return response;
         } catch (RestClientException e) {
             throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, personident);
@@ -197,7 +190,7 @@ public class OppslagTjeneste {
         URI uri = URI.create(oppslagServiceUri + "/infotrygd/harBarnAktivKontantstotte");
         logger.info("Henter info om kontantstøtte fra " + oppslagServiceUri);
         try {
-            var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
+            var response = requestMedPersonIdent(getRestTemplate(), uri, personident, AktivKontantstøtteInfo.class);
             var aktivKontantstøtteInfo = response.getBody();
 
             if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
@@ -232,7 +225,7 @@ public class OppslagTjeneste {
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/historikk?fomDato=" + formaterDato(fom) + "&tomDato=" + formaterDato(tom));
         logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
         try {
-            ResponseEntity<PersonhistorikkInfo> response = requestMedPersonIdent(uri, personident, PersonhistorikkInfo.class);
+            ResponseEntity<PersonhistorikkInfo> response = requestMedPersonIdent(getRestTemplate(), uri, personident, PersonhistorikkInfo.class);
             secureLogger.info("Personhistorikk for {}: {}", personident, response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
@@ -252,7 +245,7 @@ public class OppslagTjeneste {
         URI uri = URI.create(oppslagServiceUri + "/personopplysning/info");
         logger.info("Henter personinfo fra " + oppslagServiceUri);
         try {
-            ResponseEntity<Personinfo> response = requestMedPersonIdent(uri, personIdent, Personinfo.class);
+            ResponseEntity<Personinfo> response = requestMedPersonIdent(getRestTemplate(), uri, personIdent, Personinfo.class);
             secureLogger.info("Personinfo for {}: {}", personIdent, response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {

@@ -2,8 +2,6 @@ package no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad
 
 import no.nav.familie.ks.kontrakter.søknad.TilknytningTilUtlandVerdier
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørTilknytningUtland
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent
 
 data class RestAktørTilknytningUtland(
     val fødselsnummer: String,

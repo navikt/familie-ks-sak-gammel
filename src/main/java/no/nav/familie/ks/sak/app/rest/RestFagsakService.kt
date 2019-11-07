@@ -6,8 +6,6 @@ import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.AvvikType
-import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.VilkårType
 import no.nav.familie.ks.sak.app.behandling.domene.resultat.BehandlingresultatRepository
 import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling
 import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak
@@ -17,10 +15,16 @@ import no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad.*
 import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestBehandlingsresultat
 import no.nav.familie.ks.sak.app.rest.behandling.resultat.RestVilkårsResultat
 import no.nav.familie.ks.sak.app.rest.behandling.toRestFagsak
+import no.nav.familie.ks.sak.app.rest.tilgangskontroll.TilgangskontrollService
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
 class RestFagsakService(
+        private val tilgangskontrollService: TilgangskontrollService,
         private val behandlingresultatRepository: BehandlingresultatRepository,
         private val barnehageBarnGrunnlagRepository: BarnehageBarnGrunnlagRepository,
         private val søknadGrunnlagRepository: SøknadGrunnlagRepository,
@@ -61,7 +65,7 @@ class RestFagsakService(
                     RestOppgittFamilieforhold(barna, barnehageBarnGrunnlag.familieforhold.isBorBeggeForeldreSammen)
                 }.orElseThrow()
 
-                søkerFødselsnummer = søknadGrunnlag.søknad.søkerFødselsnummer;
+                søkerFødselsnummer = søknadGrunnlag.søknad.søkerFødselsnummer
 
                 RestSøknad(søknadGrunnlag.søknad.innsendtTidspunkt, familieforhold, oppgittUtlandsTilknytning, oppgittErklæring)
             }.orElseThrow()
@@ -90,8 +94,16 @@ class RestFagsakService(
         return fagsak.toRestFagsak(restBehandlinger, søkerFødselsnummer)
     }
 
-    fun hentRessursFagsak(fagsakId: Long): RestFagsak? {
-        return hentRestFagsak(fagsakId)
+    fun hentRessursFagsak(fagsakId: Long): Ressurs {
+        if (!tilgangskontrollService.harTilgang(fagsakId)){
+            return Ressurs.ikkeTilgang("Du har ikke tilgang til denne fagsaken")
+        }
+
+        val restFagsak = hentRestFagsak(fagsakId)
+        return when(restFagsak) {
+            null -> Ressurs.failure("Fant ikke fagsak med fagsakId: $fagsakId")
+            else -> Ressurs.success( data = restFagsak )
+        }
     }
 
     fun hentFagsaker(filter: String?): List<Fagsak> {
