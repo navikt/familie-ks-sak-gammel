@@ -22,7 +22,10 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -34,10 +37,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.Optional;
 
 @Component
@@ -73,8 +74,7 @@ public class OppslagTjeneste extends BaseService {
 
     private <T> ResponseEntity<T> postRequest(URI uri, String requestBody, Class<T> responseType) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
+        headers.add("Content-Type", "application/json;charset=UTF-8");
         headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
 
         return getRestTemplate().exchange(uri, HttpMethod.POST, new HttpEntity<>(requestBody, headers), responseType);
