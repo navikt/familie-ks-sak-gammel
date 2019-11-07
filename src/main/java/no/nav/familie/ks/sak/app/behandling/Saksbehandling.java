@@ -100,7 +100,7 @@ public class Saksbehandling {
             }
         } else {
             var avviksvurdering = (AvviksVurdering) vilkårvurdering;
-            LOG.info("Søknad ble avvikshåndtert. Fagsak-ID: {}, Årsak: {}", vedtak.getFagsakId(), avviksvurdering.getAvvik());
+            LOG.info("Søknad ble avvikshåndtert. Fagsak-ID: {}, Årsak: {}", vedtak.getFagsakId(), avviksvurdering.getAvvik().keySet());
             oppgaveBeskrivelse = OppgaveBeskrivelse.MANUELL_BEHANDLING;
         }
 
