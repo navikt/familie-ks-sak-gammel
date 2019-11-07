@@ -22,7 +22,6 @@ spring:
   flyway:
     enabled: true
 
-logging.level.no.nav.security: DEBUG
 logging:
   config: "classpath:logback-spring.xml"
 
