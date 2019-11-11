@@ -19,7 +19,6 @@ public interface OppgaveBeskrivelse {
         "Avtalt oppholdstid i barnehage: 0 timer\n" +
         "Beløp: 7500 kroner\n" +
         "\n" +
-        "Etterbetaling: NEI\n" +
         "Søknad mottatt dato: %s\n" +
         "Barnets fødselsdato: %s\n" +
         "\n" +
