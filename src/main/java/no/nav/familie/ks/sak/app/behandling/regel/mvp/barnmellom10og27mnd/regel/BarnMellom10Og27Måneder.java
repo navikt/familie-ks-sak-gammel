@@ -8,7 +8,7 @@ import no.nav.fpsak.nare.specification.LeafSpecification;
 @RuleDocumentation(BarnMellom10Og27Måneder.ID)
 public class BarnMellom10Og27Måneder extends LeafSpecification<Faktagrunnlag> {
 
-    public static final String ID = "BARN_MELLOM_10_OG_26_MÅNEDER";
+    public static final String ID = "BARN_MELLOM_10_OG_27_MÅNEDER";
 
     public BarnMellom10Og27Måneder() {
         super(ID);
