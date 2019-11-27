@@ -20,7 +20,7 @@ public class FeatureToggleConfig {
     private static final String UNLEASH_API_URL_PROPERTY_NAME = "${UNLEASH_API_URL}";
     private static final String ENVIRONMENT_NAME = "${ENVIRONMENT_NAME}";
 
-    @Profile("!dev & !e2e")
+    @Profile("prod | preprod")
     @Bean
     @Autowired
     public Unleash unleash(
@@ -46,13 +46,13 @@ public class FeatureToggleConfig {
         return new FakeUnleash();
     }
 
-    @Profile("!dev & !e2e")
+    @Profile("prod | preprod")
     @Bean
     public Strategy isNotProd(@Value(ENVIRONMENT_NAME) String env){
         return new IsNotProdStrategy(env);
     }
 
-    @Profile("!dev & !e2e")
+    @Profile("prod | preprod")
     @Bean
     public Strategy byEnvironment(@Value(ENVIRONMENT_NAME) String env){
         return new ByEnvironmentStrategy(env);
