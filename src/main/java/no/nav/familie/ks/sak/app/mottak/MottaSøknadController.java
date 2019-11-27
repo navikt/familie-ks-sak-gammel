@@ -1,14 +1,16 @@
 package no.nav.familie.ks.sak.app.mottak;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
+import no.nav.familie.ks.kontrakter.sak.Ressurs;
 import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.kontrakter.søknad.SøknadKt;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
-import no.nav.familie.ks.sak.app.rest.Ressurs;
+import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,7 @@ public class MottaSøknadController {
 
     private final FunksjonelleMetrikker funksjonelleMetrikker;
     private final Saksbehandling saksbehandling;
+    private final ObjectMapper objectMapper = new JacksonJsonConfig().objectMapper();
 
     @Autowired
     public MottaSøknadController(Saksbehandling saksbehandling, FunksjonelleMetrikker funksjonelleMetrikker) {
@@ -68,7 +71,11 @@ public class MottaSøknadController {
     @ExceptionHandler(OppslagException.class)
     public Ressurs handleOppslagException(OppslagException ex) {
         log.error("behandling feilet", ex);
-        return Ressurs.Companion.failure("mottaDokument feilet " + ex.getResponseBodyAsString(), ex);
+        try {
+            return objectMapper.readValue(ex.getResponseBodyAsString(), Ressurs.class); // kaster orginal ressurs fra oppslag hvis eksisterer
+        } catch (Exception e) {
+            return Ressurs.Companion.failure("mottaDokument feilet " + ex.getResponseBodyAsString(), ex);
+        }
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "dokument")
@@ -80,7 +87,7 @@ public class MottaSøknadController {
         try {
             Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer, journalpostID);
             funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
-            return new ResponseEntity<>(Ressurs.Companion.success("Motta dokument vellykket"), HttpStatus.OK);
+            return new ResponseEntity<>(Ressurs.Companion.success(null, "Motta dokument vellykket"), HttpStatus.OK);
         } catch (OppslagException e) {
             feiledeBehandlinger.increment();
             throw e;
