@@ -284,7 +284,7 @@ public class OppslagTjeneste extends BaseService {
         logger.info("Sender \"oppdater oppgave\"-request til " + uri);
         Oppgave oppgave = new Oppgave(hentAktørId(fnr).getId(), journalpostID, null, beskrivelse);
         try {
-            postRequest(uri, OppgaveKt.toJson(oppgave), String.class);
+            postRequest(uri, OppgaveKt.toJson(oppgave), Map.class);
         } catch (HttpClientErrorException.NotFound e) {
             logger.warn("Oppgave returnerte 404, men kaster ikke feil. Uri: {}", uri);
         } catch (RestClientException e) {
