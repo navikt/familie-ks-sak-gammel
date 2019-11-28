@@ -1,7 +1,7 @@
 package no.nav.familie.ks.sak.app.integrasjon.personopplysning;
 
 import kotlin.text.Charsets;
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.IntegrasjonTjeneste;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,17 +11,17 @@ import org.springframework.web.client.RestClientResponseException;
 import java.net.URI;
 
 @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-public class OppslagException extends RuntimeException {
-    private static final Logger logger = LoggerFactory.getLogger(OppslagTjeneste.class);
+public class IntegrasjonException extends RuntimeException {
+    private static final Logger logger = LoggerFactory.getLogger(IntegrasjonTjeneste.class);
     private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
 
     private byte[] responseBody;
 
-    public OppslagException(String msg) {
+    public IntegrasjonException(String msg) {
         super(msg);
     }
 
-    public OppslagException(String msg, Exception e, URI uri, String ident) {
+    public IntegrasjonException(String msg, Exception e, URI uri, String ident) {
         super(msg, e);
 
         String message = "";
@@ -30,8 +30,8 @@ public class OppslagException extends RuntimeException {
             responseBody = ((RestClientResponseException) e).getResponseBodyAsByteArray();
         }
 
-        secureLogger.info("Ukjent feil ved oppslag mot {}. ident={} {} {}", uri, ident, message, e);
-        logger.warn("Ukjent feil ved oppslag mot '{}'.", uri);
+        secureLogger.info("Ukjent feil ved integrasjon mot {}. ident={} {} {}", uri, ident, message, e);
+        logger.warn("Ukjent feil ved integrasjon mot '{}'.", uri);
     }
 
     public String getResponseBodyAsString() {

@@ -34,7 +34,7 @@ public class RegisterInnhentingService {
     private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
     private static final Logger logger = LoggerFactory.getLogger(RegisterInnhentingService.class);
     private PersonopplysningService personopplysningService;
-    private OppslagTjeneste oppslagTjeneste;
+    private IntegrasjonTjeneste integrasjonTjeneste;
     private Counter oppgittAnnenPartStemmer = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "JA", "beskrivelse", "Oppgitt annen part stemmer");
     private Counter oppgittAnnenPartStemmerIkke = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "NEI", "beskrivelse", "Oppgitt annen part stemmer ikke");
     private Counter oppgittAnnenPartStemmerDelvis = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "DELVIS", "beskrivelse", "Første 6 tall av fnr er likt");
@@ -42,9 +42,9 @@ public class RegisterInnhentingService {
     private Counter oppgittAnnenPartIkkeFunnetITps = Metrics.counter("soknad.kontantstotte.funksjonell.oppgittannenpart", "erliktsomitps", "IKKE_FUNNET", "beskrivelse", "Annen part er ikke funnet i TPS");
 
     @Autowired
-    public RegisterInnhentingService(PersonopplysningService personopplysningService, OppslagTjeneste oppslagTjeneste) {
+    public RegisterInnhentingService(PersonopplysningService personopplysningService, IntegrasjonTjeneste integrasjonTjeneste) {
         this.personopplysningService = personopplysningService;
-        this.oppslagTjeneste = oppslagTjeneste;
+        this.integrasjonTjeneste = integrasjonTjeneste;
     }
 
     public TpsFakta innhentPersonopplysninger(Behandling behandling, Søknad søknad) throws FDATException {
@@ -113,7 +113,7 @@ public class RegisterInnhentingService {
 
     public InfotrygdFakta hentInfotrygdFakta(Søknad søknad) {
         // TODO: Legg til støtte for flerlinger.
-        return new InfotrygdFakta(oppslagTjeneste.hentInfoOmLøpendeKontantstøtteForBarn(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer()));
+        return new InfotrygdFakta(integrasjonTjeneste.hentInfoOmLøpendeKontantstøtteForBarn(søknad.getOppgittFamilieforhold().getBarna().iterator().next().getFødselsnummer()));
     }
 
     public MedlFakta hentMedlemskapsopplysninger(Behandling behandling) {
@@ -123,7 +123,7 @@ public class RegisterInnhentingService {
         }
         PersonopplysningGrunnlag personopplysningGrunnlag = pers.get();
         final var søkerAktørId = personopplysningGrunnlag.getSøker().getAktørId();
-        final MedlemskapsInfo søkerMedlemskapsInfo = oppslagTjeneste.hentMedlemskapsUnntakFor(søkerAktørId);
+        final MedlemskapsInfo søkerMedlemskapsInfo = integrasjonTjeneste.hentMedlemskapsUnntakFor(søkerAktørId);
 
         return new MedlFakta.Builder()
             .medSøker(erTom(søkerMedlemskapsInfo.getPersonIdent()) ? Optional.empty() : Optional.of(søkerMedlemskapsInfo))
@@ -145,7 +145,7 @@ public class RegisterInnhentingService {
         if (personopplysningGrunnlag.getAnnenPart() == null) {
             return Optional.empty();
         }
-        MedlemskapsInfo annenForelder = oppslagTjeneste.hentMedlemskapsUnntakFor(personopplysningGrunnlag.getAnnenPart().getAktørId());
+        MedlemskapsInfo annenForelder = integrasjonTjeneste.hentMedlemskapsUnntakFor(personopplysningGrunnlag.getAnnenPart().getAktørId());
         return erTom(annenForelder.getPersonIdent()) ? Optional.empty() : Optional.of(annenForelder);
     }
 
@@ -154,9 +154,9 @@ public class RegisterInnhentingService {
     }
 
     private PersonMedHistorikk hentPersonMedHistorikk(String personIdent) {
-        final AktørId aktørId = oppslagTjeneste.hentAktørId(personIdent);
-        final Personinfo personinfo = oppslagTjeneste.hentPersoninfoFor(personIdent).medAktørId(aktørId);
-        final PersonhistorikkInfo personhistorikkInfo = oppslagTjeneste.hentHistorikkFor(personIdent, personinfo.getFødselsdato());
+        final AktørId aktørId = integrasjonTjeneste.hentAktørId(personIdent);
+        final Personinfo personinfo = integrasjonTjeneste.hentPersoninfoFor(personIdent).medAktørId(aktørId);
+        final PersonhistorikkInfo personhistorikkInfo = integrasjonTjeneste.hentHistorikkFor(personIdent, personinfo.getFødselsdato());
         return new PersonMedHistorikk.Builder()
             .medInfo(personinfo)
             .medPersonhistorikk(personhistorikkInfo)

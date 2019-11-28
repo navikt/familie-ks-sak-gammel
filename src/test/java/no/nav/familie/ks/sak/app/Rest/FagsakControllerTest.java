@@ -6,7 +6,7 @@ import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.BarnehageBarnGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.IntegrasjonTjeneste;
 import no.nav.familie.ks.sak.app.rest.RestFagsakService;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -42,7 +42,7 @@ public class FagsakControllerTest {
     RestTemplate restTemplate;
 
     @MockBean
-    private OppslagTjeneste oppslagTjeneste;
+    private IntegrasjonTjeneste integrasjonTjeneste;
 
     @Autowired
     private RestFagsakService restFagsakService;
@@ -58,17 +58,17 @@ public class FagsakControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        Mockito.when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId("121111111111111111111111111111111111111111111111111111"));
-        when(oppslagTjeneste.hentPersoninfoFor(any())).thenReturn(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersoninfo(),
+        Mockito.when(integrasjonTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId("121111111111111111111111111111111111111111111111111111"));
+        when(integrasjonTjeneste.hentPersoninfoFor(any())).thenReturn(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersoninfo(),
             FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersoninfo(),
             FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo());
-        when(oppslagTjeneste.hentHistorikkFor(any(), any())).thenReturn(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
+        when(integrasjonTjeneste.hentHistorikkFor(any(), any())).thenReturn(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
             FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersonhistorikkInfo(),
             FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersonhistorikkInfo());
     }
 
     @Test //Integrasjonstest / json api kontrakt test
-    public void test_at_behandling_ikke_blir_persistert_hvis_feil_fra_oppslags() throws Exception {
+    public void test_at_behandling_ikke_blir_persistert_hvis_feil_fra_integrasjons() throws Exception {
 
         //final var søknad = FaktagrunnlagTestBuilder.familieNorskStatsborgerskapMedBarnehage();
 

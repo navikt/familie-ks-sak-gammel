@@ -7,7 +7,7 @@ import no.nav.familie.ks.kontrakter.sak.Ressurs;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.AktivKontantstøtteInfo;
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.IntegrasjonException;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonhistorikkInfo;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
@@ -43,9 +43,9 @@ import java.util.Map;
 import java.util.Objects;
 
 @Component
-public class OppslagTjeneste extends BaseService {
+public class IntegrasjonTjeneste extends BaseService {
 
-    private static final Logger logger = LoggerFactory.getLogger(OppslagTjeneste.class);
+    private static final Logger logger = LoggerFactory.getLogger(IntegrasjonTjeneste.class);
     private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
     private static final String OAUTH2_CLIENT_CONFIG_KEY = "integrasjoner-clientcredentials";
 
@@ -53,11 +53,11 @@ public class OppslagTjeneste extends BaseService {
     private OIDCUtil oidcUtil;
 
     @Autowired
-    public OppslagTjeneste(@Value("${FAMILIE_INTEGRASJONER_API_URL}") URI integrasjonerServiceUri,
-                           RestTemplateBuilder restTemplateBuilderMedProxy,
-                           ClientConfigurationProperties clientConfigurationProperties,
-                           OAuth2AccessTokenService oAuth2AccessTokenService,
-                           OIDCUtil oidcUtil) {
+    public IntegrasjonTjeneste(@Value("${FAMILIE_INTEGRASJONER_API_URL}") URI integrasjonerServiceUri,
+                               RestTemplateBuilder restTemplateBuilderMedProxy,
+                               ClientConfigurationProperties clientConfigurationProperties,
+                               OAuth2AccessTokenService oAuth2AccessTokenService,
+                               OIDCUtil oidcUtil) {
         super(OAUTH2_CLIENT_CONFIG_KEY, restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService);
 
         this.integrasjonerServiceUri = integrasjonerServiceUri;
@@ -115,18 +115,18 @@ public class OppslagTjeneste extends BaseService {
     private <T> ResponseEntity<T> request(URI uri, HttpMethod method, Class<T> clazz, HttpEntity httpEntity) {
         var ressursResponse = getRestTemplate().exchange(uri, method, httpEntity, Ressurs.class);
         if (ressursResponse.getBody() == null) {
-            throw new OppslagException("Response kan ikke være tom", null, uri, null);
+            throw new IntegrasjonException("Response kan ikke være tom", null, uri, null);
         }
         return ResponseEntity.status(ressursResponse.getStatusCode()).body(Objects.requireNonNull(ressursResponse.getBody()).convert(clazz));
     }
 
     @Retryable(
-        value = {OppslagException.class},
+        value = {IntegrasjonException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public AktørId hentAktørId(String personident) {
         if (personident == null || personident.isEmpty()) {
-            throw new OppslagException("Ved henting av aktør id er personident null eller tom");
+            throw new IntegrasjonException("Ved henting av aktør id er personident null eller tom");
         }
         URI uri = URI.create(integrasjonerServiceUri + "/aktoer/v1");
         logger.info("Henter aktørId fra " + integrasjonerServiceUri);
@@ -136,23 +136,23 @@ public class OppslagTjeneste extends BaseService {
 
             String aktørId = response.getBody().get("aktørId").toString();
             if (aktørId == null || aktørId.isEmpty()) {
-                throw new OppslagException("AktørId fra oppslagstjenesten er tom");
+                throw new IntegrasjonException("AktørId fra integrasjonstjenesten er tom");
             } else {
                 return new AktørId(aktørId);
             }
         } catch (RestClientException e) {
-            throw new OppslagException("Kall mot oppslag feilet ved uthenting av aktørId", e, uri, personident);
+            throw new IntegrasjonException("Kall mot integrasjon feilet ved uthenting av aktørId", e, uri, personident);
         }
     }
 
 
     @Retryable(
-        value = {OppslagException.class},
+        value = {IntegrasjonException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public PersonIdent hentPersonIdent(String aktørId) {
         if (aktørId == null || aktørId.isEmpty()) {
-            throw new OppslagException("Ved henting av personident er aktørId null eller tom");
+            throw new IntegrasjonException("Ved henting av personident er aktørId null eller tom");
         }
         URI uri = URI.create(integrasjonerServiceUri + "/aktoer/v1/fraaktorid");
         logger.info("Henter fnr fra " + integrasjonerServiceUri);
@@ -162,22 +162,22 @@ public class OppslagTjeneste extends BaseService {
 
             String personIdent = response.getBody().get("personIdent").toString();
             if (personIdent == null || personIdent.isEmpty()) {
-                throw new OppslagException("Personident fra oppslagstjenesten er tom");
+                throw new IntegrasjonException("Personident fra integrasjonstjenesten er tom");
             } else {
                 return new PersonIdent(personIdent);
             }
         } catch (RestClientException e) {
-            throw new OppslagException("Kall mot oppslag feilet ved uthenting av personIdent", e, uri, aktørId);
+            throw new IntegrasjonException("Kall mot integrasjon feilet ved uthenting av personIdent", e, uri, aktørId);
         }
     }
 
     @Retryable(
-        value = {OppslagException.class},
+        value = {IntegrasjonException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public ResponseEntity<Tilgang> sjekkTilgangTilPerson(String personident, RestTemplate restTemplate) {
         if (personident == null) {
-            throw new OppslagException("Ved sjekking av tilgang: personident er null");
+            throw new IntegrasjonException("Ved sjekking av tilgang: personident er null");
         }
         URI uri = URI.create(integrasjonerServiceUri + "/tilgang/person");
         logger.info("Sjekker tilgang  " + integrasjonerServiceUri);
@@ -186,17 +186,17 @@ public class OppslagTjeneste extends BaseService {
             secureLogger.info("Saksbehandler {} forsøker å få tilgang til {} med resultat {}", oidcUtil.getClaim("preferred_username"), personident, response.getBody());
             return response;
         } catch (RestClientException e) {
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, personident);
+            throw new IntegrasjonException("Ukjent feil ved integrasjon mot '" + uri + "'.", e, uri, personident);
         }
     }
 
     @Retryable(
-        value = {OppslagException.class},
+        value = {IntegrasjonException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public AktivKontantstøtteInfo hentInfoOmLøpendeKontantstøtteForBarn(String personident) {
         if (personident == null || personident.isEmpty()) {
-            throw new OppslagException("Personident null eller tom");
+            throw new IntegrasjonException("Personident null eller tom");
         }
         URI uri = URI.create(integrasjonerServiceUri + "/infotrygd/v1/harBarnAktivKontantstotte");
         logger.info("Henter info om kontantstøtte fra " + integrasjonerServiceUri);
@@ -214,19 +214,19 @@ public class OppslagTjeneste extends BaseService {
                 }
                 return aktivKontantstøtteInfo;
             } else {
-                logger.info("AktivKontantstøtteInfo fra oppslagstjenesten er tom");
+                logger.info("AktivKontantstøtteInfo fra integrasjonstjenesten er tom");
                 return new AktivKontantstøtteInfo(false);
             }
         } catch (HttpClientErrorException.NotFound e) {
             secureLogger.info("Personident ikke funnet i infotrygds kontantstøttedatabase. Personident: {}", personident);
             return new AktivKontantstøtteInfo(false);
         } catch (RestClientException e) {
-            throw new OppslagException("Ukjent feil ved oppslag mot '" + uri + "'.", e, uri, personident);
+            throw new IntegrasjonException("Ukjent feil ved integrasjon mot '" + uri + "'.", e, uri, personident);
         }
     }
 
     @Retryable(
-        value = {OppslagException.class},
+        value = {IntegrasjonException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public PersonhistorikkInfo hentHistorikkFor(String personident, LocalDate fødselsdato) {
@@ -239,12 +239,12 @@ public class OppslagTjeneste extends BaseService {
             secureLogger.info("Personhistorikk for {}: {}", personident, response.getBody());
             return response.getBody();
         } catch (RestClientException e) {
-            throw new OppslagException("Kall mot oppslag feilet ved uthenting av historikk", e, uri, personident);
+            throw new IntegrasjonException("Kall mot integrasjon feilet ved uthenting av historikk", e, uri, personident);
         }
     }
 
     @Retryable(
-        value = {OppslagException.class},
+        value = {IntegrasjonException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public Personinfo hentPersoninfoFor(String personIdent) {
@@ -255,12 +255,12 @@ public class OppslagTjeneste extends BaseService {
             secureLogger.info("Personinfo for {}: {}", personIdent, response.getBody());
             return response.getBody();
         } catch (RestClientException e) {
-            throw new OppslagException("Kall mot oppslag feilet ved uthenting av personinfo", e, uri, personIdent);
+            throw new IntegrasjonException("Kall mot integrasjon feilet ved uthenting av personinfo", e, uri, personIdent);
         }
     }
 
     @Retryable(
-        value = {OppslagException.class},
+        value = {IntegrasjonException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public MedlemskapsInfo hentMedlemskapsUnntakFor(AktørId aktørId) {
@@ -271,12 +271,12 @@ public class OppslagTjeneste extends BaseService {
             secureLogger.info("MedlemskapsInfo for {}: {}", aktørId, response.getBody());
             return response.getBody();
         } catch (RestClientException e) {
-            throw new OppslagException("Kall mot oppslag feilet ved uthenting av medlemskapsinfo", e, uri, aktørId.getId());
+            throw new IntegrasjonException("Kall mot integrasjon feilet ved uthenting av medlemskapsinfo", e, uri, aktørId.getId());
         }
     }
 
     @Retryable(
-        value = {OppslagException.class},
+        value = {IntegrasjonException.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public void oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
@@ -288,7 +288,7 @@ public class OppslagTjeneste extends BaseService {
         } catch (HttpClientErrorException.NotFound e) {
             logger.warn("Oppgave returnerte 404, men kaster ikke feil. Uri: {}", uri);
         } catch (RestClientException e) {
-            throw new OppslagException("Kan ikke oppdater Gosys-oppgave", e, uri, oppgave.getAktorId());
+            throw new IntegrasjonException("Kan ikke oppdater Gosys-oppgave", e, uri, oppgave.getAktorId());
         }
     }
 
