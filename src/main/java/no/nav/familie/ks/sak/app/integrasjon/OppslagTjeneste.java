@@ -280,7 +280,7 @@ public class OppslagTjeneste extends BaseService {
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public void oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
-        URI uri = URI.create(oppslagServiceUri + "/oppgave/v1/oppdater");
+        URI uri = URI.create(oppslagServiceUri + "/oppgave/oppdater");
         logger.info("Sender \"oppdater oppgave\"-request til " + uri);
         Oppgave oppgave = new Oppgave(hentAktørId(fnr).getId(), journalpostID, null, beskrivelse);
         try {
