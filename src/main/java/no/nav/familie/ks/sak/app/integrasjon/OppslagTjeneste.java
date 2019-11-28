@@ -47,20 +47,20 @@ public class OppslagTjeneste extends BaseService {
 
     private static final Logger logger = LoggerFactory.getLogger(OppslagTjeneste.class);
     private static final Logger secureLogger = LoggerFactory.getLogger("secureLogger");
-    private static final String OAUTH2_CLIENT_CONFIG_KEY = "ks-oppslag-clientcredentials";
+    private static final String OAUTH2_CLIENT_CONFIG_KEY = "integrasjoner-clientcredentials";
 
-    private URI oppslagServiceUri;
+    private URI integrasjonerServiceUri;
     private OIDCUtil oidcUtil;
 
     @Autowired
-    public OppslagTjeneste(@Value("${FAMILIE_INTEGRASJONER_API_URL}") URI oppslagServiceUri,
+    public OppslagTjeneste(@Value("${FAMILIE_INTEGRASJONER_API_URL}") URI integrasjonerServiceUri,
                            RestTemplateBuilder restTemplateBuilderMedProxy,
                            ClientConfigurationProperties clientConfigurationProperties,
                            OAuth2AccessTokenService oAuth2AccessTokenService,
                            OIDCUtil oidcUtil) {
         super(OAUTH2_CLIENT_CONFIG_KEY, restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService);
 
-        this.oppslagServiceUri = oppslagServiceUri;
+        this.integrasjonerServiceUri = integrasjonerServiceUri;
         this.oidcUtil = oidcUtil;
     }
 
@@ -128,8 +128,8 @@ public class OppslagTjeneste extends BaseService {
         if (personident == null || personident.isEmpty()) {
             throw new OppslagException("Ved henting av aktør id er personident null eller tom");
         }
-        URI uri = URI.create(oppslagServiceUri + "/aktoer/v1");
-        logger.info("Henter aktørId fra " + oppslagServiceUri);
+        URI uri = URI.create(integrasjonerServiceUri + "/aktoer/v1");
+        logger.info("Henter aktørId fra " + integrasjonerServiceUri);
         try {
             ResponseEntity<Map> response = requestMedPersonIdent(uri, personident, Map.class);
             secureLogger.info("Vekslet inn fnr: {} til aktørId: {}", personident, response.getBody());
@@ -154,8 +154,8 @@ public class OppslagTjeneste extends BaseService {
         if (aktørId == null || aktørId.isEmpty()) {
             throw new OppslagException("Ved henting av personident er aktørId null eller tom");
         }
-        URI uri = URI.create(oppslagServiceUri + "/aktoer/v1/fraaktorid");
-        logger.info("Henter fnr fra " + oppslagServiceUri);
+        URI uri = URI.create(integrasjonerServiceUri + "/aktoer/v1/fraaktorid");
+        logger.info("Henter fnr fra " + integrasjonerServiceUri);
         try {
             ResponseEntity<Map> response = requestMedAktørId(uri, aktørId, Map.class);
             secureLogger.info("Vekslet inn aktørId: {} til fnr: {}", aktørId, response.getBody());
@@ -179,8 +179,8 @@ public class OppslagTjeneste extends BaseService {
         if (personident == null) {
             throw new OppslagException("Ved sjekking av tilgang: personident er null");
         }
-        URI uri = URI.create(oppslagServiceUri + "/tilgang/person");
-        logger.info("Sjekker tilgang  " + oppslagServiceUri);
+        URI uri = URI.create(integrasjonerServiceUri + "/tilgang/person");
+        logger.info("Sjekker tilgang  " + integrasjonerServiceUri);
         try {
             ResponseEntity<Tilgang> response = requestUtenRessurs(restTemplate, uri, personident, Tilgang.class);
             secureLogger.info("Saksbehandler {} forsøker å få tilgang til {} med resultat {}", oidcUtil.getClaim("preferred_username"), personident, response.getBody());
@@ -198,8 +198,8 @@ public class OppslagTjeneste extends BaseService {
         if (personident == null || personident.isEmpty()) {
             throw new OppslagException("Personident null eller tom");
         }
-        URI uri = URI.create(oppslagServiceUri + "/infotrygd/v1/harBarnAktivKontantstotte");
-        logger.info("Henter info om kontantstøtte fra " + oppslagServiceUri);
+        URI uri = URI.create(integrasjonerServiceUri + "/infotrygd/v1/harBarnAktivKontantstotte");
+        logger.info("Henter info om kontantstøtte fra " + integrasjonerServiceUri);
         try {
             var response = requestMedPersonIdent(uri, personident, AktivKontantstøtteInfo.class);
             var aktivKontantstøtteInfo = response.getBody();
@@ -232,8 +232,8 @@ public class OppslagTjeneste extends BaseService {
     public PersonhistorikkInfo hentHistorikkFor(String personident, LocalDate fødselsdato) {
         final var fom = fødselsdato;
         final var tom = LocalDate.now();
-        URI uri = URI.create(oppslagServiceUri + "/personopplysning/v1/historikk?fomDato=" + formaterDato(fom) + "&tomDato=" + formaterDato(tom));
-        logger.info("Henter personhistorikkInfo fra " + oppslagServiceUri);
+        URI uri = URI.create(integrasjonerServiceUri + "/personopplysning/v1/historikk?fomDato=" + formaterDato(fom) + "&tomDato=" + formaterDato(tom));
+        logger.info("Henter personhistorikkInfo fra " + integrasjonerServiceUri);
         try {
             ResponseEntity<PersonhistorikkInfo> response = requestMedPersonIdent(uri, personident, PersonhistorikkInfo.class);
             secureLogger.info("Personhistorikk for {}: {}", personident, response.getBody());
@@ -248,8 +248,8 @@ public class OppslagTjeneste extends BaseService {
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public Personinfo hentPersoninfoFor(String personIdent) {
-        URI uri = URI.create(oppslagServiceUri + "/personopplysning/v1/info");
-        logger.info("Henter personinfo fra " + oppslagServiceUri);
+        URI uri = URI.create(integrasjonerServiceUri + "/personopplysning/v1/info");
+        logger.info("Henter personinfo fra " + integrasjonerServiceUri);
         try {
             ResponseEntity<Personinfo> response = requestMedPersonIdent(uri, personIdent, Personinfo.class);
             secureLogger.info("Personinfo for {}: {}", personIdent, response.getBody());
@@ -264,8 +264,8 @@ public class OppslagTjeneste extends BaseService {
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public MedlemskapsInfo hentMedlemskapsUnntakFor(AktørId aktørId) {
-        URI uri = URI.create(oppslagServiceUri + "/medlemskap/v1/?id=" + aktørId.getId());
-        logger.info("Henter medlemskapsUnntak fra " + oppslagServiceUri);
+        URI uri = URI.create(integrasjonerServiceUri + "/medlemskap/v1/?id=" + aktørId.getId());
+        logger.info("Henter medlemskapsUnntak fra " + integrasjonerServiceUri);
         try {
             ResponseEntity<MedlemskapsInfo> response = request(uri, MedlemskapsInfo.class);
             secureLogger.info("MedlemskapsInfo for {}: {}", aktørId, response.getBody());
@@ -280,7 +280,7 @@ public class OppslagTjeneste extends BaseService {
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public void oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
-        URI uri = URI.create(oppslagServiceUri + "/oppgave/oppdater");
+        URI uri = URI.create(integrasjonerServiceUri + "/oppgave/oppdater");
         logger.info("Sender \"oppdater oppgave\"-request til " + uri);
         Oppgave oppgave = new Oppgave(hentAktørId(fnr).getId(), journalpostID, null, beskrivelse);
         try {

@@ -20,7 +20,7 @@ class TilgangskontrollService(
         private val oppslagTjeneste: OppslagTjeneste,
         private val behandlingRepository: BehandlingRepository,
         private val personopplysningGrunnlagRepository: PersonopplysningGrunnlagRepository,
-        private val fagsakRepository: FagsakRepository) : BaseService("ks-oppslag-onbehalfof", restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService) {
+        private val fagsakRepository: FagsakRepository) : BaseService("integrasjoner-onbehalfof", restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService) {
 
     fun harTilgang(fagsakId: Long): Boolean {
         val optionalFagsak = fagsakRepository.finnFagsak(fagsakId)
