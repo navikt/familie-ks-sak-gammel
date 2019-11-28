@@ -6,7 +6,7 @@ no.nav.security.jwt:
   client:
     registration:
       ks-oppslag-onbehalfof:
-        resource-url: ${FAMILIE_KS_OPPSLAG_API_URL}
+        resource-url: ${FAMILIE_INTEGRASJONER_API_URL}
         token-endpoint-url: http://vtp:8060/rest/isso/oauth2/access_token
         grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
         scope: dummy
@@ -15,7 +15,7 @@ no.nav.security.jwt:
           client-secret: dummy
           client-auth-method: client_secret_basic
       ks-oppslag-clientcredentials:
-        resource-url: ${FAMILIE_KS_OPPSLAG_API_URL}
+        resource-url: ${FAMILIE_INTEGRASJONER_API_URL}
         token-endpoint-url: http://vtp:8060/rest/isso/oauth2/access_token
         grant-type: client_credentials
         scope: dummy
@@ -42,7 +42,7 @@ spring:
 server:
   port: 8083
 
-FAMILIE_KS_OPPSLAG_API_URL: http://familie-ks-oppslag:8085/api
+FAMILIE_INTEGRASJONER_API_URL: http://familie-integrasjoner:8085/api
 
 #Unleash
 NAIS_APP_NAME: ""

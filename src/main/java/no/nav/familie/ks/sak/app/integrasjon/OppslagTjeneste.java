@@ -53,7 +53,7 @@ public class OppslagTjeneste extends BaseService {
     private OIDCUtil oidcUtil;
 
     @Autowired
-    public OppslagTjeneste(@Value("${FAMILIE_KS_OPPSLAG_API_URL}") URI oppslagServiceUri,
+    public OppslagTjeneste(@Value("${FAMILIE_INTEGRASJONER_API_URL}") URI oppslagServiceUri,
                            RestTemplateBuilder restTemplateBuilderMedProxy,
                            ClientConfigurationProperties clientConfigurationProperties,
                            OAuth2AccessTokenService oAuth2AccessTokenService,
