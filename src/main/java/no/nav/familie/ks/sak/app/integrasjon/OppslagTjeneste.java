@@ -280,11 +280,11 @@ public class OppslagTjeneste extends BaseService {
         maxAttempts = 3,
         backoff = @Backoff(delay = 5000))
     public void oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
-        URI uri = URI.create(oppslagServiceUri + "/oppgave/v1/oppdater");
+        URI uri = URI.create(oppslagServiceUri + "/oppgave/oppdater");
         logger.info("Sender \"oppdater oppgave\"-request til " + uri);
         Oppgave oppgave = new Oppgave(hentAktørId(fnr).getId(), journalpostID, null, beskrivelse);
         try {
-            postRequest(uri, OppgaveKt.toJson(oppgave), String.class);
+            postRequest(uri, OppgaveKt.toJson(oppgave), Map.class);
         } catch (HttpClientErrorException.NotFound e) {
             logger.warn("Oppgave returnerte 404, men kaster ikke feil. Uri: {}", uri);
         } catch (RestClientException e) {
