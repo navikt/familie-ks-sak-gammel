@@ -6,20 +6,20 @@ no.nav.security.jwt:
     cookie_name: azure_token
   client:
     registration:
-      ks-oppslag-onbehalfof:
-        resource-url: ${FAMILIE_KS_OPPSLAG_API_URL}
+      integrasjoner-onbehalfof:
+        resource-url: ${FAMILIE_INTEGRASJONER_API_URL}
         token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
         grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
-        scope: ${KS_OPPSLAG_SCOPE}
+        scope: ${INTEGRASJONER_SCOPE}
         authentication:
           client-id: ${KS_SAK_CLIENT_ID}
           client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
-      ks-oppslag-clientcredentials:
-        resource-url: ${FAMILIE_KS_OPPSLAG_API_URL}
+      integrasjoner-clientcredentials:
+        resource-url: ${FAMILIE_INTEGRASJONER_API_URL}
         token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
         grant-type: client_credentials
-        scope: ${KS_OPPSLAG_SCOPE}
+        scope: ${INTEGRASJONER_SCOPE}
         authentication:
           client-id: ${KS_SAK_CLIENT_ID}
           client-secret: ${CLIENT_SECRET}
@@ -29,7 +29,7 @@ spring:
   datasource:
     url: jdbc:postgresql://b27dbvl008.preprod.local:5432/familie-ks-sak
 
-FAMILIE_KS_OPPSLAG_API_URL: http://familie-ks-oppslag/api
+FAMILIE_INTEGRASJONER_API_URL: http://familie-integrasjoner/api
 
 #Unleash
 UNLEASH_API_URL: https://unleash.nais.adeo.no/api/

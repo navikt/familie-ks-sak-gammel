@@ -10,7 +10,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Barneh
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.IntegrasjonTjeneste;
 import no.nav.familie.ks.sak.config.ApplicationConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 public class BehandlingslagerServiceTest {
 
     @MockBean
-    private OppslagTjeneste oppslagTjeneste;
+    private IntegrasjonTjeneste integrasjonTjeneste;
 
     @Autowired
     private BehandlingslagerService tjeneste;
@@ -60,15 +60,15 @@ public class BehandlingslagerServiceTest {
     public void setUp() {
         when(personopplysningGrunnlagRepository.findByBehandlingAndAktiv(any()))
             .thenReturn(FaktagrunnlagTestBuilder.genererPersonopplysningGrunnlag());
-        when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
+        when(integrasjonTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
 
-        when(oppslagTjeneste.hentPersoninfoFor(any()))
+        when(integrasjonTjeneste.hentPersoninfoFor(any()))
             .thenReturn(
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersoninfo(),
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersoninfo(),
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo()
             );
-        when(oppslagTjeneste.hentHistorikkFor(any(), any()))
+        when(integrasjonTjeneste.hentHistorikkFor(any(), any()))
             .thenReturn(
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
                 FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersonhistorikkInfo(),

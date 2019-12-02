@@ -12,15 +12,15 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-public class OppslagTjenesteTest {
+public class IntegrasjonTjenesteTest {
 
-    private static final ObjectMapper oppslagMapper = new JacksonJsonConfig().objectMapper();
+    private static final ObjectMapper MAPPER = new JacksonJsonConfig().objectMapper();
     private static final String NORGE = "NOR";
 
     @Test
     public void personhistorikk_deserialiseres() throws IOException {
         File personhistorikkResponseBody = new File(getFile("personhistorikk.json"));
-        PersonhistorikkInfo personhistorikkInfo = oppslagMapper.readValue(personhistorikkResponseBody, PersonhistorikkInfo.class);
+        PersonhistorikkInfo personhistorikkInfo = MAPPER.readValue(personhistorikkResponseBody, PersonhistorikkInfo.class);
         assertThat(personhistorikkInfo.getAdressehistorikk().get(0).getAdresse().getLand()).isEqualTo(NORGE);
         assertThat(personhistorikkInfo.getStatsborgerskaphistorikk().get(0).getTilhørendeLand().getKode()).isEqualTo(NORGE);
         assertThat(personhistorikkInfo.getPersonstatushistorikk().get(0).getPersonstatus()).isEqualByComparingTo(PersonstatusType.BOSA);
@@ -30,7 +30,7 @@ public class OppslagTjenesteTest {
     @Test
     public void medlemskapsinfo_deserialiseres() throws IOException {
         File medlemskapsinfoResponseBody = new File(getFile("medlemskapsInfo.json"));
-        MedlemskapsInfo medlemskapsInfo = oppslagMapper.readValue(medlemskapsinfoResponseBody, MedlemskapsInfo.class);
+        MedlemskapsInfo medlemskapsInfo = MAPPER.readValue(medlemskapsinfoResponseBody, MedlemskapsInfo.class);
 
         assertThat(medlemskapsInfo.getGyldigePerioder().size()).isEqualTo(1);
         assertThat(medlemskapsInfo.getGyldigePerioder().get(0).getPeriodeStatusÅrsak()).isNull();

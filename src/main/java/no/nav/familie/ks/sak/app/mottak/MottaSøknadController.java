@@ -9,7 +9,7 @@ import no.nav.familie.ks.kontrakter.søknad.Søknad;
 import no.nav.familie.ks.kontrakter.søknad.SøknadKt;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.integrasjon.personopplysning.OppslagException;
+import no.nav.familie.ks.sak.app.integrasjon.personopplysning.IntegrasjonException;
 import no.nav.familie.ks.sak.config.JacksonJsonConfig;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import org.slf4j.Logger;
@@ -68,11 +68,11 @@ public class MottaSøknadController {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(OppslagException.class)
-    public Ressurs handleOppslagException(OppslagException ex) {
+    @ExceptionHandler(IntegrasjonException.class)
+    public Ressurs handleIntegrasjonException(IntegrasjonException ex) {
         log.error("behandling feilet", ex);
         try {
-            return objectMapper.readValue(ex.getResponseBodyAsString(), Ressurs.class); // kaster orginal ressurs fra oppslag hvis eksisterer
+            return objectMapper.readValue(ex.getResponseBodyAsString(), Ressurs.class); // kaster orginal ressurs fra integrasjon hvis eksisterer
         } catch (Exception e) {
             return Ressurs.Companion.failure("mottaDokument feilet " + ex.getResponseBodyAsString(), ex);
         }
@@ -88,7 +88,7 @@ public class MottaSøknadController {
             Vedtak vedtak = saksbehandling.behandle(søknad, saksnummer, journalpostID);
             funksjonelleMetrikker.tellFunksjonelleMetrikker(søknad, vedtak);
             return new ResponseEntity<>(Ressurs.Companion.success(null, "Motta dokument vellykket"), HttpStatus.OK);
-        } catch (OppslagException e) {
+        } catch (IntegrasjonException e) {
             feiledeBehandlinger.increment();
             throw e;
         } catch (Exception e) {

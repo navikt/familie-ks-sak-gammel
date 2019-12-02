@@ -9,7 +9,7 @@ import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.IntegrasjonTjeneste;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import no.nav.familie.ks.sak.app.integrasjon.oppgave.domene.OppgaveBeskrivelse;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.FDATException;
@@ -34,7 +34,7 @@ public class Saksbehandling {
     private RegisterInnhentingService registerInnhentingService;
     private FastsettingService fastsettingService;
     private ResultatService resultatService;
-    private OppslagTjeneste oppslagTjeneste;
+    private IntegrasjonTjeneste integrasjonTjeneste;
     private UnleashProvider unleash;
 
     @Autowired
@@ -42,7 +42,7 @@ public class Saksbehandling {
                           BehandlingslagerService behandlingslagerService,
                           RegisterInnhentingService registerInnhentingService,
                           FastsettingService fastsettingService,
-                          OppslagTjeneste oppslagTjeneste,
+                          IntegrasjonTjeneste integrasjonTjeneste,
                           UnleashProvider unleash,
                           ResultatService resultatService) {
         this.vurderSamletTjeneste = vurderSamletTjeneste;
@@ -50,7 +50,7 @@ public class Saksbehandling {
         this.registerInnhentingService = registerInnhentingService;
         this.fastsettingService = fastsettingService;
         this.resultatService = resultatService;
-        this.oppslagTjeneste = oppslagTjeneste;
+        this.integrasjonTjeneste = integrasjonTjeneste;
         this.unleash = unleash;
     }
 
@@ -105,8 +105,8 @@ public class Saksbehandling {
         }
 
         if (unleash.toggle(OPPDATER_OPPGAVE).isEnabled()) {
-            LOG.info("Oppdater oppgave toggle er: Enabled\n Kaller oppslagTjeneste.oppdaterGosysOppgave...");
-            oppslagTjeneste.oppdaterGosysOppgave(søknad.getSøkerFødselsnummer(), journalpostID, oppgaveBeskrivelse);
+            LOG.info("Oppdater oppgave toggle er: Enabled\n Kaller integrasjonTjeneste.oppdaterGosysOppgave...");
+            integrasjonTjeneste.oppdaterGosysOppgave(søknad.getSøkerFødselsnummer(), journalpostID, oppgaveBeskrivelse);
         } else {
             LOG.info("Oppdater oppgave toggle er: Disabled");
         }

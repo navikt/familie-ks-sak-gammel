@@ -11,7 +11,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.Per
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.IntegrasjonTjeneste;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
@@ -48,7 +48,7 @@ import static org.mockito.Mockito.when;
 public class FagsakRepositoryTest {
 
     @MockBean
-    private OppslagTjeneste oppslagTjeneste;
+    private IntegrasjonTjeneste integrasjonTjeneste;
 
     @MockBean
     private Unleash unleash;
@@ -68,17 +68,17 @@ public class FagsakRepositoryTest {
     @BeforeEach
     public void setUp() {
         when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        when(oppslagTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
-        when(oppslagTjeneste.hentPersoninfoFor(any())).thenReturn(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersoninfo(),
+        when(integrasjonTjeneste.hentAktørId(ArgumentMatchers.any())).thenAnswer(i -> new AktørId(String.valueOf(i.getArguments()[0])));
+        when(integrasjonTjeneste.hentPersoninfoFor(any())).thenReturn(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersoninfo(),
             FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersoninfo(),
             FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo());
-        when(oppslagTjeneste.hentHistorikkFor(any(), any())).thenReturn(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
+        when(integrasjonTjeneste.hentHistorikkFor(any(), any())).thenReturn(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getForelder().getPersonhistorikkInfo(),
             FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getAnnenForelder().getPersonhistorikkInfo(),
             FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersonhistorikkInfo());
 
-        when(oppslagTjeneste.hentMedlemskapsUnntakFor(any())).thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
-        when(oppslagTjeneste.hentMedlemskapsUnntakFor(any())).thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
-        when(oppslagTjeneste.hentInfoOmLøpendeKontantstøtteForBarn(any())).thenReturn(FaktagrunnlagTestBuilder.typiskInfotrygdFakta.getAktivKontantstøtteInfo());
+        when(integrasjonTjeneste.hentMedlemskapsUnntakFor(any())).thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
+        when(integrasjonTjeneste.hentMedlemskapsUnntakFor(any())).thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
+        when(integrasjonTjeneste.hentInfoOmLøpendeKontantstøtteForBarn(any())).thenReturn(FaktagrunnlagTestBuilder.typiskInfotrygdFakta.getAktivKontantstøtteInfo());
     }
 
     @Container

@@ -3,7 +3,7 @@ package no.nav.familie.ks.sak.app.rest.tilgangskontroll
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository
 import no.nav.familie.ks.sak.app.behandling.domene.FagsakRepository
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.PersonopplysningGrunnlagRepository
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste
+import no.nav.familie.ks.sak.app.integrasjon.IntegrasjonTjeneste
 import no.nav.familie.ks.sak.app.rest.BaseService
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
@@ -17,10 +17,10 @@ class TilgangskontrollService(
         restTemplateBuilderMedProxy: RestTemplateBuilder,
         clientConfigurationProperties: ClientConfigurationProperties,
         oAuth2AccessTokenService: OAuth2AccessTokenService,
-        private val oppslagTjeneste: OppslagTjeneste,
+        private val integrasjonTjeneste: IntegrasjonTjeneste,
         private val behandlingRepository: BehandlingRepository,
         private val personopplysningGrunnlagRepository: PersonopplysningGrunnlagRepository,
-        private val fagsakRepository: FagsakRepository) : BaseService("ks-oppslag-onbehalfof", restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService) {
+        private val fagsakRepository: FagsakRepository) : BaseService("integrasjoner-onbehalfof", restTemplateBuilderMedProxy, clientConfigurationProperties, oAuth2AccessTokenService) {
 
     fun harTilgang(fagsakId: Long): Boolean {
         val optionalFagsak = fagsakRepository.finnFagsak(fagsakId)
@@ -34,7 +34,7 @@ class TilgangskontrollService(
         for (behandling in behandlinger) {
             for (personopplysning in personopplysningGrunnlagRepository.findByBehandlingAndAktiv(behandling.id).stream()) {
                 for (person in personopplysning.registrertePersoner.get().iterator()) {
-                    val respons = oppslagTjeneste.sjekkTilgangTilPerson(person.personIdent.ident, restTemplate)
+                    val respons = integrasjonTjeneste.sjekkTilgangTilPerson(person.personIdent.ident, restTemplate)
                     if (!respons.body.isHarTilgang) {
                         return false
                     }
