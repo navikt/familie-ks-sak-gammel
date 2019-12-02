@@ -8,7 +8,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;
 import no.nav.familie.ks.sak.app.behandling.fastsetting.FastsettingService;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.IntegrasjonTjeneste;
 import no.nav.familie.ks.sak.app.rest.RestFagsakService;
 import no.nav.familie.ks.sak.app.rest.behandling.RestBehandling;
 import no.nav.familie.ks.sak.app.rest.behandling.RestFagsak;
@@ -44,7 +44,7 @@ public class RestFagsakTest {
     private FastsettingService fastsettingService;
 
     @MockBean
-    private OppslagTjeneste oppslagTjeneste;
+    private IntegrasjonTjeneste integrasjonTjeneste;
 
     @MockBean
     private Unleash unleash;
@@ -62,27 +62,27 @@ public class RestFagsakTest {
     public void setUp() {
         TpsFakta tpsFakta = FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage().getTpsFakta();
 
-        when(oppslagTjeneste.hentAktørId(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent())).thenReturn(tpsFakta.getForelder().getPersoninfo().getAktørId());
-        when(oppslagTjeneste.hentAktørId(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent())).thenReturn(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId());
-        when(oppslagTjeneste.hentAktørId(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent())).thenReturn(tpsFakta.getBarn().getPersoninfo().getAktørId());
+        when(integrasjonTjeneste.hentAktørId(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent())).thenReturn(tpsFakta.getForelder().getPersoninfo().getAktørId());
+        when(integrasjonTjeneste.hentAktørId(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent())).thenReturn(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId());
+        when(integrasjonTjeneste.hentAktørId(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent())).thenReturn(tpsFakta.getBarn().getPersoninfo().getAktørId());
 
-        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent()))
+        when(integrasjonTjeneste.hentPersoninfoFor(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getForelder().getPersoninfo());
-        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent()))
+        when(integrasjonTjeneste.hentPersoninfoFor(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getAnnenForelder().getPersoninfo());
-        when(oppslagTjeneste.hentPersoninfoFor(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent()))
+        when(integrasjonTjeneste.hentPersoninfoFor(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent()))
             .thenReturn(tpsFakta.getBarn().getPersoninfo());
 
-        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent(),
+        when(integrasjonTjeneste.hentHistorikkFor(tpsFakta.getForelder().getPersoninfo().getPersonIdent().getIdent(),
             tpsFakta.getForelder().getPersoninfo().getFødselsdato())).thenReturn(tpsFakta.getForelder().getPersonhistorikkInfo());
-        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent(),
+        when(integrasjonTjeneste.hentHistorikkFor(tpsFakta.getAnnenForelder().getPersoninfo().getPersonIdent().getIdent(),
             tpsFakta.getAnnenForelder().getPersoninfo().getFødselsdato())).thenReturn(tpsFakta.getAnnenForelder().getPersonhistorikkInfo());
-        when(oppslagTjeneste.hentHistorikkFor(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent(),
+        when(integrasjonTjeneste.hentHistorikkFor(tpsFakta.getBarn().getPersoninfo().getPersonIdent().getIdent(),
             tpsFakta.getBarn().getPersoninfo().getFødselsdato())).thenReturn(tpsFakta.getBarn().getPersonhistorikkInfo());
 
-        when(oppslagTjeneste.hentMedlemskapsUnntakFor(tpsFakta.getForelder().getPersoninfo().getAktørId()))
+        when(integrasjonTjeneste.hentMedlemskapsUnntakFor(tpsFakta.getForelder().getPersoninfo().getAktørId()))
             .thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
-        when(oppslagTjeneste.hentMedlemskapsUnntakFor(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId()))
+        when(integrasjonTjeneste.hentMedlemskapsUnntakFor(tpsFakta.getAnnenForelder().getPersoninfo().getAktørId()))
             .thenReturn(FaktagrunnlagTestBuilder.tomMedlemskapsinfo());
     }
 

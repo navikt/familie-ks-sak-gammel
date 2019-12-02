@@ -13,7 +13,7 @@ import no.nav.familie.ks.sak.app.behandling.regel.vilkår.barnehage.BarnehageVil
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.bosted.BostedVilkår;
 import no.nav.familie.ks.sak.app.behandling.regel.vilkår.medlemskapBosted.MedlemskapBostedVilkår;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.IntegrasjonTjeneste;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import no.nav.familie.ks.sak.config.toggle.UnleashProvider;
@@ -41,7 +41,7 @@ public class PeriodeOppretterTest {
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
     private final UnleashProvider unleashProviderMock = mock(UnleashProvider.class);
     private final UnleashProvider.Toggle toggleMock = mock(UnleashProvider.Toggle.class);
-    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(OppslagTjeneste.class), unleashProviderMock, mock(ResultatService.class));
+    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(IntegrasjonTjeneste.class), unleashProviderMock, mock(ResultatService.class));
 
     @Before
     public void setUp() {

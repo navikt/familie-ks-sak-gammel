@@ -13,7 +13,7 @@ import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.barnehagebarn.Oppgit
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.OppgittErklæring;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlag;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.SøknadGrunnlagRepository;
-import no.nav.familie.ks.sak.app.integrasjon.OppslagTjeneste;
+import no.nav.familie.ks.sak.app.integrasjon.IntegrasjonTjeneste;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,23 +27,23 @@ public class BehandlingslagerService {
     private BehandlingRepository behandlingRepository;
     private SøknadGrunnlagRepository søknadGrunnlagRepository;
     private BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository;
-    private OppslagTjeneste oppslagTjeneste;
+    private IntegrasjonTjeneste integrasjonTjeneste;
 
     @Autowired
     public BehandlingslagerService(FagsakRepository fagsakRepository,
                                    BehandlingRepository behandlingRepository,
                                    SøknadGrunnlagRepository søknadGrunnlagRepository,
                                    BarnehageBarnGrunnlagRepository barnehageBarnGrunnlagRepository,
-                                   OppslagTjeneste oppslag) {
+                                   IntegrasjonTjeneste integrasjonTjeneste) {
         this.fagsakRepository = fagsakRepository;
         this.behandlingRepository = behandlingRepository;
         this.søknadGrunnlagRepository = søknadGrunnlagRepository;
         this.barnehageBarnGrunnlagRepository = barnehageBarnGrunnlagRepository;
-        this.oppslagTjeneste = oppslag;
+        this.integrasjonTjeneste = integrasjonTjeneste;
     }
 
     public Behandling nyBehandling(Søknad søknad, String saksnummer, String journalpostID) {
-        final var søkerAktørId = oppslagTjeneste.hentAktørId(søknad.getSøkerFødselsnummer());
+        final var søkerAktørId = integrasjonTjeneste.hentAktørId(søknad.getSøkerFødselsnummer());
         final var fagsak = Fagsak.opprettNy(søkerAktørId, new PersonIdent(søknad.getSøkerFødselsnummer()), saksnummer);
         fagsakRepository.save(fagsak);
 
