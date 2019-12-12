@@ -33,6 +33,7 @@ spec:
     requests:
       memory: 512Mi
       cpu: 500m
+  webproxy: true
   secureLogs:
     enabled: true
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
