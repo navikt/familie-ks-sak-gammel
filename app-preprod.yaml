@@ -41,3 +41,6 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: preprod
+    # Setter proxy, men dropper nav.no slik at vi kan kalle sentry (https://sentry.gc.nav.no/)
+    - name: JAVA_PROXY_OPTIONS
+      value: -Dhttp.proxyHost=webproxy.nais -Dhttps.proxyHost=webproxy.nais -Dhttp.proxyPort=8088 -Dhttps.proxyPort=8088 -Dhttp.nonProxyHosts=localhost|127.0.0.1|10.254.0.1|*.local|*.adeo.no|*.aetat.no|*.devillo.no|*.oera.no|*.nais.io
