@@ -25,7 +25,7 @@ jobs:
             - "04:5d:37:94:ee:89:5e:42:f6:da:51:03:00:41:a0:0f"
       - checkout
       - setup_remote_docker:
-          docker_layer_caching: true
+          docker_layer_caching: false
       - run:
           name: Generate version number and docker image tags
           command: |
@@ -71,7 +71,7 @@ jobs:
       - attach_workspace:
           at: /home/circleci/project
       - setup_remote_docker:
-          docker_layer_caching: true
+          docker_layer_caching: false
       - run:
           name: Set up environment variables
           command: cat /home/circleci/project/properties.env >> $BASH_ENV
