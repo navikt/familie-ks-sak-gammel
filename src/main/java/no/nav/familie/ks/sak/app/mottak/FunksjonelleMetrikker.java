@@ -2,7 +2,7 @@ package no.nav.familie.ks.sak.app.mottak;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
-import no.nav.familie.ks.kontrakter.søknad.Søknad;
+import no.nav.familie.kontrakter.ks.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.avvik.AvviksVurdering;
 import no.nav.familie.ks.sak.app.behandling.SamletVilkårsVurdering;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.UtfallType;
@@ -42,12 +42,12 @@ public class FunksjonelleMetrikker {
                 Metrics.counter("soknad.kontantstotte.behandling.funksjonell.avslag", "status", Integer.toString(vilkårIkkeOppfyltÅrsak.getÅrsakKode()), "beskrivelse", vilkårIkkeOppfyltÅrsak.getBeskrivelse())
         ));
 
-        Arrays.stream(no.nav.familie.ks.kontrakter.søknad.BarnehageplassStatus.values()).forEach(barnehageplassVerdi -> barnehagestatus.put(
+        Arrays.stream(no.nav.familie.kontrakter.ks.søknad.BarnehageplassStatus.values()).forEach(barnehageplassVerdi -> barnehagestatus.put(
                 barnehageplassVerdi.name(),
                 Metrics.counter("soknad.kontantstotte.funksjonell.barnehage", "status", barnehageplassVerdi.name(), "beskrivelse", barnehageplassVerdi.getBeskrivelse())
         ));
 
-        Arrays.stream(no.nav.familie.ks.kontrakter.søknad.TilknytningTilUtlandVerdier.values()).forEach(tilknytningTilUtlandVerdi -> boddEllerJobbetINorgeEllerEøsIFemÅr.put(
+        Arrays.stream(no.nav.familie.kontrakter.ks.søknad.TilknytningTilUtlandVerdier.values()).forEach(tilknytningTilUtlandVerdi -> boddEllerJobbetINorgeEllerEøsIFemÅr.put(
                 tilknytningTilUtlandVerdi.name(),
                 Metrics.counter("soknad.kontantstotte.funksjonell.boddEllerJobbetINorgeEllerEøsIFemÅr", "status", tilknytningTilUtlandVerdi.name(), "beskrivelse", tilknytningTilUtlandVerdi.getBeskrivelse())
         ));

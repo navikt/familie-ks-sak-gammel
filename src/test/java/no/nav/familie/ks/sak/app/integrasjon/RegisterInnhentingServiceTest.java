@@ -1,7 +1,7 @@
 package no.nav.familie.ks.sak.app.integrasjon;
 
 import no.finn.unleash.Unleash;
-import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
+import no.nav.familie.kontrakter.ks.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.FaktagrunnlagTestBuilder;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.BehandlingRepository;

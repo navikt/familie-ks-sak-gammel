@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak.app.rest.behandling.grunnlag.søknad
 
-import no.nav.familie.ks.kontrakter.søknad.TilknytningTilUtlandVerdier
+import no.nav.familie.kontrakter.ks.søknad.TilknytningTilUtlandVerdier
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.søknad.AktørTilknytningUtland
 
 data class RestAktørTilknytningUtland(

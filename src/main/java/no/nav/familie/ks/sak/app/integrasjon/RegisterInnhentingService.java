@@ -2,7 +2,7 @@ package no.nav.familie.ks.sak.app.integrasjon;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
-import no.nav.familie.ks.kontrakter.søknad.Søknad;
+import no.nav.familie.kontrakter.ks.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling;
 import no.nav.familie.ks.sak.app.behandling.domene.grunnlag.personopplysning.*;
 import no.nav.familie.ks.sak.app.behandling.domene.kodeverk.Landkode;

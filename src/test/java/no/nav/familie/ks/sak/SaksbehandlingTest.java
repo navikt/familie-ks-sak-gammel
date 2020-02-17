@@ -1,7 +1,7 @@
 package no.nav.familie.ks.sak;
 
-import no.nav.familie.ks.kontrakter.søknad.Søknad;
-import no.nav.familie.ks.kontrakter.søknad.testdata.SøknadTestdata;
+import no.nav.familie.kontrakter.ks.søknad.Søknad;
+import no.nav.familie.kontrakter.ks.søknad.testdata.SøknadTestdata;
 import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService;
 import no.nav.familie.ks.sak.app.behandling.ResultatService;
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling;

@@ -1,9 +1,10 @@
 package no.nav.familie.ks.sak.app.integrasjon;
 
-import no.nav.familie.http.client.NavHttpHeaders;
-import no.nav.familie.ks.kontrakter.oppgave.Oppgave;
-import no.nav.familie.ks.kontrakter.oppgave.OppgaveKt;
-import no.nav.familie.ks.kontrakter.sak.Ressurs;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import no.nav.familie.kontrakter.felles.ObjectMapperKt;
+import no.nav.familie.kontrakter.felles.Ressurs;
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave;
+import no.nav.familie.kontrakter.felles.oppgave.Tema;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.AktivKontantstøtteInfo;
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo;
@@ -13,6 +14,7 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personhisto
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.tilgangskontroll.Tilgang;
 import no.nav.familie.ks.sak.app.rest.BaseService;
+import no.nav.familie.log.NavHttpHeaders;
 import no.nav.familie.log.mdc.MDCConstants;
 import no.nav.familie.sikkerhet.OIDCUtil;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
@@ -40,7 +42,8 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.Objects;
+
+import static no.nav.familie.kontrakter.felles.ObjectMapperKt.getObjectMapper;
 
 @Component
 public class IntegrasjonTjeneste extends BaseService {
@@ -66,45 +69,45 @@ public class IntegrasjonTjeneste extends BaseService {
 
     private <T> ResponseEntity<T> request(URI uri, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
 
         HttpEntity httpEntity = new HttpEntity(headers);
 
-        return request(uri, HttpMethod.GET, clazz, httpEntity);
+        return request(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
     private <T> ResponseEntity<T> postRequest(URI uri, String requestBody, Class<T> clazz) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=UTF-8");
-        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         HttpEntity httpEntity = new HttpEntity<>(requestBody, headers);
 
-        return request(uri, HttpMethod.POST, clazz, httpEntity);
+        return request(uri, HttpMethod.POST, httpEntity, clazz);
     }
 
     private <T> ResponseEntity<T> requestMedPersonIdent(URI uri, String personident, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
 
         HttpEntity httpEntity = new HttpEntity(headers);
 
-        return request(uri, HttpMethod.GET, clazz, httpEntity);
+        return request(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
     private <T> ResponseEntity<T> requestMedAktørId(URI uri, String aktørId, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         headers.add("Nav-Aktorid", aktørId);
 
         HttpEntity httpEntity = new HttpEntity(headers);
-        return request(uri, HttpMethod.GET, clazz, httpEntity);
+        return request(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
 
     private <T> ResponseEntity<T> requestUtenRessurs(RestTemplate restTemplate, URI uri, String personident, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(NavHttpHeaders.NAV_CALLID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
+        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
 
         HttpEntity httpEntity = new HttpEntity(headers);
@@ -112,12 +115,15 @@ public class IntegrasjonTjeneste extends BaseService {
         return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
-    private <T> ResponseEntity<T> request(URI uri, HttpMethod method, Class<T> clazz, HttpEntity httpEntity) {
+    private <T> ResponseEntity<T> request(URI uri, HttpMethod method, HttpEntity httpEntity, Class<T> clazz) {
         var ressursResponse = getRestTemplate().exchange(uri, method, httpEntity, Ressurs.class);
         if (ressursResponse.getBody() == null) {
             throw new IntegrasjonException("Response kan ikke være tom", null, uri, null);
         }
-        return ResponseEntity.status(ressursResponse.getStatusCode()).body(Objects.requireNonNull(ressursResponse.getBody()).convert(clazz));
+        Ressurs<T> ressurs = ressursResponse.getBody();
+
+        return ResponseEntity.status(ressursResponse.getStatusCode())
+                             .body(getObjectMapper().convertValue(ressurs.getData(), clazz));
     }
 
     @Retryable(
@@ -183,7 +189,10 @@ public class IntegrasjonTjeneste extends BaseService {
         logger.info("Sjekker tilgang  " + integrasjonerServiceUri);
         try {
             ResponseEntity<Tilgang> response = requestUtenRessurs(restTemplate, uri, personident, Tilgang.class);
-            secureLogger.info("Saksbehandler {} forsøker å få tilgang til {} med resultat {}", oidcUtil.getClaim("preferred_username"), personident, response.getBody());
+            secureLogger.info("Saksbehandler {} forsøker å få tilgang til {} med resultat {}",
+                              oidcUtil.getClaim("preferred_username"),
+                              personident,
+                              response.getBody());
             return response;
         } catch (RestClientException e) {
             throw new IntegrasjonException("Ukjent feil ved integrasjon mot '" + uri + "'.", e, uri, personident);
@@ -206,7 +215,8 @@ public class IntegrasjonTjeneste extends BaseService {
 
             if (aktivKontantstøtteInfo != null && aktivKontantstøtteInfo.getHarAktivKontantstotte() != null) {
                 if (aktivKontantstøtteInfo.getHarAktivKontantstotte()) {
-                    secureLogger.info("Personident {}: Har løpende kontantstøtte eller er under behandling for kontantstøtte.", personident);
+                    secureLogger.info("Personident {}: Har løpende kontantstøtte eller er under behandling for kontantstøtte.",
+                                      personident);
                     logger.info("Har løpende kontantstøtte eller er under behandling for kontantstøtte.");
                 } else {
                     secureLogger.info("Kontantstøtten for {} har opphørt", personident);
@@ -232,7 +242,9 @@ public class IntegrasjonTjeneste extends BaseService {
     public PersonhistorikkInfo hentHistorikkFor(String personident, LocalDate fødselsdato) {
         final var fom = fødselsdato;
         final var tom = LocalDate.now();
-        URI uri = URI.create(integrasjonerServiceUri + "/personopplysning/v1/historikk?fomDato=" + formaterDato(fom) + "&tomDato=" + formaterDato(tom));
+        URI uri = URI.create(
+            integrasjonerServiceUri + "/personopplysning/v1/historikk?fomDato=" + formaterDato(fom) + "&tomDato=" +
+            formaterDato(tom));
         logger.info("Henter personhistorikkInfo fra " + integrasjonerServiceUri);
         try {
             ResponseEntity<PersonhistorikkInfo> response = requestMedPersonIdent(uri, personident, PersonhistorikkInfo.class);
@@ -271,7 +283,10 @@ public class IntegrasjonTjeneste extends BaseService {
             secureLogger.info("MedlemskapsInfo for {}: {}", aktørId, response.getBody());
             return response.getBody();
         } catch (RestClientException e) {
-            throw new IntegrasjonException("Kall mot integrasjon feilet ved uthenting av medlemskapsinfo", e, uri, aktørId.getId());
+            throw new IntegrasjonException("Kall mot integrasjon feilet ved uthenting av medlemskapsinfo",
+                                           e,
+                                           uri,
+                                           aktørId.getId());
         }
     }
 
@@ -282,13 +297,15 @@ public class IntegrasjonTjeneste extends BaseService {
     public void oppdaterGosysOppgave(String fnr, String journalpostID, String beskrivelse) {
         URI uri = URI.create(integrasjonerServiceUri + "/oppgave/oppdater");
         logger.info("Sender \"oppdater oppgave\"-request til " + uri);
-        Oppgave oppgave = new Oppgave(hentAktørId(fnr).getId(), journalpostID, null, beskrivelse);
+        Oppgave oppgave = new Oppgave(hentAktørId(fnr).getId(), journalpostID, null, beskrivelse, Tema.KON);
         try {
-            postRequest(uri, OppgaveKt.toJson(oppgave), Map.class);
+            postRequest(uri, ObjectMapperKt.getObjectMapper().writeValueAsString(oppgave), Map.class);
         } catch (HttpClientErrorException.NotFound e) {
             logger.warn("Oppgave returnerte 404, men kaster ikke feil. Uri: {}", uri);
         } catch (RestClientException e) {
             throw new IntegrasjonException("Kan ikke oppdater Gosys-oppgave", e, uri, oppgave.getAktorId());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,7 +1,7 @@
 package no.nav.familie.ks.sak.app.rest
 
-import no.nav.familie.ks.kontrakter.søknad.Søknad
-import no.nav.familie.ks.kontrakter.søknad.toSøknad
+import no.nav.familie.kontrakter.ks.søknad.Søknad
+import no.nav.familie.kontrakter.ks.søknad.toSøknad
 import no.nav.familie.ks.sak.app.behandling.BehandlingslagerService
 import no.nav.familie.ks.sak.app.behandling.Saksbehandling
 import no.nav.familie.ks.sak.app.behandling.domene.Behandling
