@@ -1,7 +1,5 @@
 package no.nav.familie.ks.sak.app.integrasjon;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import no.nav.familie.kontrakter.felles.ObjectMapperKt;
 import no.nav.familie.kontrakter.felles.Ressurs;
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave;
 import no.nav.familie.kontrakter.felles.oppgave.Tema;
@@ -15,13 +13,11 @@ import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.Personinfo;
 import no.nav.familie.ks.sak.app.integrasjon.tilgangskontroll.Tilgang;
 import no.nav.familie.ks.sak.app.rest.BaseService;
 import no.nav.familie.log.NavHttpHeaders;
-import no.nav.familie.log.mdc.MDCConstants;
 import no.nav.familie.sikkerhet.OIDCUtil;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -69,17 +65,14 @@ public class IntegrasjonTjeneste extends BaseService {
 
     private <T> ResponseEntity<T> request(URI uri, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
-
         HttpEntity httpEntity = new HttpEntity(headers);
 
         return request(uri, HttpMethod.GET, httpEntity, clazz);
     }
 
-    private <T> ResponseEntity<T> postRequest(URI uri, String requestBody, Class<T> clazz) {
+    private <T> ResponseEntity<T> postRequest(URI uri, Object requestBody, Class<T> clazz) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=UTF-8");
-        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         HttpEntity httpEntity = new HttpEntity<>(requestBody, headers);
 
         return request(uri, HttpMethod.POST, httpEntity, clazz);
@@ -87,7 +80,6 @@ public class IntegrasjonTjeneste extends BaseService {
 
     private <T> ResponseEntity<T> requestMedPersonIdent(URI uri, String personident, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
 
         HttpEntity httpEntity = new HttpEntity(headers);
@@ -97,7 +89,6 @@ public class IntegrasjonTjeneste extends BaseService {
 
     private <T> ResponseEntity<T> requestMedAktørId(URI uri, String aktørId, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         headers.add("Nav-Aktorid", aktørId);
 
         HttpEntity httpEntity = new HttpEntity(headers);
@@ -107,7 +98,6 @@ public class IntegrasjonTjeneste extends BaseService {
 
     private <T> ResponseEntity<T> requestUtenRessurs(RestTemplate restTemplate, URI uri, String personident, Class<T> clazz) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(NavHttpHeaders.NAV_CALL_ID.asString(), MDC.get(MDCConstants.MDC_CALL_ID));
         headers.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident);
 
         HttpEntity httpEntity = new HttpEntity(headers);
@@ -299,13 +289,11 @@ public class IntegrasjonTjeneste extends BaseService {
         logger.info("Sender \"oppdater oppgave\"-request til " + uri);
         Oppgave oppgave = new Oppgave(hentAktørId(fnr).getId(), journalpostID, null, beskrivelse, Tema.KON);
         try {
-            postRequest(uri, ObjectMapperKt.getObjectMapper().writeValueAsString(oppgave), Map.class);
+            postRequest(uri, oppgave, Map.class);
         } catch (HttpClientErrorException.NotFound e) {
             logger.warn("Oppgave returnerte 404, men kaster ikke feil. Uri: {}", uri);
         } catch (RestClientException e) {
             throw new IntegrasjonException("Kan ikke oppdater Gosys-oppgave", e, uri, oppgave.getAktorId());
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
         }
     }
 

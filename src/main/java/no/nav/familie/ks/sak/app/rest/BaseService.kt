@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.app.rest
 
+import no.nav.familie.http.interceptor.MdcValuesPropagatingClientInterceptor
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
@@ -28,6 +29,7 @@ open class BaseService(clientConfigKey: String, restTemplateBuilder: RestTemplat
             .orElseThrow { RuntimeException("could not find oauth2 client config for key=$clientConfigKey") }
 
     val restTemplate: RestTemplate = restTemplateBuilder
-            .additionalInterceptors(BearerAuthorizationInterceptor(oAuth2AccessTokenService, clientProperties))
+            .additionalInterceptors(BearerAuthorizationInterceptor(oAuth2AccessTokenService, clientProperties),
+                                     MdcValuesPropagatingClientInterceptor())
             .build()
 }

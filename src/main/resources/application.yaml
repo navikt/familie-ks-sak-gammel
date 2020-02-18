@@ -1,3 +1,6 @@
+application:
+  name: familie-ks-sak
+
 server:
   servlet:
     context-path: /

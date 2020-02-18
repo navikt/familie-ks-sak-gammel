@@ -1,3 +1,6 @@
+application:
+  name: familie-ks-sak
+
 no.nav.security.jwt:
   issuer.azuread:
     discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
@@ -24,6 +27,7 @@ no.nav.security.jwt:
           client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
 
+
 credential:
   username: "srv-ks-sak"
   password: "not-a-real-password"
@@ -48,3 +52,5 @@ FAMILIE_INTEGRASJONER_API_URL: http://localhost:8085/api
 
 #Unleash
 UNLEASH_API_URL: http://localhost
+
+

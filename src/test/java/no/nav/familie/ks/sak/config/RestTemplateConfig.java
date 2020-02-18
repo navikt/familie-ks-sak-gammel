@@ -1,8 +1,10 @@
 package no.nav.familie.ks.sak.config;
 
+import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -12,6 +14,7 @@ import java.time.Duration;
 
 @Configuration
 @Profile("dev")
+@Import(ConsumerIdClientInterceptor.class)
 public class RestTemplateConfig {
 
     @Bean
@@ -21,9 +24,10 @@ public class RestTemplateConfig {
     }
 
     @Bean
-    public RestTemplateBuilder restTemplateBuilderMedProxy() {
+    public RestTemplateBuilder restTemplateBuilderMedProxy(ConsumerIdClientInterceptor consumerIdClientInterceptor) {
         return new RestTemplateBuilder()
             .setConnectTimeout(Duration.ofSeconds(5))
-            .setReadTimeout(Duration.ofSeconds(5));
+            .setReadTimeout(Duration.ofSeconds(5))
+            .additionalInterceptors(consumerIdClientInterceptor);
     }
 }
