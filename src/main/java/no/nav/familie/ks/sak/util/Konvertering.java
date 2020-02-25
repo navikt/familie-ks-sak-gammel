@@ -1,6 +1,6 @@
 package no.nav.familie.ks.sak.util;
 
-import no.nav.familie.ks.kontrakter.søknad.Standpunkt;
+import no.nav.familie.kontrakter.ks.søknad.Standpunkt;
 
 import java.util.Optional;
 

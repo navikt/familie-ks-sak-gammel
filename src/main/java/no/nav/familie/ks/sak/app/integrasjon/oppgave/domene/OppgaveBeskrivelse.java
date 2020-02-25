@@ -1,7 +1,7 @@
 package no.nav.familie.ks.sak.app.integrasjon.oppgave.domene;
 
-import no.nav.familie.ks.kontrakter.søknad.Barn;
-import no.nav.familie.ks.kontrakter.søknad.Søknad;
+import no.nav.familie.kontrakter.ks.søknad.Barn;
+import no.nav.familie.kontrakter.ks.søknad.Søknad;
 import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 
 import java.time.LocalDate;
