@@ -43,7 +43,6 @@ import static org.mockito.Mockito.when;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ContextConfiguration(classes = DevLauncher.class, initializers = { FagsakRepositoryTest.Initializer.class })
 @Testcontainers
-@DisabledIfEnvironmentVariable(named="CIRCLECI", matches="true")
 @ActiveProfiles("dev")
 public class FagsakRepositoryTest {
 

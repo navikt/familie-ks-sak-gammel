@@ -7,7 +7,7 @@ metadata:
     team: teamfamilie
 
 spec:
-  image: navikt/familie-ks-sak:{{version}}
+  image: {{ image }}
   port: 8083
   liveness:
     path: /internal/status/isAlive
