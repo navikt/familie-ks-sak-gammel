@@ -36,6 +36,7 @@ jobs:
         run: mvn verify sonar:sonar --settings .m2/maven-settings.xml --file pom.xml
       - name: Bygg Docker image
         run: |
+          echo Image: $IMAGE
           docker build -t $IMAGE .
       - name: Login to Github Package Registry
         env:
