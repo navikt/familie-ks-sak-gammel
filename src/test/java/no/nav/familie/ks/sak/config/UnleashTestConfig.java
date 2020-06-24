@@ -1,6 +1,8 @@
 package no.nav.familie.ks.sak.config;
 
 import no.finn.unleash.Unleash;
+import no.finn.unleash.UnleashContext;
+import no.finn.unleash.Variant;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -25,6 +27,26 @@ public class UnleashTestConfig {
             @Override
             public boolean isEnabled(String s, boolean b) {
                 return true;
+            }
+
+            @Override
+            public Variant getVariant(String s, UnleashContext unleashContext) {
+                return null;
+            }
+
+            @Override
+            public Variant getVariant(String s, UnleashContext unleashContext, Variant variant) {
+                return null;
+            }
+
+            @Override
+            public Variant getVariant(String s) {
+                return null;
+            }
+
+            @Override
+            public Variant getVariant(String s, Variant variant) {
+                return null;
             }
 
             @Override
