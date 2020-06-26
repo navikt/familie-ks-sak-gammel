@@ -21,7 +21,7 @@
         <changelist>-SNAPSHOT</changelist>
         <spring.cloud.version>2.2.2.RELEASE</spring.cloud.version>
         <java.version>11</java.version>
-        <token-validation-spring.version>1.1.2</token-validation-spring.version>
+        <token-validation-spring.version>1.1.5</token-validation-spring.version>
         <fpsak.nare.version>2.0_20191115215140_feb3f33</fpsak.nare.version>
         <cxf.version>3.3.1</cxf.version>
         <tjenestespesifikasjoner.version>1.2019.06.11-13.36-786a4cec3151</tjenestespesifikasjoner.version>
