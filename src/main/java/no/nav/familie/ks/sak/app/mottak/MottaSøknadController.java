@@ -56,7 +56,7 @@ public class MottaSøknadController {
             sb.append("=");
             sb.append(errorMessage);
         });
-        return Ressurs.Companion.failure(sb.toString(), ex);
+        return Ressurs.Companion.failure(sb.toString(), null, ex);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -64,7 +64,7 @@ public class MottaSøknadController {
     public Ressurs handleMissingKotlinParameterException(MissingKotlinParameterException kotEx) {
         log.error("MissingKotlinParameterException ved validering av søknadJson");
         secureLogger.error("Feil ved validering av søknadJson. message{}", kotEx.getMsg()); //message innholder fnr
-        return Ressurs.Companion.failure("MissingKotlinParameterException ved validering av søknadJson", null);
+        return Ressurs.Companion.failure("MissingKotlinParameterException ved validering av søknadJson", null,null);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -74,7 +74,7 @@ public class MottaSøknadController {
         try {
             return objectMapper.readValue(ex.getResponseBodyAsString(), Ressurs.class); // kaster orginal ressurs fra integrasjon hvis eksisterer
         } catch (Exception e) {
-            return Ressurs.Companion.failure("mottaDokument feilet " + ex.getResponseBodyAsString(), ex);
+            return Ressurs.Companion.failure("mottaDokument feilet " + ex.getResponseBodyAsString(), null, ex);
         }
     }
 
@@ -94,7 +94,7 @@ public class MottaSøknadController {
         } catch (Exception e) {
             log.error("behandling feilet", e);
             feiledeBehandlinger.increment();
-            Ressurs failure = Ressurs.Companion.failure("mottaDokument feilet", e);
+            Ressurs failure = Ressurs.Companion.failure("mottaDokument feilet", null, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(failure);
         }
     }
