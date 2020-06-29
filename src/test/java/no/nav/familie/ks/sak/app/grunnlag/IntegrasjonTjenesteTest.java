@@ -2,6 +2,7 @@ package no.nav.familie.ks.sak.app.grunnlag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import no.nav.familie.kontrakter.felles.personinfo.Ident;
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId;
 import no.nav.familie.ks.sak.app.integrasjon.IntegrasjonTjeneste;
 import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.AktivKontantstøtteInfo;
@@ -99,9 +100,9 @@ public class IntegrasjonTjenesteTest {
 
     @Test
     public void hentHistorikkFor() throws Exception {
-        stubFor(get(urlEqualTo("/api/personopplysning/v1/historikk?fomDato=1980-01-31&tomDato=" + LocalDate.now().format(
+        stubFor(post(urlEqualTo("/api/personopplysning/v2/historikk?fomDato=1980-01-31&tomDato=" + LocalDate.now().format(
             DateTimeFormatter.ISO_DATE)))
-                    .withHeader(NavHttpHeaders.NAV_PERSONIDENT.asString(), equalTo(FNR))
+                    .withRequestBody(matchingJsonPath("$.[?(@.ident == '" + FNR + "')]"))
                     .willReturn(aResponse()
                                     .withHeader("Content-Type", "application/json")
                                     .withHeader("Nav-Personident", FNR)
@@ -121,8 +122,8 @@ public class IntegrasjonTjenesteTest {
 
     @Test
     public void hentPersoninfoFor() throws Exception {
-        stubFor(get(urlEqualTo("/api/personopplysning/v1/info"))
-                    .withHeader(NavHttpHeaders.NAV_PERSONIDENT.asString(), equalTo(FNR))
+        stubFor(post(urlEqualTo("/api/personopplysning/v2/info"))
+                    .withRequestBody(matchingJsonPath("$.[?(@.ident == '" + FNR + "')]"))
                     .willReturn(aResponse()
                                     .withHeader("Content-Type", "application/json")
                                     .withBody(MAPPER.writeValueAsString(Companion.success(Personinfo.builder()
