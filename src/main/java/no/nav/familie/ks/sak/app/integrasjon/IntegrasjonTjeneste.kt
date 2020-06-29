@@ -4,6 +4,7 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.Tema
+import no.nav.familie.kontrakter.felles.personinfo.Ident
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId
 import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.AktivKontantstøtteInfo
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo
@@ -221,13 +222,13 @@ class IntegrasjonTjeneste @Autowired constructor(@param:Value("\${FAMILIE_INTEGR
     fun hentHistorikkFor(personident: String, fødselsdato: LocalDate): PersonhistorikkInfo {
         val tom = LocalDate.now()
         val uri = URI.create(
-                integrasjonerServiceUri.toString() + "/personopplysning/v1/historikk?fomDato="
+                integrasjonerServiceUri.toString() + "/personopplysning/v2/historikk?fomDato="
                 + formaterDato(fødselsdato) + "&tomDato=" +
                 formaterDato(tom))
         logger.info("Henter personhistorikkInfo fra $integrasjonerServiceUri")
         return try {
             val response =
-                    requestMedPersonIdent(uri, personident, PersonhistorikkInfo::class.java)
+                    postRequest(uri, Ident(personident), PersonhistorikkInfo::class.java)
             secureLogger.info("Personhistorikk for {}: {}", personident, response.body)
             response.body
         } catch (e: RestClientException) {
@@ -239,10 +240,10 @@ class IntegrasjonTjeneste @Autowired constructor(@param:Value("\${FAMILIE_INTEGR
                maxAttempts = 3,
                backoff = Backoff(delay = 5000))
     fun hentPersoninfoFor(personIdent: String): Personinfo {
-        val uri = URI.create("$integrasjonerServiceUri/personopplysning/v1/info")
+        val uri = URI.create("$integrasjonerServiceUri/personopplysning/v2/info")
         logger.info("Henter personinfo fra $integrasjonerServiceUri")
         return try {
-            val response = requestMedPersonIdent(uri, personIdent, Personinfo::class.java)
+            val response = postRequest(uri, Ident(personIdent), Personinfo::class.java)
             secureLogger.info("Personinfo for {}: {}", personIdent, response.body)
             response.body
         } catch (e: RestClientException) {
