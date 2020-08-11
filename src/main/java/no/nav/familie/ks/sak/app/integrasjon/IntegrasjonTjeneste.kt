@@ -4,7 +4,7 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.Tema
-import no.nav.familie.kontrakter.felles.personinfo.Ident
+import no.nav.familie.kontrakter.felles.personopplysning.Ident
 import no.nav.familie.ks.sak.app.behandling.domene.typer.AktørId
 import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.AktivKontantstøtteInfo
 import no.nav.familie.ks.sak.app.integrasjon.medlemskap.MedlemskapsInfo
