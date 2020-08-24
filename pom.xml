@@ -20,6 +20,7 @@
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
         <spring.cloud.version>2.2.4.RELEASE</spring.cloud.version>
+        <spring.vault.version>2.2.2.RELEASE</spring.vault.version>
         <java.version>11</java.version>
         <token-validation-spring.version>1.2.0</token-validation-spring.version>
         <fpsak.nare.version>2.0_20191115215140_feb3f33</fpsak.nare.version>
@@ -285,7 +286,7 @@
         <dependency>
             <groupId>org.springframework.vault</groupId>
             <artifactId>spring-vault-core</artifactId>
-            <version>${spring.cloud.version}</version>
+            <version>${spring.vault.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
