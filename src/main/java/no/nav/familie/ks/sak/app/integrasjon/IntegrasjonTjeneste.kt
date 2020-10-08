@@ -279,7 +279,6 @@ class IntegrasjonTjeneste @Autowired constructor(@param:Value("\${FAMILIE_INTEGR
         logger.info("Sender \"oppdater oppgave\"-request til $uri")
         val oppgave = Oppgave(aktoerId = hentAktørId(fnr).id,
                               journalpostId = journalpostID,
-                              eksisterendeOppgaveId = null,
                               beskrivelse = beskrivelse,
                               tema = Tema.KON)
         try {
