@@ -16,8 +16,6 @@ import no.nav.familie.ks.sak.app.behandling.resultat.Vedtak;
 import no.nav.familie.ks.sak.app.integrasjon.IntegrasjonTjeneste;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.domene.PersonIdent;
-import no.nav.familie.ks.sak.config.toggle.UnleashProvider;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -29,6 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PeriodeOppretterTest {
+
     private static final int MIN_ALDER_I_MÅNEDER = 13;
     private static final int MAKS_ALDER_I_MÅNEDER = 23;
     private static final int MAKS_UTBETALINGSGRAD = 100;
@@ -37,34 +36,61 @@ public class PeriodeOppretterTest {
 
     private final BehandlingslagerService behandlingslagerMock = mock(BehandlingslagerService.class);
     private final RegisterInnhentingService registerInnhentingServiceMock = mock(RegisterInnhentingService.class);
-    private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(), new MedlemskapBostedVilkår(), new BarnehageVilkår(), new BostedVilkår()));
+    private final VurderSamletTjeneste vurderSamletTjeneste = new VurderSamletTjeneste(List.of(new BarneVilkår(),
+                                                                                               new MedlemskapBostedVilkår(),
+                                                                                               new BarnehageVilkår(),
+                                                                                               new BostedVilkår()));
     private final FastsettingService fastsettingServiceMock = mock(FastsettingService.class);
-    private final UnleashProvider unleashProviderMock = mock(UnleashProvider.class);
-    private final UnleashProvider.Toggle toggleMock = mock(UnleashProvider.Toggle.class);
-    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste, behandlingslagerMock, registerInnhentingServiceMock, fastsettingServiceMock, mock(IntegrasjonTjeneste.class), unleashProviderMock, mock(ResultatService.class));
+    private final Saksbehandling saksbehandling = new Saksbehandling(vurderSamletTjeneste,
+                                                                     behandlingslagerMock,
+                                                                     registerInnhentingServiceMock,
+                                                                     fastsettingServiceMock,
+                                                                     mock(IntegrasjonTjeneste.class),
+                                                                     mock(ResultatService.class));
 
-    @Before
-    public void setUp() {
-        when(unleashProviderMock.toggle(any())).thenReturn(toggleMock);
-        when(toggleMock.isEnabled()).thenReturn(true);
-    }
 
     @Test
     public void søknad_med_barnehage_gir_feil() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapMedGradertBarnehage());
-        when(behandlingslagerMock.nyBehandling(any(), any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), new PersonIdent(""),""), "").build());
+        when(fastsettingServiceMock.fastsettFakta(any(),
+                                                  any(),
+                                                  any(),
+                                                  any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapMedGradertBarnehage());
+        when(behandlingslagerMock.nyBehandling(any(),
+                                               any(),
+                                               any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L),
+                                                                                                             new PersonIdent(""),
+                                                                                                             ""), "").build());
         Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieGradertBarnehageplass(), SAKSNUMMER, JOURNALPOSTID);
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.MANUELL_BEHANDLING);
     }
 
     @Test
     public void at_søknad_uten_barnehage_gir_stønadperiode() {
-        when(fastsettingServiceMock.fastsettFakta(any(), any(), any(), any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
-        when(behandlingslagerMock.nyBehandling(any(), any(), any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L), new PersonIdent(""), ""), "").build());
+        when(fastsettingServiceMock.fastsettFakta(any(),
+                                                  any(),
+                                                  any(),
+                                                  any())).thenReturn(FaktagrunnlagTestBuilder.familieNorskStatsborgerskapUtenBarnehage());
+        when(behandlingslagerMock.nyBehandling(any(),
+                                               any(),
+                                               any())).thenReturn(Behandling.forFørstegangssøknad(new Fagsak(new AktørId(0L),
+                                                                                                             new PersonIdent(""),
+                                                                                                             ""), "").build());
         Vedtak vedtak = saksbehandling.behandle(SøknadTestdata.norskFamilieUtenBarnehageplass(), SAKSNUMMER, JOURNALPOSTID);
         assertThat(vedtak.getVilkårvurdering().getSamletUtfallType()).isEqualTo(UtfallType.OPPFYLT);
-        assertThat(vedtak.getStønadperiode().getFom()).isEqualTo(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo().getFødselsdato().plusMonths(MIN_ALDER_I_MÅNEDER).withDayOfMonth(1));
-        assertThat(vedtak.getStønadperiode().getTom()).isEqualTo(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger().getBarn().getPersoninfo().getFødselsdato().plusMonths(MAKS_ALDER_I_MÅNEDER).withDayOfMonth(1));
+        assertThat(vedtak.getStønadperiode()
+                         .getFom()).isEqualTo(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger()
+                                                                      .getBarn()
+                                                                      .getPersoninfo()
+                                                                      .getFødselsdato()
+                                                                      .plusMonths(MIN_ALDER_I_MÅNEDER)
+                                                                      .withDayOfMonth(1));
+        assertThat(vedtak.getStønadperiode()
+                         .getTom()).isEqualTo(FaktagrunnlagTestBuilder.faktaBeggeForeldreOgBarnNorskStatsborger()
+                                                                      .getBarn()
+                                                                      .getPersoninfo()
+                                                                      .getFødselsdato()
+                                                                      .plusMonths(MAKS_ALDER_I_MÅNEDER)
+                                                                      .withDayOfMonth(1));
         assertThat(vedtak.getStønadperiode().getProsent()).isEqualTo(100);
     }
 

@@ -11,11 +11,9 @@ import no.nav.familie.ks.sak.app.grunnlag.MedlFakta;
 import no.nav.familie.ks.sak.app.grunnlag.TpsFakta;
 import no.nav.familie.ks.sak.app.integrasjon.IntegrasjonTjeneste;
 import no.nav.familie.ks.sak.app.integrasjon.RegisterInnhentingService;
+import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.InfotrygdFakta;
 import no.nav.familie.ks.sak.app.integrasjon.oppgave.domene.OppgaveBeskrivelse;
 import no.nav.familie.ks.sak.app.integrasjon.personopplysning.FDATException;
-import no.nav.familie.ks.sak.app.integrasjon.infotrygd.domene.InfotrygdFakta;
-
-import no.nav.familie.ks.sak.config.toggle.UnleashProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +33,6 @@ public class Saksbehandling {
     private FastsettingService fastsettingService;
     private ResultatService resultatService;
     private IntegrasjonTjeneste integrasjonTjeneste;
-    private UnleashProvider unleash;
 
     @Autowired
     public Saksbehandling(VurderSamletTjeneste vurderSamletTjeneste,
@@ -43,7 +40,6 @@ public class Saksbehandling {
                           RegisterInnhentingService registerInnhentingService,
                           FastsettingService fastsettingService,
                           IntegrasjonTjeneste integrasjonTjeneste,
-                          UnleashProvider unleash,
                           ResultatService resultatService) {
         this.vurderSamletTjeneste = vurderSamletTjeneste;
         this.behandlingslagerService = behandlingslagerService;
@@ -51,7 +47,6 @@ public class Saksbehandling {
         this.fastsettingService = fastsettingService;
         this.resultatService = resultatService;
         this.integrasjonTjeneste = integrasjonTjeneste;
-        this.unleash = unleash;
     }
 
     @Transactional
@@ -95,21 +90,21 @@ public class Saksbehandling {
                 LOG.info("Søknad kan behandles automatisk. Fagsak-ID: {}, Årsak: {}", vedtak.getFagsakId(), samletUtfallType);
                 oppgaveBeskrivelse = String.format(OppgaveBeskrivelse.FORESLÅ_VEDTAK, OppgaveBeskrivelse.args(vedtak, søknad));
             } else {
-                LOG.info("Søknad kan ikke behandles automatisk. Fagsak-ID: {}, Årsak: {}", vedtak.getFagsakId(), samletVilkårVurdering.getResultater());
+                LOG.info("Søknad kan ikke behandles automatisk. Fagsak-ID: {}, Årsak: {}",
+                         vedtak.getFagsakId(),
+                         samletVilkårVurdering.getResultater());
                 oppgaveBeskrivelse = OppgaveBeskrivelse.MANUELL_BEHANDLING;
             }
         } else {
             var avviksvurdering = (AvviksVurdering) vilkårvurdering;
-            LOG.info("Søknad ble avvikshåndtert. Fagsak-ID: {}, Årsak: {}", vedtak.getFagsakId(), avviksvurdering.getAvvik().keySet());
+            LOG.info("Søknad ble avvikshåndtert. Fagsak-ID: {}, Årsak: {}",
+                     vedtak.getFagsakId(),
+                     avviksvurdering.getAvvik().keySet());
             oppgaveBeskrivelse = OppgaveBeskrivelse.MANUELL_BEHANDLING;
         }
 
-        if (unleash.toggle(OPPDATER_OPPGAVE).isEnabled()) {
-            LOG.info("Oppdater oppgave toggle er: Enabled\n Kaller integrasjonTjeneste.oppdaterGosysOppgave...");
-            integrasjonTjeneste.oppdaterGosysOppgave(søknad.getSøkerFødselsnummer(), journalpostID, oppgaveBeskrivelse);
-        } else {
-            LOG.info("Oppdater oppgave toggle er: Disabled");
-        }
+
+        integrasjonTjeneste.oppdaterGosysOppgave(søknad.getSøkerFødselsnummer(), journalpostID, oppgaveBeskrivelse);
     }
 
     private SamletVilkårsVurdering vurderVilkår(Behandling behandling, Faktagrunnlag grunnlag) {
