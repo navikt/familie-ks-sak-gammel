@@ -32,5 +32,5 @@ spring:
 FAMILIE_INTEGRASJONER_API_URL: http://familie-integrasjoner/api
 
 #Unleash
-UNLEASH_API_URL: https://unleash.nais.adeo.no/api/
+UNLEASH_API_URL: https://unleash.nais.io/api/
 ENVIRONMENT_NAME: q0
