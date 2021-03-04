@@ -46,3 +46,6 @@ spring:
 server:
   port: 8083
 FAMILIE_INTEGRASJONER_API_URL: http://localhost:8085/api
+STS_URL: "dummy"
+CREDENTIAL_USERNAME: not-a-real-srvuser
+CREDENTIAL_PASSWORD: not-a-real-pw
