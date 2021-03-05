@@ -1,5 +1,6 @@
 package no.nav.familie.ks.sak.config;
 
+import no.finn.unleash.MoreOperations;
 import no.finn.unleash.Unleash;
 import no.finn.unleash.UnleashContext;
 import no.finn.unleash.Variant;
@@ -53,6 +54,9 @@ public class UnleashTestConfig {
             public List<String> getFeatureToggleNames() {
                 return new LinkedList<>();
             }
+
+            @Override
+            public MoreOperations more() { return null; }
         };
     }
 }
