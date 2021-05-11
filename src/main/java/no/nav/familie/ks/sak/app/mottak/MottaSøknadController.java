@@ -63,7 +63,7 @@ public class MottaSøknadController {
     @ExceptionHandler(MissingKotlinParameterException.class)
     public Ressurs handleMissingKotlinParameterException(MissingKotlinParameterException kotEx) {
         log.error("MissingKotlinParameterException ved validering av søknadJson");
-        secureLogger.error("Feil ved validering av søknadJson. message{}", kotEx.getMsg()); //message innholder fnr
+        secureLogger.error("Feil ved validering av søknadJson. message{}", kotEx.getMessage()); //message innholder fnr
         return Ressurs.Companion.failure("MissingKotlinParameterException ved validering av søknadJson", null,null);
     }
 
