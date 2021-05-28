@@ -29,7 +29,7 @@
         <common-java-modules.version>2018.10.02.19.54</common-java-modules.version>
         <felles.version>1.20210510092430_d9bfcd5</felles.version>
         <kontrakt.version>2.0_20210526093406_a00d131</kontrakt.version>
-        <unleash.version>4.2.1</unleash.version>
+        <unleash.version>4.3.0</unleash.version>
         <spring-boot.version>${project.parent.version}</spring-boot.version>
         <kotlin.version>1.4.21-2</kotlin.version>
         <testcontainers.version>1.15.3</testcontainers.version>
