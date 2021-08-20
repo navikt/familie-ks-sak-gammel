@@ -29,6 +29,7 @@ jobs:
         uses: actions/setup-java@v2.2.0
         with:
           java-version: '11.x'
+          distribution: 'adopt'
       - name: Build with Maven
         env:
           GITHUB_USERNAME: x-access-token
