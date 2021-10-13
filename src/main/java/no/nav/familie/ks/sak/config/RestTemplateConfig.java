@@ -5,9 +5,8 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
@@ -23,6 +22,7 @@ public class RestTemplateConfig {
             .build();
     }
     @Bean
+    @Primary
     public RestTemplateBuilder restTemplateBuilderMedProxy(ConsumerIdClientInterceptor consumerIdClientInterceptor) {
         return new RestTemplateBuilder()
             .setConnectTimeout(Duration.ofSeconds(5))
