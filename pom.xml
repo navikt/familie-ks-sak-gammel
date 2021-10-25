@@ -29,10 +29,10 @@
         <common-java-modules.version>2018.10.02.19.54</common-java-modules.version>
         <felles.version>1.20211008153542_d279663</felles.version>
         <kontrakt.version>2.0_20211015081925_ef6cd67</kontrakt.version>
-        <unleash.version>4.4.0</unleash.version>
+        <unleash.version>4.4.1</unleash.version>
         <spring-boot.version>${project.parent.version}</spring-boot.version>
         <kotlin.version>1.4.21-2</kotlin.version>
-        <testcontainers.version>1.16.1</testcontainers.version>
+        <testcontainers.version>1.16.2</testcontainers.version>
         <junit-jupiter.version>RELEASE</junit-jupiter.version>
 
         <!--suppress UnresolvedMavenProperty  Ligger som secret i github-->
