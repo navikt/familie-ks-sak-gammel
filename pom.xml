@@ -27,7 +27,7 @@
         <cxf.version>3.3.1</cxf.version>
         <tjenestespesifikasjoner.version>1.2019.06.11-13.36-786a4cec3151</tjenestespesifikasjoner.version>
         <common-java-modules.version>2018.10.02.19.54</common-java-modules.version>
-        <felles.version>1.20211130150604_d0c74bd</felles.version>
+        <felles.version>1.20211202083100_64f46dd</felles.version>
         <kontrakt.version>2.0_20211130102051_80f114f</kontrakt.version>
         <unleash.version>4.4.1</unleash.version>
         <spring-boot.version>${project.parent.version}</spring-boot.version>
