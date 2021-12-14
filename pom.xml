@@ -31,7 +31,7 @@
         <kontrakt.version>2.0_20211206094303_9d0455f</kontrakt.version>
         <unleash.version>4.4.1</unleash.version>
         <spring-boot.version>${project.parent.version}</spring-boot.version>
-        <kotlin.version>1.6.0</kotlin.version>
+        <kotlin.version>1.6.10</kotlin.version>
         <testcontainers.version>1.16.2</testcontainers.version>
         <junit-jupiter.version>RELEASE</junit-jupiter.version>
 
