@@ -14,7 +14,6 @@ jobs:
         with:
           java-version: 17
           distribution: 'temurin'
-          cache: 'maven'
       - uses: actions/cache@v2.1.7
         with:
           path: ~/.m2/repository

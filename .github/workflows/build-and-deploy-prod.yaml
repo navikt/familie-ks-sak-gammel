@@ -30,7 +30,6 @@ jobs:
         with:
           java-version: 17
           distribution: 'temurin'
-          cache: 'maven'
       - name: Build with Maven
         env:
           GITHUB_USERNAME: x-access-token
