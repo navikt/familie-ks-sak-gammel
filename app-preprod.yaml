@@ -38,8 +38,8 @@ spec:
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
     - https://familie-ks-sak.nais.preprod.local # Deprecated - erstattes av dev.adeo.no
     - https://familie-ks-sak.dev-fss.nais.io # Deprecated - erstattes av dev.adeo.no
-    - https://familie-ks-sak.dev.adeo.no # Deprecated - erstattes av intern.dev.adeo.no
-    - https://familie-ks-sak.intern.dev.adeo.no
+    - https://familie-ks-sak.dev.adeo.no # Deprecated - erstattes av dev.intern.nav.no
+    - https://familie-ks-sak.dev.intern.nav.no
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: preprod
