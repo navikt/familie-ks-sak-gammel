@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.1</version>
+        <version>2.6.6</version>
     </parent>
 
     <groupId>no.nav.familie.ks.sak</groupId>
@@ -28,10 +28,10 @@
         <tjenestespesifikasjoner.version>1.2019.06.11-13.36-786a4cec3151</tjenestespesifikasjoner.version>
         <common-java-modules.version>2018.10.02.19.54</common-java-modules.version>
         <felles.version>1.20211217154554_3bb883e</felles.version>
-        <kontrakt.version>2.0_20211220104445_a348ae3</kontrakt.version>
+        <kontrakt.version>2.0_20220406133852_e1934d1</kontrakt.version>
         <unleash.version>4.4.1</unleash.version>
         <spring-boot.version>${project.parent.version}</spring-boot.version>
-        <kotlin.version>1.6.10</kotlin.version>
+        <kotlin.version>1.6.20</kotlin.version>
         <testcontainers.version>1.16.3</testcontainers.version>
         <junit-jupiter.version>RELEASE</junit-jupiter.version>
 
@@ -149,7 +149,7 @@
         <dependency>
             <groupId>no.nav.fpsak.tidsserie</groupId>
             <artifactId>fpsak-tidsserie</artifactId>
-            <version>2.5.6</version>
+            <version>2.6.2</version>
         </dependency>
         <dependency>
             <groupId>no.nav.familie.kontrakter</groupId>
@@ -205,7 +205,7 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-logback</artifactId>
-            <version>5.5.2</version>
+            <version>5.7.1</version>
         </dependency>
 
         <!-- Database -->
