@@ -205,7 +205,7 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-logback</artifactId>
-            <version>5.5.2</version>
+            <version>5.7.1</version>
         </dependency>
 
         <!-- Database -->
@@ -371,7 +371,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.7</version>
+                    <version>0.8.8</version>
                 </plugin>
             </plugins>
         </pluginManagement>
