@@ -22,7 +22,7 @@
         <spring.cloud.version>3.1.2</spring.cloud.version>
         <spring.vault.version>2.3.2</spring.vault.version>
         <java.version>17</java.version>
-        <token-validation-spring.version>2.0.16</token-validation-spring.version>
+        <token-validation-spring.version>2.0.19</token-validation-spring.version>
         <fpsak.nare.version>2.2.2</fpsak.nare.version>
         <cxf.version>3.3.1</cxf.version>
         <tjenestespesifikasjoner.version>1.2019.06.11-13.36-786a4cec3151</tjenestespesifikasjoner.version>
