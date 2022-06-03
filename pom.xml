@@ -32,7 +32,7 @@
         <unleash.version>4.4.1</unleash.version>
         <spring-boot.version>${project.parent.version}</spring-boot.version>
         <kotlin.version>1.6.21</kotlin.version>
-        <testcontainers.version>1.17.1</testcontainers.version>
+        <testcontainers.version>1.17.2</testcontainers.version>
         <junit-jupiter.version>RELEASE</junit-jupiter.version>
 
         <!--suppress UnresolvedMavenProperty  Ligger som secret i github-->
