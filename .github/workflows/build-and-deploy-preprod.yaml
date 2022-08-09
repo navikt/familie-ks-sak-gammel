@@ -7,14 +7,16 @@ jobs:
   deploy-to-dev:
     name: Bygg app/image, push til github, deploy til dev-fss
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
-        uses: actions/setup-java@v3.3.0
+        uses: actions/setup-java@v3.4.1
         with:
           java-version: 17
           distribution: 'temurin'
-      - uses: actions/cache@v3.0.2
+      - uses: actions/cache@v3.0.6
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-cache-${{ hashFiles('pom.xml') }}
