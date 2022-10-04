@@ -87,7 +87,7 @@ public class IntegrasjonTjenesteTest {
 
     @Test
     public void hentAktørId() throws Exception {
-        stubFor(get(urlEqualTo("/api/aktoer/v1"))
+        stubFor(get(urlEqualTo("/api/aktoer/v2/KON"))
                     .withHeader(NavHttpHeaders.NAV_PERSONIDENT.asString(), equalTo(FNR))
                     .willReturn(aResponse()
                                     .withHeader("Content-Type", "application/json")
@@ -168,7 +168,7 @@ public class IntegrasjonTjenesteTest {
 
     @Test
     public void hentPersonIdent() throws Exception {
-        stubFor(get(urlEqualTo("/api/aktoer/v1/fraaktorid"))
+        stubFor(get(urlEqualTo("/api/aktoer/v2/fraaktorid/KON"))
                     .withHeader("Nav-Aktorid", equalTo(AKTØR_ID_STRING))
                     .willReturn(aResponse()
                                     .withHeader("Content-Type", "application/json")
@@ -195,7 +195,7 @@ public class IntegrasjonTjenesteTest {
 
     @Test
     public void oppdaterGosysOppgave() throws Exception {
-        stubFor(get(urlEqualTo("/api/aktoer/v1"))
+        stubFor(get(urlEqualTo("/api/aktoer/v2/KON"))
                     .withHeader(NavHttpHeaders.NAV_PERSONIDENT.asString(), equalTo(FNR))
                     .willReturn(aResponse()
                                     .withHeader("Content-Type", "application/json")
