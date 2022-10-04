@@ -113,7 +113,7 @@ class IntegrasjonTjeneste @Autowired constructor(@param:Value("\${FAMILIE_INTEGR
         if (personident == null || personident.isEmpty()) {
             throw IntegrasjonException("Ved henting av aktør id er personident null eller tom")
         }
-        val uri = URI.create("$integrasjonerServiceUri/aktoer/v1")
+        val uri = URI.create("$integrasjonerServiceUri/aktoer/v2/KON")
         logger.info("Henter aktørId fra $integrasjonerServiceUri")
         return try {
             val response = requestMedPersonIdent(uri,
@@ -140,7 +140,7 @@ class IntegrasjonTjeneste @Autowired constructor(@param:Value("\${FAMILIE_INTEGR
         if (aktørId == null || aktørId.isEmpty()) {
             throw IntegrasjonException("Ved henting av personident er aktørId null eller tom")
         }
-        val uri = URI.create("$integrasjonerServiceUri/aktoer/v1/fraaktorid")
+        val uri = URI.create("$integrasjonerServiceUri/aktoer/v2/fraaktorid/KON")
         logger.info("Henter fnr fra $integrasjonerServiceUri")
         return try {
             val response =
